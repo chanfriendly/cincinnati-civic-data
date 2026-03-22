@@ -1,0 +1,15 @@
+name = "cincinnati-api-proxy"
+main = "api-proxy.js"
+compatibility_date = "2024-01-01"
+
+# Environment: secrets are set via `wrangler secret put CENSUS_API_KEY` etc.
+# Do NOT hardcode keys here.
+
+[env.production]
+routes = [
+  # Replace {your-pages-project} with your actual Cloudflare Pages domain
+  { pattern = "your-pages-project.pages.dev/api/*", zone_name = "pages.dev" }
+]
+
+# [vars]
+# Add non-sensitive runtime vars here if needed

@@ -1,0 +1,171 @@
+{
+  "app": {
+    "title": "Plataforma de Datos Cívicos de Cincinnati",
+    "subtitle": "Datos públicos para residentes, defensores y periodistas",
+    "attribution": "Datos del Portal de Datos Abiertos de Cincinnati",
+    "loading": "Cargando…",
+    "error": "La API de datos de la ciudad no está disponible temporalmente.",
+    "retry": "Reintentar",
+    "noData": "No se encontraron datos para esta búsqueda.",
+    "viewAll": "Ver todo",
+    "collapse": "Colapsar",
+    "source": "Fuente",
+    "updated": "Actualizado",
+    "learnMore": "Más información",
+    "explain": "Explica esto en lenguaje sencillo",
+    "generating": "Generando resumen…",
+    "dataDisclaimer": "Datos de {{source}} — Actualizado {{date}}"
+  },
+  "nav": {
+    "address": "Búsqueda de Dirección",
+    "neighborhood": "Perfiles de Barrio",
+    "police": "Rendición de Cuentas Policial",
+    "explorer": "Explorador de Barrios",
+    "displacement": "Justicia de Vivienda",
+    "owner": "Vigilancia de Propietarios",
+    "roadmap": "Trabajo Futuro"
+  },
+  "address": {
+    "title": "Búsqueda de Dirección",
+    "description": "Obtén un registro público completo para cualquier dirección de Cincinnati.",
+    "placeholder": "Ingresa una dirección de Cincinnati…",
+    "search": "Buscar",
+    "permits": "Permisos de Construcción",
+    "inspections": "Inspecciones y Violaciones",
+    "abatements": "Condonaciones de Impuestos",
+    "crime": "Delitos Cercanos",
+    "blight": "Condonación de Lote (PLAP)",
+    "transit": "Acceso al Transporte",
+    "crimeDisclaimer": "Las direcciones en los datos de delitos son aproximadas (últimos dos dígitos reemplazados). Las ubicaciones se sesgaron dentro de la misma manzana por privacidad.",
+    "noPermits": "No se encontraron permisos de construcción para esta dirección.",
+    "noInspections": "No se encontraron inspecciones para esta dirección.",
+    "noAbatements": "No se encontraron condonaciones de impuestos para esta dirección.",
+    "noCrime": "No se encontraron incidentes delictivos dentro de 400 metros.",
+    "noBlight": "No se encontraron registros de PLAP para esta dirección.",
+    "noTransit": "No se encontraron paradas de autobús SORTA dentro de 0.5 millas.",
+    "nearbyStops": "{{count}} parada(s) de autobús dentro de 0.5 millas",
+    "routes": "Rutas: {{routes}}"
+  },
+  "neighborhood": {
+    "title": "Perfiles de Barrio",
+    "description": "Un perfil de datos imprimible para cualquier barrio de Cincinnati.",
+    "select": "Selecciona un barrio",
+    "dateRange": "Rango de fechas",
+    "print": "Imprimir / Guardar como PDF",
+    "crime": "Incidentes Delictivos",
+    "permits": "Permisos de Construcción",
+    "food": "Violaciones de Seguridad Alimentaria",
+    "abatements": "Condonaciones de Impuestos",
+    "blight": "Deterioro / PLAP",
+    "perceptions": "Percepciones Comunitarias",
+    "fire": "Bomberos y EMS",
+    "housing": "Ingresos y Costos de Vivienda",
+    "medianIncome": "Ingreso Medio del Hogar",
+    "medianRent": "Renta Bruta Mediana",
+    "rentBurden": "Tasa de Carga de Alquiler",
+    "rentBurdenNote": "% de hogares que pagan más del 30% de los ingresos en alquiler",
+    "generatedOn": "Generado {{date}}",
+    "printHeader": "Perfil de Barrio de Cincinnati"
+  },
+  "police": {
+    "title": "Rendición de Cuentas Policial",
+    "description": "Busca conjuntos de datos de transparencia policial de Cincinnati en lenguaje sencillo.",
+    "trafficStops": "Paradas de Tráfico",
+    "pedestrianStops": "Paradas Peatonales",
+    "useOfForce": "Uso de la Fuerza",
+    "ois": "Disparos que Involucraron Oficiales",
+    "crime": "Mapa de Incidentes Delictivos",
+    "query": "Haz una pregunta sobre los datos",
+    "queryPlaceholder": "p. ej. ¿Con qué frecuencia fueron registrados los conductores negros en el Distrito 1 en 2023?",
+    "search": "Buscar",
+    "frozenNotice": "Este conjunto de datos está actualmente congelado pendiente de la transición de CPD a un nuevo sistema de gestión de registros.",
+    "frozenAs": "Última actualización: {{date}}",
+    "rmsGap": "Nota: Los datos delictivos del RMS antiguo se detienen en 6/2/2024. Un nuevo conjunto de datos comienza el 6/3/2024. Ambos se combinan para análisis histórico.",
+    "disclaimer": "Estos datos son publicados por la Ciudad de Cincinnati con fines de responsabilidad pública. Los patrones en los datos no establecen intención o causa.",
+    "raceBreakdown": "Por Raza",
+    "searchRate": "Tasa de Búsqueda",
+    "outcome": "Resultado",
+    "district": "Distrito",
+    "year": "Año",
+    "filterBy": "Filtrar por",
+    "all": "Todos"
+  },
+  "explorer": {
+    "title": "Explorador de Barrios",
+    "description": "Compara barrios de Cincinnati basándote en lo que es importante para ti.",
+    "howCalculated": "¿Cómo se calcula esto?",
+    "dimensions": "Dimensiones de Comparación",
+    "allOff": "Activa las dimensiones a continuación para comenzar a comparar barrios.",
+    "top5": "Top 5 Barrios",
+    "noSelection": "Activa al menos una dimensión para ver resultados.",
+    "weight": "Peso",
+    "stars": "{{n}} estrellas",
+    "score": "Puntuación",
+    "rawData": "Datos brutos",
+    "dataSource": "Fuente de datos",
+    "notAvailable": "No disponible ({{reason}})",
+    "insufficientData": "Datos insuficientes",
+    "moeNote": "Margen de error: ±{{moe}}",
+    "tractNote": "Los límites de los tramos censales no se alinean perfectamente con los límites de los barrios. Las asignaciones ambiguas se señalan.",
+    "colorblindToggle": "Paleta segura para daltónicos",
+    "yearSelector": "Año del censo",
+    "incomeSub": {
+      "label": "Estoy buscando:",
+      "lower": "Áreas más económicas",
+      "higher": "Áreas de ingresos más altos"
+    },
+    "dim": {
+      "affordability": {
+        "label": "Asequibilidad",
+        "description": "Tasa de carga de alquiler (% que paga >30% de los ingresos en vivienda) y renta bruta mediana."
+      },
+      "income": {
+        "label": "Nivel de Ingresos",
+        "description": "Ingreso medio del hogar. Tú eliges si las áreas de ingresos más altos o más bajos puntúan mejor."
+      },
+      "safety": {
+        "label": "Seguridad",
+        "description": "Incidentes delictivos por 1,000 residentes por año. Tasa más baja = puntuación más alta."
+      },
+      "transit": {
+        "label": "Acceso al Transporte",
+        "description": "Número de paradas de autobús SORTA dentro de 0.4 millas del centroide del barrio."
+      },
+      "investment": {
+        "label": "Inversión en Barrios",
+        "description": "Cambio año a año en el volumen de permisos de construcción. Creciente = trayectoria de mejora."
+      },
+      "blight": {
+        "label": "Mantenimiento Público",
+        "description": "Actividad de deterioro PLAP por milla cuadrada y proporción de inspecciones que pasan al primer intento."
+      },
+      "parks": {
+        "label": "Acceso a Parques",
+        "description": "Total de acres de parque dentro de 0.75 millas del centroide del barrio, por 1,000 residentes. Fuente: CAGIS Parques y Espacios Verdes."
+      },
+      "flood": {
+        "label": "Riesgo de Inundación",
+        "description": "Si el centroide del barrio cae en una Zona de Peligro de Inundación Especial de FEMA (zona de 100 años). Fuente: FEMA National Flood Hazard Layer."
+      },
+      "food": {
+        "label": "Acceso a Alimentos",
+        "description": "% de la población del barrio que vive en un área de desierto alimentario (bajos ingresos + supermercado a más de 1 milla). Fuente: Atlas de Investigación de Acceso a Alimentos del USDA 2019."
+      },
+      "schools": {
+        "label": "Calidad de las Escuelas",
+        "description": "Los datos de desempeño de las escuelas de CPS no están disponibles a través de API pública. Para información sobre escuelas, visita la tarjeta de calificaciones del Departamento de Educación de Ohio."
+      }
+    },
+    "methodology": {
+      "title": "Cómo se califican los barrios",
+      "body": "Cada dimensión habilitada produce una puntuación de 0–100 para cada barrio, normalizada en toda la ciudad (100 = mejor de su clase, 0 = peor). La puntuación compuesta final es el promedio ponderado de todas las puntuaciones de dimensión habilitadas, usando tus pesos de estrellas. Los barrios grises tienen datos insuficientes en una o más dimensiones habilitadas. Los empates se rompen alfabéticamente.",
+      "formula": "Compuesto = Σ(puntuación_dimensión × peso_estrella) / Σ(peso_estrella)"
+    },
+    "caveats": {
+      "census": "Los datos del censo ACS se basan en encuestas con márgenes de error. Los barrios pequeños pueden tener una incertidumbre alta.",
+      "tracts": "Los límites de los tramos censales no se alinean perfectamente con los 52 barrios de Cincinnati. Donde un tramo abarca múltiples barrios, los datos se atribuyen al barrio que contiene el centroide del tramo.",
+      "crime": "Los datos delictivos utilizan ubicaciones aproximadas (privacidad sesgada a nivel de manzana). Las tasas por barrio son direccionalmente precisas pero no exactas.",
+      "schools": "La 'calidad de las escuelas' está explícitamente ausente de esta herramienta. Consulta la tarjeta de calificaciones del Departamento de Educación de Ohio en reportcard.education.ohio.gov."
+    }
+  }
+}

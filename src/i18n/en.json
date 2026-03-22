@@ -1,0 +1,171 @@
+{
+  "app": {
+    "title": "Cincinnati Civic Data Platform",
+    "subtitle": "Public data for residents, advocates & journalists",
+    "attribution": "Data from Cincinnati Open Data Portal",
+    "loading": "Loading…",
+    "error": "The city data API is temporarily unavailable.",
+    "retry": "Retry",
+    "noData": "No data found for this query.",
+    "viewAll": "View all",
+    "collapse": "Collapse",
+    "source": "Source",
+    "updated": "Updated",
+    "learnMore": "Learn more",
+    "explain": "Explain this in plain language",
+    "generating": "Generating summary…",
+    "dataDisclaimer": "Data from {{source}} — Updated {{date}}"
+  },
+  "nav": {
+    "address": "Address Lookup",
+    "neighborhood": "Neighborhood Profiles",
+    "police": "Police Accountability",
+    "explorer": "Neighborhood Explorer",
+    "displacement": "Housing Justice",
+    "owner": "Owner Watch",
+    "roadmap": "Future Work"
+  },
+  "address": {
+    "title": "Address Lookup",
+    "description": "Get a full public record for any Cincinnati address.",
+    "placeholder": "Enter a Cincinnati address…",
+    "search": "Search",
+    "permits": "Building Permits",
+    "inspections": "Inspections & Violations",
+    "abatements": "Tax Abatements",
+    "crime": "Nearby Crime",
+    "blight": "Lot Abatement (PLAP)",
+    "transit": "Transit Access",
+    "crimeDisclaimer": "Addresses in crime data are approximate (last two digits replaced). Locations are skewed within the same block for privacy.",
+    "noPermits": "No building permits found for this address.",
+    "noInspections": "No inspections found for this address.",
+    "noAbatements": "No tax abatements found for this address.",
+    "noCrime": "No crime incidents found within 400 meters.",
+    "noBlight": "No PLAP records found for this address.",
+    "noTransit": "No SORTA bus stops found within 0.5 miles.",
+    "nearbyStops": "{{count}} bus stop(s) within 0.5 miles",
+    "routes": "Routes: {{routes}}"
+  },
+  "neighborhood": {
+    "title": "Neighborhood Profiles",
+    "description": "A printable data profile for any Cincinnati neighborhood.",
+    "select": "Select a neighborhood",
+    "dateRange": "Date range",
+    "print": "Print / Save as PDF",
+    "crime": "Crime Incidents",
+    "permits": "Building Permits",
+    "food": "Food Safety Violations",
+    "abatements": "Tax Abatements",
+    "blight": "Blight / PLAP",
+    "perceptions": "Community Perceptions",
+    "fire": "Fire & EMS",
+    "housing": "Income & Housing Costs",
+    "medianIncome": "Median Household Income",
+    "medianRent": "Median Gross Rent",
+    "rentBurden": "Rent Burden Rate",
+    "rentBurdenNote": "% of households paying more than 30% of income on rent",
+    "generatedOn": "Generated {{date}}",
+    "printHeader": "Cincinnati Neighborhood Profile"
+  },
+  "police": {
+    "title": "Police Accountability",
+    "description": "Search Cincinnati police transparency datasets in plain English.",
+    "trafficStops": "Traffic Stops",
+    "pedestrianStops": "Pedestrian Stops",
+    "useOfForce": "Use of Force",
+    "ois": "Officer-Involved Shootings",
+    "crime": "Crime Incidents Map",
+    "query": "Ask a question about the data",
+    "queryPlaceholder": "e.g. How often were Black drivers searched in District 1 in 2023?",
+    "search": "Search",
+    "frozenNotice": "This dataset is currently frozen pending CPD's transition to a new records management system.",
+    "frozenAs": "Last updated: {{date}}",
+    "rmsGap": "Note: Crime data from the old RMS stops at 6/2/2024. A new dataset starts 6/3/2024. Both are combined for historical analysis.",
+    "disclaimer": "This data is published by the City of Cincinnati for public accountability purposes. Patterns in the data do not establish intent or cause.",
+    "raceBreakdown": "By Race",
+    "searchRate": "Search Rate",
+    "outcome": "Outcome",
+    "district": "District",
+    "year": "Year",
+    "filterBy": "Filter by",
+    "all": "All"
+  },
+  "explorer": {
+    "title": "Neighborhood Explorer",
+    "description": "Compare Cincinnati neighborhoods based on what matters to you.",
+    "howCalculated": "How is this calculated?",
+    "dimensions": "Comparison Dimensions",
+    "allOff": "Toggle dimensions below to start comparing neighborhoods.",
+    "top5": "Top 5 Neighborhoods",
+    "noSelection": "Enable at least one dimension to see results.",
+    "weight": "Weight",
+    "stars": "{{n}} stars",
+    "score": "Score",
+    "rawData": "Raw data",
+    "dataSource": "Data source",
+    "notAvailable": "Not available ({{reason}})",
+    "insufficientData": "Insufficient data",
+    "moeNote": "Margin of error: ±{{moe}}",
+    "tractNote": "Census tract boundaries do not perfectly align with neighborhood boundaries. Ambiguous assignments are flagged.",
+    "colorblindToggle": "Colorblind-safe palette",
+    "yearSelector": "Census year",
+    "incomeSub": {
+      "label": "I am looking for:",
+      "lower": "Lower-cost areas",
+      "higher": "Higher-income areas"
+    },
+    "dim": {
+      "affordability": {
+        "label": "Affordability",
+        "description": "Rent burden rate (% paying >30% of income on housing) and median gross rent."
+      },
+      "income": {
+        "label": "Income Level",
+        "description": "Median household income. You choose whether higher or lower income areas score better."
+      },
+      "safety": {
+        "label": "Safety",
+        "description": "Crime incidents per 1,000 residents per year. Lower rate = higher score."
+      },
+      "transit": {
+        "label": "Transit Access",
+        "description": "Number of SORTA bus stops within 0.4 miles of the neighborhood centroid."
+      },
+      "investment": {
+        "label": "Neighborhood Investment",
+        "description": "Year-over-year change in building permit volume. Rising = improving trajectory."
+      },
+      "blight": {
+        "label": "Public Maintenance",
+        "description": "PLAP blight activity per square mile and proportion of inspections passing first attempt."
+      },
+      "parks": {
+        "label": "Park Access",
+        "description": "Total park acreage within 0.75 miles of the neighborhood centroid, per 1,000 residents. Source: CAGIS Parks and Greenspace."
+      },
+      "flood": {
+        "label": "Flood Risk",
+        "description": "Whether the neighborhood centroid falls in a FEMA Special Flood Hazard Area (100-year zone). Source: FEMA National Flood Hazard Layer."
+      },
+      "food": {
+        "label": "Food Access",
+        "description": "% of neighborhood population living in a food desert tract (low income + supermarket >1 mile away). Source: USDA Food Access Research Atlas 2019."
+      },
+      "schools": {
+        "label": "School Quality",
+        "description": "CPS school performance data is not available via public API. For school information, visit the Ohio Dept. of Education report card."
+      }
+    },
+    "methodology": {
+      "title": "How neighborhoods are scored",
+      "body": "Each enabled dimension produces a score from 0–100 for every neighborhood, normalized across the city (100 = best in class, 0 = worst). The final composite score is the weighted average of all enabled dimension scores, using your star weights. Gray neighborhoods have insufficient data on one or more enabled dimensions. Ties are broken alphabetically.",
+      "formula": "Composite = Σ(dimension_score × star_weight) / Σ(star_weight)"
+    },
+    "caveats": {
+      "census": "Census ACS data is survey-based with margins of error. Small neighborhoods may have high uncertainty.",
+      "tracts": "Census tract boundaries do not align perfectly with Cincinnati's 52 neighborhoods. Where a tract spans multiple neighborhoods, data is attributed to the neighborhood containing the tract centroid.",
+      "crime": "Crime data uses approximate locations (privacy-skewed to block level). Rates per neighborhood are directionally accurate but not precise.",
+      "schools": "'School quality' is explicitly absent from this tool. See the Ohio Dept. of Education report card at reportcard.education.ohio.gov."
+    }
+  }
+}
