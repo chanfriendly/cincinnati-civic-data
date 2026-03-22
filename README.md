@@ -2,25 +2,41 @@
 
 ## Project Overview
 
-The Cincinnati Civic Data Platform is a React-based web application that empowers residents and civic organizations to explore and understand Cincinnati's neighborhoods through aggregated open data. The platform combines population demographics, housing, economic indicators, transportation, and voting records into an accessible, map-based interface. It is designed for civic participation, research, and community engagement—helping residents make informed decisions about where to live, work, organize, or advocate.
+The Cincinnati Civic Data Platform is a React-based web application that empowers residents and civic organizations to explore and understand Cincinnati's neighborhoods through aggregated open data. The platform combines demographics, housing, crime, police accountability, displacement risk, landlord activity, and transportation data into an accessible interface designed for civic participation, research, and community engagement.
 
-The platform serves community organizers, researchers, residents, journalists, and local government staff by providing a single source of truth for Cincinnati's civic and demographic data, updated regularly from official city and federal sources.
+The platform serves community organizers, researchers, residents, journalists, and local government staff by providing a single source of truth for Cincinnati's civic and demographic data, updated in near real-time from official city, county, and federal sources.
+
+**Live site:** [cincinnati-civic-data.vercel.app](https://cincinnati-civic-data.vercel.app)
+
+---
+
+## Tab-by-Tab Overview
+
+| Tab | Purpose | Primary Data Sources |
+|-----|---------|----------------------|
+| **Address Lookup** | Search any Cincinnati address to see nearby crime, zoning, flood zone, historic district, parks, transit stops, and live traffic — plus an AI-generated summary | Socrata (crime), Hamilton County CAGIS (zoning/parks/historic), OHGO (traffic), SORTA (transit), OpenRouter AI |
+| **Neighborhood Profiles** | Select a neighborhood to view crime trends, building permits, property inspections, blight complaints, and Census demographics side by side | Socrata (crime, permits, inspections, blight), U.S. Census ACS |
+| **Police Accountability** | Explore CPD traffic stops, pedestrian stops, use-of-force incidents, officer-involved shootings, and crime — broken down by race, district, and year — with an AI Q&A interface | Socrata (CPD datasets), OpenRouter AI |
+| **Neighborhood Explorer** | Choropleth map ranking all Cincinnati neighborhoods across housing, crime, and economic dimensions | Socrata, Census ACS, CAGIS neighborhood boundaries |
+| **Displacement Risk** | Track gentrification and displacement pressure across neighborhoods using permit activity, tax abatements, PLAP listings, and unit loss | Socrata (permits, abatements, PLAP, demolitions), Census ACS |
+| **Owner Activity** | Search a landlord or developer name to surface their permit history, CRA subsidies, PLAP listings, and unit changes across all Cincinnati neighborhoods | Socrata (permits, unit activity, CRA, PLAP, abatements) |
+| **Roadmap** | Public roadmap of planned features and known limitations | Static |
+
+---
 
 ## Prerequisites
 
-- **Node.js 18+** and **npm** (for local development and building)
-- **Cloudflare account** (free tier sufficient; required to deploy the Worker for API proxying)
-- **API keys** (4 total; see [API Keys Guide](#api-keys-guide) below)
-  - U.S. Census Bureau API key
-  - Anthropic (Claude) API key
-  - Socrata App Token
-  - Google Maps / Mapbox geocoding API key
+- **Node.js 18+** and **npm**
+- **Vercel account** (free tier sufficient; required for the serverless API proxy)
+- **API keys** (see [API Keys Guide](#api-keys-guide) below)
+
+---
 
 ## Quick Start
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-org/cincinnati-civic-data.git
+   git clone https://github.com/chanfriendly/cincinnati-civic-data.git
    cd cincinnati-civic-data
    ```
 
@@ -34,10 +50,12 @@ The platform serves community organizers, researchers, residents, journalists, a
    cp .env.example .env.local
    ```
 
-4. **Fill in API keys** in `.env.local` (see [API Keys Guide](#api-keys-guide)):
+4. **Fill in your API keys** in `.env.local` (see [API Keys Guide](#api-keys-guide)):
    ```
-   VITE_SOCRATA_APP_TOKEN=your_socrata_app_token
-   VITE_GEOCODING_API_KEY=your_geocoding_key
+   VITE_SOCRATA_APP_TOKEN=your_token
+   VITE_GEOCODING_API_KEY=your_key
+   VITE_GEOCODING_PROVIDER=google
+   VITE_OHGO_API_KEY=your_key
    ```
 
 5. **Start the development server:**
@@ -46,221 +64,184 @@ The platform serves community organizers, researchers, residents, journalists, a
    ```
    The app will open at `http://localhost:5173`.
 
-6. **For local testing with the Worker proxy:**
-   See the [Development Notes](#development-notes) section on configuring Vite to proxy requests.
+> **Note:** The AI features (Address Lookup summary, Police Accountability Q&A) call `/api/openrouter/*`, which is a Vercel serverless function. This route is not available in local dev unless you run `vercel dev` or mock the endpoint. The rest of the app works fully without it.
+
+---
 
 ## API Keys Guide
 
-All API keys must be acquired before the first run. The following table summarizes each key's purpose, sensitivity, and where it lives:
+| Key | Service | Purpose | Sensitivity | Where It Lives |
+|-----|---------|---------|-------------|----------------|
+| `VITE_SOCRATA_APP_TOKEN` | Socrata (City of Cincinnati) | Authenticate all Socrata dataset requests | Low | Browser bundle / Vercel env var |
+| `VITE_GEOCODING_API_KEY` | Google Maps or Mapbox | Convert addresses to lat/lon for Address Lookup | Low | Browser bundle / Vercel env var |
+| `VITE_GEOCODING_PROVIDER` | — | Set to `google` or `mapbox` | — | Browser bundle / Vercel env var |
+| `VITE_OHGO_API_KEY` | OHGO (Ohio ODOT) | Live traffic incidents, construction zones, cameras | Low | Browser bundle / Vercel env var |
+| `OPENROUTER_API_KEY` | OpenRouter | AI summaries and Q&A (routed through Vercel serverless function) | **High** | Vercel env var only — never use `VITE_` prefix |
+| `CENSUS_API_KEY` | U.S. Census Bureau | ACS demographic data by neighborhood and tract | **High** | Vercel env var only — never use `VITE_` prefix |
 
-| Key | Service | Purpose | Sensitivity | Stored | Where to Get |
-|-----|---------|---------|-------------|--------|--------------|
-| `VITE_SOCRATA_APP_TOKEN` | Socrata (City of Cincinnati) | Authenticate all Socrata API requests (housing, permits, 311 calls, permits, violations) | **Low** | Browser bundle | https://data.cincinnati-oh.gov → Sign up → Developer Settings |
-| `VITE_GEOCODING_API_KEY` | Google Maps or Mapbox | Convert addresses to lat/lon for Address Lookup and map markers | **Low** | Browser bundle | Google Cloud Console (Maps API) or Mapbox Dashboard |
-| `CENSUS_API_KEY` | U.S. Census Bureau | Query decennial and ACS data at tract and block group level | **High** | Cloudflare Worker secret only | https://api.census.gov/data/key_signup.html |
-| `ANTHROPIC_API_KEY` | Anthropic (Claude) | AI-powered neighborhood summary generation and trend analysis | **High** | Cloudflare Worker secret only | https://console.anthropic.com → API Keys |
+### Getting Each Key
 
-### Creating Each Key
-
-**Socrata App Token:**
+**Socrata App Token**
 1. Visit https://data.cincinnati-oh.gov
-2. Click **Sign Up** (or log in if you have an account)
-3. Go to **Developer Settings** → **App Tokens**
-4. Click **Create Token**
-5. Name it "Cincinnati Civic Platform Local"
-6. Copy the token and add to `.env.local`:
-   ```
-   VITE_SOCRATA_APP_TOKEN=abc123def456...
-   ```
+2. Sign up or log in → **Developer Settings** → **App Tokens** → **Create Token**
+3. Add to `.env.local`: `VITE_SOCRATA_APP_TOKEN=your_token`
 
-**Google Maps / Mapbox Key:**
-- **Google Cloud:** Visit https://console.cloud.google.com, enable Maps API, create API key, restrict to your domain
-- **Mapbox:** Visit https://account.mapbox.com, create access token, restrict to your domain
-- Add to `.env.local`:
-  ```
-  VITE_GEOCODING_API_KEY=your_key_here
-  ```
+**Google Maps Geocoding Key**
+1. Visit https://console.cloud.google.com
+2. Enable the **Geocoding API** and **Maps JavaScript API**
+3. Create an API key and restrict it to your domain
+4. Add to `.env.local`: `VITE_GEOCODING_API_KEY=your_key` and `VITE_GEOCODING_PROVIDER=google`
 
-**Census API Key:**
+**OHGO Traffic Key**
+1. Visit https://ohgo.com → **Developer** → **API Key**
+2. Register for a free key
+3. Add to `.env.local`: `VITE_OHGO_API_KEY=your_key`
+
+**OpenRouter API Key** *(AI features — high sensitivity)*
+1. Visit https://openrouter.ai → **Keys** → **Create Key**
+2. Add funds or use a free model
+3. Add to **Vercel project settings** as `OPENROUTER_API_KEY` (no `VITE_` prefix)
+4. Do **not** add this to `.env.local` or any browser-facing variable
+
+**Census API Key** *(high sensitivity)*
 1. Visit https://api.census.gov/data/key_signup.html
-2. Enter your email and org name
-3. Agree to terms
-4. Copy the key from the confirmation email
-5. Deploy to Cloudflare Worker (see [Deployment](#deployment-to-cloudflare-pages))
+2. Enter your email and org name; key arrives by email
+3. Add to **Vercel project settings** as `CENSUS_API_KEY` (no `VITE_` prefix)
 
-**Anthropic API Key:**
-1. Visit https://console.anthropic.com
-2. Go to **API Keys**
-3. Click **Create Key**
-4. Copy the key and store in Cloudflare Worker secret (see deployment steps below)
+---
+
+## Deployment to Vercel
+
+The app is deployed as a static Vite build with a Vercel serverless function handling the sensitive API proxy.
+
+### 1. Install Vercel CLI and link the project
+
+```bash
+npm install -g vercel
+vercel link
+```
+
+### 2. Set environment variables in Vercel
+
+In your Vercel project → **Settings** → **Environment Variables**, add:
+
+**Browser-safe (all environments):**
+```
+VITE_SOCRATA_APP_TOKEN
+VITE_GEOCODING_API_KEY
+VITE_GEOCODING_PROVIDER
+VITE_OHGO_API_KEY
+```
+
+**Server-only (never expose in browser):**
+```
+OPENROUTER_API_KEY
+CENSUS_API_KEY
+```
+
+### 3. Deploy
+
+```bash
+vercel --prod
+```
+
+Or connect your GitHub repo to Vercel for automatic deploys on every push to `main`.
+
+### How the AI proxy works
+
+All AI requests go to `/api/openrouter/[...path]` — a Vercel serverless function defined in `api/openrouter/[...path].js`. This function injects the `OPENROUTER_API_KEY` server-side and forwards requests to `https://openrouter.ai/api/v1/`. The key is never exposed to the browser.
+
+---
 
 ## SORTA Transit Data
 
-The platform includes a seed transit dataset at `/public/data/sorta_stops.json` containing ~30 bus stops and their routes. This file is used by the Neighborhood Explorer and Address Lookup to show transit proximity.
+The platform includes a seed transit dataset at `public/data/sorta_stops.json` containing Cincinnati bus stops. This file powers the transit proximity cards in Address Lookup.
 
-### Updating from Live GTFS Feed
+### Updating from the Live GTFS Feed
 
-To refresh SORTA data with the latest stops and routes:
-
-1. Download the current GTFS feed:
-   ```bash
-   curl -o google_transit.zip https://www.go-metro.com/transitdata/google_transit.zip
-   ```
-
-2. Extract the zip file:
-   ```bash
-   unzip google_transit.zip
-   ```
-
-3. Convert stops and routes to the app format using the provided conversion script:
-   ```bash
-   node scripts/convert-gtfs.js
-   ```
-   This reads `stops.txt` and `routes.txt` and outputs JSON to `public/data/sorta_stops.json`.
-
-4. Commit the updated file to version control:
-   ```bash
-   git add public/data/sorta_stops.json
-   git commit -m "chore: update SORTA transit data"
-   ```
-
-Note: The seed file includes stops across major Cincinnati neighborhoods and covers primary SORTA routes. Update frequency depends on SORTA schedule changes (typically quarterly).
-
-## Tab-by-Tab Overview
-
-| Tab | Purpose | Primary Data Sources |
-|-----|---------|----------------------|
-| **Dashboard** | High-level city trends, population growth, housing costs, key metrics | Census ACS, Zillow/Redfin (housing prices), Socrata |
-| **Neighborhood Explorer** | Map-based neighborhood profiles with demographics, transit, economic data | Census tracts, SORTA stops, Socrata datasets |
-| **Address Lookup** | Search a specific address to see neighborhood data, nearby transit, closest services | Geocoding API, Census tract lookup, SORTA proximity |
-| **Housing** | Rent trends, vacancy, affordability, permits, new construction | Socrata housing permits, ACS, property tax data |
-| **Voting** | Council votes, legislative history, public comments | Socrata voting records, Cincinnati City Council API |
-| **Economy** | Jobs, wages, business permits, economic indicators by neighborhood | ACS work-from-home, self-employment, Socrata permits |
-| **Insights** | AI-powered narrative summaries and trend analysis | Claude API (proxied through Worker) |
-
-## Deployment to Cloudflare Pages
-
-Follow these steps to deploy the platform to production:
-
-### 1. Create a Cloudflare Pages Project
-
-1. Log into Cloudflare dashboard
-2. Go to **Pages**
-3. Click **Create a project**
-4. Select **Connect to Git** and authorize GitHub
-5. Select your `cincinnati-civic-data` repository
-6. Choose a project name (e.g., `cincinnati-civic`)
-7. Leave the framework as **None** (we use Vite)
-
-### 2. Configure Build Settings
-
-In the Pages project settings:
-- **Build command:** `npm run build`
-- **Build output directory:** `dist`
-- **Root directory:** `/` (or leave blank)
-
-### 3. Set Environment Variables
-
-In Pages project settings, go to **Settings** → **Environment Variables**:
-
-Add these variables (these are **browser-safe**, so they're OK to expose):
-```
-VITE_SOCRATA_APP_TOKEN=your_token_here
-VITE_GEOCODING_API_KEY=your_key_here
-```
-
-Do **NOT** add `CENSUS_API_KEY` or `ANTHROPIC_API_KEY` here—they go in the Worker.
-
-### 4. Deploy the Worker
-
-The Worker proxies sensitive Census and Claude API calls:
-
-1. **Install Wrangler** (if not already installed):
-   ```bash
-   npm install -g wrangler
-   ```
-
-2. **Authenticate with Cloudflare:**
-   ```bash
-   wrangler login
-   ```
-
-3. **Set Worker secrets** (these are hidden from the browser):
-   ```bash
-   cd worker
-   wrangler secret put CENSUS_API_KEY
-   # Paste your Census API key when prompted
-
-   wrangler secret put ANTHROPIC_API_KEY
-   # Paste your Anthropic API key when prompted
-   ```
-
-4. **Update `wrangler.toml`** with your Pages domain:
-   ```toml
-   [env.production]
-   routes = [
-     { pattern = "your-pages-project.pages.dev/api/*", zone_name = "pages.dev" }
-   ]
-   ```
-
-5. **Deploy the Worker:**
-   ```bash
-   wrangler deploy --env production
-   ```
-
-6. **Verify the routes** are active in Cloudflare Pages **Settings** → **Functions** → **Routes**
-
-### 5. Verify Deployment
-
-Visit your Pages URL (e.g., `https://cincinnati-civic.pages.dev`). The app should load and all tabs should function. Test Census and Claude endpoints via the Insights tab.
-
-## Development Notes
-
-### Local Development Proxy
-
-When developing locally, requests to `/api/census` and `/api/claude` are proxied by Vite (configured in `vite.config.ts`). The dev server forwards these to a local mock server or directly to Cloudflare Workers if you've set up a tunnel.
-
-For testing the live Worker without deploying:
-1. Use Wrangler local mode: `wrangler dev` from the `worker/` directory
-2. Update Vite proxy in `vite.config.ts` to `http://localhost:8787`
-
-### CAGIS CORS Note
-
-The CAGIS vector tile API (used for City of Cincinnati base maps) may not support CORS from localhost. **Test CORS early** in development:
 ```bash
-curl -I -H "Origin: http://localhost:5173" \
-  "https://map-api.cagis.org/..."
+# Download latest GTFS feed
+curl -o google_transit.zip https://www.go-metro.com/transitdata/google_transit.zip
+unzip google_transit.zip
+
+# Convert to app format
+node scripts/convert-gtfs.js
+
+# Commit
+git add public/data/sorta_stops.json
+git commit -m "chore: update SORTA transit data"
 ```
-If CORS fails, add a route to the Cloudflare Worker to proxy CAGIS requests.
 
-### Census Data Alignment
+> **Note:** Route associations (`routes: []`) are currently empty in the seed data — the GTFS conversion script needs to be updated to join `stop_times.txt` → `trips.txt` → `routes.txt` to populate them. The UI handles empty routes gracefully.
 
-Census data is available at two geographies: **Census tract** (finer resolution, ~1,200 people per tract) and **block group** (coarser, ~1,500 people). The platform uses tracts and aligns them to Cincinnati neighborhoods using a pre-computed mapping table (`src/data/tract-to-neighborhood.json`). This mapping was created by manual GIS analysis and is stored in version control. To update it, regenerate from Census shapefiles and neighborhood boundaries.
+---
 
 ## Data Sources
 
-| Dataset | Socrata UID | Refresh Frequency | Used In |
-|---------|-------------|-------------------|---------|
-| Housing Permits | `n8v6-gdp6` | Daily | Housing, Insights |
-| Property Tax | `asc4-hpy2` | Monthly | Housing, Neighborhood Explorer |
-| Violations & Inspections | `a2nx-4u46` | Weekly | Housing, Neighborhood Explorer |
-| Development Permits | `i67r-kfyq` | Daily | Housing, Insights |
-| Voting Records | `vh3j-9tpq` | Per session | Voting, Council Votes |
-| SORTA Bus Stops | `/public/data/sorta_stops.json` | Quarterly | Address Lookup, Neighborhood Explorer |
-| Census Tracts (Decennial) | Federal Census Bureau | Every 10 years | All tabs |
-| ACS Demographics (5-year) | Census Bureau | Annual | Dashboard, Neighborhood Explorer, Economy |
+### Socrata (data.cincinnati-oh.gov)
 
-## Known Limitations (v1)
+| Dataset | UID | Used In |
+|---------|-----|---------|
+| Crime Reports — STARS (current) | `7aqy-xrv9` | Address Lookup, Neighborhood Profiles |
+| Crime Reports — PDI (legacy) | `k59e-2pvf` | Address Lookup, Neighborhood Profiles, Police Accountability, Displacement |
+| Traffic Stops (CPD) | `ktgf-4sjh` | Police Accountability |
+| Pedestrian Stops (CPD) | `jx3x-rh6i` | Police Accountability |
+| Use of Force (CPD) | `748b-sht4` | Police Accountability |
+| Officer-Involved Shootings | `r6q4-muts` | Police Accountability |
+| Community Perceptions Survey | `gdf4-fqik` | Police Accountability |
+| Building Permits | `uhjb-xac9` | Displacement, Owner Activity, Neighborhood Profiles |
+| Unit Activity (additions/removals) | `xedz-tk7q` | Owner Activity |
+| Tax Abatements | `tkp7-yf64` | Displacement, Owner Activity |
+| PLAP (Problem Landlord List) | `pk9w-99n6` | Displacement, Owner Activity, Neighborhood Profiles |
+| Demolition Permits | `cncm-znd6` | Displacement |
+| CRA Loans & Subsidies | `m76i-p5p9` | Owner Activity |
+| Property Inspections / Violations | `ivda-umw7` | Address Lookup, Neighborhood Profiles |
+| Fire & EMS Incidents | `vnsz-a3wp` | Neighborhood Profiles |
+| Food Safety Inspections | `rg6p-b3h3` | Neighborhood Profiles |
 
-The following features are **out of scope** for v1 and planned for future releases:
+### Other Sources
 
-- **Council Votes Detail:** The Voting tab shows vote counts and outcomes; drill-down into individual vote rationales and abstentions is deferred
-- **Art & Culture Tab:** Planned for v2; requires integration with ArtsWave/Cultural Trails data
-- **School Quality Metrics:** Deferred (requires Cincinnati Public Schools API and open data access)
-- **User Accounts & Saved Neighborhoods:** Deferred (requires backend auth and database)
-- **311 Service Requests Real-Time:** Only historical data shown; real-time 311 tracking is future work
-- **GTFS-RT (Real-Time Transit):** Seed data only; live bus locations and delays require SORTA GTFS-RT API (not publicly available as of v1)
-- **Historical Trend Charts:** Available for housing and voting; economic and demographic trends are future work
+| Source | Used In |
+|--------|---------|
+| U.S. Census ACS 5-Year Estimates | Neighborhood Profiles, Neighborhood Explorer, Displacement |
+| Hamilton County CAGIS (ArcGIS Online, org: `JyZag7oO4NteHGiq`) | Address Lookup — zoning, parks, historic districts |
+| OHGO / Ohio ODOT | Address Lookup — live traffic incidents, construction, cameras |
+| SORTA GTFS | Address Lookup — nearby bus stops |
+| OpenRouter (AI) | Address Lookup — address summary; Police Accountability — Q&A |
+
+---
+
+## Development Notes
+
+### AI features in local dev
+
+The `/api/openrouter/*` serverless function only runs on Vercel. To test AI features locally, either:
+- Run `vercel dev` instead of `npm run dev` (requires Vercel CLI and linked project)
+- Or temporarily set `VITE_OPENROUTER_API_KEY` in `.env.local` and adjust the fetch target in `src/utils/api.ts` to call OpenRouter directly (revert before committing)
+
+### CAGIS Endpoints
+
+All CAGIS spatial queries use the ArcGIS Online-hosted Open Data layers (`services.arcgis.com/JyZag7oO4NteHGiq`), which return `Access-Control-Allow-Origin: *` and are safe for direct browser requests. The on-premises `cagisonline.hamilton-co.org` server does **not** support CORS and cannot be queried from a browser.
+
+### TypeScript
+
+Run the type checker separately from the build:
+```bash
+npx tsc --noEmit
+```
+
+The build command (`npm run build`) runs `tsc && vite build` — both must pass for a successful deployment.
+
+---
+
+## Known Limitations
+
+- **SORTA route associations:** `routes: []` is empty for all stops in the seed data. The UI handles this gracefully (no "Routes:" label shown). Fixing requires updating the GTFS conversion script.
+- **Census tract alignment:** Neighborhood-to-tract mapping uses a pre-computed lookup. Tracts that straddle neighborhood boundaries are assigned to the neighborhood with the largest overlap.
+- **Police data lag:** CPD datasets on Socrata are updated on varying schedules; some may lag by 30–90 days.
+- **OHGO coverage:** OHGO only covers Ohio-managed roads (interstates, state routes). Local Cincinnati streets are not included.
+
+---
 
 ## Contributing
 
@@ -270,6 +251,6 @@ This platform is built in the spirit of open civic data and non-commercial publi
 - **Code:** Bug fixes, performance improvements, and new visualizations are encouraged
 - **Design:** Accessibility and mobile improvements are priorities
 
-Please ensure all contributions align with the non-commercial, public-benefit mission of the platform. See the scoping document (`cincinnati_civic_platform_scope_v1.1.docx`) for the full project vision.
+Please ensure all contributions align with the non-commercial, public-benefit mission of the platform.
 
-For questions or feedback, open a GitHub issue or contact the maintainers.
+For questions or feedback, open a [GitHub issue](https://github.com/chanfriendly/cincinnati-civic-data/issues).
