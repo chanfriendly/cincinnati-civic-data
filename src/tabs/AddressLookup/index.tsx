@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSODA } from '../../hooks/useSODA';
 import { useLanguage } from '../../context/LanguageContext';
@@ -8,7 +8,7 @@ import {
   fetchOHGOIncidents, fetchOHGOCameras, fetchOHGOConstruction, ohgoEnabled,
 } from '../../utils/api';
 import type { OHGOIncident, OHGOCamera, OHGOConstruction } from '../../types';
-import { DataCard, LoadingSkeleton, EmptyState, ErrorState, DataAttribution } from '../../components/ui';
+import { DataCard, EmptyState, DataAttribution } from '../../components/ui';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -54,7 +54,6 @@ export default function AddressLookup() {
   const [selectedAddress, setSelectedAddress] = useState<GeocodedAddress | null>(null);
   const [searchInput, setSearchInput] = useState('');
   const [suggestions, setSuggestions] = useState<{ place_name: string; center: [number, number] }[]>([]);
-  const [loadingAddress, setLoadingAddress] = useState(false);
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -160,8 +159,8 @@ export default function AddressLookup() {
   // Merge crime data
   const mergedCrime = useMemo(() => {
     const allCrime: CrimeRecord[] = [
-      ...(crimeOld.data || []),
-      ...(crimeNew.data || []),
+      ...((crimeOld.data || []) as CrimeRecord[]),
+      ...((crimeNew.data || []) as CrimeRecord[]),
     ];
     return allCrime.sort((a, b) => {
       const dateA = new Date(a.date_reported || a.datereported || 0).getTime();

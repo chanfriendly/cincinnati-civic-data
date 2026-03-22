@@ -1,13 +1,11 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSODA } from '../../hooks/useSODA';
 import { callClaude, formatDate } from '../../utils/api';
 import { useLanguage } from '../../context/LanguageContext';
 import {
   DataCard,
-  LoadingSkeleton,
   EmptyState,
-  ErrorState,
   DataAttribution,
 } from '../../components/ui';
 import {
@@ -17,16 +15,12 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   Cell,
-  LineChart,
-  Line,
 } from 'recharts';
 
 type SubSection = 'traffic' | 'pedestrian' | 'force' | 'ois' | 'crime' | 'question';
 
-const COLORS = ['#1A4A6B', '#C8861A', '#4CAF50', '#9C27B0', '#FF5722', '#607D8B'];
 // Keys must match the UPPERCASE values returned by Socrata (e.g. 'BLACK', not 'Black')
 const RACE_COLORS: { [key: string]: string } = {
   'BLACK': '#1A4A6B',
@@ -46,9 +40,7 @@ export default function PoliceAccountability() {
   const [activeSection, setActiveSection] = useState<SubSection>('traffic');
   const [trafficYear, setTrafficYear] = useState<number>(2024);
   const [trafficDistrict, setTrafficDistrict] = useState<string>('all');
-  const [pedestrianYear, setPedestrianYear] = useState<number>(2024);
   const [pedestrianDistrict, setPedestrianDistrict] = useState<string>('all');
-  const [oisDistrict, setOisDistrict] = useState<string>('all');
   const [crimeType, setCrimeType] = useState<string>('');
   const [crimeYear, setCrimeYear] = useState<number>(2024);
   const [aiQuestion, setAiQuestion] = useState('');

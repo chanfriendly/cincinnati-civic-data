@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { callClaude } from '../../utils/api';
 import type { NeighborhoodScore, Dimension } from '../../types';

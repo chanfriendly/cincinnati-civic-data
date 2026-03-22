@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSODA } from '../../hooks/useSODA';
-import { formatDate, formatCurrency, fetchNeighborhoodCensusStats, stripNeighborhoodName } from '../../utils/api';
+import { formatCurrency, fetchNeighborhoodCensusStats, stripNeighborhoodName } from '../../utils/api';
 import type { NeighborhoodCensusStats } from '../../utils/api';
 import {
   DataCard,
-  LoadingSkeleton,
   EmptyState,
-  ErrorState,
   DataAttribution,
 } from '../../components/ui';
 import {
@@ -17,9 +15,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
-  Cell,
 } from 'recharts';
 
 // Neighborhoods sourced from CPD crime dataset (k59e-2pvf) — only Cincinnati
@@ -68,8 +64,6 @@ const CENSUS_KEY_OVERRIDE: Record<string, string> = {
   'Lower Price Hill':  'lowerpricehillqueensgate',
   'Millvale':          'millvale',
 };
-
-const COLORS = ['#1A4A6B', '#C8861A', '#4CAF50', '#9C27B0', '#FF5722', '#607D8B'];
 
 export default function NeighborhoodProfiles() {
   const { t } = useTranslation();

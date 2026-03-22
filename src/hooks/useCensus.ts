@@ -31,8 +31,15 @@ export function useCensus(
     if (skip || variables.length === 0) return;
     setStatus('loading');
     try {
-      const result = await fetchCensus(year, variables, forClause, inClause);
-      setData(result);
+      const geoQuery = inClause ? `for=${forClause}&in=${inClause}` : `for=${forClause}`;
+      const raw = await fetchCensus(year, variables.join(','), geoQuery);
+      const [headers, ...rows] = raw;
+      const records: Record<string, string>[] = rows.map((row) => {
+        const obj: Record<string, string> = {};
+        if (headers) headers.forEach((key, i) => { obj[key] = row[i]; });
+        return obj;
+      });
+      setData(records);
       setStatus('success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Census fetch failed');

@@ -26,7 +26,7 @@ export function normalize(
 export function getRawValue(
   metrics: NeighborhoodRawMetrics,
   dimId: DimensionId,
-  incomeSub: 'higher' | 'lower' = 'higher'
+  _incomeSub: 'higher' | 'lower' = 'higher'
 ): number | undefined {
   switch (dimId) {
     case 'affordability': return metrics.rentBurdenRate;
@@ -97,7 +97,7 @@ export function computeScores(
   }
 
   // Score each neighborhood
-  return neighborhoods.map((name, idx) => {
+  return neighborhoods.map((name) => {
     const metrics = rawDataMap.get(name)!;
     const dimensionScores: Record<DimensionId, number | null> = {
       affordability: null, income: null, safety: null,

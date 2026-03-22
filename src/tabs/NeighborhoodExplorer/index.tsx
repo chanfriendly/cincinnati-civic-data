@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../context/LanguageContext';
 import { computeScores } from '../../utils/scoring';
 import { fetchSODA, distanceMiles, normalizeNeighborhoodName, calculateCentroid, fetchNearbyParks, fetchFloodZone, fetchFARAHamilton } from '../../utils/api';
-import type { Dimension, NeighborhoodRawMetrics, NeighborhoodScore, DimensionId } from '../../types';
+import type { Dimension, NeighborhoodRawMetrics, DimensionId } from '../../types';
 import DimensionPanel from './DimensionPanel';
 import ChoroplethMap from './ChoroplethMap';
 import TopNeighborhoods from './TopNeighborhoods';
@@ -119,7 +119,6 @@ const INITIAL_DIMENSIONS: Dimension[] = [
   },
 ];
 
-const UID_CRIME_OLD = 'k59e-2pvf';
 const UID_CRIME_NEW = '7aqy-xrv9';
 const UID_PERMITS = 'uhjb-xac9'; // corrected — tsjj-dcaf was a derived view with no columns
 const UID_PLAP = 'pk9w-99n6';
@@ -387,7 +386,7 @@ export default function NeighborhoodExplorer() {
         // ── Step 1: Build neighborhood centroids from GeoJSON ────────────────
         const neighCentroids = new Map<string, [number, number]>();
         for (const feature of geojson.features) {
-          const neighName = normalizeNeighborhoodName(feature.properties?.NEIGH || '');
+          const neighName = normalizeNeighborhoodName(String(feature.properties?.NEIGH ?? ''));
           if (!neighName) continue;
           if (feature.geometry.type === 'Polygon') {
             const coords = (feature.geometry as any).coordinates as number[][][];
@@ -472,7 +471,7 @@ export default function NeighborhoodExplorer() {
         const neighCentroids = new Map<string, [number, number]>();
         if (geojson) {
           for (const feature of geojson.features) {
-            const neighName = normalizeNeighborhoodName(feature.properties?.NEIGH || '');
+            const neighName = normalizeNeighborhoodName(String(feature.properties?.NEIGH ?? ''));
             if (feature.geometry.type === 'Polygon') {
               const coords = (feature.geometry as any).coordinates as number[][][];
               const centroid = calculateCentroid(coords);

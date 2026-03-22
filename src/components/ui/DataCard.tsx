@@ -19,6 +19,8 @@ interface DataCardProps {
   loading?: boolean
   error?: string | null
   onRetry?: () => void
+  empty?: boolean
+  className?: string
 }
 
 const ChevronIcon: React.FC<{ isOpen: boolean; className?: string }> = ({
