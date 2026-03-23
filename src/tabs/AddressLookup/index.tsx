@@ -56,6 +56,7 @@ export default function AddressLookup() {
   const [suggestions, setSuggestions] = useState<{ place_name: string; center: [number, number] }[]>([]);
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -409,6 +410,8 @@ export default function AddressLookup() {
     if (!selectedAddress) return;
 
     setLoadingAi(true);
+    setAiError(null);
+    setAiSummary(null);
     try {
       const summary = {
         address: selectedAddress.formatted,
@@ -430,6 +433,7 @@ export default function AddressLookup() {
       setAiSummary(response);
     } catch (e) {
       console.error('AI summary error:', e);
+      setAiError('Summary unavailable — please try again in a moment.');
     } finally {
       setLoadingAi(false);
     }
@@ -518,6 +522,8 @@ export default function AddressLookup() {
               <div className="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap">
                 {aiSummary}
               </div>
+            ) : aiError ? (
+              <p className="text-sm text-red-600">{aiError}</p>
             ) : (
               <p className="text-sm text-gray-500 italic">
                 {t('addressLookup.aiHint', 'Click "Explain This Record" to get a plain-language summary of all data found for this address.')}
