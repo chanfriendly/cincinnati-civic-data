@@ -8,8 +8,6 @@ const SOCRATA_TOKEN = import.meta.env.VITE_SOCRATA_APP_TOKEN ?? '';
 
 // OpenRouter proxy route (key is injected server-side by Vite dev proxy / Cloudflare Worker)
 const AI_ENDPOINT = '/api/openrouter/v1/chat/completions';
-// Use the free tier during development: minimax/minimax-m2.5:free
-// Switch to minimax/minimax-m2.5 for production
 const AI_MODEL = 'minimax/minimax-m2.5';
 
 // ─── SODA API ─────────────────────────────────────────────────────────────────
@@ -365,6 +363,9 @@ export async function fetchNearbyParks(lat: number, lng: number, radiusMiles = 0
     outFields: '*',
     returnGeometry: 'false',
     resultRecordCount: '8',
+    // Exclude school grounds and road right-of-way parcels that appear in this
+    // greenspace layer but are not parks.
+    where: "TYPE NOT LIKE '%SCHOOL%' AND TYPE NOT LIKE '%ROAD%'",
     f: 'json',
   });
   try {

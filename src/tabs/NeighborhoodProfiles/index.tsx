@@ -47,7 +47,7 @@ const NEIGHBORHOOD_DATASET_KEY: Record<string, string> = {
   'Mt. Lookout':       'MT. LOOKOUT',
   'Mt. Washington':    'MT. WASHINGTON',
   "O'Bryonville":      "O'BRYONVILLE",
-  'South Cumminsville':'S.. CUMMINSVILLE',
+  'South Cumminsville':'S. CUMMINSVILLE',
 };
 
 // Maps Tab 2 CPD neighborhood names to the stripped SNA keys used by the
@@ -81,18 +81,20 @@ export default function NeighborhoodProfiles() {
   // Most names map cleanly via .toUpperCase(), but a few have quirks in the
   // CPD dataset (e.g. BONDHILL, MT. LOOKOUT) that require an explicit lookup.
   const nbhUpper = NEIGHBORHOOD_DATASET_KEY[selectedNeighborhood] ?? selectedNeighborhood.toUpperCase();
+  // Escape single quotes for SoQL string literals (e.g. O'Bryonville → O''Bryonville)
+  const nbhSoQL = nbhUpper.replace(/'/g, "''");
 
   // Crime data (combined old + new)
   // cpd_neighborhood values are UPPER CASE in both datasets (e.g. 'AVONDALE')
   // k59e-2pvf: neighborhood field is cpd_neighborhood; date is date_reported; offense is offense
   // 7aqy-xrv9: neighborhood field is cpd_neighborhood; date is datereported; offense is stars_category
   const crimeOld = useSODA('k59e-2pvf', {
-    $where: `cpd_neighborhood='${nbhUpper}' AND date_reported >= '${startDate}' AND date_reported <= '${endDate}'`,
+    $where: `cpd_neighborhood='${nbhSoQL}' AND date_reported >= '${startDate}' AND date_reported <= '${endDate}'`,
     $limit: 1000,
   });
 
   const crimeNew = useSODA('7aqy-xrv9', {
-    $where: `cpd_neighborhood='${nbhUpper}' AND datereported >= '${startDate}' AND datereported <= '${endDate}'`,
+    $where: `cpd_neighborhood='${nbhSoQL}' AND datereported >= '${startDate}' AND datereported <= '${endDate}'`,
     $limit: 1000,
   });
 
@@ -112,12 +114,22 @@ export default function NeighborhoodProfiles() {
   // Building permits — UID uhjb-xac9; neighborhood field is UPPER CASE.
   // Fetch up to 500 records for the breakdown chart, plus a separate count
   // query for the true total (large neighborhoods exceed the 500 record limit).
+  // Excludes trade/service permits (mechanical, plumbing, electrical, fire suppression)
+  // so only structural building permits are counted and charted.
+  const PERMIT_TYPE_FILTER =
+    " AND (permittypemapped IS NULL OR (" +
+    "lower(permittypemapped) NOT LIKE '%mechanical%' AND " +
+    "lower(permittypemapped) NOT LIKE '%plumbing%' AND " +
+    "lower(permittypemapped) NOT LIKE '%electrical%' AND " +
+    "lower(permittypemapped) NOT LIKE '%fire suppression%'))";
+  const permitsWhere = `neighborhood='${nbhSoQL}' AND neighborhood != 'N/A'${PERMIT_TYPE_FILTER}`;
+
   const permits = useSODA('uhjb-xac9', {
-    $where: `neighborhood='${nbhUpper}' AND neighborhood != 'N/A'`,
+    $where: permitsWhere,
     $limit: 500,
   });
   const permitsCount = useSODA('uhjb-xac9', {
-    $where: `neighborhood='${nbhUpper}' AND neighborhood != 'N/A'`,
+    $where: permitsWhere,
     $select: 'count(*) as total',
   });
 
@@ -137,7 +149,7 @@ export default function NeighborhoodProfiles() {
 
   // Food safety — neighborhood field is UPPER CASE
   const foodSafety = useSODA('rg6p-b3h3', {
-    $where: `neighborhood='${nbhUpper}'`,
+    $where: `neighborhood='${nbhSoQL}'`,
     $limit: 500,
   });
 
@@ -154,7 +166,7 @@ export default function NeighborhoodProfiles() {
 
   // Tax abatements — field is ccd_neigh, Title Case (matches dropdown values)
   const taxAbatements = useSODA('tkp7-yf64', {
-    $where: `ccd_neigh='${selectedNeighborhood}'`,
+    $where: `ccd_neigh='${selectedNeighborhood.replace(/'/g, "''")}'`,
     $limit: 500,
   });
 
@@ -168,7 +180,7 @@ export default function NeighborhoodProfiles() {
 
   // PLAP/Blight — neighborhood field is UPPER CASE
   const blight = useSODA('pk9w-99n6', {
-    $where: `neighborhood='${nbhUpper}'`,
+    $where: `neighborhood='${nbhSoQL}'`,
     $limit: 500,
   });
 
@@ -207,7 +219,7 @@ export default function NeighborhoodProfiles() {
 
   // Fire & EMS — neighborhood field is UPPER CASE
   const fireEms = useSODA('vnsz-a3wp', {
-    $where: `neighborhood='${nbhUpper}'`,
+    $where: `neighborhood='${nbhSoQL}'`,
     $limit: 500,
   });
 
@@ -397,9 +409,9 @@ export default function NeighborhoodProfiles() {
             </div>
 
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={crimeByType.slice(0, 10)}>
+              <BarChart data={crimeByType.slice(0, 10)} margin={{ bottom: 60, left: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="type" angle={-45} textAnchor="end" height={80} />
+                <XAxis dataKey="type" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 11 }} tickFormatter={(v: string) => v.length > 22 ? v.slice(0, 20) + '…' : v} />
                 <YAxis />
                 <Tooltip />
                 <Bar dataKey="count" fill="#1A4A6B" />
@@ -447,9 +459,9 @@ export default function NeighborhoodProfiles() {
             </div>
 
             <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={permitsByType.slice(0, 8)}>
+              <BarChart data={permitsByType.slice(0, 8)} margin={{ bottom: 60, left: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="type" angle={-45} textAnchor="end" height={80} />
+                <XAxis dataKey="type" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 11 }} tickFormatter={(v: string) => v.length > 22 ? v.slice(0, 20) + '…' : v} />
                 <YAxis />
                 <Tooltip />
                 <Bar dataKey="count" fill="#C8861A" />
