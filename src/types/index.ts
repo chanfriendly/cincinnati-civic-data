@@ -129,6 +129,8 @@ export interface SORTAStop {
   stop_lat: number;
   stop_lon: number;
   routes: string[];
+  /** GTFS wheelchair_boarding: 0 = unknown, 1 = accessible, 2 = not accessible */
+  wheelchair_boarding?: 0 | 1 | 2;
 }
 
 // ─── OHGO TRAFFIC ────────────────────────────────────────────────────────────

@@ -27,6 +27,8 @@ interface TransitStop {
   stop_lon: number;
   stop_name: string;
   routes: string[];
+  /** GTFS wheelchair_boarding: 0 = unknown, 1 = accessible, 2 = not accessible */
+  wheelchair_boarding?: 0 | 1 | 2;
 }
 
 interface CrimeRecord {
@@ -44,6 +46,7 @@ interface NearbyStop {
   stop_name: string;
   distance: number;
   routes: string[];
+  wheelchair_boarding?: 0 | 1 | 2;
 }
 
 type CAGISStatus = 'idle' | 'loading' | 'done' | 'error';
@@ -199,6 +202,7 @@ export default function AddressLookup() {
               stop.stop_lon
             ),
             routes: stop.routes,
+            wheelchair_boarding: stop.wheelchair_boarding,
           }))
           .filter((s) => s.distance <= 0.5)
           .sort((a, b) => a.distance - b.distance);
@@ -714,10 +718,22 @@ export default function AddressLookup() {
             >
               {transitStops.length > 0 ? (
                 <div className="space-y-3">
+                  {/* Wheelchair accessibility summary — only shown when data is available */}
+                  {transitStops.some(s => s.wheelchair_boarding === 1 || s.wheelchair_boarding === 2) && (
+                    <div className="text-xs text-gray-500 bg-blue-50 rounded px-3 py-2">
+                      ♿ {transitStops.filter(s => s.wheelchair_boarding === 1).length} of {transitStops.length} nearby stops are wheelchair accessible
+                    </div>
+                  )}
                   {transitStops.map((stop, idx) => (
                     <div key={idx} className="border-b border-gray-200 pb-2 last:border-b-0">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-gray-900 flex items-center gap-1">
                         {stop.stop_name}
+                        {stop.wheelchair_boarding === 1 && (
+                          <span title="Wheelchair accessible" className="text-blue-600 text-xs">♿</span>
+                        )}
+                        {stop.wheelchair_boarding === 2 && (
+                          <span title="Not wheelchair accessible" className="text-gray-400 text-xs line-through">♿</span>
+                        )}
                       </div>
                       <div className="text-xs text-gray-600">
                         {stop.distance.toFixed(2)} mi{stop.routes.length > 0 ? ` • Routes: ${stop.routes.join(', ')}` : ''}
