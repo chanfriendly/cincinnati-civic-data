@@ -98,17 +98,28 @@ export default function NeighborhoodProfiles() {
     $limit: 1000,
   });
 
+  // FBI UCR classification labels used by the STARS dataset are opaque to
+  // residents. Map them to plain-English equivalents for the chart display.
+  const CRIME_LABEL_MAP: Record<string, string> = {
+    'Part 2': 'Other Offenses (Part 2)',        // drugs, DUI, vandalism, fraud, etc.
+    'Part 1': 'Serious Crimes (Part 1)',         // homicide, rape, robbery, assault, burglary, theft
+    'Part 1 - Person': 'Violent Crimes',
+    'Part 1 - Property': 'Property Crimes',
+  };
+
   const crimeByType = useMemo(() => {
     const combined = [...(crimeOld.data || []), ...(crimeNew.data || [])];
     const counts: { [key: string]: number } = {};
     combined.forEach((record: any) => {
       // Old dataset uses `offense`; new STARS dataset uses `stars_category`
-      const type = record.stars_category || record.offense || 'Unknown';
+      const raw = record.stars_category || record.offense || 'Unknown';
+      const type = CRIME_LABEL_MAP[raw] ?? raw;
       counts[type] = (counts[type] || 0) + 1;
     });
     return Object.entries(counts)
       .map(([type, count]) => ({ type, count }))
       .sort((a, b) => b.count - a.count);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [crimeOld.data, crimeNew.data]);
 
   // Building permits — UID uhjb-xac9; neighborhood field is UPPER CASE.

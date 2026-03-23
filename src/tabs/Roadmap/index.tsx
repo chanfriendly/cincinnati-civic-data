@@ -412,6 +412,9 @@ const Roadmap: React.FC = () => (
           of the &ldquo;Seeking Data&rdquo; or &ldquo;Needs Partner&rdquo; items above, or if you want to advocate for
           a specific feature, we want to hear from you. Community input directly shapes the roadmap.
         </p>
+        <p className="text-blue-200 text-xs font-semibold uppercase tracking-wide mb-2">
+          You may be interested in these organizations
+        </p>
         <div className="flex flex-wrap gap-3 text-sm">
           <a href="https://data.cincinnati-oh.gov" target="_blank" rel="noopener noreferrer"
             className="bg-white text-[#1A4A6B] px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors">
