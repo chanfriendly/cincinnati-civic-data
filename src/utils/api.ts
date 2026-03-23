@@ -8,7 +8,7 @@ const SOCRATA_TOKEN = import.meta.env.VITE_SOCRATA_APP_TOKEN ?? '';
 
 // OpenRouter proxy route (key is injected server-side by Vite dev proxy / Cloudflare Worker)
 const AI_ENDPOINT = '/api/openrouter/v1/chat/completions';
-const AI_MODEL = 'minimax/minimax-m2.5:free';
+const AI_MODEL = 'minimax/minimax-m2.5';
 
 // ─── SODA API ─────────────────────────────────────────────────────────────────
 

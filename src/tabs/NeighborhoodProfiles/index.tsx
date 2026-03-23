@@ -114,12 +114,22 @@ export default function NeighborhoodProfiles() {
   // Building permits — UID uhjb-xac9; neighborhood field is UPPER CASE.
   // Fetch up to 500 records for the breakdown chart, plus a separate count
   // query for the true total (large neighborhoods exceed the 500 record limit).
+  // Excludes trade/service permits (mechanical, plumbing, electrical, fire suppression)
+  // so only structural building permits are counted and charted.
+  const PERMIT_TYPE_FILTER =
+    " AND (permittypemapped IS NULL OR (" +
+    "lower(permittypemapped) NOT LIKE '%mechanical%' AND " +
+    "lower(permittypemapped) NOT LIKE '%plumbing%' AND " +
+    "lower(permittypemapped) NOT LIKE '%electrical%' AND " +
+    "lower(permittypemapped) NOT LIKE '%fire suppression%'))";
+  const permitsWhere = `neighborhood='${nbhSoQL}' AND neighborhood != 'N/A'${PERMIT_TYPE_FILTER}`;
+
   const permits = useSODA('uhjb-xac9', {
-    $where: `neighborhood='${nbhSoQL}' AND neighborhood != 'N/A'`,
+    $where: permitsWhere,
     $limit: 500,
   });
   const permitsCount = useSODA('uhjb-xac9', {
-    $where: `neighborhood='${nbhSoQL}' AND neighborhood != 'N/A'`,
+    $where: permitsWhere,
     $select: 'count(*) as total',
   });
 

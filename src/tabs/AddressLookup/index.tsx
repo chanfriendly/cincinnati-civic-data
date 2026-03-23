@@ -94,12 +94,21 @@ export default function AddressLookup() {
     );
   };
 
+  // Exclude trade/service permits (mechanical, plumbing, electrical, fire suppression)
+  // so only structural building permits are shown.
+  const PERMIT_TYPE_FILTER =
+    " AND (permittypemapped IS NULL OR (" +
+    "lower(permittypemapped) NOT LIKE '%mechanical%' AND " +
+    "lower(permittypemapped) NOT LIKE '%plumbing%' AND " +
+    "lower(permittypemapped) NOT LIKE '%electrical%' AND " +
+    "lower(permittypemapped) NOT LIKE '%fire suppression%'))";
+
   // Building Permits — UID uhjb-xac9 (tsjj-dcaf is a derived view with no columns)
   const permits = useSODA(
     'uhjb-xac9',
     selectedAddress
       ? {
-          $where: bboxWhere('latitude', 'longitude', 200),
+          $where: bboxWhere('latitude', 'longitude', 200) + PERMIT_TYPE_FILTER,
           $order: 'applieddate DESC',
           $limit: 50,
         }
@@ -432,8 +441,9 @@ export default function AddressLookup() {
       const response = await callClaude(systemPrompt, userMessage, language);
       setAiSummary(response);
     } catch (e) {
-      console.error('AI summary error:', e);
-      setAiError('Summary unavailable — please try again in a moment.');
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error('AI summary error:', msg);
+      setAiError(`Summary unavailable: ${msg}`);
     } finally {
       setLoadingAi(false);
     }
