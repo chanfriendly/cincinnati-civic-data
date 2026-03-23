@@ -9,3 +9,6 @@ Thumbs.db
 *.log
 .wrangler/
 worker/.wrangler/
+
+# GTFS conversion temp files
+scripts/_gtfs_tmp*
