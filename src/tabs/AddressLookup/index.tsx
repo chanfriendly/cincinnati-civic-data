@@ -94,27 +94,26 @@ export default function AddressLookup() {
     );
   };
 
-  // Exclude trade/service permits (mechanical, plumbing, electrical, fire suppression)
-  // so only structural building permits are shown.
-  const PERMIT_TYPE_FILTER =
-    " AND (permittypemapped IS NULL OR (" +
-    "lower(permittypemapped) NOT LIKE '%mechanical%' AND " +
-    "lower(permittypemapped) NOT LIKE '%plumbing%' AND " +
-    "lower(permittypemapped) NOT LIKE '%electrical%' AND " +
-    "lower(permittypemapped) NOT LIKE '%fire suppression%'))";
-
   // Building Permits — UID uhjb-xac9 (tsjj-dcaf is a derived view with no columns)
   const permits = useSODA(
     'uhjb-xac9',
     selectedAddress
       ? {
-          $where: bboxWhere('latitude', 'longitude', 200) + PERMIT_TYPE_FILTER,
+          $where: bboxWhere('latitude', 'longitude', 200),
           $order: 'applieddate DESC',
           $limit: 50,
         }
       : {},
     noAddress
   );
+
+  // Trade/service permit terms to exclude from the structural permits display.
+  // Checks both permittypemapped and permittype (many records have one null).
+  const TRADE_PERMIT_TERMS = ['mechanical', 'plumbing', 'electrical', 'hvac', 'fire suppression', 'boiler', 'elevator'];
+  const structuralPermits = (permits.data || []).filter((p: any) => {
+    const typeStr = ((p.permittypemapped || p.permittype) ?? '').toLowerCase();
+    return !TRADE_PERMIT_TERMS.some(term => typeStr.includes(term));
+  });
 
   const inspections = useSODA(
     'ivda-umw7',
@@ -548,11 +547,11 @@ export default function AddressLookup() {
               title={t('addressLookup.permits', 'Building Permits')}
               loading={permits.loading}
               error={permits.error}
-              empty={!permits.data || permits.data.length === 0}
+              empty={structuralPermits.length === 0}
             >
-              {permits.data && permits.data.length > 0 ? (
+              {structuralPermits.length > 0 ? (
                 <div className="space-y-3">
-                  {permits.data.slice(0, 10).map((permit: any, idx: number) => (
+                  {structuralPermits.slice(0, 10).map((permit: any, idx: number) => (
                     <div key={idx} className="border-b border-gray-200 pb-2 last:border-b-0">
                       <div className="text-sm font-medium text-gray-900">
                         {permit.permittypemapped || permit.permittype || t('addressLookup.unknown', 'Unknown')}

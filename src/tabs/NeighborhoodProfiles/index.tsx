@@ -114,14 +114,26 @@ export default function NeighborhoodProfiles() {
   // Building permits — UID uhjb-xac9; neighborhood field is UPPER CASE.
   // Fetch up to 500 records for the breakdown chart, plus a separate count
   // query for the true total (large neighborhoods exceed the 500 record limit).
-  // Excludes trade/service permits (mechanical, plumbing, electrical, fire suppression)
-  // so only structural building permits are counted and charted.
-  const PERMIT_TYPE_FILTER =
-    " AND (permittypemapped IS NULL OR (" +
+  // Excludes trade/service permits so only structural building permits are shown.
+  //
+  // SoQL two-branch filter: when permittypemapped IS NOT NULL check it;
+  // when it IS NULL fall through to permittype (many records have one null).
+  // 'hvac' is a literal value in this dataset — must be excluded explicitly.
+  const _tradeFilter =
     "lower(permittypemapped) NOT LIKE '%mechanical%' AND " +
     "lower(permittypemapped) NOT LIKE '%plumbing%' AND " +
     "lower(permittypemapped) NOT LIKE '%electrical%' AND " +
-    "lower(permittypemapped) NOT LIKE '%fire suppression%'))";
+    "lower(permittypemapped) NOT LIKE '%hvac%' AND " +
+    "lower(permittypemapped) NOT LIKE '%fire suppression%'";
+  const _tradeFilterType =
+    "lower(permittype) NOT LIKE '%mechanical%' AND " +
+    "lower(permittype) NOT LIKE '%plumbing%' AND " +
+    "lower(permittype) NOT LIKE '%electrical%' AND " +
+    "lower(permittype) NOT LIKE '%hvac%' AND " +
+    "lower(permittype) NOT LIKE '%fire suppression%'";
+  const PERMIT_TYPE_FILTER =
+    ` AND ((permittypemapped IS NOT NULL AND ${_tradeFilter})` +
+    ` OR (permittypemapped IS NULL AND (permittype IS NULL OR (${_tradeFilterType}))))`;
   const permitsWhere = `neighborhood='${nbhSoQL}' AND neighborhood != 'N/A'${PERMIT_TYPE_FILTER}`;
 
   const permits = useSODA('uhjb-xac9', {
@@ -133,15 +145,20 @@ export default function NeighborhoodProfiles() {
     $select: 'count(*) as total',
   });
 
+  // Client-side safety net — same terms as the SoQL filter above.
+  const TRADE_PERMIT_TERMS = ['mechanical', 'plumbing', 'electrical', 'hvac', 'fire suppression', 'boiler', 'elevator'];
   const permitsByType = useMemo(() => {
     const counts: { [key: string]: number } = {};
     (permits.data || []).forEach((permit: any) => {
+      const typeStr = ((permit.permittypemapped || permit.permittype) ?? '').toLowerCase();
+      if (TRADE_PERMIT_TERMS.some(term => typeStr.includes(term))) return;
       const type = permit.permittypemapped || permit.permittype || 'Other';
       counts[type] = (counts[type] || 0) + 1;
     });
     return Object.entries(counts)
       .map(([type, count]) => ({ type, count }))
       .sort((a, b) => b.count - a.count);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [permits.data]);
 
   const demolitionCount = permitsByType.find((p) => p.type.toLowerCase().includes('demolition'))
