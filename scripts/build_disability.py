@@ -272,40 +272,35 @@ def main():
         print("ERROR: No neighborhood features found in SNA GeoJSON.")
         sys.exit(1)
 
-    # Build tract centroid list — Census API doesn't return geometry,
-    # so we approximate tract centroids using TIGER/Line tract centroids.
-    # We fetch them from the Census Geocoder or compute from a bounding box.
-    # Simpler: fetch tract centroids from Census TIGERweb.
-    print("Fetching tract centroids from TIGERweb...")
-    # TIGERweb field names for 2020 Census tracts (MapServer/8):
-    #   STATEFP  — state FIPS (not "STATE")
-    #   COUNTYFP — county FIPS (not "COUNTY")
-    #   GEOID    — full 11-digit FIPS (state2 + county3 + tract6)
-    #   INTPTLAT — internal point latitude (not "CENTLAT")
-    #   INTPTLON — internal point longitude (not "CENTLON")
-    tiger_url = (
-        "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Tracts_Blocks/"
-        "MapServer/8/query"
-        f"?where=STATEFP='{CENSUS_STATE}'%20AND%20COUNTYFP='{CENSUS_COUNTY}'"
-        "&outFields=GEOID,INTPTLAT,INTPTLON"
-        "&returnGeometry=false"
-        "&f=json"
-        "&resultRecordCount=500"
+    # Build tract centroid list using the TIGERweb ACS2022 REST API (layer 6 = Census Tracts).
+    # Returns INTPTLAT/INTPTLON — Census "internal point" coordinates — for each tract.
+    # No polygon computation needed. Hamilton County (39061) has exactly 226 tracts,
+    # all returned in a single request (well within the 300-record default limit).
+    tigerweb_url = (
+        "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_ACS2022"
+        "/MapServer/6/query"
+        f"?where=STATE%3D%27{CENSUS_STATE}%27+AND+COUNTY%3D%27{CENSUS_COUNTY}%27"
+        "&outFields=GEOID%2CINTPTLAT%2CINTPTLON"
+        "&f=json&resultRecordCount=300"
     )
+    print("Fetching Hamilton County tract centroids from TIGERweb ACS2022 (layer 6)...")
     tract_centroids = {}
     try:
-        with urllib.request.urlopen(tiger_url, timeout=30) as resp:
-            tiger = json.loads(resp.read())
-        for feat in tiger.get("features", []):
+        req = urllib.request.Request(tigerweb_url, headers={"User-Agent": "build_disability.py/1.0"})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            tw = json.loads(resp.read())
+        for feat in tw.get("features", []):
             attrs = feat.get("attributes", {})
             geoid = str(attrs.get("GEOID", ""))
-            lat = attrs.get("INTPTLAT")
-            lon = attrs.get("INTPTLON")
-            if geoid and lat is not None and lon is not None:
-                tract_centroids[geoid] = (float(lat), float(lon))
-        print(f"  → {len(tract_centroids)} tract centroids from TIGERweb.")
+            try:
+                lat = float(attrs["INTPTLAT"])
+                lon = float(attrs["INTPTLON"])
+                tract_centroids[geoid] = (lat, lon)
+            except (KeyError, TypeError, ValueError):
+                pass
+        print(f"  → {len(tract_centroids)} Hamilton County tract centroids.")
     except Exception as e:
-        print(f"  WARNING: TIGERweb failed ({e}). Will use Census tract IDs only (no centroid match).")
+        print(f"  WARNING: TIGERweb fetch failed ({e}). Tracts won't be mapped to neighborhoods.")
 
     # Aggregate: for each tract, find closest neighborhood
     accum = {n["name"]: {
