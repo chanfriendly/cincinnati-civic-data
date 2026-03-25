@@ -31,14 +31,11 @@
 
 **TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors). Vite full build blocked by sandbox filesystem permissions on `dist/` — not a code issue. Vercel will build from source cleanly.
 
-**⚠️ ACTION REQUIRED — Run locally before deploying the tab with real data:**
-```bash
-python3 scripts/build_disability.py
-git add public/data/neighborhood_disability.json
-git commit -m "Add ACS disability data for Accessibility tab"
-git push
-```
-The script fetches Census ACS 5-Year 2022 tract data for Hamilton County, maps tracts to neighborhoods using TIGERweb centroids + closest-centroid assignment, and writes `neighborhood_disability.json`. It requires no API key and should complete in ~15 seconds.
+**✅ FIXED — `build_disability.py` now generates data. 47 neighborhoods written.**
+
+Root cause: GENZ2022/json/ directory doesn't carry per-state tract files (HTTP 404 confirmed). Fixed by switching to TIGERweb ACS2022 REST API, **MapServer layer 6** (Census Tracts). Layer 6 returns `INTPTLAT`/`INTPTLON` internal-point coordinates directly — no polygon centroid computation needed. All 226 Hamilton County tracts returned in a single request with `where=STATE='39' AND COUNTY='061'`.
+
+Key finding: layer 8 is Census Block Groups (12-digit GEOIDs, 678 results for Hamilton County), not tracts. Layer 6 is Census Tracts (11-digit GEOIDs, 226 results — exact match).
 
 **What the tab shows without running the script:**
 - Neighborhood selector and impairment view selector ✅
@@ -183,7 +180,7 @@ Additionally, `permittypemapped = "HVAC"` was not caught by the existing trade p
 | Neighborhood Explorer | ✅ Mostly working | 7 of 9 dimensions confirmed; Park Access + Flood Risk need live test (slow — 52 async CAGIS/FEMA calls) |
 | Displacement | ❌ Stub | UI shell exists, no data wired |
 | Owner Activity | ❌ Stub | UI shell exists, no data wired |
-| Accessibility | ⚠️ Partial | Tab live; paratransit coverage + data gaps sections work; Census disability metrics require running `scripts/build_disability.py` locally |
+| Accessibility | ✅ Working | Tab live; paratransit coverage, data gaps, and Census disability metrics all functional. `neighborhood_disability.json` generated (47 neighborhoods). |
 | Roadmap | ✅ Working | Static content |
 
 ### Data Gaps
@@ -226,7 +223,7 @@ Census tracts don't align with Cincinnati neighborhood statistical areas (SNAs).
 
 ### High Priority
 - [x] **Verify unconfirmed field names (Tab 2)** — All three confirmed correct `neighborhood` (UPPER CASE). Date field for Fire & EMS is `create_time_incident`. PLAP date fields are `sr_recd_date`/`enf_recd_date` (no `date` field). Fixed in Session 3.
-- [ ] **Run `scripts/build_disability.py` locally** — Generates `public/data/neighborhood_disability.json`. Must be run from a machine with public internet access (Census API blocked from Cowork sandbox). See Session 6 notes for exact commands.
+- [x] **Run `scripts/build_disability.py` locally** — Fixed and run. 47 neighborhoods in `public/data/neighborhood_disability.json`. Committed and deployed.
 - [ ] **Live test CAGIS cards (Tab 1)** — Test with a Downtown address (e.g., 525 Vine St) and a Hyde Park address. Verify zoning, flood, historic, and parks all return data. Check browser Network tab for any 4xx/5xx.
 - [ ] **Live test Park Access + Flood Risk (Tab 4)** — Enable both dimensions; wait 60s; check scores appear. If blank, open Network tab and look for failed ArcGIS or FEMA requests.
 
