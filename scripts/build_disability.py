@@ -277,11 +277,17 @@ def main():
     # We fetch them from the Census Geocoder or compute from a bounding box.
     # Simpler: fetch tract centroids from Census TIGERweb.
     print("Fetching tract centroids from TIGERweb...")
+    # TIGERweb field names for 2020 Census tracts (MapServer/8):
+    #   STATEFP  — state FIPS (not "STATE")
+    #   COUNTYFP — county FIPS (not "COUNTY")
+    #   GEOID    — full 11-digit FIPS (state2 + county3 + tract6)
+    #   INTPTLAT — internal point latitude (not "CENTLAT")
+    #   INTPTLON — internal point longitude (not "CENTLON")
     tiger_url = (
         "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Tracts_Blocks/"
         "MapServer/8/query"
-        f"?where=STATE='{CENSUS_STATE}'%20AND%20COUNTY='{CENSUS_COUNTY}'"
-        "&outFields=GEOID,CENTLAT,CENTLON"
+        f"?where=STATEFP='{CENSUS_STATE}'%20AND%20COUNTYFP='{CENSUS_COUNTY}'"
+        "&outFields=GEOID,INTPTLAT,INTPTLON"
         "&returnGeometry=false"
         "&f=json"
         "&resultRecordCount=500"
@@ -293,8 +299,8 @@ def main():
         for feat in tiger.get("features", []):
             attrs = feat.get("attributes", {})
             geoid = str(attrs.get("GEOID", ""))
-            lat = attrs.get("CENTLAT")
-            lon = attrs.get("CENTLON")
+            lat = attrs.get("INTPTLAT")
+            lon = attrs.get("INTPTLON")
             if geoid and lat is not None and lon is not None:
                 tract_centroids[geoid] = (float(lat), float(lon))
         print(f"  → {len(tract_centroids)} tract centroids from TIGERweb.")
