@@ -9,3 +9,4 @@ Thumbs.db
 *.log
 .wrangler/
 worker/.wrangler/
+.vercel

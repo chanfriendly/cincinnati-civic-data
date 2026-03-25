@@ -552,7 +552,9 @@ export default function NeighborhoodExplorer() {
               const [centLat, centLon] = centroids.get(name)!;
               const parks = await fetchNearbyParks(centLat, centLon, 0.75);
               const totalAcres = parks.reduce((sum, p) => {
-                const acres = parseFloat(String(p.ACREAGE ?? '0'));
+                // The parks layer has no ACREAGE field — use SHAPE__Area.
+                // Units don't matter here since scores are min-max normalized.
+                const acres = parseFloat(String(p.SHAPE__Area ?? '0'));
                 return sum + (isNaN(acres) ? 0 : acres);
               }, 0);
               parkMap.set(name, totalAcres);

@@ -94,27 +94,9 @@ export default function AddressLookup() {
     );
   };
 
-  // Exclude trade/service permits (mechanical, plumbing, electrical, fire suppression)
-  // so only structural building permits are shown.
-  const PERMIT_TYPE_FILTER =
-    " AND (permittypemapped IS NULL OR (" +
-    "lower(permittypemapped) NOT LIKE '%mechanical%' AND " +
-    "lower(permittypemapped) NOT LIKE '%plumbing%' AND " +
-    "lower(permittypemapped) NOT LIKE '%electrical%' AND " +
-    "lower(permittypemapped) NOT LIKE '%fire suppression%'))";
-
-  // Building Permits — UID uhjb-xac9 (tsjj-dcaf is a derived view with no columns)
-  const permits = useSODA(
-    'uhjb-xac9',
-    selectedAddress
-      ? {
-          $where: bboxWhere('latitude', 'longitude', 200) + PERMIT_TYPE_FILTER,
-          $order: 'applieddate DESC',
-          $limit: 50,
-        }
-      : {},
-    noAddress
-  );
+  // NOTE: Building permits (uhjb-xac9) removed from Address Lookup.
+  // That dataset has no geocoordinates, so the bounding box query returned
+  // unfiltered city-wide permits. Permit data is available by neighborhood in Tab 2.
 
   const inspections = useSODA(
     'ivda-umw7',
@@ -424,7 +406,6 @@ export default function AddressLookup() {
     try {
       const summary = {
         address: selectedAddress.formatted,
-        permits: permits.data?.length || 0,
         inspections: inspections.data?.length || 0,
         violations: inspections.data?.filter((i: any) => i.result?.toLowerCase() === 'failed')
           .length,
@@ -447,7 +428,7 @@ export default function AddressLookup() {
     } finally {
       setLoadingAi(false);
     }
-  }, [selectedAddress, permits.data, inspections.data, taxAbatements.data, mergedCrime, blight.data, transitStops, language]);
+  }, [selectedAddress, inspections.data, taxAbatements.data, mergedCrime, blight.data, transitStops, language]);
 
   const crimeLoading = crimeOld.loading || crimeNew.loading;
   const crimeError = crimeOld.error || crimeNew.error;
@@ -543,35 +524,6 @@ export default function AddressLookup() {
 
           {/* Two-column grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Building Permits */}
-            <DataCard
-              title={t('addressLookup.permits', 'Building Permits')}
-              loading={permits.loading}
-              error={permits.error}
-              empty={!permits.data || permits.data.length === 0}
-            >
-              {permits.data && permits.data.length > 0 ? (
-                <div className="space-y-3">
-                  {permits.data.slice(0, 10).map((permit: any, idx: number) => (
-                    <div key={idx} className="border-b border-gray-200 pb-2 last:border-b-0">
-                      <div className="text-sm font-medium text-gray-900">
-                        {permit.permittypemapped || permit.permittype || t('addressLookup.unknown', 'Unknown')}
-                      </div>
-                      <div className="text-xs text-gray-600">
-                        {formatDate(permit.applieddate)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <EmptyState message={t('addressLookup.noPermits', 'No permits found')} />
-              )}
-              <DataAttribution
-                source={t('addressLookup.attributionPermits', 'Building Permits')}
-                uid="uhjb-xac9"
-              />
-            </DataCard>
-
             {/* Inspections & Violations */}
             <DataCard
               title={t('addressLookup.inspections', 'Inspections & Violations')}
@@ -852,11 +804,11 @@ export default function AddressLookup() {
               {parksStatus === 'done' && nearbyParks.length > 0 ? (
                 <div className="space-y-2">
                   {nearbyParks.slice(0, 5).map((p, i) => {
-                    // Layer 15 attrs: NAME, ACREAGE, TYPE, ADDRESS, DISTRICT, NEIGHBORHOOD
-                    const name = String(p.NAME ?? p.PARK_NAME ?? `Park ${i + 1}`);
-                    const acres = p.ACREAGE ? `${parseFloat(String(p.ACREAGE)).toFixed(1)} ac` : '';
-                    const type = String(p.TYPE ?? p.PARK_TYPE ?? '');
-                    const nbhd = String(p.NEIGHBORHOOD ?? '');
+                    // Confirmed layer attrs: NAME, SHORT_NAME, PARKTYPE, SHAPE__Area
+                    const name = String(p.SHORT_NAME ?? p.NAME ?? `Park ${i + 1}`);
+                    const acres = '';  // SHAPE__Area units unknown; omit display
+                    const type = String(p.PARKTYPE ?? '');
+                    const nbhd = '';
                     return (
                       <div key={i} className="flex items-center justify-between border-b border-gray-100 pb-1 last:border-0">
                         <div>

@@ -147,21 +147,37 @@ export default function NeighborhoodProfiles() {
   const demolitionCount = permitsByType.find((p) => p.type.toLowerCase().includes('demolition'))
     ?.count || 0;
 
-  // Food safety — neighborhood field is UPPER CASE
+  // Food safety — neighborhood field is UPPER CASE; date field is action_date.
+  // Dataset is per-violation (one row per violation per inspection), so the same
+  // business can appear many times. Filter out 'N/A' geocoding failures and
+  // apply the selected date range.
   const foodSafety = useSODA('rg6p-b3h3', {
-    $where: `neighborhood='${nbhSoQL}'`,
+    $where: `neighborhood='${nbhSoQL}' AND neighborhood != 'N/A' AND action_date >= '${startDate}' AND action_date <= '${endDate}'`,
     $limit: 500,
   });
 
-  const activeViolations = useMemo(() => {
-    // action_status values: "Approved - No Violations", "Approved - Violations Corrected",
-    // "Approved - Violations", "Failed", "Critical Violation", etc.
-    // Must explicitly exclude "No Violations" before checking for "violation"
+  // Deduplicate by license_no to get one entry per facility for the list display.
+  const uniqueFacilities = useMemo(() => {
+    const seen = new Set<string>();
     return (foodSafety.data || []).filter((item: any) => {
-      const status = (item.action_status || item.inspection_status || item.status || '').toLowerCase();
-      if (status.includes('no violation')) return false;
-      return status.includes('violation') || status.includes('fail') || status.includes('critical');
+      const key = item.license_no || item.business_name || String(Math.random());
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
     });
+  }, [foodSafety.data]);
+
+  // Count unique facilities (by license_no) that have at least one active violation.
+  const activeViolations = useMemo(() => {
+    const facilitiesWithViolation = new Set<string>();
+    (foodSafety.data || []).forEach((item: any) => {
+      const status = (item.action_status || '').toLowerCase();
+      if (status.includes('no violation')) return;
+      if (status.includes('violation') || status.includes('fail') || status.includes('critical')) {
+        facilitiesWithViolation.add(item.license_no || item.business_name || '');
+      }
+    });
+    return facilitiesWithViolation;
   }, [foodSafety.data]);
 
   // Tax abatements — field is ccd_neigh, Title Case (matches dropdown values)
@@ -217,9 +233,9 @@ export default function NeighborhoodProfiles() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [perceptions.data]);
 
-  // Fire & EMS — neighborhood field is UPPER CASE
+  // Fire & EMS — neighborhood field is UPPER CASE; date field is create_time_incident.
   const fireEms = useSODA('vnsz-a3wp', {
-    $where: `neighborhood='${nbhSoQL}'`,
+    $where: `neighborhood='${nbhSoQL}' AND create_time_incident >= '${startDate}' AND create_time_incident <= '${endDate}'`,
     $limit: 500,
   });
 
@@ -482,21 +498,21 @@ export default function NeighborhoodProfiles() {
         title={t('neighborhood.foodSafety', 'Food Safety')}
         loading={foodSafety.loading}
         error={foodSafety.error}
-        empty={!foodSafety.data || foodSafety.data.length === 0}
+        empty={uniqueFacilities.length === 0}
         className="print-page"
       >
-        {foodSafety.data && foodSafety.data.length > 0 ? (
+        {uniqueFacilities.length > 0 ? (
           <div className="space-y-3">
-            {activeViolations.length > 0 && (
+            {activeViolations.size > 0 && (
               <div className="bg-yellow-50 border border-yellow-200 p-3 rounded mb-4">
                 <div className="text-sm font-semibold text-yellow-900">
-                  {activeViolations.length} {t('neighborhood.facilitiesWithViolations', 'Facilities with Active Violations')}
+                  {activeViolations.size} {t('neighborhood.facilitiesWithViolations', 'Facilities with Active Violations')}
                 </div>
               </div>
             )}
 
-            {foodSafety.data.slice(0, 15).map((facility: any, idx: number) => {
-              const status = facility.action_status || facility.inspection_status || facility.status || '';
+            {uniqueFacilities.slice(0, 15).map((facility: any, idx: number) => {
+              const status = facility.action_status || '';
               const hasViolation = !status.toLowerCase().includes('no violation') &&
                 (status.toLowerCase().includes('violation') || status.toLowerCase().includes('fail') || status.toLowerCase().includes('critical'));
               return (
