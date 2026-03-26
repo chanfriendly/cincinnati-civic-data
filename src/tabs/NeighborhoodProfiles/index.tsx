@@ -239,17 +239,42 @@ export default function NeighborhoodProfiles() {
     $limit: 500,
   });
 
+  // Recent records (2025+) lack cfd_incident_type_group/incident_type_desc and only
+  // populate incident_type_id, which follows the pattern "CATEGORY - PROTOCOL_CODE"
+  // (e.g. "BREATH - 6C1", "STROKE - 28C1F CLEAR EVIDENCE"). Extract the prefix word
+  // and map to a human-readable label so the chart doesn't collapse to "Other".
+  const INCIDENT_ID_LABEL: Record<string, string> = {
+    ABDOM: 'Abdominal Pain', ALLERGIC: 'Allergic Reaction', ASSAULT: 'Assault',
+    BACK: 'Back Pain', BITE: 'Animal Bite', BREATH: 'Breathing Problems',
+    BURN: 'Burns', CARDIAC: 'Cardiac Arrest', CHPN: 'Chest Pain',
+    DIABETIC: 'Diabetic Emergency', DROWN: 'Drowning', EMS: 'Medical Emergency',
+    FALL: 'Falls', FALLS: 'Falls', FAINT: 'Fainting / Unconscious',
+    FIRE: 'Fire', FALARM: 'Fire Alarm', FALCID: 'False Alarm',
+    HAZMAT: 'Hazmat', HEADACHE: 'Headache', HEMOR: 'Hemorrhage',
+    INFOF: 'Administrative', OD: 'Overdose', OBSTETRIC: 'Obstetric',
+    PAIN: 'Pain', PSYCH: 'Psychiatric', RESCUE: 'Rescue',
+    SICK: 'Illness', STROKE: 'Stroke', STUCK: 'Stuck in Elevator',
+    TRAUMATIC: 'Traumatic Injury', UNCONSCIOUS: 'Unconscious', VEHICLE: 'Vehicle Accident',
+  };
+
   const fireEmsByType = useMemo(() => {
     const counts: { [key: string]: number } = {};
     (fireEms.data || []).forEach((incident: any) => {
-      // Prefer cfd_incident_type_group (semantic groupings like "BREATHING PROBLEMS"),
-      // then fall back to incident_type_desc (specific call code description).
-      const type = incident.cfd_incident_type_group || incident.incident_type_desc || 'Other';
-      counts[type] = (counts[type] || 0) + 1;
+      // 1. cfd_incident_type_group — populated for older records, best grouping
+      // 2. incident_type_id prefix — "BREATH - 6C1" → "Breathing Problems"
+      // 3. incident_type_desc — fallback for any remaining older records
+      let type: string = incident.cfd_incident_type_group || incident.incident_type_desc || '';
+      if (!type && incident.incident_type_id) {
+        const raw = String(incident.incident_type_id).replace(/^=/, '');
+        const prefix = raw.split(/[\s-]/)[0].toUpperCase();
+        type = INCIDENT_ID_LABEL[prefix] ?? raw;
+      }
+      counts[type || 'Other'] = (counts[type || 'Other'] || 0) + 1;
     });
     return Object.entries(counts)
       .map(([type, count]) => ({ type, count }))
       .sort((a, b) => b.count - a.count);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fireEms.data]);
 
   // Per-neighborhood ACS census data — loaded from /data/neighborhood_acs.json
