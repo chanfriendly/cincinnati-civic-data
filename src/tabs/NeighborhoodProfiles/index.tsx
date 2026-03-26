@@ -129,7 +129,8 @@ export default function NeighborhoodProfiles() {
     "lower(permittypemapped) NOT LIKE '%mechanical%' AND " +
     "lower(permittypemapped) NOT LIKE '%plumbing%' AND " +
     "lower(permittypemapped) NOT LIKE '%electrical%' AND " +
-    "lower(permittypemapped) NOT LIKE '%fire suppression%'))";
+    "lower(permittypemapped) NOT LIKE '%fire suppression%' AND " +
+    "lower(permittypemapped) != 'hvac'))";
   const permitsWhere = `neighborhood='${nbhSoQL}' AND neighborhood != 'N/A'${PERMIT_TYPE_FILTER}`;
 
   const permits = useSODA('uhjb-xac9', {
@@ -507,7 +508,7 @@ export default function NeighborhoodProfiles() {
         className="print-page"
       >
         <p className="text-xs text-gray-500 italic mb-3">
-          {t('neighborhood.permitsDef', 'Structural building permits issued by the city — new construction, renovations, and demolitions. Trade permits (electrical, plumbing, mechanical) are excluded.')}
+          {t('neighborhood.permitsDef', 'Structural building permits issued by the city — new construction, renovations, and demolitions. Trade permits (electrical, plumbing, mechanical, HVAC) are excluded.')}
         </p>
         {permitsByType.length > 0 ? (
           <div className="space-y-4">
