@@ -363,9 +363,9 @@ export async function fetchNearbyParks(lat: number, lng: number, radiusMiles = 0
     outFields: '*',
     returnGeometry: 'false',
     resultRecordCount: '8',
-    // Exclude school grounds — confirmed field name is PARKTYPE (not TYPE).
-    // Schools-Private and Schools-Public appear in this greenspace layer.
-    where: "PARKTYPE NOT IN ('Schools-Private', 'Schools-Public')",
+    // Exclude non-public / non-park greenspace types.
+    // Full PARKTYPE value list confirmed against CAGIS layer 34 (754 features, 16 types).
+    where: "PARKTYPE NOT IN ('Schools-Private', 'Schools-Public', 'Cemetery', 'Private Commercial', 'Clubs-Members Only', 'Other Private')",
     f: 'json',
   });
   try {
