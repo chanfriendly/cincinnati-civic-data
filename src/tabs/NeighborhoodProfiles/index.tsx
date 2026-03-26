@@ -415,6 +415,9 @@ export default function NeighborhoodProfiles() {
         empty={crimeByType.length === 0}
         className="print-page"
       >
+        <p className="text-xs text-gray-500 italic mb-3">
+          {t('neighborhood.crimeDef', 'Incidents reported to Cincinnati Police Department within the selected date range, broken down by offense category. Sourced from the PDI legacy dataset and the current STARS system.')}
+        </p>
         {crimeByType.length > 0 ? (
           <div className="space-y-4">
             <div className="text-2xl font-bold text-[#C8861A]">
@@ -451,6 +454,9 @@ export default function NeighborhoodProfiles() {
         empty={!permits.data || permits.data.length === 0}
         className="print-page"
       >
+        <p className="text-xs text-gray-500 italic mb-3">
+          {t('neighborhood.permitsDef', 'Structural building permits issued by the city — new construction, renovations, and demolitions. Trade permits (electrical, plumbing, mechanical) are excluded.')}
+        </p>
         {permitsByType.length > 0 ? (
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-4 mb-4">
@@ -501,6 +507,9 @@ export default function NeighborhoodProfiles() {
         empty={uniqueFacilities.length === 0}
         className="print-page"
       >
+        <p className="text-xs text-gray-500 italic mb-3">
+          {t('neighborhood.foodSafetyDef', 'Health inspection results for restaurants, food trucks, and other licensed food facilities. Each entry reflects the most recent inspection status within the selected date range.')}
+        </p>
         {uniqueFacilities.length > 0 ? (
           <div className="space-y-3">
             {activeViolations.size > 0 && (
@@ -549,6 +558,9 @@ export default function NeighborhoodProfiles() {
         empty={!taxAbatements.data || taxAbatements.data.length === 0}
         className="print-page"
       >
+        <p className="text-xs text-gray-500 italic mb-3">
+          {t('neighborhood.taxAbatementsDef', 'City-granted property tax exemptions, typically tied to new construction or rehabilitation projects. High abatement totals can signal investment activity — or tax revenue the neighborhood is not collecting.')}
+        </p>
         {taxAbatements.data && taxAbatements.data.length > 0 ? (
           <div className="space-y-3">
             <div className="bg-green-50 p-3 rounded mb-4">
@@ -649,6 +661,9 @@ export default function NeighborhoodProfiles() {
         empty={fireEmsByType.length === 0}
         className="print-page"
       >
+        <p className="text-xs text-gray-500 italic mb-3">
+          {t('neighborhood.fireEmsDef', 'All incidents dispatched to Cincinnati Fire Department — including fires, medical emergencies, and rescue calls — within the selected date range.')}
+        </p>
         {fireEmsByType.length > 0 ? (
           <div className="space-y-4">
             <div className="text-2xl font-bold text-[#1A4A6B]">
