@@ -242,7 +242,9 @@ export default function NeighborhoodProfiles() {
   const fireEmsByType = useMemo(() => {
     const counts: { [key: string]: number } = {};
     (fireEms.data || []).forEach((incident: any) => {
-      const type = incident.incident_type_desc || incident.incident_type || 'Unknown';
+      // Prefer cfd_incident_type_group (semantic groupings like "BREATHING PROBLEMS"),
+      // then fall back to incident_type_desc (specific call code description).
+      const type = incident.cfd_incident_type_group || incident.incident_type_desc || 'Other';
       counts[type] = (counts[type] || 0) + 1;
     });
     return Object.entries(counts)
