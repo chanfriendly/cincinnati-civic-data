@@ -124,7 +124,7 @@ const SECTIONS: RoadmapSection[] = [
       },
       {
         title: 'Tax Abatement Accountability Dashboard',
-        status: 'in-progress',
+        status: 'completed',
         description: 'Cross-reference properties receiving city tax abatements with their blight violation and inspection history. Now live with address-level cross-referencing in Housing Justice, plus a city-wide CRA developer leaderboard showing top recipients of commercial subsidies by total dollar value.',
         why: 'Cincinnati grants millions in property tax abatements to developers. Residents in abatement zones should be able to see whether those subsidies improved conditions or accelerated displacement. All needed data is already in our system.',
         dataSource: 'Cincinnati Open Data: Tax Abatements (tkp7-yf64), Commercial CRA Abatements (m76i-p5p9) x PLAP Blight Violations',
@@ -132,7 +132,7 @@ const SECTIONS: RoadmapSection[] = [
       },
       {
         title: 'Owner / Developer Activity Tracker',
-        status: 'in-progress',
+        status: 'completed',
         description: 'Search any owner name or LLC to see all their permit activity, housing unit removals, CRA subsidies, and neighborhood presence city-wide — Cincinnati\'s version of JustFix NYC\'s "Who Owns What." Now live in the Owner Watch tab.',
         why: 'Large landlords and developers frequently hold properties under multiple LLC names, making their full portfolio and violation history invisible. Searching permit applicant names surfaces those patterns using open data.',
         dataSource: 'Cincinnati Open Data: Housing Unit Activity (xedz-tk7q), Commercial CRA Abatements (m76i-p5p9)',
@@ -192,9 +192,9 @@ const SECTIONS: RoadmapSection[] = [
     items: [
       {
         title: 'OHGO Real-Time Traffic Integration',
-        status: 'in-progress',
-        description: 'Live construction zones, road closures, and traffic incidents from ODOT\'s OHGO API, shown near any address.',
-        why: 'Construction activity is a leading indicator of neighborhood investment (or displacement). Real-time incident data is useful for residents and emergency planning. We need an API key to activate this feature.',
+        status: 'completed',
+        description: 'Live construction zones, road closures, and traffic incidents from ODOT\'s OHGO API, shown near any address. Now live in Address Lookup. Note: covers Ohio-managed roads (interstates, state routes) only — not Cincinnati city streets.',
+        why: 'Construction activity is a leading indicator of neighborhood investment (or displacement). Real-time incident data is useful for residents and emergency planning.',
         dataSource: 'OHGO API (Ohio Dept. of Transportation) — requires API key',
         dataSourceUrl: 'https://www.ohgo.com/',
         tab: 'Address Lookup',
