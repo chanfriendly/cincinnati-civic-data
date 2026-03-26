@@ -41,6 +41,7 @@ export default function PoliceAccountability() {
   const [trafficYear, setTrafficYear] = useState<number>(2024);
   const [trafficDistrict, setTrafficDistrict] = useState<string>('all');
   const [pedestrianDistrict, setPedestrianDistrict] = useState<string>('all');
+  const [forceYear, setForceYear] = useState<number>(2024);
   const [crimeType, setCrimeType] = useState<string>('');
   const [crimeYear, setCrimeYear] = useState<number>(2024);
   const [aiQuestion, setAiQuestion] = useState('');
@@ -125,6 +126,13 @@ export default function PoliceAccountability() {
     ...(pedestrianWhere ? { $where: pedestrianWhere } : {}),
   });
 
+  const pedestrianOutcome = useSODA('jx3x-rh6i', {
+    $select: 'race,disposition_text,count(*) as count',
+    $group: 'race,disposition_text',
+    ...(pedestrianWhere ? { $where: pedestrianWhere } : {}),
+    $limit: 200,
+  });
+
   const pedestrianByRaceData = useMemo(() => {
     return (pedestrianByRace.data || [])
       .map((item: any) => ({
@@ -134,31 +142,91 @@ export default function PoliceAccountability() {
       .sort((a: any, b: any) => b.count - a.count);
   }, [pedestrianByRace.data]);
 
+  const pedestrianOutcomeData = useMemo(() => {
+    const raceMap = new Map<string, Map<string, number>>();
+    for (const item of (pedestrianOutcome.data || []) as any[]) {
+      const race = (item.race || 'UNKNOWN').toUpperCase();
+      const disp = (item.disposition_text || 'UNKNOWN').toUpperCase();
+      const count = parseInt(item.count || '0', 10);
+      if (!raceMap.has(race)) raceMap.set(race, new Map());
+      raceMap.get(race)!.set(disp, (raceMap.get(race)!.get(disp) || 0) + count);
+    }
+    return Array.from(raceMap.entries())
+      .map(([race, disps]) => ({
+        race,
+        total: Array.from(disps.values()).reduce((a, b) => a + b, 0),
+        dispositions: Object.fromEntries(disps),
+      }))
+      .sort((a, b) => b.total - a.total);
+  }, [pedestrianOutcome.data]);
+
+  const topPedDispositions = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const item of (pedestrianOutcome.data || []) as any[]) {
+      const disp = (item.disposition_text || 'UNKNOWN').toUpperCase();
+      const count = parseInt(item.count || '0', 10);
+      counts.set(disp, (counts.get(disp) || 0) + count);
+    }
+    return Array.from(counts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([d]) => d);
+  }, [pedestrianOutcome.data]);
+
   // Use of Force (748b-sht4)
-  // Fields confirmed: eventdate (not date), sna_neighborhood (not neighborhood)
-  const forceQuery = useSODA('748b-sht4', {
-    $limit: 100,
-    $order: 'eventdate DESC',
+  // Fields confirmed: eventdate, sna_neighborhood, formtype, district
+  // Note: no race field in this dataset. Valid years: 2021–2025 (3 records have data-entry errors with year 2200+, excluded by year filter).
+  const forceWhere = `eventdate >= '${forceYear}-01-01' AND eventdate <= '${forceYear}-12-31'`;
+
+  const forceByNeighborhoodQ = useSODA('748b-sht4', {
+    $select: 'sna_neighborhood,count(*) as count',
+    $group: 'sna_neighborhood',
+    $where: forceWhere,
+    $order: 'count DESC',
+    $limit: 10,
+  });
+
+  const forceByTypeQ = useSODA('748b-sht4', {
+    $select: 'formtype,count(*) as count',
+    $group: 'formtype',
+    $where: forceWhere,
+    $order: 'count DESC',
+  });
+
+  const forceCount = useSODA('748b-sht4', {
+    $select: 'count(*) as total',
+    $where: forceWhere,
   });
 
   const forceByNeighborhood = useMemo(() => {
-    const counts: { [key: string]: number } = {};
-    (forceQuery.data || []).forEach((item: any) => {
-      const nb = item.sna_neighborhood || 'Unknown';
-      counts[nb] = (counts[nb] || 0) + 1;
-    });
-    return Object.entries(counts)
-      .map(([neighborhood, count]) => ({ neighborhood, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 10);
-  }, [forceQuery.data]);
+    return (forceByNeighborhoodQ.data || []).map((item: any) => ({
+      neighborhood: item.sna_neighborhood || 'Unknown',
+      count: parseInt(item.count || '0', 10),
+    }));
+  }, [forceByNeighborhoodQ.data]);
 
-  // OIS (r6q4-muts)
-  // No 'year' column — use date_extract_y(incident_date) to group by year
+  const forceByType = useMemo(() => {
+    return (forceByTypeQ.data || []).map((item: any) => ({
+      type: (item.formtype || 'UNKNOWN').replace(/_/g, ' '),
+      count: parseInt(item.count || '0', 10),
+    }));
+  }, [forceByTypeQ.data]);
+
+  // OIS legacy (r6q4-muts) — frozen at 2019, CPD transitioned to Police Firearm Discharge datasets
   const oisQuery = useSODA('r6q4-muts', {
     $select: 'date_extract_y(incident_date) as year,count(*) as count',
     $group: 'year',
     $order: 'year DESC',
+  });
+
+  // Police Firearm Discharge — new datasets published after RMS transition (n625-s9aa incidents, dxac-g4wm subjects)
+  const firearmsIncidents = useSODA('n625-s9aa', {
+    $select: 'date_extract_y(incidentdatetime) as year,count(*) as count',
+    $group: 'year',
+    $order: 'year ASC',
+  });
+
+  const firearmsSubjects = useSODA('dxac-g4wm', {
+    $select: 'subject_race,count(*) as count',
+    $group: 'subject_race',
+    $order: 'count DESC',
   });
 
   const oisByYear = useMemo(() => {
@@ -169,6 +237,20 @@ export default function PoliceAccountability() {
       }))
       .sort((a: any, b: any) => a.year.localeCompare(b.year));
   }, [oisQuery.data]);
+
+  const firearmsIncidentsByYear = useMemo(() => {
+    return (firearmsIncidents.data || []).map((item: any) => ({
+      year: item.year || 'Unknown',
+      count: parseInt(item.count || '0', 10),
+    }));
+  }, [firearmsIncidents.data]);
+
+  const firearmsSubjectsByRace = useMemo(() => {
+    return (firearmsSubjects.data || []).map((item: any) => ({
+      race: (item.subject_race || 'UNKNOWN').toUpperCase(),
+      count: parseInt(item.count || '0', 10),
+    }));
+  }, [firearmsSubjects.data]);
 
   // Crime Map (combined)
   const crimeOld = useSODA('k59e-2pvf', {
@@ -384,9 +466,10 @@ export default function PoliceAccountability() {
       {activeSection === 'pedestrian' && (
         <div className="space-y-6">
           {/* Data note */}
-          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-            <p className="text-sm text-blue-900">
-              {t('police.pedNote', 'This dataset covers all recorded pedestrian contacts. Date filtering is not available as the date field is not populated by the source agency.')}
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+            <p className="text-sm text-yellow-900 font-semibold">Dataset is very sparse — only 31 records total.</p>
+            <p className="text-sm text-yellow-800 mt-1">
+              {t('police.pedNote', 'CPD stopped populating this dataset after 2020. Date filtering is unavailable as the date field is not populated. Data shown represents the full available history.')}
             </p>
           </div>
 
@@ -449,34 +532,125 @@ export default function PoliceAccountability() {
               uid="jx3x-rh6i"
             />
           </DataCard>
+
+          {/* Pedestrian Outcomes by Race */}
+          <DataCard
+            title={t('police.pedOutcomesByRace', 'Outcomes by Race (Disposition)')}
+            loading={pedestrianOutcome.loading}
+            error={pedestrianOutcome.error}
+          >
+            <p className="text-xs text-gray-500 mb-3 italic">
+              Stop outcomes (disposition_text) broken down by race of subject.
+            </p>
+            {pedestrianOutcomeData.length > 0 && topPedDispositions.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b-2 border-gray-200">
+                      <th className="text-left py-2 pr-3 font-semibold text-gray-700">Race</th>
+                      <th className="text-right py-2 pr-3 font-semibold text-gray-700">Total</th>
+                      {topPedDispositions.map((d) => (
+                        <th key={d} className="text-right py-2 px-2 font-semibold text-gray-700 whitespace-nowrap" title={d}>
+                          {d.length > 14 ? d.slice(0, 12) + '…' : d}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pedestrianOutcomeData.map((row) => (
+                      <tr key={row.race} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="py-2 pr-3 font-medium text-gray-900 whitespace-nowrap">{row.race}</td>
+                        <td className="py-2 pr-3 text-right text-gray-700 font-semibold">{row.total.toLocaleString()}</td>
+                        {topPedDispositions.map((d) => (
+                          <td key={d} className="py-2 px-2 text-right text-gray-600">
+                            {row.dispositions[d] ? row.dispositions[d].toLocaleString() : '—'}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <EmptyState message={t('police.noData', 'No outcome data available')} />
+            )}
+            <DataAttribution source={t('police.attributionPedestrian', 'Pedestrian Stops')} uid="jx3x-rh6i" />
+          </DataCard>
         </div>
       )}
 
       {/* Use of Force Section */}
       {activeSection === 'force' && (
         <div className="space-y-6">
-          {/* Freeze Notice */}
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-            <p className="text-sm font-semibold text-yellow-900">
-              {t(
-                'police.freezeNotice',
-                'This dataset is currently frozen pending CPD\'s transition to a new records management system. Last available data shown.'
-              )}
-            </p>
+          {/* Controls */}
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('police.year', 'Year')}
+                </label>
+                <select
+                  value={forceYear}
+                  onChange={(e) => setForceYear(parseInt(e.target.value))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4A6B] focus:border-transparent"
+                >
+                  {[2021, 2022, 2023, 2024, 2025].map((yr) => (
+                    <option key={yr} value={yr}>{yr}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
+
+          {/* Summary stat */}
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="text-3xl font-bold text-red-700">
+              {parseInt((forceCount.data as any)?.[0]?.total || '0', 10).toLocaleString()}
+            </div>
+            <div className="text-sm text-gray-600 mt-1">
+              {t('police.totalForceIncidents', 'Use of force incidents')} ({forceYear})
+            </div>
+          </div>
+
+          {/* Force by Type */}
+          <DataCard
+            title={t('police.forceByType', 'Use of Force by Type')}
+            loading={forceByTypeQ.loading}
+            error={forceByTypeQ.error}
+            empty={forceByType.length === 0}
+          >
+            <p className="text-xs text-gray-500 italic mb-3">
+              This dataset does not include a race field. Breakdown shown by force type (formtype).
+            </p>
+            {forceByType.length > 0 ? (
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={forceByType} margin={{ bottom: 80, left: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="type" angle={-35} textAnchor="end" interval={0} tick={{ fontSize: 11 }}
+                    tickFormatter={(v: string) => v.length > 22 ? v.slice(0, 20) + '…' : v} />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="#FF5722" radius={[3, 3, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyState message={t('police.noData', 'No data available')} />
+            )}
+            <DataAttribution source={t('police.attributionForce', 'Use of Force')} uid="748b-sht4" />
+          </DataCard>
 
           {/* Force by Neighborhood */}
           <DataCard
             title={t('police.forcebyNeighborhood', 'Use of Force by Neighborhood (Top 10)')}
-            loading={forceQuery.loading}
-            error={forceQuery.error}
+            loading={forceByNeighborhoodQ.loading}
+            error={forceByNeighborhoodQ.error}
             empty={forceByNeighborhood.length === 0}
           >
             {forceByNeighborhood.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={forceByNeighborhood}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="neighborhood" angle={-45} textAnchor="end" height={80} />
+                  <XAxis dataKey="neighborhood" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 11 }} />
                   <YAxis />
                   <Tooltip />
                   <Bar dataKey="count" fill="#FF5722" />
@@ -485,38 +659,7 @@ export default function PoliceAccountability() {
             ) : (
               <EmptyState message={t('police.noData', 'No data available')} />
             )}
-
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-600">
-                {t('police.forceNote', 'For deeper analysis, related datasets include Subjects (uid: 4gu6-tz3f) and Officers (uid: 28j3-kqky), linked via UNIQUE_REPORT_ID.')}
-              </p>
-            </div>
-
-            <DataAttribution
-              source={t('police.attributionForce', 'Use of Force')}
-              uid="748b-sht4"
-            />
-          </DataCard>
-
-          {/* Summary Stats */}
-          <DataCard
-            title={t('police.forceStats', 'Summary Statistics')}
-            loading={forceQuery.loading}
-            error={forceQuery.error}
-            empty={!forceQuery.data || forceQuery.data.length === 0}
-          >
-            {forceQuery.data && forceQuery.data.length > 0 && (
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-red-50 p-4 rounded">
-                  <div className="text-2xl font-bold text-red-700">
-                    {forceQuery.data.length}
-                  </div>
-                  <div className="text-xs text-gray-600 mt-1">
-                    {t('police.totalForceIncidents', 'Total Incidents')}
-                  </div>
-                </div>
-              </div>
-            )}
+            <DataAttribution source={t('police.attributionForce', 'Use of Force')} uid="748b-sht4" />
           </DataCard>
         </div>
       )}
@@ -524,19 +667,69 @@ export default function PoliceAccountability() {
       {/* OIS Section */}
       {activeSection === 'ois' && (
         <div className="space-y-6">
-          {/* Freeze Notice */}
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-            <p className="text-sm font-semibold text-yellow-900">
-              {t(
-                'police.freezeNotice',
-                'This dataset is currently frozen pending CPD\'s transition to a new records management system. Last available data shown.'
-              )}
+          {/* Transition notice */}
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+            <p className="text-sm font-semibold text-blue-900">CPD has transitioned to a new records management system.</p>
+            <p className="text-sm text-blue-800 mt-1">
+              The legacy OIS dataset (below) is frozen at September 2019. Cincinnati now publishes firearm discharge data under three new datasets:
+              Incidents (<strong>n625-s9aa</strong>), Subjects (<strong>dxac-g4wm</strong>), and Officers (<strong>82xu-949a</strong>),
+              covering 2021–2024. The new data is shown first.
             </p>
           </div>
 
-          {/* OIS by Year */}
+          {/* New: Police Firearm Discharge */}
           <DataCard
-            title={t('police.oisByYear', 'Officer-Involved Shootings by Year')}
+            title="Police Firearm Discharge — Incidents by Year (2021–present)"
+            loading={firearmsIncidents.loading}
+            error={firearmsIncidents.error}
+            empty={firearmsIncidentsByYear.length === 0}
+          >
+            {firearmsIncidentsByYear.length > 0 ? (
+              <ResponsiveContainer width="100%" height={240}>
+                <BarChart data={firearmsIncidentsByYear}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="year" />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="#1A4A6B" radius={[3, 3, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyState message={t('police.noData', 'No data available')} />
+            )}
+            <DataAttribution source="Police Firearm Discharge – Incidents" uid="n625-s9aa" />
+          </DataCard>
+
+          <DataCard
+            title="Police Firearm Discharge — Subjects by Race (2021–present)"
+            loading={firearmsSubjects.loading}
+            error={firearmsSubjects.error}
+            empty={firearmsSubjectsByRace.length === 0}
+          >
+            <p className="text-xs text-gray-500 italic mb-3">Race of subjects involved in firearm discharge incidents. Small sample size (5 subjects total as of last update).</p>
+            {firearmsSubjectsByRace.length > 0 ? (
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={firearmsSubjectsByRace} margin={{ bottom: 40, left: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="race" tick={{ fontSize: 11 }} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="#1A4A6B" radius={[3, 3, 0, 0]}>
+                    {firearmsSubjectsByRace.map((entry: any, i: number) => (
+                      <Cell key={i} fill={RACE_COLORS[entry.race] || '#607D8B'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyState message={t('police.noData', 'No data available')} />
+            )}
+            <DataAttribution source="Police Firearm Discharge – Subjects" uid="dxac-g4wm" />
+          </DataCard>
+
+          {/* Legacy OIS */}
+          <DataCard
+            title={t('police.oisByYear', 'Legacy OIS by Year (frozen at 2019)')}
             loading={oisQuery.loading}
             error={oisQuery.error}
             empty={oisByYear.length === 0}
@@ -548,14 +741,14 @@ export default function PoliceAccountability() {
                   <XAxis dataKey="year" />
                   <YAxis />
                   <Tooltip />
-                  <Bar dataKey="count" fill="#1A4A6B" />
+                  <Bar dataKey="count" fill="#607D8B" />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
               <EmptyState message={t('police.noData', 'No data available')} />
             )}
             <DataAttribution
-              source={t('police.attributionOIS', 'Officer-Involved Shootings')}
+              source={t('police.attributionOIS', 'PDI Officer-Involved Shootings (legacy)')}
               uid="r6q4-muts"
             />
           </DataCard>
