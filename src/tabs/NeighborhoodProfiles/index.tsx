@@ -92,10 +92,18 @@ export default function NeighborhoodProfiles() {
     $where: `cpd_neighborhood='${nbhSoQL}' AND date_reported >= '${startDate}' AND date_reported <= '${endDate}'`,
     $limit: 1000,
   });
+  const crimeOldCount = useSODA('k59e-2pvf', {
+    $where: `cpd_neighborhood='${nbhSoQL}' AND date_reported >= '${startDate}' AND date_reported <= '${endDate}'`,
+    $select: 'count(*) as total',
+  });
 
   const crimeNew = useSODA('7aqy-xrv9', {
     $where: `cpd_neighborhood='${nbhSoQL}' AND datereported >= '${startDate}' AND datereported <= '${endDate}'`,
     $limit: 1000,
+  });
+  const crimeNewCount = useSODA('7aqy-xrv9', {
+    $where: `cpd_neighborhood='${nbhSoQL}' AND datereported >= '${startDate}' AND datereported <= '${endDate}'`,
+    $select: 'count(*) as total',
   });
 
   const crimeByType = useMemo(() => {
@@ -199,6 +207,10 @@ export default function NeighborhoodProfiles() {
     $where: `neighborhood='${nbhSoQL}'`,
     $limit: 500,
   });
+  const blightCount = useSODA('pk9w-99n6', {
+    $where: `neighborhood='${nbhSoQL}'`,
+    $select: 'count(*) as total',
+  });
 
   // Community perceptions — gdf4-fqik is a city-wide resident survey.
   // Each row is a respondent; columns are Likert-scale ratings (1–5).
@@ -237,6 +249,10 @@ export default function NeighborhoodProfiles() {
   const fireEms = useSODA('vnsz-a3wp', {
     $where: `neighborhood='${nbhSoQL}' AND create_time_incident >= '${startDate}' AND create_time_incident <= '${endDate}'`,
     $limit: 500,
+  });
+  const fireEmsCount = useSODA('vnsz-a3wp', {
+    $where: `neighborhood='${nbhSoQL}' AND create_time_incident >= '${startDate}' AND create_time_incident <= '${endDate}'`,
+    $select: 'count(*) as total',
   });
 
   // Recent records (2025+) lack cfd_incident_type_group/incident_type_desc and only
@@ -448,10 +464,19 @@ export default function NeighborhoodProfiles() {
         {crimeByType.length > 0 ? (
           <div className="space-y-4">
             <div className="text-2xl font-bold text-[#C8861A]">
-              {crimeByType.reduce((sum, item) => sum + item.count, 0)}
+              {(
+                parseInt((crimeOldCount.data as any)?.[0]?.total || '0', 10) +
+                parseInt((crimeNewCount.data as any)?.[0]?.total || '0', 10)
+              ).toLocaleString()}
             </div>
             <div className="text-sm text-gray-600 mb-4">
               {t('neighborhood.totalIncidents', 'total incidents')} ({startDate} to {endDate})
+              {(
+                parseInt((crimeOldCount.data as any)?.[0]?.total || '0', 10) +
+                parseInt((crimeNewCount.data as any)?.[0]?.total || '0', 10)
+              ) > 2000 && (
+                <span className="ml-1 text-xs text-gray-400">(chart shows sample of 2,000)</span>
+              )}
             </div>
 
             <ResponsiveContainer width="100%" height={300}>
@@ -628,7 +653,7 @@ export default function NeighborhoodProfiles() {
         {blight.data && blight.data.length > 0 ? (
           <div className="space-y-2">
             <div className="text-3xl font-bold text-[#C8861A]">
-              {blight.data.length}
+              {parseInt((blightCount.data as any)?.[0]?.total || '0', 10).toLocaleString()}
             </div>
             <div className="text-sm text-gray-600">
               {t('neighborhood.blightRecords', 'active blight records in this neighborhood')}
@@ -694,10 +719,13 @@ export default function NeighborhoodProfiles() {
         {fireEmsByType.length > 0 ? (
           <div className="space-y-4">
             <div className="text-2xl font-bold text-[#1A4A6B]">
-              {fireEms.data?.length || 0}
+              {parseInt((fireEmsCount.data as any)?.[0]?.total || '0', 10).toLocaleString()}
             </div>
             <div className="text-sm text-gray-600 mb-4">
               {t('neighborhood.totalIncidents', 'total incidents')}
+              {parseInt((fireEmsCount.data as any)?.[0]?.total || '0', 10) > 500 && (
+                <span className="ml-1 text-xs text-gray-400">(chart shows sample of 500)</span>
+              )}
             </div>
 
             <ResponsiveContainer width="100%" height={250}>
