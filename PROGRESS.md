@@ -6,6 +6,80 @@
 
 ## Session Log
 
+### Session 8 — Phase 1 Implementation: Roadmap Rewrite + Neighborhood Profiles (March 2026)
+
+**Goal:** Update the Roadmap tab to reflect our new platform vision and commitments; implement Phase 1 foundation fixes in Neighborhood Profiles (Tab 2).
+
+**Roadmap tab (`src/tabs/Roadmap/index.tsx`):**
+- Added vision header: "Why we built this" panel with four key stats (evictions, lead service lines, racial income gap, tenant legal representation) in a dark header card
+- Added "How we decide what to build" principles block (Fill civic gaps; Show tradeoffs; Race and place together; Accuracy over completeness)
+- Added "What we won't build" section (real-time crime heat maps, predictive policing inputs, surveillance infrastructure, scraped personal data) — this makes our ethics explicit and public
+- Added two new roadmap sections: Environmental Health & Lead Safety, Racial Equity & Economic Mobility
+- Added BRT Construction Impact Tracker item to Transit section
+- Updated footer CTA with State of Black Cincinnati link
+
+**Neighborhood Profiles (`src/tabs/NeighborhoodProfiles/index.tsx`):**
+
+1. **Dynamic neighborhood dropdown (Phase 1.1):** On mount, fetches distinct `cpd_neighborhood` values from the STARS crime dataset (`7aqy-xrv9`) and filters the static NEIGHBORHOODS list to only show neighborhoods with actual crime records. Falls back to the full static list on error. If the previously selected neighborhood is filtered out, resets to the first available.
+
+2. **Per-neighborhood Census data (Phase 1.2):** Was already implemented! `fetchNeighborhoodCensusStats()` was already called and displayed in the Income & Housing card. Confirmed working — no changes needed.
+
+3. **311 service requests (Phase 1.3):** Added a full DataCard using dataset `gcej-gmiw` (Cincinnati 311 Non-Emergency Service Requests):
+   - Shows total request count (via separate count query for accuracy)
+   - Shows open/pending count (filtered by sr_status field)
+   - Shows average resolution time in days (computed from date_created / date_closed)
+   - Bar chart showing top 8 request types by volume (sr_type_desc)
+   - Positioned before Fire & EMS so the civic-transparency sequence is: permits → food safety → abatements → blight → 311 → fire/EMS
+
+**Park acreage script (`scripts/build_parks.py`):**
+- Pre-computes park count and total SHAPE__Area per neighborhood from CAGIS FeatureServer/34
+- Uses point-in-polygon (ray-casting) for precise neighborhood assignment, with nearest-centroid fallback for parks on boundaries
+- Output: `public/data/cagis_neighborhood_parks.json` keyed by normalized neighborhood name
+- Eliminates 52 sequential runtime CAGIS calls in the Neighborhood Explorer (30–60s delay)
+- **Must be run locally** — CAGIS is blocked from the Cowork sandbox
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+**Pending (Phase 1 remaining):**
+- [ ] Run `scripts/build_parks.py` locally and commit `public/data/cagis_neighborhood_parks.json`
+- [ ] Update `src/utils/scoring.ts` to read from `cagis_neighborhood_parks.json` instead of making runtime CAGIS calls (write this in next session once the JSON exists)
+- [ ] Live test CAGIS cards in Tab 1 (Address Lookup) with real addresses
+
+---
+
+### Session 7 — Research, Roadmap & Roadmap Tab Update (March 2026)
+
+**Goal:** Deep research on Cincinnati's civic landscape to ground the platform in real city priorities; produce a unified project roadmap; update the Roadmap tab with research-backed additions.
+
+**Research findings (see `CINCINNATI_RESEARCH_REPORT.md` for full detail):**
+- Cincinnati's most urgent civic data gap is **lead safety** — 33,449 lead/unknown water service lines remain; 220 child cases/year; no civic-facing map exists
+- **Racial equity dashboard** is the next highest gap: Urban League "State of Black Cincinnati" (2024) documents $31,520 vs. $70,909 median income by race, 17.5% vs. 67% mortgage approval
+- **Environmental justice** beyond flood risk: EPA EJScreen data (free API) would add air toxics, Superfund proximity, and industrial exposure
+- **Connected Communities zoning reform** (June 2024) is the most important housing policy change in decades; permit data to track its equity impact is already in our system
+- **SORTA BRT construction** (Hamilton Ave + Reading Rd) is beginning in 2025 — transit-equity context for affected neighborhoods is needed
+- **311 service request data** exists on Cincinnati Open Data portal and should be in Neighborhood Profiles
+- **Ascend 2030** (City + Hamilton County + UC + P&G + Microsoft) is Cincinnati's AI strategy — potential future partnership for data access
+- **Brent Spence Bridge** ($3.6B, 2026–2030) is the largest infrastructure investment in Cincinnati's modern era
+
+**Files created:**
+- `CINCINNATI_RESEARCH_REPORT.md` — Full research synthesis (history, current focus, 10–15 year outlook, data gaps, stakeholders)
+- `PROJECT_ROADMAP.md` — Phased project roadmap with 6 phases, partnership priorities, data sources to add, and session sequencing recommendation
+
+**Files modified:**
+- `src/tabs/Roadmap/index.tsx` — Added two new sections (Environmental Health & Lead Safety; Racial Equity & Economic Mobility) and a new BRT Construction Impact Tracker item in the Transit section
+- `CLAUDE.md` — Updated Recommended Next Steps with research-informed priorities; added new data sources to the reference table
+- `PROGRESS.md` — This entry
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+**Key session decisions:**
+- Lead service line tracker identified as the highest-priority new tab — urgent public health gap, data publicly available, no civic-facing map exists
+- EPA EJScreen chosen over building a custom EJ score because it's a free federal API with authoritative methodology
+- Racial equity dashboard scoped to Census ACS data first (already in our system) before seeking HMDA or partner data
+- Connected Communities zoning impact tracker scoped as an Explorer dimension addition, not a standalone tab
+
+---
+
 ### Session 6 — Accessibility Tab (March 2026)
 
 **Goal:** Add a dedicated Accessibility tab for Cincinnati's disabled community, with adjustable views by impairment type and prominent data-gap call-to-action framing.

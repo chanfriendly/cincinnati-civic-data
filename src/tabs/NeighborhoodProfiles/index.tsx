@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSODA } from '../../hooks/useSODA';
-import { formatCurrency, fetchNeighborhoodCensusStats, stripNeighborhoodName } from '../../utils/api';
+import { formatCurrency, fetchSODA, fetchNeighborhoodCensusStats, stripNeighborhoodName } from '../../utils/api';
 import type { NeighborhoodCensusStats } from '../../utils/api';
 import {
   DataCard,
@@ -76,6 +76,36 @@ export default function NeighborhoodProfiles() {
   const [endDate, setEndDate] = useState(
     new Date().toISOString().split('T')[0]
   );
+
+  // Dynamic neighborhood list — filtered to only show neighborhoods that have
+  // at least one record in the current STARS crime dataset (7aqy-xrv9).
+  // Falls back to the full static list if the fetch fails.
+  const [availableNeighborhoods, setAvailableNeighborhoods] = useState<string[]>(NEIGHBORHOODS);
+  useEffect(() => {
+    fetchSODA<{ cpd_neighborhood: string }>('7aqy-xrv9', {
+      $select: 'cpd_neighborhood',
+      $group: 'cpd_neighborhood',
+      $limit: 100,
+    }).then(({ data: rows }) => {
+      if (!rows || rows.length === 0) return;
+      const activeKeys = new Set(rows.map((r: { cpd_neighborhood: string }) => r.cpd_neighborhood?.toUpperCase().trim()).filter(Boolean));
+      const filtered = NEIGHBORHOODS.filter(nb => {
+        const key = NEIGHBORHOOD_DATASET_KEY[nb] ?? nb.toUpperCase();
+        return activeKeys.has(key);
+      });
+      if (filtered.length > 0) {
+        setAvailableNeighborhoods(filtered);
+        // If the current selection was filtered out, reset to the first available.
+        setSelectedNeighborhood(prev =>
+          filtered.includes(prev) ? prev : filtered[0]
+        );
+      }
+    }).catch(() => { /* silently keep static list on error */ });
+  // Only run once on mount — we don't re-fetch when the date range changes
+  // because the neighborhood list should reflect all-time presence, not just
+  // the selected window.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Resolve the exact dataset key (UPPER CASE) for the selected neighborhood.
   // Most names map cleanly via .toUpperCase(), but a few have quirks in the
@@ -294,6 +324,49 @@ export default function NeighborhoodProfiles() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fireEms.data]);
 
+  // 311 Service Requests — UID gcej-gmiw; neighborhood field is neighborhood (UPPER CASE).
+  // Date field is date_created; sr_type_desc is the human-readable category.
+  // We fetch up to 1000 records for breakdown + a separate count query for the true total.
+  const requests311 = useSODA('gcej-gmiw', {
+    $where: `neighborhood='${nbhSoQL}' AND date_created >= '${startDate}' AND date_created <= '${endDate}'`,
+    $limit: 1000,
+  });
+  const requests311Count = useSODA('gcej-gmiw', {
+    $where: `neighborhood='${nbhSoQL}' AND date_created >= '${startDate}' AND date_created <= '${endDate}'`,
+    $select: 'count(*) as total',
+  });
+
+  const requests311ByType = useMemo(() => {
+    const counts: { [key: string]: number } = {};
+    (requests311.data || []).forEach((req: any) => {
+      const type = req.sr_type_desc || req.group_title || req.sr_type || 'Other';
+      counts[type] = (counts[type] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .map(([type, count]) => ({ type, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [requests311.data]);
+
+  // Average resolution time in days for closed requests in the selected window
+  const avgResolutionDays = useMemo(() => {
+    const closed = (requests311.data || []).filter((req: any) => req.date_closed && req.date_created);
+    if (closed.length === 0) return null;
+    const totalDays = closed.reduce((sum: number, req: any) => {
+      const created = new Date(req.date_created).getTime();
+      const closedDate = new Date(req.date_closed).getTime();
+      const days = (closedDate - created) / (1000 * 60 * 60 * 24);
+      return sum + (days >= 0 ? days : 0);
+    }, 0);
+    return Math.round(totalDays / closed.length * 10) / 10;
+  }, [requests311.data]);
+
+  const openRequestCount = useMemo(() => {
+    return (requests311.data || []).filter((req: any) => {
+      const status = (req.sr_status || '').toLowerCase();
+      return status.includes('open') || status.includes('pending') || status.includes('assigned');
+    }).length;
+  }, [requests311.data]);
+
   // Per-neighborhood ACS census data — loaded from /data/neighborhood_acs.json
   // via fetchNeighborhoodCensusStats(). Falls back to null values while loading.
   const [censusStats, setCensusStats] = useState<Map<string, NeighborhoodCensusStats> | null>(null);
@@ -331,7 +404,7 @@ export default function NeighborhoodProfiles() {
                 onChange={(e) => setSelectedNeighborhood(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4A6B] focus:border-transparent"
               >
-                {NEIGHBORHOODS.map((nb) => (
+                {availableNeighborhoods.map((nb) => (
                   <option key={nb} value={nb}>
                     {nb}
                   </option>
@@ -703,6 +776,60 @@ export default function NeighborhoodProfiles() {
         <DataAttribution
           source={t('neighborhood.attributionPerceptions', 'Community Perceptions Survey')}
           uid="gdf4-fqik"
+        />
+      </DataCard>
+
+      {/* 311 Service Requests */}
+      <DataCard
+        title={t('neighborhood.requests311', '311 Service Requests')}
+        loading={requests311.loading}
+        error={requests311.error}
+        empty={requests311ByType.length === 0}
+        className="print-page"
+      >
+        <p className="text-xs text-gray-500 italic mb-3">
+          {t('neighborhood.requests311Def', 'Non-emergency service requests submitted by residents to the City of Cincinnati — covering issues like potholes, abandoned vehicles, illegal dumping, graffiti, street lights, and more. High open-request counts or long resolution times can signal service delivery disparities.')}
+        </p>
+        {requests311ByType.length > 0 ? (
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="bg-blue-50 p-3 rounded">
+                <div className="text-2xl font-bold text-[#1A4A6B]">
+                  {parseInt((requests311Count.data as any)?.[0]?.total || '0', 10).toLocaleString()}
+                </div>
+                <div className="text-xs text-gray-600">{t('neighborhood.totalRequests', 'Total Requests')}</div>
+              </div>
+              <div className="bg-amber-50 p-3 rounded">
+                <div className="text-2xl font-bold text-amber-700">
+                  {openRequestCount.toLocaleString()}
+                </div>
+                <div className="text-xs text-gray-600">{t('neighborhood.openRequests', 'Still Open / Pending')}</div>
+              </div>
+              <div className="bg-green-50 p-3 rounded">
+                <div className="text-2xl font-bold text-green-700">
+                  {avgResolutionDays != null ? `${avgResolutionDays}d` : '—'}
+                </div>
+                <div className="text-xs text-gray-600">{t('neighborhood.avgResolution', 'Avg. Resolution Time')}</div>
+              </div>
+            </div>
+
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={requests311ByType.slice(0, 8)} margin={{ bottom: 60, left: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="type" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 11 }}
+                  tickFormatter={(v: string) => v.length > 28 ? v.slice(0, 26) + '…' : v} />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="count" fill="#6366F1" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <EmptyState message={t('neighborhood.no311', 'No service requests found')} />
+        )}
+        <DataAttribution
+          source={t('neighborhood.attribution311', '311 Non-Emergency Service Requests')}
+          uid="gcej-gmiw"
         />
       </DataCard>
 

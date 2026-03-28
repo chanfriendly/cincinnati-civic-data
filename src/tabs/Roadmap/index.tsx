@@ -85,6 +85,20 @@ const GlobeIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) 
   </svg>
 )
 
+const LeafIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+      d="M5 3s5.5 0 9 3.5S17 14 17 14M5 3c0 0 0 10 7 14M5 3L3 21" />
+  </svg>
+)
+
+const ScaleIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+      d="M3 6l9-3 9 3M3 6v12l9 3 9-3V6M12 3v18" />
+  </svg>
+)
+
 // ─── Section data ─────────────────────────────────────────────────────────────
 
 const SECTIONS: RoadmapSection[] = [
@@ -208,6 +222,15 @@ const SECTIONS: RoadmapSection[] = [
         tab: 'Neighborhood Explorer',
       },
       {
+        title: 'BRT Construction Impact Tracker',
+        status: 'planned',
+        description: 'Track the rollout of Cincinnati\'s first Bus Rapid Transit lines on Hamilton Avenue and Reading Road — showing construction zones, new stop locations, projected service frequency, and which neighborhoods gain or lose access during the build period.',
+        why: 'SORTA\'s Reinventing Metro BRT build (approved 2024, construction starting 2025) is the biggest transit investment in Cincinnati in decades. Neighborhoods along the corridors will experience both construction disruption and long-term access gains. Residents deserve a clear view of both.',
+        dataSource: 'SORTA GTFS feed + SORTA Reinventing Metro project updates (go-metro.com/reinventing-metro)',
+        dataSourceUrl: 'https://www.go-metro.com/reinventing-metro',
+        tab: 'Address Lookup',
+      },
+      {
         title: 'Bike Infrastructure & Pedestrian Safety',
         status: 'open-question',
         description: 'Map of bike lanes, protected intersections, and pedestrian crossing infrastructure relative to injury crash data.',
@@ -254,6 +277,94 @@ const SECTIONS: RoadmapSection[] = [
         description: 'Side-by-side comparison of any two Cincinnati neighborhoods across all Explorer dimensions — useful for equity arguments, grant applications, and community presentations.',
         why: 'Advocates making the case for investment in a neighborhood benefit from comparing it directly to better-resourced areas using the same metrics. The data is already available.',
         tab: 'Neighborhood Explorer',
+      },
+    ],
+  },
+  {
+    id: 'environment',
+    heading: 'Environmental Health & Lead Safety',
+    subheading: 'Cincinnati\'s industrial legacy and aging infrastructure create public health risks that are not evenly distributed — and are barely visible in public data.',
+    Icon: LeafIcon,
+    iconBg: 'bg-emerald-100 text-emerald-700',
+    items: [
+      {
+        title: 'Lead Service Line Replacement Tracker',
+        status: 'planned',
+        description: 'An interactive map showing the status of Cincinnati\'s 52,129 lead and unknown water service lines — which have been replaced, which are in progress, and which remain. Overlaid with childhood blood lead case rates by census tract.',
+        why: 'As of 2025, 33,449 lead or unknown service lines remain in Cincinnati — 64% of the original inventory. The city\'s 2024 Lead Annual Report recorded an average of 220 child blood lead cases per year (2015–2024), yet only 36.8% of Cincinnati children are tested annually. Hamilton County ranks 54th of Ohio\'s 88 counties for lead-poisoned children. This data exists and is published by the Cincinnati Health Department — no civic-facing map yet exists.',
+        dataSource: 'Cincinnati Health Department lead service line inventory + 2024 Lead Annual Report',
+        dataSourceUrl: 'https://www.cincinnati-oh.gov/health/chd-programs/lead-poisoning-prevention/',
+        relatedOrgs: ['Cincinnati Health Department', 'Cincinnati Children\'s Hospital', 'Groundwork Ohio River Valley'],
+      },
+      {
+        title: 'Environmental Justice Cumulative Impact Map',
+        status: 'planned',
+        description: 'A neighborhood-level overlay combining EPA EJScreen scores, air toxics exposure, Superfund/brownfield proximity, flood risk, lead burden, and proximity to industrial facilities — the same approach used by CalEnviroScreen in California.',
+        why: 'Environmental burden in Cincinnati is concentrated in lower-income and Black communities along the river corridor and in neighborhoods like Lower Price Hill, Carthage, and Norwood. The EPA has invested $800k+ in Cincinnati environmental justice grants (2023–2024). EJScreen data is a free federal API. Our platform already has flood risk — adding the full picture is the next step.',
+        dataSource: 'EPA EJScreen API (public, no auth required)',
+        dataSourceUrl: 'https://www.epa.gov/ejscreen',
+        relatedOrgs: ['Groundwork Ohio River Valley', 'EPA Region 5', 'Cincinnati Port Authority'],
+      },
+      {
+        title: 'Industrial Site Remediation Progress',
+        status: 'seeking-data',
+        description: 'Track the cleanup status of contaminated industrial sites across Cincinnati — Phase I assessments completed, remediation in progress, and sites cleared for reuse.',
+        why: 'The City completed nearly 40 Phase I environmental site assessments under the 2023 Green Cincinnati Plan. Cincinnati Port holds $16M in state cleanup grants. But no single public dashboard shows where these sites are, what stage they\'re in, or what\'s planned for them. Neighbors in affected communities have no way to track remediation.',
+        dataSource: 'EPA Brownfields database (partial) + City of Cincinnati Green Cincinnati Plan implementation data (not yet public)',
+        relatedOrgs: ['Cincinnati Port Authority', 'Groundwork Ohio River Valley', 'Ohio EPA'],
+      },
+      {
+        title: 'Flood Risk Infrastructure Status',
+        status: 'planned',
+        description: 'An interactive view of Cincinnati\'s aging flood protection infrastructure — the Mill Creek Barrier Dam, 14 floodgates, and 1.5-mile floodwall — overlaid with updated FEMA flood zone boundaries and First Street Foundation flood risk scores.',
+        why: 'The Ohio River reached 60 feet at Cincinnati on April 7, 2025 — the highest in seven years. The flood protection infrastructure was built in 1948 and is nearly 90 years old. Flooding that historically occurred every 20 years now occurs every 5–10. Yet our current flood data only shows FEMA flood zones — not the condition of the infrastructure protecting neighborhoods from them.',
+        dataSource: 'FEMA NFHL (already in system) + First Street Foundation flood risk API + City stormwater management data',
+        dataSourceUrl: 'https://www.cincinnati-oh.gov/stormwater/flood-management/',
+        tab: 'Address Lookup',
+      },
+    ],
+  },
+  {
+    id: 'equity',
+    heading: 'Racial Equity & Economic Mobility',
+    subheading: 'Cincinnati\'s racial wealth gap is not historical background — it is the current operating reality. The data to make it visible is public.',
+    Icon: ScaleIcon,
+    iconBg: 'bg-rose-100 text-rose-700',
+    items: [
+      {
+        title: 'Racial Equity Dashboard',
+        status: 'planned',
+        description: 'A neighborhood-level dashboard showing income, homeownership rates, mortgage approval rates, poverty, and incarceration by race — drawing on Census ACS data and local reporting. Updated annually as new ACS data is released.',
+        why: 'The Urban League\'s "State of Black Cincinnati" report (June 2024) documents stark disparities: 35.6% of Black residents in poverty vs. 16.5% of white; median household income $31,520 vs. $70,909; mortgage approval 17.5% vs. 67%. These gaps are not abstract statistics — they shape which neighborhoods are reinvested in and which aren\'t. Making them visible at the neighborhood level enables accountability.',
+        dataSource: 'U.S. Census ACS (already in our system) + Urban League State of Black Cincinnati report',
+        dataSourceUrl: 'https://www.ulgso.org/blackcincinnati',
+        relatedOrgs: ['Urban League of Greater Southwestern Ohio', 'All-In Cincinnati', 'Cincinnati NAACP'],
+      },
+      {
+        title: 'Connected Communities Zoning Reform Impact Tracker',
+        status: 'planned',
+        description: 'Track the impact of Cincinnati\'s Connected Communities zoning reform (adopted June 5, 2024; effective July 1, 2024) — which removed minimum lot sizes and parking mandates for most of the city — by monitoring new permit applications, housing unit additions, and rent changes in formerly restricted zones.',
+        why: 'Connected Communities is the biggest zoning change in Cincinnati in decades, explicitly designed to increase housing supply. Whether it produces affordable units or just market-rate infill is an open empirical question that will determine its equity impact. The permit and zoning data to answer it is already in our system.',
+        dataSource: 'Cincinnati Open Data: Building Permits (uhjb-xac9) + Tax Abatements (tkp7-yf64) + CAGIS Zoning Layer',
+        tab: 'Neighborhood Explorer',
+      },
+      {
+        title: 'Mortgage Lending & Homeownership Gap Map',
+        status: 'needs-partner',
+        description: 'A map of mortgage application approval rates by race and neighborhood — showing where lending disparities concentrate and how they have changed over time.',
+        why: 'Mortgage approval rates for Black borrowers in Cincinnati were 17.5% in 2020 vs. 67% for white borrowers. This lending gap directly shapes homeownership rates, wealth accumulation, and neighborhood stability. HMDA (Home Mortgage Disclosure Act) data is public at the federal level, but requires cleaning and geographic matching.',
+        dataSource: 'HMDA data (Consumer Financial Protection Bureau, public)',
+        dataSourceUrl: 'https://www.consumerfinance.gov/data-research/hmda/',
+        relatedOrgs: ['Housing Opportunities Made Equal (HOME Cincy)', 'Federal Home Loan Bank of Cincinnati', 'Urban League'],
+      },
+      {
+        title: 'School Funding Equity Tracker',
+        status: 'seeking-data',
+        description: 'Per-pupil spending by CPS school, overlaid with neighborhood poverty rates, school performance indicators, and the impact of state funding formula changes on individual schools.',
+        why: 'Cincinnati Public Schools is facing a >$50M budget gap (2025–2026) after Ohio changed its funding formula. CPS receives only $0.36 per dollar per student under the new formula. Since CPS is majority Black and lower-income, these cuts are a racial equity issue. The data to make this visible exists in state education records but is not machine-readable.',
+        dataSource: 'Ohio Department of Education ESSA Report Cards + CPS budget documents',
+        dataSourceUrl: 'https://reportcard.education.ohio.gov/',
+        relatedOrgs: ['Cincinnati Public Schools', 'Strive Partnership', 'United Way of Greater Cincinnati'],
       },
     ],
   },
@@ -359,6 +470,7 @@ const Legend: React.FC = () => (
 
 const Roadmap: React.FC = () => (
   <div className="max-w-5xl mx-auto">
+
     {/* Page header */}
     <div className="mb-8">
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Future Work &amp; Data Roadmap</h1>
@@ -368,14 +480,68 @@ const Roadmap: React.FC = () => (
         what we&apos;re building, what data gaps exist, and where we need partners to unlock
         the next layer of insight.
       </p>
-      <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-        <p className="text-sm text-amber-800">
-          <span className="font-semibold">Hamilton County context: </span>
-          13,601 eviction filings in 2024 (9% of renters — above the national average). Only 7% of tenants
-          have legal representation in housing court vs. 93% of landlords. Only 32 affordable units exist
-          per 100 residents earning below $35,000/year. The data gaps below are not abstract —
-          they have real consequences for real families.
-        </p>
+    </div>
+
+    {/* Why this exists */}
+    <div className="mb-8 bg-[#1A4A6B] text-white rounded-xl p-6">
+      <h2 className="text-base font-bold mb-3 text-white">Why we built this</h2>
+      <p className="text-blue-100 text-sm leading-relaxed mb-4">
+        Cincinnati&apos;s public data is largely open — but it&apos;s scattered across dozens of portals,
+        in formats that require technical expertise to use. That means the people with the most at
+        stake in civic decisions — tenants, parents, community organizers — are the least likely to
+        access it. We exist to close that gap.
+      </p>
+      <p className="text-blue-100 text-sm leading-relaxed mb-5">
+        Every number on this platform represents a real tradeoff: zoning reform vs. displacement risk.
+        Transit investment vs. who actually benefits. Police accountability vs. community trust. Flood
+        protection vs. riverfront development. We try to make those tradeoffs legible, not obscure them.
+      </p>
+      {/* Stat row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { stat: '13,601', label: 'eviction filings in Hamilton County, 2024 — 9% of all renter households' },
+          { stat: '33,449', label: 'lead or unknown water service lines still active in Cincinnati as of 2025' },
+          { stat: '$31,520', label: 'median household income for Black families vs. $70,909 for white families' },
+          { stat: '7%', label: 'of tenants have legal representation in housing court — vs. 93% of landlords' },
+        ].map(({ stat, label }) => (
+          <div key={stat} className="bg-white/10 rounded-lg p-3">
+            <div className="text-xl font-bold text-white">{stat}</div>
+            <div className="text-xs text-blue-200 leading-tight mt-1">{label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Guiding principles */}
+    <div className="mb-8 bg-gray-50 border border-gray-200 rounded-xl p-5">
+      <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">How we decide what to build</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {[
+          {
+            title: 'Fill civic gaps, not dashboard gaps',
+            body: 'We build what residents actually need — even when it\'s harder. If no civic-facing lead service line map exists in Cincinnati, we build one.',
+          },
+          {
+            title: 'Show the tradeoffs',
+            body: 'Gentrification, transit, policing, flood risk — each involves real winners and losers. Our job is to make that visible, not to paper it over.',
+          },
+          {
+            title: 'Race and place together',
+            body: 'Every metric should be examinable by race and by neighborhood. Data that\'s only citywide can hide inequity.',
+          },
+          {
+            title: 'Accuracy over completeness',
+            body: 'A broken tab is worse than a missing one. We label gaps as gaps, and we don\'t ship data we haven\'t verified.',
+          },
+        ].map(({ title, body }) => (
+          <div key={title} className="flex gap-3">
+            <div className="w-1.5 rounded-full bg-[#1A4A6B] flex-shrink-0 mt-1" style={{ height: 'auto', minHeight: '1.5rem' }} />
+            <div>
+              <p className="text-sm font-semibold text-gray-800">{title}</p>
+              <p className="text-xs text-gray-500 leading-relaxed mt-0.5">{body}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
 
@@ -403,27 +569,71 @@ const Roadmap: React.FC = () => (
       </section>
     ))}
 
+    {/* What we won't build */}
+    <div className="mb-10 border border-gray-200 rounded-xl p-5 bg-white">
+      <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-1">What we won&apos;t build</h2>
+      <p className="text-xs text-gray-500 mb-4">
+        Clarity about our limits is part of being trustworthy. These are explicit commitments, not omissions.
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {[
+          {
+            title: 'No real-time crime heat maps',
+            body: 'Individual incident maps without context amplify fear without accountability. We show aggregate trends and patterns — not a live crime ticker.',
+          },
+          {
+            title: 'No predictive policing inputs',
+            body: 'We don\'t publish algorithmic risk scores for individuals, addresses, or neighborhoods. Those systems have a documented history of encoding racial bias.',
+          },
+          {
+            title: 'No surveillance infrastructure',
+            body: 'No integration with traffic cameras, license plate readers, or facial recognition systems — regardless of who operates them.',
+          },
+          {
+            title: 'No scraped personal data',
+            body: 'We use public government datasets. We don\'t scrape social media, purchase data broker records, or aggregate information about private individuals.',
+          },
+        ].map(({ title, body }) => (
+          <div key={title} className="flex gap-3 bg-gray-50 rounded-lg p-3">
+            <div className="flex-shrink-0 mt-0.5">
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-700">{title}</p>
+              <p className="text-xs text-gray-500 leading-relaxed mt-0.5">{body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
     {/* Footer CTA */}
     <div className="border-t border-gray-200 pt-8 mb-8">
-      <div className="bg-[#1A4A6B] text-white rounded-xl p-6">
+      <div className="bg-gray-900 text-white rounded-xl p-6">
         <h2 className="text-lg font-bold mb-2">Have data, skills, or community knowledge to contribute?</h2>
-        <p className="text-blue-100 text-sm leading-relaxed mb-4">
+        <p className="text-gray-300 text-sm leading-relaxed mb-4">
           This is an open-source project. If your organization has data that would unlock any
           of the &ldquo;Seeking Data&rdquo; or &ldquo;Needs Partner&rdquo; items above, or if you want to advocate for
           a specific feature, we want to hear from you. Community input directly shapes the roadmap.
         </p>
         <div className="flex flex-wrap gap-3 text-sm">
           <a href="https://data.cincinnati-oh.gov" target="_blank" rel="noopener noreferrer"
-            className="bg-white text-[#1A4A6B] px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
             Cincinnati Open Data Portal
           </a>
           <a href="https://evictionlab.org/eviction-tracking/cincinnati-oh/" target="_blank" rel="noopener noreferrer"
-            className="bg-white text-[#1A4A6B] px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
             Eviction Lab &mdash; Cincinnati
           </a>
           <a href="https://www.homecincy.org" target="_blank" rel="noopener noreferrer"
-            className="bg-white text-[#1A4A6B] px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
             HOME Cincy
+          </a>
+          <a href="https://www.ulgso.org/blackcincinnati" target="_blank" rel="noopener noreferrer"
+            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+            State of Black Cincinnati
           </a>
         </div>
       </div>

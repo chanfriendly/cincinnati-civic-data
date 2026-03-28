@@ -90,6 +90,17 @@ public/data/neighborhood_acs.json  226 Hamilton County Census tracts (ACS 2022, 
 | SORTA GTFS | Bus stop locations | Static file |
 | USDA Food Access | Food desert data | None |
 
+#### Planned / Future APIs (not yet integrated)
+
+| Source | Purpose | Auth | Notes |
+|--------|---------|------|-------|
+| Cincinnati Health Dept. Lead Inventory | Lead service line map | None (public) | `https://www.cincinnati-oh.gov/health/chd-programs/lead-poisoning-prevention/` |
+| EPA EJScreen API | Environmental justice scores (air, Superfund, industrial) | None (public) | `https://ejscreen.epa.gov/mapper/ejscreenRESTbroker.aspx` |
+| HUD Subsidized Households | Affordable housing inventory + expiration dates | None (public API) | `https://www.huduser.gov/portal/datasets/assthsg.html` |
+| CFPB HMDA | Mortgage lending by race and census tract | None (public) | `https://ffiec.cfpb.gov/api/public/` |
+| Cincinnati Open Data: 311 | Service request volume and resolution time | None | Look up UID on data.cincinnati-oh.gov |
+| First Street Foundation | Property-level flood probability over 30 years | API key | `https://firststreet.org/` |
+
 ## Critical Patterns — Do Not Break
 
 ### SODA Query Encoding
@@ -140,16 +151,28 @@ OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...
 
 ## Recommended Next Steps (Priority Order)
 
-1. **Verify unconfirmed field names on Tab 2** — For Food Safety, PLAP, and Fire & EMS, fetch one record from the UID and confirm the neighborhood field. To check: `https://data.cincinnati-oh.gov/resource/{uid}.json?$limit=1`
-2. **Wire per-neighborhood Census data into Tab 2** — Explorer already computes neighborhood-level income/rent from `neighborhood_acs.json`. Extract into a shared hook so Tab 2 shows real per-neighborhood numbers.
-3. **Live test CAGIS cards (Tab 1)** — Test zoning, flood, historic, and parks with a Downtown address (known flood zone) and Hyde Park address (known not in flood zone).
-4. **Live test Park Access + Flood Risk dimensions (Tab 4)** — Enable both; wait 60s; confirm scores populate. Check Network tab for failures on `arcgis.com` (parks) or `hazards.fema.gov` (flood).
+> Full phased roadmap: see `PROJECT_ROADMAP.md`. Research basis: see `CINCINNATI_RESEARCH_REPORT.md`.
+
+### Phase 1 — Foundation Fixes (immediate)
+1. **Wire per-neighborhood Census data into Tab 2** — Explorer already computes neighborhood-level income/rent from `neighborhood_acs.json`. Extract into a shared hook so Tab 2 shows real per-neighborhood numbers.
+2. **Fix neighborhood dropdown (Tab 2)** — Currently shows all 53 neighborhoods even if no data exists. Filter to neighborhoods with at least one crime record.
+3. **Add 311 service requests to Tab 2** — Data exists on Cincinnati Open Data portal; service delivery disparities by neighborhood are a high-value civic transparency addition.
+4. **Live test CAGIS cards (Tab 1)** — Test zoning, flood, historic, and parks with a Downtown address (known flood zone) and Hyde Park address (known not in flood zone).
 5. **Pre-compute park acreage** — 52 sequential CAGIS calls at runtime is slow. Write a Node.js script that generates `public/data/cagis_neighborhood_parks.json` (same pattern as `neighborhood_acs.json`).
-6. **Implement Displacement tab** — Key datasets: permits (`uhjb-xac9`), tax abatements (`tkp7-yf64`), PLAP (`pk9w-99n6`), demolitions (`cncm-znd6`).
-7. **Implement Owner Activity tab** — Key datasets: permits (`uhjb-xac9`), unit activity (`xedz-tk7q`), CRA loans (`m76i-p5p9`), tax abatements (`tkp7-yf64`).
-8. **Fix neighborhood dropdown (Tab 2)** — Currently shows all 53 neighborhoods even if no data exists. Filter to neighborhoods with at least one crime record.
-9. **Spanish translation review** — Current ES strings are machine-translated.
-10. **Mobile testing** — Tabs 1 and 3 are primary mobile use cases.
+
+### Phase 2 — Lead & Environmental Health (high priority)
+6. **Lead service line tracker** — Cincinnati has 33,449 lead/unknown service lines remaining; 220 child cases/year. Cincinnati Health Dept. publishes the inventory. No civic-facing map exists — highest-priority new feature.
+7. **EPA EJScreen environmental justice layer** — Free federal API (no auth). Add air toxics, Superfund proximity, and industrial exposure to Neighborhood Explorer as a new EJ dimension.
+8. **Flood infrastructure status** — First Street Foundation probability data + Mill Creek floodwall condition status alongside existing FEMA flood zones.
+
+### Phase 3 — Racial Equity (high priority)
+9. **Racial equity metrics by neighborhood** — Census ACS B19001/B25003/B17001 by race tables. Already fetching Census data; new breakdowns. Motivated by Urban League "State of Black Cincinnati" (2024).
+10. **Connected Communities zoning impact tracker** — Track permit applications filed under the June 2024 zoning reform. Permit data already in our system.
+
+### Lower Priority
+11. **HUD affordable housing inventory** — Free public API. Section 8, LIHTC, public housing units + subsidy expiration dates.
+12. **Spanish translation review** — Current ES strings are machine-translated.
+13. **Mobile testing** — Tabs 1 and 3 are primary mobile use cases.
 
 ## Known Issues & Workarounds
 
