@@ -6,6 +6,33 @@
 
 ## Session Log
 
+### Session 9 — Phase 1 Completion: Parks Integration + Police Accountability Audit (March 2026)
+
+**Goal:** Complete Phase 1 (parks JSON integration), and audit/fix the Police Accountability tab against the principles we published in the Roadmap.
+
+**NeighborhoodExplorer (`src/tabs/NeighborhoodExplorer/index.tsx`):**
+- Updated `loadParks` useEffect to first attempt loading `/data/cagis_neighborhood_parks.json` (the pre-computed static file from `scripts/build_parks.py`)
+- If static file exists and is non-empty, applies it directly — eliminates all 52 runtime CAGIS calls and the 30–60s load delay
+- Falls back to the existing CAGIS batch strategy if the file is absent (e.g., on first deploy before the script is run)
+- **To activate:** run `python3 scripts/build_parks.py` locally and commit the output JSON
+
+**Police Accountability (`src/tabs/PoliceAccountability/index.tsx`) — Principles Audit:**
+
+The audit identified two issues:
+
+1. **"Crime Map" tab removed** — The tab was labeled "Crime Map" and showed a table of the 100 most recent individual crime records, filtered by offense type. This is functionally a crime ticker — individual incidents without accountability context — which directly violates the principle we published on the Roadmap ("Individual incident maps without context amplify fear without accountability. We show aggregate trends, not a live crime ticker."). Removed: the `crime` sub-section type, three `useSODA` hooks (`crimeOld`, `crimeNew`), `mergedCrime` memo, all associated state (`crimeType`, `crimeYear`), and the full rendering block. Aggregate crime trend data remains available in Neighborhood Profiles (Tab 2) which is the appropriate context.
+
+2. **Use of Force incident map reframed** — The map shows *police use-of-force locations*, not crime locations. Renamed from "Use of Force — Incident Map" to "Where CPD Used Force — Geographic Distribution." Added explicit note: "This is accountability data about police conduct, not a crime map. Concentration in certain neighborhoods reflects patrol patterns and deployment, not resident behavior." This framing distinction is important for our credibility with community organizations.
+
+3. **Disclaimer updated** — Added sentence explaining why individual crime incident records are not shown here, and directing users to Neighborhood Profiles for crime trend data.
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+**Phase 1 complete — remaining item:**
+- [ ] Run `scripts/build_parks.py` locally, commit `public/data/cagis_neighborhood_parks.json` to activate fast park scoring in Explorer
+
+---
+
 ### Session 8 — Phase 1 Implementation: Roadmap Rewrite + Neighborhood Profiles (March 2026)
 
 **Goal:** Update the Roadmap tab to reflect our new platform vision and commitments; implement Phase 1 foundation fixes in Neighborhood Profiles (Tab 2).
