@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import L from 'leaflet';
 import { useTranslation } from 'react-i18next';
 import { useSODA } from '../../hooks/useSODA';
-import { callClaude, formatDate } from '../../utils/api';
+import { callClaude } from '../../utils/api';
 import { useLanguage } from '../../context/LanguageContext';
 import {
   DataCard,
@@ -20,7 +20,7 @@ import {
   Cell,
 } from 'recharts';
 
-type SubSection = 'traffic' | 'force' | 'ois' | 'crime' | 'question';
+type SubSection = 'traffic' | 'force' | 'ois' | 'question';
 
 // Keys must match the UPPERCASE values returned by Socrata (e.g. 'BLACK', not 'Black')
 const RACE_COLORS: { [key: string]: string } = {
@@ -42,8 +42,6 @@ export default function PoliceAccountability() {
   const [trafficYear, setTrafficYear] = useState<number>(2024);
   const [trafficDistrict, setTrafficDistrict] = useState<string>('all');
   const [forceYear, setForceYear] = useState<number>(2024);
-  const [crimeType, setCrimeType] = useState<string>('');
-  const [crimeYear, setCrimeYear] = useState<number>(2024);
   const [aiQuestion, setAiQuestion] = useState('');
   const [aiResponse, setAiResponse] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
@@ -220,28 +218,6 @@ export default function PoliceAccountability() {
     }));
   }, [firearmsSubjects.data]);
 
-  // Crime Map (combined)
-  const crimeOld = useSODA('k59e-2pvf', {
-    $where: `date_reported >= '${crimeYear}-01-01' AND date_reported <= '${crimeYear}-12-31'${
-      crimeType ? ` AND offense LIKE '%${crimeType}%'` : ''
-    }`,
-    $limit: 100,
-    $order: 'date_reported DESC',
-  });
-
-  // 7aqy-xrv9 (STARS): date field is datereported, offense field is stars_category
-  const crimeNew = useSODA('7aqy-xrv9', {
-    $where: `datereported >= '${crimeYear}-01-01' AND datereported <= '${crimeYear}-12-31'${
-      crimeType ? ` AND stars_category LIKE '%${crimeType}%'` : ''
-    }`,
-    $limit: 100,
-    $order: 'datereported DESC',
-  });
-
-  const mergedCrime = useMemo(() => {
-    return [...(crimeOld.data || []), ...(crimeNew.data || [])].slice(0, 100);
-  }, [crimeOld.data, crimeNew.data]);
-
   const handleAiQuestion = useCallback(async () => {
     if (!aiQuestion.trim()) return;
 
@@ -323,6 +299,11 @@ export default function PoliceAccountability() {
             'Traffic and pedestrian stop data includes race of the subject, included by the city specifically for accountability purposes (originating from the Collaborative Agreement).'
           )}
         </p>
+        <p className="text-xs text-yellow-700 mt-1">
+          This tab focuses on <strong>police behavior</strong> — stop patterns, force used, and officer-involved shootings.
+          Neighborhood-level crime trend data is available in the <strong>Neighborhood Profiles</strong> tab.
+          We do not publish individual incident records as a crime map or ticker, which can amplify fear without accountability context.
+        </p>
       </div>
 
       {/* Navigation Tabs */}
@@ -332,7 +313,6 @@ export default function PoliceAccountability() {
             { id: 'traffic', label: t('police.trafficStops', 'Traffic Stops') },
             { id: 'force', label: t('police.useOfForce', 'Use of Force') },
             { id: 'ois', label: t('police.ois', 'OIS') },
-            { id: 'crime', label: t('police.crimeMap', 'Crime Map') },
             { id: 'question', label: t('police.askQuestion', 'Ask a Question') },
           ].map((tab) => (
             <button
@@ -602,16 +582,19 @@ export default function PoliceAccountability() {
             <DataAttribution source="Use of Force – Subjects" uid="4gu6-tz3f" />
           </DataCard>
 
-          {/* Incident Heatmap */}
+          {/* Incident Map — police use-of-force locations */}
           <DataCard
-            title="Use of Force — Incident Map"
+            title="Where CPD Used Force — Geographic Distribution"
             loading={forceCoordinatesQ.loading}
             error={forceCoordinatesQ.error}
             empty={false}
           >
             <p className="text-xs text-gray-500 italic mb-3">
-              Each dot represents one use-of-force incident with recorded coordinates.
-              Overlapping dots indicate higher density. Scroll the map to zoom; click and drag to pan.
+              Each dot marks the location of a <strong>police use-of-force incident</strong> — where
+              an officer applied physical or mechanical force during an encounter.
+              This is accountability data about <em>police conduct</em>, not a crime map.
+              Concentration in certain neighborhoods reflects patrol patterns and deployment, not resident behavior.
+              Scroll to zoom; click and drag to pan.
             </p>
             <div ref={heatmapRef} style={{ height: 400, borderRadius: 8, zIndex: 0 }} />
             <DataAttribution source={t('police.attributionForce', 'Use of Force')} uid="748b-sht4" />
@@ -705,104 +688,6 @@ export default function PoliceAccountability() {
             <DataAttribution
               source={t('police.attributionOIS', 'PDI Officer-Involved Shootings (legacy)')}
               uid="r6q4-muts"
-            />
-          </DataCard>
-        </div>
-      )}
-
-      {/* Crime Map Section */}
-      {activeSection === 'crime' && (
-        <div className="space-y-6">
-          {/* Note about RMS transition */}
-          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-            <p className="text-sm text-blue-900">
-              {t(
-                'police.crimeNote',
-                'Note: Records Management System transition on 6/2/2024. Data gap between old (k59e-2pvf) and new STARS (7aqy-xrv9) datasets.'
-              )}
-            </p>
-          </div>
-
-          {/* Controls */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('police.year', 'Year')}
-                </label>
-                <select
-                  value={crimeYear}
-                  onChange={(e) => setCrimeYear(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4A6B] focus:border-transparent"
-                >
-                  {[2020, 2021, 2022, 2023, 2024].map((yr) => (
-                    <option key={yr} value={yr}>
-                      {yr}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('police.offenseType', 'Offense Type (optional)')}
-                </label>
-                <input
-                  type="text"
-                  value={crimeType}
-                  onChange={(e) => setCrimeType(e.target.value)}
-                  placeholder={t('police.filterPlaceholder', 'e.g., Assault')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4A6B] focus:border-transparent"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Crime Table */}
-          <DataCard
-            title={t('police.crimeRecords', 'Crime Records')}
-            loading={crimeOld.loading || crimeNew.loading}
-            error={crimeOld.error || crimeNew.error}
-            empty={mergedCrime.length === 0}
-          >
-            {mergedCrime.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-2 px-3 font-semibold text-gray-900">
-                        {t('police.date', 'Date')}
-                      </th>
-                      <th className="text-left py-2 px-3 font-semibold text-gray-900">
-                        {t('police.offense', 'Offense')}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mergedCrime.map((crime: any, idx: number) => (
-                      <tr
-                        key={idx}
-                        className="border-b border-gray-100 hover:bg-gray-50"
-                      >
-                        <td className="py-2 px-3 text-gray-600">
-                          {formatDate(
-                            crime.date_reported || crime.datereported
-                          )}
-                        </td>
-                        <td className="py-2 px-3 text-gray-900">
-                          {crime.offense_type || crime.offense}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <EmptyState message={t('police.noData', 'No data available')} />
-            )}
-            <DataAttribution
-              source={t('police.attributionCrime', 'PDI Crime + STARS')}
-              uid="k59e-2pvf"
             />
           </DataCard>
         </div>
