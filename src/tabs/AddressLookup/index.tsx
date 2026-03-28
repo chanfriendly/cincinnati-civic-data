@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { renderMarkdown } from '../../utils/markdown';
 import { useTranslation } from 'react-i18next';
 import { useSODA } from '../../hooks/useSODA';
 import { useLanguage } from '../../context/LanguageContext';
@@ -515,8 +516,8 @@ export default function AddressLookup() {
               </button>
             </div>
             {aiSummary ? (
-              <div className="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap">
-                {aiSummary}
+              <div className="prose prose-sm max-w-none">
+                {renderMarkdown(aiSummary)}
               </div>
             ) : aiError ? (
               <p className="text-sm text-red-600">{aiError}</p>

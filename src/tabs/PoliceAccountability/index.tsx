@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { renderMarkdown } from '../../utils/markdown';
 import L from 'leaflet';
 import { useTranslation } from 'react-i18next';
 import { useSODA } from '../../hooks/useSODA';
@@ -729,8 +730,8 @@ export default function PoliceAccountability() {
                   <div className="text-sm font-semibold text-green-900 mb-2">
                     {t('police.response', 'Response')}
                   </div>
-                  <div className="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap">
-                    {aiResponse}
+                  <div className="prose prose-sm max-w-none">
+                    {renderMarkdown(aiResponse)}
                   </div>
                 </div>
               )}
