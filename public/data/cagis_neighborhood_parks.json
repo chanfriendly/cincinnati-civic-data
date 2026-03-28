@@ -1,0 +1,198 @@
+{
+  "downtown": {
+    "parkCount": 8,
+    "totalArea": 389327.38
+  },
+  "riversidesedamsville": {
+    "parkCount": 8,
+    "totalArea": 3265158.03
+  },
+  "wintonhills": {
+    "parkCount": 6,
+    "totalArea": 342049.21
+  },
+  "northfairmount": {
+    "parkCount": 3,
+    "totalArea": 304638.6
+  },
+  "mtadams": {
+    "parkCount": 7,
+    "totalArea": 64277.51
+  },
+  "saylerpark": {
+    "parkCount": 13,
+    "totalArea": 1134899.29
+  },
+  "riverside": {
+    "parkCount": 7,
+    "totalArea": 831837.03
+  },
+  "springgrovevillage": {
+    "parkCount": 5,
+    "totalArea": 250503.61
+  },
+  "collegehill": {
+    "parkCount": 16,
+    "totalArea": 1487208.64
+  },
+  "eastpricehill": {
+    "parkCount": 15,
+    "totalArea": 704647.26
+  },
+  "hydepark": {
+    "parkCount": 15,
+    "totalArea": 640967.01
+  },
+  "mtairy": {
+    "parkCount": 6,
+    "totalArea": 2309873.74
+  },
+  "oakley": {
+    "parkCount": 5,
+    "totalArea": 189282.94
+  },
+  "hartwell": {
+    "parkCount": 24,
+    "totalArea": 848504.53
+  },
+  "overtherhine": {
+    "parkCount": 11,
+    "totalArea": 97218.53
+  },
+  "madisonville": {
+    "parkCount": 36,
+    "totalArea": 1530809.4
+  },
+  "california": {
+    "parkCount": 8,
+    "totalArea": 2007828.59
+  },
+  "clifton": {
+    "parkCount": 9,
+    "totalArea": 801507.86
+  },
+  "pleasantridge": {
+    "parkCount": 12,
+    "totalArea": 2206825.83
+  },
+  "evanston": {
+    "parkCount": 8,
+    "totalArea": 463343.97
+  },
+  "northavondale": {
+    "parkCount": 11,
+    "totalArea": 921628.28
+  },
+  "carthage": {
+    "parkCount": 9,
+    "totalArea": 1929050.55
+  },
+  "mtlookout": {
+    "parkCount": 2,
+    "totalArea": 2261525.82
+  },
+  "mtauburn": {
+    "parkCount": 15,
+    "totalArea": 438341.13
+  },
+  "rollhill": {
+    "parkCount": 6,
+    "totalArea": 396507.07
+  },
+  "kennedyheights": {
+    "parkCount": 11,
+    "totalArea": 730800.34
+  },
+  "westend": {
+    "parkCount": 13,
+    "totalArea": 298975.79
+  },
+  "pendleton": {
+    "parkCount": 7,
+    "totalArea": 57143.71
+  },
+  "westwood": {
+    "parkCount": 12,
+    "totalArea": 11210722.57
+  },
+  "millvale": {
+    "parkCount": 2,
+    "totalArea": 34397.52
+  },
+  "southfairmount": {
+    "parkCount": 3,
+    "totalArea": 237444.44
+  },
+  "walnuthills": {
+    "parkCount": 10,
+    "totalArea": 81633.05
+  },
+  "campwashington": {
+    "parkCount": 3,
+    "totalArea": 46132.27
+  },
+  "linwood": {
+    "parkCount": 12,
+    "totalArea": 4037948.21
+  },
+  "cuf": {
+    "parkCount": 13,
+    "totalArea": 1152878.68
+  },
+  "roselawn": {
+    "parkCount": 5,
+    "totalArea": 1201515.06
+  },
+  "avondale": {
+    "parkCount": 18,
+    "totalArea": 912516.33
+  },
+  "paddockhills": {
+    "parkCount": 4,
+    "totalArea": 245435.07
+  },
+  "westpricehill": {
+    "parkCount": 9,
+    "totalArea": 1341840.61
+  },
+  "northside": {
+    "parkCount": 9,
+    "totalArea": 1497831.42
+  },
+  "eastwalnuthills": {
+    "parkCount": 7,
+    "totalArea": 351373.1
+  },
+  "mtwashington": {
+    "parkCount": 11,
+    "totalArea": 2013936.68
+  },
+  "eastend": {
+    "parkCount": 7,
+    "totalArea": 808416.25
+  },
+  "columbiatusculum": {
+    "parkCount": 1,
+    "totalArea": 674958.53
+  },
+  "eastwestwood": {
+    "parkCount": 2,
+    "totalArea": 455482.96
+  },
+  "bondhill": {
+    "parkCount": 3,
+    "totalArea": 63987.72
+  },
+  "lowerpricehillqueensgate": {
+    "parkCount": 3,
+    "totalArea": 37987.0
+  },
+  "corryville": {
+    "parkCount": 3,
+    "totalArea": 25913.09
+  },
+  "southcumminsville": {
+    "parkCount": 1,
+    "totalArea": 83504.95
+  }
+}
