@@ -36,7 +36,9 @@ interface CrimeRecord {
   offense?: string;
   date_reported?: string;
   datereported?: string; // STARS dataset field name
-  location?: { latitude: number; longitude: number };
+  // Socrata returns lat/lng as top-level fields (not nested under "location")
+  latitude_x?: string | number;
+  longitude_x?: string | number;
   address?: string;
 }
 
@@ -373,11 +375,14 @@ export default function AddressLookup() {
       .openPopup();
 
     // Add crime markers with privacy offset
+    // Socrata returns coordinates as latitude_x / longitude_x at the top level
     mergedCrime.forEach((crime) => {
-      if (crime.location?.latitude && crime.location?.longitude) {
+      const clat = parseFloat(String(crime.latitude_x ?? ''));
+      const clng = parseFloat(String(crime.longitude_x ?? ''));
+      if (!isNaN(clat) && !isNaN(clng) && clat !== 0 && clng !== 0) {
         const offset = (Math.random() - 0.5) * 0.002;
         L.circleMarker(
-          [crime.location.latitude + offset, crime.location.longitude + offset],
+          [clat + offset, clng + offset],
           {
             radius: 5,
             fillColor: '#C8861A',

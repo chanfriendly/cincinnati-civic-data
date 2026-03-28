@@ -122,6 +122,15 @@ const DisplacementIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h
   </svg>
 )
 
+const LeadIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+      d="M12 2C12 2 5 10 5 14a7 7 0 0014 0c0-4-7-12-7-12z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+      d="M12 17v.01" />
+  </svg>
+)
+
 const AccessibilityIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <circle cx="12" cy="4" r="1.5" strokeWidth={2} />
@@ -142,6 +151,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
     { id: 'explorer', icon: <ExplorerIcon />, labelKey: 'nav.explorer' },
     { id: 'displacement', icon: <DisplacementIcon />, labelKey: 'nav.displacement' },
     { id: 'owner', icon: <OwnerIcon />, labelKey: 'nav.owner' },
+    { id: 'lead', icon: <LeadIcon />, labelKey: 'nav.lead' },
     { id: 'accessibility', icon: <AccessibilityIcon />, labelKey: 'nav.accessibility' },
     { id: 'roadmap', icon: <RoadmapIcon />, labelKey: 'nav.roadmap' },
   ]

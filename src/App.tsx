@@ -14,6 +14,7 @@ const Roadmap = React.lazy(() => import('./tabs/Roadmap'))
 const DisplacementTab = React.lazy(() => import('./tabs/Displacement'))
 const OwnerActivity = React.lazy(() => import('./tabs/OwnerActivity'))
 const Accessibility = React.lazy(() => import('./tabs/Accessibility'))
+const LeadSafety = React.lazy(() => import('./tabs/LeadSafety'))
 
 const TabLoadingFallback: React.FC = () => (
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -54,6 +55,12 @@ const AppContent: React.FC = () => {
         return (
           <Suspense fallback={<TabLoadingFallback />}>
             <Accessibility />
+          </Suspense>
+        )
+      case 'lead':
+        return (
+          <Suspense fallback={<TabLoadingFallback />}>
+            <LeadSafety />
           </Suspense>
         )
       case 'roadmap':

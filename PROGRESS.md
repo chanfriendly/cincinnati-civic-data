@@ -6,6 +6,53 @@
 
 ## Session Log
 
+### Session 10 — Phase 2 Start: Lead Safety Tab (March 2026)
+
+**Goal:** Begin Phase 2 with the highest-urgency civic gap — lead service line safety. Build a new tab showing GCWW lead service line inventory by neighborhood, replacement program activity, and actionable resident guidance.
+
+**New tab: Lead Safety (`src/tabs/LeadSafety/index.tsx`)**
+
+Architecture follows the Accessibility tab pattern: pre-built static JSON for the expensive inventory data, live SODA query for the replacement activity data, graceful degradation if the static file hasn't been generated yet.
+
+**Files created:**
+- `src/tabs/LeadSafety/index.tsx` — full tab component
+- `public/data/lead_service_lines.json` — placeholder `{}` until `build_lead.py` is run
+- `scripts/build_lead.py` — pre-compute script (same pattern as `build_disability.py`)
+
+**Files modified:**
+- `src/types/index.ts` — added `'lead'` to `TabId`; added `NeighborhoodLeadStats` interface
+- `src/utils/api.ts` — added `fetchNeighborhoodLeadStats()`, `fetchLeadReplacements()`, `LeadReplacementRecord` interface
+- `src/App.tsx` — added lazy import and `case 'lead'` to render switch
+- `src/components/layout/TabNav.tsx` — added `LeadIcon` and lead tab entry (positioned before Accessibility)
+- `src/i18n/en.json`, `es.json` — added `nav.lead` key
+
+**What the tab shows:**
+1. **Urgency Banner** — city-wide stats (33,449 lines, ~220 children/year, 36.8% testing rate) framed as a public health call to action
+2. **Service Line Inventory card** — from pre-built JSON: lead/unknown/copper/galvanized/replaced counts with visual bar breakdown; risk badge (High/Elevated/Moderate/Lower) based on % lead+unknown
+3. **Replacement Activity card** — live SODA query on `ntfu-vnkd`; shows count + year-by-year bar chart of completed replacements
+4. **What You Can Do card** — address lookup link, free testing kits, replacement program info, interim safety tips, renters' rights
+5. **City-wide Comparison** — horizontal bar chart of all neighborhoods ranked by % lead+unknown (only renders if pre-built JSON is populated)
+6. **Data Gaps card** — transparent about what's missing (blood lead case data by neighborhood, interior plumbing, ArcGIS inventory vs. confirmed inspections)
+
+**Data sources used:**
+- `ntfu-vnkd` — GCWW Private-Side One-off Lead Service Line Replacements (live, queryable from browser)
+- `/data/lead_service_lines.json` — pre-built from `scripts/build_lead.py`
+
+**Critical: field names for `ntfu-vnkd` are NOT yet confirmed** — the SODA API is blocked from the Cowork sandbox. The `build_lead.py` script will discover and document actual column names on first local run. The `fetchLeadReplacements()` function uses `neighborhood` and `date_completed` as field name guesses — these must be verified against the live dataset.
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+**Pending for this tab:**
+- [ ] Run `scripts/build_lead.py` locally to generate `public/data/lead_service_lines.json`
+- [ ] Verify `ntfu-vnkd` field names (neighborhood field, date field) from live data
+- [ ] If HTML scraping fails (mygcww.org may block scripts), update `build_lead.py` to use ArcGIS feature service from GCWW map (`gcww.maps.arcgis.com`)
+- [ ] Once fields are confirmed, update `fetchLeadReplacements()` if field names differ from guesses
+
+**Address Lookup "crime" label issue (flagged by user):**
+The Address Lookup map header says "location and nearby crime" but no crime overlay is shown. This was flagged during this session. Separate fix needed — either: (a) add a crime radius overlay to the map, or (b) rename the section to remove the "crime" mention. The Session 9 removal of the crime tab was in Police Accountability, not Address Lookup. See PROGRESS.md Pending Tasks for the fix.
+
+---
+
 ### Session 9 — Phase 1 Completion: Parks Integration + Police Accountability Audit (March 2026)
 
 **Goal:** Complete Phase 1 (parks JSON integration), and audit/fix the Police Accountability tab against the principles we published in the Roadmap.
@@ -325,6 +372,9 @@ Census tracts don't align with Cincinnati neighborhood statistical areas (SNAs).
 ### High Priority
 - [x] **Verify unconfirmed field names (Tab 2)** — All three confirmed correct `neighborhood` (UPPER CASE). Date field for Fire & EMS is `create_time_incident`. PLAP date fields are `sr_recd_date`/`enf_recd_date` (no `date` field). Fixed in Session 3.
 - [x] **Run `scripts/build_disability.py` locally** — Fixed and run. 47 neighborhoods in `public/data/neighborhood_disability.json`. Committed and deployed.
+- [ ] **Run `scripts/build_lead.py` locally** — Generates `public/data/lead_service_lines.json`. Script tries GCWW neighborhood stats page first, falls back to SODA replacement count. Field names in `ntfu-vnkd` must be verified on first run.
+- [ ] **Verify `ntfu-vnkd` field names** — The `fetchLeadReplacements()` function guesses `neighborhood` and `date_completed`. Confirm actual field names from live dataset and update if different.
+- [ ] **Fix Address Lookup map label** — Map section says "location and nearby crime" but no crime is shown on the map. Either add a nearby-crime radius overlay or rename the section. Needs investigation of `src/tabs/AddressLookup/index.tsx`.
 - [ ] **Live test CAGIS cards (Tab 1)** — Test with a Downtown address (e.g., 525 Vine St) and a Hyde Park address. Verify zoning, flood, historic, and parks all return data. Check browser Network tab for any 4xx/5xx.
 - [ ] **Live test Park Access + Flood Risk (Tab 4)** — Enable both dimensions; wait 60s; check scores appear. If blank, open Network tab and look for failed ArcGIS or FEMA requests.
 
