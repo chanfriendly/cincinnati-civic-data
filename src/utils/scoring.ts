@@ -65,6 +65,12 @@ export function getRawValue(
     // Food Access: % of population in a food desert tract (USDA FARA LILA definition).
     // Higher % = worse food access → higherIsBetter: false.
     case 'food': return metrics.foodDesertPct;
+    // Environmental Justice: EPA EJScreen 2023 composite pollution burden index.
+    // Population-weighted average of national percentile ranks for:
+    //   air toxics cancer risk (30%), diesel PM (20%), traffic proximity (20%),
+    //   Superfund proximity (15%), hazardous waste proximity (15%).
+    // Higher index = greater pollution burden → higherIsBetter: false.
+    case 'ej': return metrics.ejPollutionIndex;
     case 'schools': return undefined;
     default: return undefined;
   }
@@ -102,7 +108,7 @@ export function computeScores(
     const dimensionScores: Record<DimensionId, number | null> = {
       affordability: null, income: null, safety: null,
       transit: null, investment: null, blight: null,
-      parks: null, flood: null, food: null, schools: null,
+      parks: null, flood: null, food: null, ej: null, schools: null,
     };
 
     if (enabledDims.length === 0) {

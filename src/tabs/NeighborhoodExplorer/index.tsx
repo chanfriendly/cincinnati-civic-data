@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../context/LanguageContext';
 import { computeScores } from '../../utils/scoring';
-import { fetchSODA, distanceMiles, normalizeNeighborhoodName, calculateCentroid, fetchNearbyParks, fetchFloodZone, fetchFARAHamilton } from '../../utils/api';
+import { fetchSODA, distanceMiles, normalizeNeighborhoodName, calculateCentroid, fetchNearbyParks, fetchFloodZone, fetchFARAHamilton, fetchNeighborhoodEJStats } from '../../utils/api';
 import type { Dimension, NeighborhoodRawMetrics, DimensionId } from '../../types';
 import DimensionPanel from './DimensionPanel';
 import ChoroplethMap from './ChoroplethMap';
@@ -102,6 +102,16 @@ const INITIAL_DIMENSIONS: Dimension[] = [
     labelKey: 'explorer.dim.food.label',
     descriptionKey: 'explorer.dim.food.description',
     methodology: 'Source: USDA Economic Research Service — Food Access Research Atlas 2019 (FARA). Metric: % of neighborhood population living in a Low Income + Low Access (LILA) census tract, using the urban definition (supermarket more than 1 mile away). Lower food desert exposure = higher score. Scores are min-max normalized across all Cincinnati neighborhoods. LILA tracts signal that residents likely lack affordable, healthy food nearby — a key equity indicator.',
+    enabled: false,
+    weight: 3,
+    available: true,
+    higherIsBetter: false,
+  },
+  {
+    id: 'ej',
+    labelKey: 'explorer.dim.ej.label',
+    descriptionKey: 'explorer.dim.ej.description',
+    methodology: 'Source: EPA EJScreen 2023 (tract-level CSV, preserved by Public Environmental Data Partners after EPA took the REST API offline in February 2025). Metric: population-weighted composite of five national percentile ranks — air toxics cancer risk (30%), diesel PM (20%), traffic proximity (20%), Superfund site proximity (15%), hazardous waste facility proximity (15%). Lower composite = cleaner environment = higher score. Scores are min-max normalized across Cincinnati neighborhoods. Note: percentiles are relative to the national distribution, not just Cincinnati.',
     enabled: false,
     weight: 3,
     available: true,
@@ -735,6 +745,42 @@ export default function NeighborhoodExplorer() {
     };
     loadFood();
   }, [geojson]);
+
+  // ── EPA EJScreen: Environmental justice indicators per neighborhood ─────────
+  // Loads the pre-built static JSON produced by scripts/build_ejscreen.py.
+  // If the file is empty ({}) — i.e., the script hasn't been run yet — the EJ
+  // dimension simply has no data and the Explorer degrades gracefully (the
+  // dimension can still be toggled but all neighborhoods will be gray).
+  useEffect(() => {
+    const loadEJ = async () => {
+      try {
+        const ejMap = await fetchNeighborhoodEJStats();
+        if (ejMap.size === 0) return; // build script not yet run
+
+        setRawDataMap((prev) => {
+          const updated = new Map(prev);
+          for (const [key, stats] of ejMap) {
+            const existing = updated.get(key) ?? {};
+            updated.set(key, {
+              ...existing,
+              ejPollutionIndex:   stats.ejIndex    ?? undefined,
+              ejCancerPctile:     stats.cancerPctile    ?? undefined,
+              ejDieselPctile:     stats.dieselPctile    ?? undefined,
+              ejTrafficPctile:    stats.trafficPctile   ?? undefined,
+              ejSuperfundPctile:  stats.superfundPctile ?? undefined,
+              ejWastePctile:      stats.wastePctile     ?? undefined,
+              ejWastewaterPctile: stats.wastewaterPctile ?? undefined,
+              ejPm25Pctile:       stats.pm25Pctile      ?? undefined,
+            });
+          }
+          return updated;
+        });
+      } catch (err) {
+        console.warn('EJScreen data not available (run scripts/build_ejscreen.py):', err);
+      }
+    };
+    loadEJ();
+  }, []); // static file — no dependency on geojson
 
   // Compute scores — filter out blank or invalid neighborhood names that can
   // appear when GeoJSON features have empty/null NEIGH properties.

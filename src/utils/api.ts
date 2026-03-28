@@ -1,4 +1,4 @@
-import type { SODAQueryParams, OHGOIncident, OHGOCamera, OHGOConstruction, NeighborhoodDisabilityStats, NeighborhoodLeadStats } from '../types';
+import type { SODAQueryParams, OHGOIncident, OHGOCamera, OHGOConstruction, NeighborhoodDisabilityStats, NeighborhoodLeadStats, NeighborhoodEJStats } from '../types';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -801,4 +801,33 @@ export async function fetchLeadReplacements(
   } catch {
     return [];
   }
+}
+
+// ─── EPA EJScreen ─────────────────────────────────────────────────────────────
+
+/**
+ * Pre-computed EPA EJScreen 2023 environmental justice indicators per neighborhood.
+ * Built by `scripts/build_ejscreen.py` from the EJScreen 2023 tract-level CSV
+ * (preserved by PEDP after EPA took down the REST API in February 2025).
+ *
+ * Returns {} if the build script hasn't been run yet — the Explorer degrades
+ * gracefully (EJ dimension shows as unavailable).
+ */
+let _ejCachePromise: Promise<Map<string, NeighborhoodEJStats>> | null = null;
+
+export async function fetchNeighborhoodEJStats(): Promise<Map<string, NeighborhoodEJStats>> {
+  if (_ejCachePromise) return _ejCachePromise;
+
+  _ejCachePromise = (async () => {
+    const resp = await fetch('/data/neighborhood_ejscreen.json');
+    if (!resp.ok) throw new Error(`EJScreen data file not found: HTTP ${resp.status}`);
+    const raw: Record<string, NeighborhoodEJStats> = await resp.json();
+    const result = new Map<string, NeighborhoodEJStats>();
+    for (const [key, value] of Object.entries(raw)) {
+      result.set(key, value);
+    }
+    return result;
+  })();
+
+  return _ejCachePromise;
 }

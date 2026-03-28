@@ -6,6 +6,43 @@
 
 ## Session Log
 
+### Session 11 — Phase 2 Continued: EJScreen Environmental Justice Dimension (March 2026)
+
+**Goal:** Add EPA EJScreen environmental justice indicators as a new scored dimension in the Neighborhood Explorer.
+
+**Key discovery:** EPA EJScreen REST API was taken offline February 5, 2025 (Trump administration rollback). The CLAUDE.md reference to `ejscreen.epa.gov/mapper/ejscreenRESTbroker.aspx` is no longer valid. Data is preserved by [PEDP](https://screening-tools.com) and [Zenodo](https://zenodo.org/records/14767363) as a bulk CSV download.
+
+**Architecture:** Same pre-build pattern as parks/census. `scripts/build_ejscreen.py` downloads the EJScreen 2023 tract-level CSV, filters to Hamilton County (FIPS 39061), maps tracts to neighborhoods using the same nearest-centroid logic as the ACS loader, population-weights the percentile indicators, and writes `public/data/neighborhood_ejscreen.json`.
+
+**Composite EJ index:** Weighted average of 5 national percentile ranks:
+- Air toxics cancer risk (30%)
+- Diesel PM (20%)
+- Traffic proximity (20%)
+- Superfund site proximity (15%)
+- Hazardous waste facility proximity (15%)
+
+Higher index = greater pollution burden = lower Explorer score (`higherIsBetter: false`).
+
+**Files created:**
+- `scripts/build_ejscreen.py` — download, filter, aggregate, write JSON
+- `public/data/neighborhood_ejscreen.json` — placeholder `{}` until script runs
+
+**Files modified:**
+- `src/types/index.ts` — added `'ej'` to DimensionId; added EJ fields to NeighborhoodRawMetrics; added NeighborhoodEJStats interface
+- `src/utils/api.ts` — added `fetchNeighborhoodEJStats()` with cache
+- `src/utils/scoring.ts` — added `ej` case to getRawValue(); added `ej: null` to dimensionScores initializer
+- `src/tabs/NeighborhoodExplorer/index.tsx` — added EJ dimension definition; imported fetchNeighborhoodEJStats; added loadEJ useEffect
+- `src/i18n/en.json`, `es.json` — added `explorer.dim.ej.label` and `.description`
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+**Pending:**
+- [ ] Run `python3 scripts/build_ejscreen.py` locally. If automated download fails, manually download the EJScreen 2023 tract CSV from https://screening-tools.com/epa-ejscreen or https://zenodo.org/records/14767363, save as `scripts/data/ejscreen_tracts.csv`, then re-run.
+- [ ] Verify plausibility: Mill Creek corridor (Camp Washington, Lower Price Hill) should rank high on ejIndex; Hyde Park/O'Bryonville should rank low.
+- [ ] Commit `public/data/neighborhood_ejscreen.json` and push to Vercel.
+
+---
+
 ### Session 10 — Phase 2 Start: Lead Safety Tab (March 2026)
 
 **Goal:** Begin Phase 2 with the highest-urgency civic gap — lead service line safety. Build a new tab showing GCWW lead service line inventory by neighborhood, replacement program activity, and actionable resident guidance.

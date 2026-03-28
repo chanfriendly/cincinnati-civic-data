@@ -153,6 +153,10 @@
         "label": "Food Access",
         "description": "% of neighborhood population living in a food desert tract (low income + supermarket >1 mile away). Source: USDA Food Access Research Atlas 2019."
       },
+      "ej": {
+        "label": "Air & Environmental",
+        "description": "Composite pollution burden score from EPA EJScreen 2023: weighted average of national percentile ranks for air toxics cancer risk (30%), diesel PM (20%), traffic proximity (20%), Superfund site proximity (15%), and hazardous waste facility proximity (15%). Higher national percentile = greater exposure. Source: EPA EJScreen 2023 (preserved by Public Environmental Data Partners)."
+      },
       "schools": {
         "label": "School Quality",
         "description": "CPS school performance data is not available via public API. For school information, visit the Ohio Dept. of Education report card."
