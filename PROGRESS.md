@@ -38,18 +38,38 @@ Architecture follows the Accessibility tab pattern: pre-built static JSON for th
 - `ntfu-vnkd` — GCWW Private-Side One-off Lead Service Line Replacements (live, queryable from browser)
 - `/data/lead_service_lines.json` — pre-built from `scripts/build_lead.py`
 
-**Critical: field names for `ntfu-vnkd` are NOT yet confirmed** — the SODA API is blocked from the Cowork sandbox. The `build_lead.py` script will discover and document actual column names on first local run. The `fetchLeadReplacements()` function uses `neighborhood` and `date_completed` as field name guesses — these must be verified against the live dataset.
+**Dataset confirmed (2026-03-28 live test):**
+- `ntfu-vnkd` — returns 403 (authentication required). Do not use.
+- `b4xq-u3su` — publicly accessible. Confirmed fields:
+  `address, status, emergency, replacement, adminarea, municipality, privatematerialtype, publicmaterialtype, publicreplacedate, gis_branchnumber`
+- Neighborhood field: **`adminarea`** (case TBD — use `upper()` for WHERE clauses)
+- Date field: **`publicreplacedate`** (ISO 8601, public-side replacement date)
+- Material field: **`privatematerialtype`** (Lead, Copper, Unknown, Galvanized, etc.)
+- Strategy 1 (HTML scrape) failed — mygcww.org returned unstructured HTML. Strategy 2 (SODA fallback) found `b4xq-u3su` fields but no neighborhood field initially. Updated script now uses `adminarea` and fetches full inventory grouped by `adminarea + privatematerialtype`.
 
 **TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
 
-**Pending for this tab:**
-- [ ] Run `scripts/build_lead.py` locally to generate `public/data/lead_service_lines.json`
-- [ ] Verify `ntfu-vnkd` field names (neighborhood field, date field) from live data
-- [ ] If HTML scraping fails (mygcww.org may block scripts), update `build_lead.py` to use ArcGIS feature service from GCWW map (`gcww.maps.arcgis.com`)
-- [ ] Once fields are confirmed, update `fetchLeadReplacements()` if field names differ from guesses
+**Session 10 follow-up (continued in Session 11):**
 
-**Address Lookup "crime" label issue (flagged by user):**
-The Address Lookup map header says "location and nearby crime" but no crime overlay is shown. This was flagged during this session. Separate fix needed — either: (a) add a crime radius overlay to the map, or (b) rename the section to remove the "crime" mention. The Session 9 removal of the crime tab was in Police Accountability, not Address Lookup. See PROGRESS.md Pending Tasks for the fix.
+`build_lead.py` required two fixes before producing correct data:
+1. Dataset `ntfu-vnkd` returns 403. Switched to `b4xq-u3su` (publicly accessible).
+2. Material types are chemical codes (PB = lead, CU = copper), not English words. Original `is_replaced()` fired on any record with a `publicreplacedate`, misclassifying all copper lines as "replaced." Replaced with `classify_record()` using explicit code sets and status-aware logic.
+
+**Final output (2026-03-28 run):**
+- 71 neighborhoods, 6,448 records
+- 1,142 active lead lines | 67 replaced | 5,216 copper/safe | 22 unknown | 1 galvanized
+- Hotspots: West Price Hill (159), Avondale (89), East Price Hill (77), Hyde Park (62)
+- Worst % concentration: Lower Price Hill 47%, West Price Hill 36%, Cheviot 21%
+
+`adminarea` values are SNA neighborhood names in ALL CAPS. Script title-cases them with CUF as a special case (acronym). All neighborhood keys normalize correctly via `stripNeighborhoodName()`.
+
+**`LeadSafety/index.tsx` framing updates:**
+- "Service Line Inventory" → "Replacement Program Status" with scope caveat (covers ~6,448 program lines, not city-wide 33,449 total)
+- StatRow labels clarified: "Active lead lines (pending replacement)", "Lead lines successfully replaced"
+- Attribution uid corrected to `b4xq-u3su`
+
+**Address Lookup crime marker bug fixed (committed in Session 10):**
+Map code was checking `crime.location?.latitude` but Socrata returns `latitude_x`/`longitude_x` as top-level fields. Fixed in `src/tabs/AddressLookup/index.tsx`; committed in commit `108eab9`.
 
 ---
 
@@ -372,8 +392,8 @@ Census tracts don't align with Cincinnati neighborhood statistical areas (SNAs).
 ### High Priority
 - [x] **Verify unconfirmed field names (Tab 2)** — All three confirmed correct `neighborhood` (UPPER CASE). Date field for Fire & EMS is `create_time_incident`. PLAP date fields are `sr_recd_date`/`enf_recd_date` (no `date` field). Fixed in Session 3.
 - [x] **Run `scripts/build_disability.py` locally** — Fixed and run. 47 neighborhoods in `public/data/neighborhood_disability.json`. Committed and deployed.
-- [ ] **Run `scripts/build_lead.py` locally** — Generates `public/data/lead_service_lines.json`. Script tries GCWW neighborhood stats page first, falls back to SODA replacement count. Field names in `ntfu-vnkd` must be verified on first run.
-- [ ] **Verify `ntfu-vnkd` field names** — The `fetchLeadReplacements()` function guesses `neighborhood` and `date_completed`. Confirm actual field names from live dataset and update if different.
+- [ ] **Run updated `scripts/build_lead.py` locally** — Uses confirmed `b4xq-u3su` dataset with `adminarea` + `privatematerialtype` grouping. Check that `adminarea` values match SNA neighborhood names — if not, update the display_name mapping in the script.
+- [x] **Confirmed `b4xq-u3su` field names** — `adminarea` (neighborhood), `privatematerialtype` (material), `publicreplacedate` (date), `status`, `replacement`. Updated `api.ts` and build script accordingly.
 - [ ] **Fix Address Lookup map label** — Map section says "location and nearby crime" but no crime is shown on the map. Either add a nearby-crime radius overlay or rename the section. Needs investigation of `src/tabs/AddressLookup/index.tsx`.
 - [ ] **Live test CAGIS cards (Tab 1)** — Test with a Downtown address (e.g., 525 Vine St) and a Hyde Park address. Verify zoning, flood, historic, and parks all return data. Check browser Network tab for any 4xx/5xx.
 - [ ] **Live test Park Access + Flood Risk (Tab 4)** — Enable both dimensions; wait 60s; check scores appear. If blank, open Network tab and look for failed ArcGIS or FEMA requests.

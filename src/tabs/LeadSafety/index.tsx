@@ -144,7 +144,18 @@ function UrgencyBanner() {
   );
 }
 
-/** Inventory section — loaded from pre-built JSON */
+/**
+ * Replacement Program Status card — loaded from pre-built JSON.
+ *
+ * IMPORTANT: The underlying dataset (b4xq-u3su) records ~6,400 service lines
+ * that GCWW has formally evaluated and enrolled in the replacement program.
+ * It is NOT the full city-wide inventory of all ~33,449 lead/unknown lines.
+ * Lines outside the program do not appear here. This scope is disclosed in the UI.
+ *
+ * Material codes: PB = lead, CU = copper, GS = galvanized, LDNR = lead-do-not-replace.
+ * "replaced" specifically means: a lead (PB/LDNR) line with status='Complete'.
+ * Copper lines with 'Complete' status count under 'copper', not 'replaced'.
+ */
 function InventoryCard({ neighborhood }: { neighborhood: string }) {
   const [stats, setStats] = useState<NeighborhoodLeadStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -205,60 +216,73 @@ function InventoryCard({ neighborhood }: { neighborhood: string }) {
 
   return (
     <DataCard
-      title="Service Line Inventory"
+      title="Replacement Program Status"
       loading={loading}
       error={error}
-      attribution={{ datasetName: 'GCWW Lead Service Line Inventory', lastUpdated: stats?.asOf ?? null }}
+      attribution={{ datasetName: 'GCWW Lead Service Line Replacement Program', lastUpdated: stats?.asOf ?? null, uid: 'b4xq-u3su' }}
     >
       {stats === null && !loading ? (
-        <p className="text-sm text-gray-500">No inventory data found for {neighborhood}.</p>
+        <p className="text-sm text-gray-500">
+          No program data found for {neighborhood} — this neighborhood may not yet have
+          lines enrolled in GCWW's formal replacement program.
+        </p>
       ) : stats ? (
         <div className="space-y-2">
-          {/* Risk badge */}
-          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold mb-3 ${riskColor(leadOrUnknown, stats.total)}`}>
-            <span>{riskLabel(leadOrUnknown, stats.total)}</span>
-            <span className="font-normal opacity-75">·</span>
-            <span>{pct(leadOrUnknown, stats.total)} of lines are lead or unknown</span>
+          {/* Scope caveat — always visible */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-xs text-blue-900 mb-3">
+            <strong>Scope:</strong> This shows {neighborhood}'s {stats.total.toLocaleString()} service lines
+            enrolled in GCWW's replacement program — not all lines in the neighborhood.
+            Cincinnati's full inventory of ~33,449 lead/unknown lines is not available
+            on the public open data portal.
           </div>
+
+          {/* Risk badge — only meaningful if there are active lead lines */}
+          {stats.lead + stats.unknown > 0 && (
+            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold mb-2 ${riskColor(leadOrUnknown, stats.total)}`}>
+              <span>{riskLabel(leadOrUnknown, stats.total)}</span>
+              <span className="font-normal opacity-75">·</span>
+              <span>{pct(leadOrUnknown, stats.total)} of program lines still active lead</span>
+            </div>
+          )}
 
           {/* Breakdown */}
           <StatRow
-            label="Lead service lines"
+            label="Active lead lines (pending replacement)"
             value={stats.lead}
             barWidth={stats.total ? (stats.lead / stats.total) * 100 : 0}
             barColor="bg-red-500"
-            note="Confirmed lead material — replacement is a priority"
+            note="PB material + not yet replaced — enrolled in program, awaiting action"
           />
           <StatRow
             label="Unknown material"
             value={stats.unknown}
             barWidth={stats.total ? (stats.unknown / stats.total) * 100 : 0}
             barColor="bg-orange-400"
-            note="Material unconfirmed — treated as potentially lead"
+            note="No material code recorded — treated as potentially lead"
           />
           <StatRow
             label="Galvanized steel"
             value={stats.galvanized}
             barWidth={stats.total ? (stats.galvanized / stats.total) * 100 : 0}
             barColor="bg-yellow-400"
-            note="Corrosion concern; may have been connected to a lead line"
+            note="Corrosion concern; often co-located with lead connections"
           />
           <StatRow
-            label="Copper or safe material"
+            label="Copper / confirmed safe"
             value={stats.copper}
             barWidth={stats.total ? (stats.copper / stats.total) * 100 : 0}
             barColor="bg-green-500"
-            note="Confirmed non-lead material"
+            note="CU, brass, or other non-lead material — confirmed by GCWW inspection"
           />
           <StatRow
-            label="Already replaced"
+            label="Lead lines successfully replaced"
             value={stats.replaced}
             barWidth={stats.total ? (stats.replaced / stats.total) * 100 : 0}
             barColor="bg-blue-500"
-            note="Private-side replacement completed through GCWW program"
+            note="PB lines with status='Complete' — lead is gone from these addresses"
           />
           <div className="pt-2 border-t border-gray-100 flex justify-between items-center">
-            <span className="text-sm text-gray-500">Total service lines</span>
+            <span className="text-sm text-gray-500">Lines in program (this neighborhood)</span>
             <span className="text-sm font-bold text-[#1A4A6B]">{stats.total.toLocaleString()}</span>
           </div>
         </div>
@@ -282,12 +306,11 @@ function ReplacementActivityCard({ neighborhood }: { neighborhood: string }) {
       .finally(() => setLoading(false));
   }, [neighborhood]);
 
-  // Group by year for chart
+  // Group by year for chart — use confirmed field publicreplacedate
   const yearData = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const r of records) {
-      // Try to parse year from date_completed — field name unconfirmed until live test
-      const raw = r.date_completed ?? '';
+      const raw = r.publicreplacedate ?? '';
       const year = raw.slice(0, 4);
       if (/^\d{4}$/.test(year)) {
         counts[year] = (counts[year] ?? 0) + 1;
@@ -313,11 +336,16 @@ function ReplacementActivityCard({ neighborhood }: { neighborhood: string }) {
     >
       {total === 0 && !loading ? (
         <div className="text-sm text-gray-500 space-y-1">
-          <p>No replacement records found for {neighborhood}.</p>
+          <p>No replacement records with a completion date found for {neighborhood}.</p>
           <p className="text-xs text-gray-400">
-            This may mean the dataset has no records matching this neighborhood name, or that
-            the live query returned an unexpected field format. Field names in this dataset
-            have not yet been confirmed through live testing.
+            This may mean no public-side replacements have been recorded for this neighborhood yet,
+            or the neighborhood name in the <code>adminarea</code> field doesn't match exactly.
+            Try viewing the full dataset at{' '}
+            <a href="https://data.cincinnati-oh.gov/dataset/GCWW-Private-Side-One-off-Lead-Service-Line-Replac/b4xq-u3su"
+              target="_blank" rel="noopener noreferrer" className="underline text-[#1A4A6B]">
+              data.cincinnati-oh.gov
+            </a>{' '}
+            to verify the adminarea name format.
           </p>
         </div>
       ) : (

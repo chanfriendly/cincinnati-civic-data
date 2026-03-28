@@ -1,1 +1,712 @@
-{}
+{
+  "andersontownship": {
+    "name": "Anderson Township",
+    "total": 11,
+    "lead": 1,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 10,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "arlingtonheights": {
+    "name": "Arlington Heights",
+    "total": 6,
+    "lead": 1,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 5,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "avondale": {
+    "name": "Avondale",
+    "total": 394,
+    "lead": 89,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 302,
+    "replaced": 3,
+    "asOf": "2026-03-28"
+  },
+  "blueash": {
+    "name": "Blue Ash",
+    "total": 2,
+    "lead": 0,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 2,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "bondhill": {
+    "name": "Bond Hill",
+    "total": 91,
+    "lead": 21,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 68,
+    "replaced": 2,
+    "asOf": "2026-03-28"
+  },
+  "california": {
+    "name": "California",
+    "total": 7,
+    "lead": 0,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 7,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "campwashington": {
+    "name": "Camp Washington",
+    "total": 56,
+    "lead": 6,
+    "unknown": 4,
+    "galvanized": 0,
+    "copper": 45,
+    "replaced": 1,
+    "asOf": "2026-03-28"
+  },
+  "carthage": {
+    "name": "Carthage",
+    "total": 26,
+    "lead": 6,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 19,
+    "replaced": 1,
+    "asOf": "2026-03-28"
+  },
+  "cheviot": {
+    "name": "Cheviot",
+    "total": 185,
+    "lead": 38,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 144,
+    "replaced": 3,
+    "asOf": "2026-03-28"
+  },
+  "clifton": {
+    "name": "Clifton",
+    "total": 192,
+    "lead": 28,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 160,
+    "replaced": 4,
+    "asOf": "2026-03-28"
+  },
+  "coleraintownship": {
+    "name": "Colerain Township",
+    "total": 1,
+    "lead": 1,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 0,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "collegehill": {
+    "name": "College Hill",
+    "total": 152,
+    "lead": 23,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 129,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "columbiatownship": {
+    "name": "Columbia Township",
+    "total": 8,
+    "lead": 1,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 7,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "columbiatusculum": {
+    "name": "Columbia Tusculum",
+    "total": 44,
+    "lead": 6,
+    "unknown": 1,
+    "galvanized": 0,
+    "copper": 36,
+    "replaced": 1,
+    "asOf": "2026-03-28"
+  },
+  "corryville": {
+    "name": "Corryville",
+    "total": 77,
+    "lead": 10,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 67,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "cuf": {
+    "name": "CUF",
+    "total": 234,
+    "lead": 39,
+    "unknown": 1,
+    "galvanized": 0,
+    "copper": 187,
+    "replaced": 7,
+    "asOf": "2026-03-28"
+  },
+  "deerpark": {
+    "name": "Deer Park",
+    "total": 16,
+    "lead": 2,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 14,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "delhitownship": {
+    "name": "Delhi Township",
+    "total": 17,
+    "lead": 2,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 14,
+    "replaced": 1,
+    "asOf": "2026-03-28"
+  },
+  "downtown": {
+    "name": "Downtown",
+    "total": 20,
+    "lead": 1,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 19,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "eastend": {
+    "name": "East End",
+    "total": 77,
+    "lead": 15,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 62,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "eastpricehill": {
+    "name": "East Price Hill",
+    "total": 442,
+    "lead": 77,
+    "unknown": 1,
+    "galvanized": 1,
+    "copper": 358,
+    "replaced": 5,
+    "asOf": "2026-03-28"
+  },
+  "eastwalnuthills": {
+    "name": "East Walnut Hills",
+    "total": 134,
+    "lead": 18,
+    "unknown": 1,
+    "galvanized": 0,
+    "copper": 111,
+    "replaced": 4,
+    "asOf": "2026-03-28"
+  },
+  "eastwestwood": {
+    "name": "East Westwood",
+    "total": 22,
+    "lead": 0,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 22,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "elmwoodplace": {
+    "name": "Elmwood Place",
+    "total": 14,
+    "lead": 4,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 10,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "englishwoods": {
+    "name": "English Woods",
+    "total": 1,
+    "lead": 0,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 1,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "evanston": {
+    "name": "Evanston",
+    "total": 345,
+    "lead": 48,
+    "unknown": 1,
+    "galvanized": 0,
+    "copper": 293,
+    "replaced": 3,
+    "asOf": "2026-03-28"
+  },
+  "fairfax": {
+    "name": "Fairfax",
+    "total": 7,
+    "lead": 2,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 5,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "golfmanor": {
+    "name": "Golf Manor",
+    "total": 6,
+    "lead": 0,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 6,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "greentownship": {
+    "name": "Green Township",
+    "total": 31,
+    "lead": 2,
+    "unknown": 2,
+    "galvanized": 0,
+    "copper": 26,
+    "replaced": 1,
+    "asOf": "2026-03-28"
+  },
+  "hartwell": {
+    "name": "Hartwell",
+    "total": 45,
+    "lead": 8,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 37,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "hydepark": {
+    "name": "Hyde Park",
+    "total": 375,
+    "lead": 62,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 310,
+    "replaced": 3,
+    "asOf": "2026-03-28"
+  },
+  "kennedyheights": {
+    "name": "Kennedy Heights",
+    "total": 114,
+    "lead": 19,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 95,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "linwood": {
+    "name": "Linwood",
+    "total": 60,
+    "lead": 11,
+    "unknown": 1,
+    "galvanized": 0,
+    "copper": 47,
+    "replaced": 1,
+    "asOf": "2026-03-28"
+  },
+  "lowerpricehill": {
+    "name": "Lower Price Hill",
+    "total": 49,
+    "lead": 23,
+    "unknown": 1,
+    "galvanized": 0,
+    "copper": 25,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "madisonville": {
+    "name": "Madisonville",
+    "total": 204,
+    "lead": 28,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 176,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "mariemont": {
+    "name": "Mariemont",
+    "total": 17,
+    "lead": 4,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 13,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "mason": {
+    "name": "Mason",
+    "total": 11,
+    "lead": 0,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 11,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "millvale": {
+    "name": "Millvale",
+    "total": 9,
+    "lead": 1,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 8,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "mountadams": {
+    "name": "Mount Adams",
+    "total": 39,
+    "lead": 6,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 33,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "mountairy": {
+    "name": "Mount Airy",
+    "total": 17,
+    "lead": 4,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 13,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "mountauburn": {
+    "name": "Mount Auburn",
+    "total": 172,
+    "lead": 29,
+    "unknown": 2,
+    "galvanized": 0,
+    "copper": 140,
+    "replaced": 1,
+    "asOf": "2026-03-28"
+  },
+  "mounthealthy": {
+    "name": "Mount Healthy",
+    "total": 85,
+    "lead": 15,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 70,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "mountlookout": {
+    "name": "Mount Lookout",
+    "total": 102,
+    "lead": 15,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 87,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "mountwashington": {
+    "name": "Mount Washington",
+    "total": 41,
+    "lead": 8,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 32,
+    "replaced": 1,
+    "asOf": "2026-03-28"
+  },
+  "newtown": {
+    "name": "Newtown",
+    "total": 1,
+    "lead": 0,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 1,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "northavondale": {
+    "name": "North Avondale",
+    "total": 95,
+    "lead": 15,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 79,
+    "replaced": 1,
+    "asOf": "2026-03-28"
+  },
+  "northcollegehill": {
+    "name": "North College Hill",
+    "total": 91,
+    "lead": 13,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 78,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "northfairmount": {
+    "name": "North Fairmount",
+    "total": 52,
+    "lead": 6,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 44,
+    "replaced": 2,
+    "asOf": "2026-03-28"
+  },
+  "northside": {
+    "name": "Northside",
+    "total": 255,
+    "lead": 27,
+    "unknown": 3,
+    "galvanized": 0,
+    "copper": 222,
+    "replaced": 3,
+    "asOf": "2026-03-28"
+  },
+  "norwood": {
+    "name": "Norwood",
+    "total": 3,
+    "lead": 0,
+    "unknown": 1,
+    "galvanized": 0,
+    "copper": 2,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "oakley": {
+    "name": "Oakley",
+    "total": 176,
+    "lead": 24,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 150,
+    "replaced": 2,
+    "asOf": "2026-03-28"
+  },
+  "overtherhine": {
+    "name": "Over-The-Rhine",
+    "total": 78,
+    "lead": 20,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 58,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "pendleton": {
+    "name": "Pendleton",
+    "total": 12,
+    "lead": 0,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 12,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "pleasantridge": {
+    "name": "Pleasant Ridge",
+    "total": 244,
+    "lead": 33,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 210,
+    "replaced": 1,
+    "asOf": "2026-03-28"
+  },
+  "queensgate": {
+    "name": "Queensgate",
+    "total": 3,
+    "lead": 1,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 2,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "riverside": {
+    "name": "Riverside",
+    "total": 72,
+    "lead": 22,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 49,
+    "replaced": 1,
+    "asOf": "2026-03-28"
+  },
+  "roselawn": {
+    "name": "Roselawn",
+    "total": 9,
+    "lead": 1,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 8,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "saintbernard": {
+    "name": "Saint Bernard",
+    "total": 46,
+    "lead": 12,
+    "unknown": 1,
+    "galvanized": 0,
+    "copper": 33,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "saylerpark": {
+    "name": "Sayler Park",
+    "total": 58,
+    "lead": 9,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 49,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "sedamsville": {
+    "name": "Sedamsville",
+    "total": 32,
+    "lead": 3,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 28,
+    "replaced": 1,
+    "asOf": "2026-03-28"
+  },
+  "silverton": {
+    "name": "Silverton",
+    "total": 32,
+    "lead": 4,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 26,
+    "replaced": 2,
+    "asOf": "2026-03-28"
+  },
+  "southcumminsville": {
+    "name": "South Cumminsville",
+    "total": 52,
+    "lead": 10,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 42,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "southfairmount": {
+    "name": "South Fairmount",
+    "total": 98,
+    "lead": 19,
+    "unknown": 1,
+    "galvanized": 0,
+    "copper": 77,
+    "replaced": 1,
+    "asOf": "2026-03-28"
+  },
+  "springfieldtownship": {
+    "name": "Springfield Township",
+    "total": 25,
+    "lead": 6,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 19,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "springgrovevillage": {
+    "name": "Spring Grove Village",
+    "total": 52,
+    "lead": 6,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 46,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "sycamoretownship": {
+    "name": "Sycamore Township",
+    "total": 2,
+    "lead": 0,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 2,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  },
+  "walnuthills": {
+    "name": "Walnut Hills",
+    "total": 122,
+    "lead": 16,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 103,
+    "replaced": 3,
+    "asOf": "2026-03-28"
+  },
+  "westend": {
+    "name": "West End",
+    "total": 80,
+    "lead": 15,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 62,
+    "replaced": 3,
+    "asOf": "2026-03-28"
+  },
+  "westpricehill": {
+    "name": "West Price Hill",
+    "total": 439,
+    "lead": 159,
+    "unknown": 1,
+    "galvanized": 0,
+    "copper": 277,
+    "replaced": 2,
+    "asOf": "2026-03-28"
+  },
+  "westwood": {
+    "name": "Westwood",
+    "total": 357,
+    "lead": 46,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 308,
+    "replaced": 3,
+    "asOf": "2026-03-28"
+  },
+  "wintonhills": {
+    "name": "Winton Hills",
+    "total": 4,
+    "lead": 1,
+    "unknown": 0,
+    "galvanized": 0,
+    "copper": 3,
+    "replaced": 0,
+    "asOf": "2026-03-28"
+  }
+}

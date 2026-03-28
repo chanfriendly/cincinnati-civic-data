@@ -747,44 +747,55 @@ export async function fetchNeighborhoodLeadStats(): Promise<Map<string, Neighbor
 }
 
 /**
- * A single GCWW private-side lead service line replacement record.
- * Source: Cincinnati Open Data `ntfu-vnkd`
- * "GCWW Private-Side One-off Lead Service Line Replacements"
+ * A single GCWW lead service line inventory record.
+ * Source: Cincinnati Open Data `b4xq-u3su`
+ * "GCWW Private-Side One-off Lead Service Line Replacement"
  *
- * Field names are not confirmed from live testing — the build script will
- * discover and document the actual schema on first local run.
+ * Field names confirmed from live API on 2026-03-28:
+ *   address, status, emergency, replacement, adminarea, municipality,
+ *   privatematerialtype, publicmaterialtype, publicreplacedate, gis_branchnumber
+ *
+ * Note: ntfu-vnkd returns 403 (requires auth). b4xq-u3su is the correct UID.
  */
 export interface LeadReplacementRecord {
-  /** Address of the replacement */
+  /** Street address */
   address?: string;
-  /** Neighborhood (SNA name, UPPER CASE in source) */
-  neighborhood?: string;
-  /** Date the replacement was completed */
-  date_completed?: string;
-  /** Year extracted for grouping */
-  year?: string;
+  /** Neighborhood/SNA area (confirmed field name: adminarea) */
+  adminarea?: string;
+  /** Municipality (usually "Cincinnati") */
+  municipality?: string;
+  /** Private-side pipe material (Lead, Copper, Unknown, Galvanized, etc.) */
+  privatematerialtype?: string;
+  /** Public-side pipe material */
+  publicmaterialtype?: string;
+  /** Date the public-side was replaced — ISO 8601 string */
+  publicreplacedate?: string;
+  /** Current line status */
+  status?: string;
 }
 
 /**
- * Fetch recent lead service line replacements from the GCWW open dataset.
- * Used by the Lead Safety tab to show replacement program activity.
+ * Fetch lead service line records from the GCWW open dataset.
+ * Filters to records with a publicreplacedate so the tab can show
+ * replacement program activity by year.
  *
- * Dataset: `ntfu-vnkd` — GCWW Private-Side One-off Lead Service Line Replacements.
- * Note: This dataset records completed private-side replacements only, not the
- * full inventory of all service lines.
+ * Dataset: `b4xq-u3su` — GCWW Lead Service Line inventory.
+ * The `adminarea` field contains the neighborhood name in the source data.
+ * Exact case is unknown until live-tested; query uses upper() for safety.
  */
 export async function fetchLeadReplacements(
   neighborhood?: string,
-  limit = 500
+  limit = 1000
 ): Promise<LeadReplacementRecord[]> {
   const whereClause = neighborhood
-    ? `neighborhood='${neighborhood.toUpperCase()}'`
-    : '1=1';
+    ? `publicreplacedate IS NOT NULL AND upper(adminarea)='${neighborhood.toUpperCase()}'`
+    : `publicreplacedate IS NOT NULL`;
   try {
-    const resp = await fetchSODA<LeadReplacementRecord>('ntfu-vnkd', {
+    const resp = await fetchSODA<LeadReplacementRecord>('b4xq-u3su', {
       $where: whereClause,
+      $select: 'adminarea,privatematerialtype,publicreplacedate,status',
       $limit: limit,
-      $order: 'date_completed DESC',
+      $order: 'publicreplacedate DESC',
     });
     return resp.data;
   } catch {
