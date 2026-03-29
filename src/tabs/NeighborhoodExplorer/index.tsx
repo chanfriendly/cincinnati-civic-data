@@ -111,7 +111,7 @@ const INITIAL_DIMENSIONS: Dimension[] = [
     id: 'ej',
     labelKey: 'explorer.dim.ej.label',
     descriptionKey: 'explorer.dim.ej.description',
-    methodology: 'Source: EPA EJScreen 2023 (tract-level CSV, preserved by Public Environmental Data Partners after EPA took the REST API offline in February 2025). Metric: population-weighted composite of five national percentile ranks — air toxics cancer risk (30%), diesel PM (20%), traffic proximity (20%), Superfund site proximity (15%), hazardous waste facility proximity (15%). Lower composite = cleaner environment = higher score. Scores are min-max normalized across Cincinnati neighborhoods. Note: percentiles are relative to the national distribution, not just Cincinnati.',
+    methodology: 'Source: EPA AirToxScreen 2019, via EPA ArcGIS feature service (still live as of 2025). Metric: cumulative air toxics cancer risk estimate (cases per million residents), population-weighted from census tracts assigned to each neighborhood. Lower cancer risk = cleaner air = higher score. Scores are min-max normalized across Cincinnati neighborhoods. Note: EPA\'s EJScreen tool — which previously provided updated, multi-indicator environmental justice screening — was taken offline in February 2025. AirToxScreen 2019 is the most recent publicly available modeled estimate.',
     enabled: false,
     weight: 3,
     available: true,

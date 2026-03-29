@@ -73,17 +73,18 @@ This is the platform's most urgent gap. Cincinnati has 33,449 lead or unknown wa
 - [ ] Overlay childhood blood lead case rates by census tract
 - [ ] Add "Is my address affected?" address lookup integration (Tab 1 cross-link)
 
-### 2.2 EPA EJScreen Environmental Justice Layer
-- [ ] Integrate EPA EJScreen API (free, no auth) for: air toxics exposure index, Superfund proximity, wastewater discharge indicator, traffic proximity
-- [ ] Display as neighborhood-level composite environmental burden score
-- [ ] Add to Neighborhood Explorer as a new scored dimension
+### 2.2 Environmental Justice Layer ✅ (partial)
+- [x] Add EJ dimension to Neighborhood Explorer — scored by cumulative air toxics cancer risk
+- [x] Data source: EPA AirToxScreen 2019 via ArcGIS feature service (45 neighborhoods mapped)
+- [x] Methodology tooltip discloses that EPA's EJScreen was taken offline in February 2025 and that AirToxScreen 2019 is the most recent publicly available modeled estimate
+- [ ] **Future enhancement:** Add EPA TRI (Toxics Release Inventory) facility-level data to show *which specific industrial sites* drive the burden in high-risk neighborhoods — a complement to the tract-level AirToxScreen score, not a replacement
 
 ### 2.3 Flood Infrastructure Status
 - [ ] Add Mill Creek Barrier Dam / floodwall infrastructure status to flood zone display (Tab 1 + Explorer)
 - [ ] Integrate First Street Foundation flood risk probability data
 - [ ] Contextualize: "This address has a X% chance of flooding over 30 years"
 
-**Data sources:** Cincinnati Health Department (lead inventory), EPA EJScreen API, City Stormwater (floodwall data), First Street Foundation API
+**Data sources:** Cincinnati Health Department (lead inventory), EPA AirToxScreen / TRI (environmental justice), City Stormwater (floodwall data), First Street Foundation API
 
 ---
 
