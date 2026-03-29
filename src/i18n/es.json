@@ -155,7 +155,7 @@
       },
       "ej": {
         "label": "Aire y Medio Ambiente",
-        "description": "Puntuación compuesta de carga de contaminación de EPA EJScreen 2023: promedio ponderado de percentiles nacionales para riesgo de cáncer por tóxicos del aire (30%), PM diésel (20%), proximidad al tráfico (20%), proximidad a sitios Superfund (15%) y proximidad a instalaciones de residuos peligrosos (15%). Mayor percentil = mayor exposición. Fuente: EPA EJScreen 2023 (preservado por Public Environmental Data Partners)."
+        "description": "Riesgo acumulado de cáncer por tóxicos del aire por barrio, de EPA AirToxScreen 2019 — los mismos datos que usa EJScreen para su indicador de riesgo de cáncer. Se mide en casos de cáncer de por vida estimados por millón de residentes por inhalación de tóxicos del aire modelados. También captura niveles de partículas de diésel e índice de riesgo respiratorio. Los barrios con menor carga tienen puntuación más alta. Fuente: EPA AirToxScreen 2019 a través del servicio de ArcGIS de EPA."
       },
       "schools": {
         "label": "Calidad de las Escuelas",

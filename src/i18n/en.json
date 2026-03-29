@@ -155,7 +155,7 @@
       },
       "ej": {
         "label": "Air & Environmental",
-        "description": "Composite pollution burden score from EPA EJScreen 2023: weighted average of national percentile ranks for air toxics cancer risk (30%), diesel PM (20%), traffic proximity (20%), Superfund site proximity (15%), and hazardous waste facility proximity (15%). Higher national percentile = greater exposure. Source: EPA EJScreen 2023 (preserved by Public Environmental Data Partners)."
+        "description": "Cumulative air toxics cancer risk per neighborhood, from EPA AirToxScreen 2019 — the same underlying data that EJScreen uses for its cancer risk indicator. Measured in estimated lifetime cancer cases per million residents from inhalation of modeled air toxics. Also captures diesel particulate matter levels and respiratory hazard index. Neighborhoods with lower burden score higher. Source: EPA AirToxScreen 2019 via EPA ArcGIS feature service (confirmed live 2026)."
       },
       "schools": {
         "label": "School Quality",
