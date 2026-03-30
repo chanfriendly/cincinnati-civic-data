@@ -520,7 +520,7 @@ export default function NeighborhoodProfiles() {
 
         <DataAttribution
           source={t('neighborhood.attributionCensus', 'U.S. Census Bureau ACS 2022')}
-          uid=""
+          url="https://www.census.gov/programs-surveys/acs"
         />
       </DataCard>
 

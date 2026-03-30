@@ -721,7 +721,7 @@ export default function AddressLookup() {
               ) : zoningStatus === 'done' ? (
                 <EmptyState message="Address outside Cincinnati zoning boundary" />
               ) : null}
-              <DataAttribution source="Zoning Designation — CAGIS" />
+              <DataAttribution source="Zoning Designation — CAGIS" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
             </DataCard>
 
             {/* ── CAGIS: FEMA Flood Zone ───────────────────────────────────── */}
@@ -762,7 +762,7 @@ export default function AddressLookup() {
                   <p className="text-sm text-gray-700">Minimal flood hazard area.</p>
                 </div>
               ) : null}
-              <DataAttribution source="FEMA National Flood Hazard Layer (NFHL)" />
+              <DataAttribution source="FEMA National Flood Hazard Layer (NFHL)" url="https://msc.fema.gov/portal/home" />
             </DataCard>
 
             {/* ── CAGIS: Historic District ─────────────────────────────────── */}
@@ -798,7 +798,7 @@ export default function AddressLookup() {
               ) : historicStatus === 'done' ? (
                 <EmptyState message="Not in a Cincinnati historic district" />
               ) : null}
-              <DataAttribution source="Cincinnati Historic Districts — CAGIS" />
+              <DataAttribution source="Cincinnati Historic Districts — CAGIS" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
             </DataCard>
 
             {/* ── CAGIS: Nearby Parks ──────────────────────────────────────── */}
@@ -835,7 +835,7 @@ export default function AddressLookup() {
               ) : parksStatus === 'done' ? (
                 <EmptyState message="No parks found within 0.5 miles" />
               ) : null}
-              <DataAttribution source="Parks and Greenspace — CAGIS" />
+              <DataAttribution source="Parks and Greenspace — CAGIS" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
             </DataCard>
 
             {/* ── OHGO: Traffic & Road Conditions ──────────────────────────── */}
@@ -872,7 +872,7 @@ export default function AddressLookup() {
               ) : ohgoStatus === 'done' ? (
                 <EmptyState message="No active incidents within 1 mile" />
               ) : null}
-              <DataAttribution source="OHGO — Ohio Dept of Transportation" />
+              <DataAttribution source="OHGO — Ohio Dept of Transportation" url="https://www.ohgo.com/" />
             </DataCard>
 
             <DataCard
@@ -902,7 +902,7 @@ export default function AddressLookup() {
               ) : ohgoStatus === 'done' ? (
                 <EmptyState message="No active work zones within 2 miles" />
               ) : null}
-              <DataAttribution source="OHGO — Ohio Dept of Transportation" />
+              <DataAttribution source="OHGO — Ohio Dept of Transportation" url="https://www.ohgo.com/" />
             </DataCard>
 
             <DataCard
@@ -940,7 +940,7 @@ export default function AddressLookup() {
               ) : ohgoStatus === 'done' ? (
                 <EmptyState message="No traffic cameras within 1 mile" />
               ) : null}
-              <DataAttribution source="OHGO — Ohio Dept of Transportation" />
+              <DataAttribution source="OHGO — Ohio Dept of Transportation" url="https://www.ohgo.com/" />
             </DataCard>
 
           </div>

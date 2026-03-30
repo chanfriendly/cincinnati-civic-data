@@ -256,7 +256,7 @@ function ParatransitCard({ neighborhood }: { neighborhood: string }) {
       title="ADA Paratransit Coverage (SORTA Access)"
       loading={loading}
       error={error}
-      attribution={{ datasetName: 'SORTA GTFS Static Feed', lastUpdated: null }}
+      attribution={{ datasetName: 'SORTA GTFS Static Feed', lastUpdated: null, url: 'https://www.go-metro.com/about/developer-data/' }}
     >
       <div className="space-y-3">
         {/* Coverage status */}

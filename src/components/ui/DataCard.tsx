@@ -14,6 +14,7 @@ interface DataCardProps {
     datasetName: string
     lastUpdated: string | null
     uid?: string
+    url?: string
   }
   // Convenience state props — DataCard handles the loading/error UI automatically
   loading?: boolean

@@ -6,6 +6,7 @@ interface DataAttributionProps {
   source?: string        // alias — tabs use this interchangeably
   lastUpdated?: string | null
   uid?: string
+  url?: string           // explicit link override — used for non-Socrata sources (CAGIS, FEMA, Census, etc.)
 }
 
 const DataAttribution: React.FC<DataAttributionProps> = ({
@@ -13,12 +14,13 @@ const DataAttribution: React.FC<DataAttributionProps> = ({
   source,
   lastUpdated,
   uid,
+  url,
 }) => {
   const label = datasetName ?? source ?? 'Cincinnati Open Data Portal'
   const formattedDate = lastUpdated ? formatDate(lastUpdated) : null
-  const portalLink = uid
+  const portalLink = url ?? (uid
     ? `https://data.cincinnati-oh.gov/resource/${uid}`
-    : 'https://data.cincinnati-oh.gov'
+    : 'https://data.cincinnati-oh.gov')
 
   return (
     <p className="text-xs text-gray-400 italic mt-3 pt-2 border-t border-gray-100">
