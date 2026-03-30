@@ -1,5 +1,5 @@
 # Cincinnati Civic Data Platform — Project Roadmap
-**Last updated:** March 2026 | **Informed by:** Session 7 civic research
+**Last updated:** March 2026 | **Informed by:** Sessions 1–11
 
 ---
 
@@ -27,102 +27,108 @@ Make Cincinnati's public data accessible, honest, and useful to the people who n
 
 | Tab | Status | Notes |
 |-----|--------|-------|
-| Address Lookup | ✅ Working | CAGIS cards not fully live-tested |
-| Neighborhood Profiles | ⚠️ Partial | Census data is city-wide fallback |
-| Police Accountability | ✅ Working | Charts + AI Q&A functional |
-| Neighborhood Explorer | ✅ Mostly working | Park/Flood dimensions need live test |
+| Address Lookup | ✅ Working | Crime markers fixed; CAGIS cards need live address test |
+| Neighborhood Profiles | ✅ Mostly working | Per-neighborhood Census data, dynamic dropdown, 311 live |
+| Police Accountability | ✅ Working | Charts + AI Q&A; crime map removed per platform principles |
+| Neighborhood Explorer | ✅ Mostly working | EJ dimension added; parks pre-computed (49 neighborhoods) |
 | Displacement (Housing Justice) | ⚠️ Partial | Pressure index live; eviction/LLC data seeking partner |
 | Owner Watch | ✅ Working | Permit + CRA search live |
+| Lead Safety | ✅ Working | GCWW replacement program data (71 neighborhoods, 1,142 lead lines) |
 | Accessibility | ✅ Working | 47 neighborhoods with disability data |
-| Roadmap | ✅ Working | Updated with research-backed items |
+| Roadmap | ✅ Working | Reflects completed work and live platform principles |
 
 ---
 
-## Phase 1 — Solidify the Foundation
-**Target: Next 1–2 sessions | Effort: Medium**
+## Phase 1 — Solidify the Foundation ✅ Complete
 
-These are fixes and completions to existing functionality. Nothing new — just making what's there reliable.
+These fixes and completions to existing functionality were the prerequisite for everything else.
 
-### 1.1 Fix Neighborhood Profiles (Tab 2)
-- [ ] Wire per-neighborhood Census data (income, rent burden) from `neighborhood_acs.json` — Explorer already has this; Tab 2 needs it
-- [ ] Fix neighborhood dropdown to only show neighborhoods with at least one crime record (currently shows all 53 even if empty)
-- [ ] Live test Food Safety, PLAP, and Fire & EMS queries with a known neighborhood
+### 1.1 Neighborhood Profiles (Tab 2) ✅
+- [x] Per-neighborhood Census data (income, rent burden) from `neighborhood_acs.json`
+- [x] Dynamic neighborhood dropdown — only shows neighborhoods with crime records
+- [x] Food Safety, PLAP, and Fire & EMS field names verified against live data; date filters fixed
+- [x] 311 service requests — dataset `gcej-gmiw`; shows volume, open count, avg resolution time, top request types
 
-### 1.2 Live Test Critical Data Paths
-- [ ] Test CAGIS cards (zoning, flood, historic, parks) with a Downtown address and a Hyde Park address
-- [ ] Test Park Access + Flood Risk dimensions in Explorer — wait 60s; confirm scores populate
-- [ ] Pre-compute park acreage to eliminate 52 sequential CAGIS calls at runtime
+### 1.2 Data Path Fixes ✅
+- [x] Parks query fixed — invalid `TYPE` field replaced with confirmed `PARKTYPE` field
+- [x] Census MultiPolygon fix — TIGERweb ACS2022 REST API (MapServer layer 6) returns 226 Hamilton County tracts with coordinates
+- [x] Crime markers in Address Lookup fixed — was reading `crime.location?.latitude`; Socrata returns `latitude_x`/`longitude_x` at top level
+- [x] Park acreage pre-computed — `scripts/build_parks.py` generates `public/data/cagis_neighborhood_parks.json` (49 neighborhoods); eliminates 52 sequential runtime CAGIS calls
 
-### 1.3 Implement 311 Service Requests in Neighborhood Profiles
-- [ ] Fetch 311 data from Cincinnati Open Data portal by neighborhood and date range
-- [ ] Show request volume and average resolution time
-- [ ] This is the single highest-value addition to Tab 2 given what research reveals about service delivery disparities
-
-**Why Phase 1 first:** These are the foundational fixes that make the existing platform trustworthy. Shipping new tabs on top of broken foundation data is counterproductive.
+### 1.3 Police Accountability Principles Audit ✅
+- [x] "Crime Map" tab removed — individual incident ticker violated published platform principle
+- [x] Use of Force map reframed as accountability data (police conduct), not a crime map
+- [x] Disclaimer updated to explain why individual incident records are not shown here
 
 ---
 
-## Phase 2 — Lead & Environmental Health Tab
-**Target: Next 2–3 sessions | Effort: High | Priority: CRITICAL**
+## Phase 2 — Lead & Environmental Health
+**Priority: Critical | Effort: High**
 
-This is the platform's most urgent gap. Cincinnati has 33,449 lead or unknown water service lines remaining. 220 children per year are diagnosed with elevated blood lead levels. Only 36.8% of children are tested. No civic-facing map exists.
+### 2.1 Lead Service Line Tracker ✅ Complete
+Built as a dedicated Lead Safety tab.
+- [x] Neighborhood-by-neighborhood breakdown of GCWW replacement program (dataset `b4xq-u3su`)
+- [x] Active lead lines, replaced lines, and risk concentration by area — 71 neighborhoods, 1,142 active lead lines
+- [x] City-wide urgency framing (33,449 lines remaining, ~220 child cases/year, 36.8% testing rate)
+- [x] Resident action guidance: address lookup link, free testing kits, interim safety tips, renters' rights
+- [x] City-wide comparison chart showing all neighborhoods ranked by % active lead lines
+- [x] Transparent data gap disclosure: program covers ~6,400 of 33,449 total city lines
 
-### 2.1 Lead Service Line Map
-- [ ] Fetch Cincinnati Health Department lead service line inventory
-- [ ] Display map with status (replaced, unknown, active lead) per address/block
-- [ ] Overlay childhood blood lead case rates by census tract
-- [ ] Add "Is my address affected?" address lookup integration (Tab 1 cross-link)
+**Remaining gaps:**
+- [ ] Blood lead case rates by census tract (Cincinnati Health Dept. — requires structured access or partnership)
+- [ ] Address-level lookup: "Is my address in the program?" (requires GCWW address matching)
+- [ ] Full city-wide inventory (33,449 lines) — not yet publicly available in machine-readable form
 
-### 2.2 Environmental Justice Layer ✅ (partial)
-- [x] Add EJ dimension to Neighborhood Explorer — scored by cumulative air toxics cancer risk
+### 2.2 Environmental Justice Layer ✅ Partial
+- [x] EJ dimension added to Neighborhood Explorer — scored by cumulative air toxics cancer risk
 - [x] Data source: EPA AirToxScreen 2019 via ArcGIS feature service (45 neighborhoods mapped)
-- [x] Methodology tooltip discloses that EPA's EJScreen was taken offline in February 2025 and that AirToxScreen 2019 is the most recent publicly available modeled estimate
-- [ ] **Future enhancement:** Add EPA TRI (Toxics Release Inventory) facility-level data to show *which specific industrial sites* drive the burden in high-risk neighborhoods — a complement to the tract-level AirToxScreen score, not a replacement
+- [x] Methodology tooltip discloses EJScreen was taken offline in February 2025; AirToxScreen 2019 is the most recent publicly available modeled estimate
+- [ ] **Future enhancement:** EPA TRI facility-level data — show which specific industrial sites drive the burden in high-risk neighborhoods (complement to tract-level score, not a replacement)
 
 ### 2.3 Flood Infrastructure Status
-- [ ] Add Mill Creek Barrier Dam / floodwall infrastructure status to flood zone display (Tab 1 + Explorer)
+- [ ] Add Mill Creek Barrier Dam / floodwall infrastructure condition to flood zone display (Tab 1 + Explorer)
 - [ ] Integrate First Street Foundation flood risk probability data
-- [ ] Contextualize: "This address has a X% chance of flooding over 30 years"
+- [ ] Contextualize: "This address has an X% chance of flooding over 30 years"
 
-**Data sources:** Cincinnati Health Department (lead inventory), EPA AirToxScreen / TRI (environmental justice), City Stormwater (floodwall data), First Street Foundation API
+**Data sources:** GCWW (lead, `b4xq-u3su`), EPA AirToxScreen / TRI (environmental justice), City Stormwater (floodwall), First Street Foundation API
 
 ---
 
 ## Phase 3 — Racial Equity Dashboard
-**Target: 3–5 sessions | Effort: High | Priority: High**
+**Priority: High | Effort: High**
 
-The Urban League's "State of Black Cincinnati" (June 2024) is the clearest statement of what this tab needs to show: income, homeownership, mortgage approval, poverty, and incarceration by race and neighborhood. All of this is derivable from Census data already in our system.
+The Urban League's "State of Black Cincinnati" (June 2024) documents the need: $31,520 vs. $70,909 median household income by race; 17.5% vs. 67% mortgage approval. All of this is derivable from Census data already in our system.
 
 ### 3.1 Racial Equity Metrics by Neighborhood
-- [ ] Build a dedicated Equity tab (or add to Neighborhood Profiles as a view)
-- [ ] Show: poverty rate by race, median income by race, homeownership rate by race, rent burden by race — per neighborhood
+- [ ] Dedicated Equity tab or expanded Neighborhood Profiles view
+- [ ] Poverty rate by race, median income by race, homeownership rate by race, rent burden by race — per neighborhood
 - [ ] Source: Census ACS B19001 (income), B25003 (tenure), B17001 (poverty) by race tables — same API as existing Census data
 
 ### 3.2 HMDA Mortgage Lending Map
-- [ ] Integrate CFPB HMDA data (public, annual) showing mortgage approval rates by race and census tract
-- [ ] Show redlining legacy overlay (from HOLC maps) alongside current lending patterns
+- [ ] CFPB HMDA data (public, annual) — mortgage approval rates by race and census tract
+- [ ] Redlining legacy overlay (HOLC maps) alongside current lending patterns
 
 ### 3.3 Connected Communities Zoning Reform Impact
-- [ ] Track new building permit applications filed under the relaxed zoning rules (post July 2024)
-- [ ] Show: where new density is being added, at what rent levels (unit type + permit category), in which neighborhoods
-- [ ] Compare to pre-reform baseline
+- [ ] Track new building permit applications filed under relaxed zoning rules (effective July 1, 2024)
+- [ ] Show where new density is being added, at what unit types, in which neighborhoods
+- [ ] Compare to pre-reform baseline — permit data already in our system
 
-**Why this matters now:** The Connected Communities reform just turned two years old. The equity question — does relaxed zoning produce affordable housing or accelerate displacement — is answerable with permit data we already have. This could be a meaningful contribution to national housing policy debate.
+**Why this matters now:** The Connected Communities reform is approaching its second anniversary. The equity question — does relaxed zoning produce affordable housing or accelerate displacement — is answerable with permit data we already have.
 
 ---
 
 ## Phase 4 — Displacement & Owner Watch Deepening
-**Target: 4–6 sessions | Effort: Medium**
+**Priority: High | Effort: Medium**
 
-The Displacement tab is live with a pressure index. Owner Watch is live with permit/CRA search. This phase deepens both.
+The Displacement tab has a live pressure index. Owner Watch has permit/CRA search. This phase deepens both.
 
 ### 4.1 Eviction Court Data (Needs Partner)
-- [ ] Pursue partnership with Legal Aid Society of Greater Cincinnati for anonymized filing data
+- [ ] Partnership with Legal Aid Society of Greater Cincinnati for anonymized filing data
 - [ ] Eviction Lab provides county totals; tract-level data requires direct court records access
 - [ ] Hamilton County: 13,601 filings in 2024 (~9% of all renter households)
 
 ### 4.2 HUD Affordable Housing Inventory
-- [ ] Integrate HUD Picture of Subsidized Households API (public)
+- [ ] HUD Picture of Subsidized Households API (public)
 - [ ] Map Section 8, LIHTC, and public housing units by neighborhood
 - [ ] Flag units with subsidy expiration dates within 5 years
 
@@ -134,12 +140,12 @@ The Displacement tab is live with a pressure index. Owner Watch is live with per
 ---
 
 ## Phase 5 — Schools & Transit
-**Target: 6–8 sessions | Effort: Medium**
+**Priority: Medium | Effort: Medium**
 
 ### 5.1 School Proximity in Address Lookup
-- [ ] Add nearest CPS schools with walk distances and bus service availability to Address Lookup
+- [ ] Nearest CPS schools with walk distances and bus service availability
 - [ ] Use CPS school location GeoJSON (public) + SORTA data (already in system)
-- [ ] Add walk zone eligibility indicator (determines whether bus service is provided)
+- [ ] Walk zone eligibility indicator (determines whether bus service is provided)
 
 ### 5.2 School Quality Data
 - [ ] Waiting on Ohio DOE ESSA report cards to become machine-readable
@@ -149,12 +155,12 @@ The Displacement tab is live with a pressure index. Owner Watch is live with per
 ### 5.3 Transit Equity Gap Analysis
 - [ ] Compare SORTA stop density and route frequency by neighborhood against income
 - [ ] Show job accessibility via transit (time to top Cincinnati employers)
-- [ ] Add BRT corridor impact projections as construction progresses
+- [ ] Add BRT corridor impact projections as construction progresses (Hamilton Ave + Reading Rd, approved 2024)
 
 ---
 
 ## Phase 6 — Platform Maturity
-**Target: 8–12 sessions | Effort: Varies**
+**Priority: Ongoing | Effort: Varies**
 
 These are important but depend on earlier phases being solid.
 
@@ -173,8 +179,8 @@ These are important but depend on earlier phases being solid.
 
 | Partner | What They Unlock | Status |
 |---------|-----------------|--------|
-| Legal Aid Society of Greater Cincinnati | Eviction filing data at granular level | Not yet approached |
-| Cincinnati Health Department | Lead service line inventory API access | Data published; need structured access |
+| Legal Aid Society of Greater Cincinnati | Eviction filing data at tract level | Not yet approached |
+| Cincinnati Health Department | Full lead service line inventory (33,449 lines); blood lead case rates by tract | Data published; need structured access |
 | Housing Opportunities Made Equal (HOME Cincy) | Fair housing complaint data; LLC research help | Not yet approached |
 | Urban League of Greater Southwestern Ohio | Racial equity data sharing | Not yet approached |
 | Strive Partnership | School outcome data (machine-readable) | Not yet approached |
@@ -183,19 +189,21 @@ These are important but depend on earlier phases being solid.
 
 ---
 
-## Data Sources to Add
+## Data Sources Status
 
-| Source | Purpose | Auth | Priority |
-|--------|---------|------|----------|
-| Cincinnati Health Dept. Lead Inventory | Lead service line map | None (public) | **Critical** |
-| EPA EJScreen API | Environmental justice scores | None (public) | High |
-| CFPB HMDA Data | Mortgage lending by race | None (public) | High |
-| HUD Subsidized Housing | Affordable unit inventory | None (public API) | Medium |
-| Cincinnati Open Data: 311 | Service request response times | None | Medium |
-| First Street Foundation | Flood risk probability | API key | Medium |
-| Hamilton County Eviction Court | Eviction filings | Partner required | High (with partner) |
-| Ohio DOE ESSA Report Cards | School performance | None (not machine-readable yet) | Medium |
-| OSM Overpass API | Accessibility infrastructure | None (public) | Low |
+| Source | Purpose | Status |
+|--------|---------|--------|
+| Cincinnati Health Dept. Lead Inventory | Lead service line map | ✅ Partial — GCWW program data live (`b4xq-u3su`); full inventory not yet machine-readable |
+| EPA AirToxScreen 2019 | Air toxics cancer risk by neighborhood | ✅ Live — Explorer EJ dimension (ArcGIS feature service) |
+| EPA EJScreen | Multi-indicator EJ screening | ❌ Offline since February 2025 (federal rollback) |
+| Cincinnati Open Data: 311 | Service request response times | ✅ Live — Neighborhood Profiles (`gcej-gmiw`) |
+| CFPB HMDA Data | Mortgage lending by race | Planned — Phase 3.2 |
+| HUD Subsidized Housing | Affordable unit inventory | Planned — Phase 4.2 |
+| First Street Foundation | Flood risk probability | Planned — Phase 2.3 |
+| Hamilton County Eviction Court | Eviction filings | Partner required — Phase 4.1 |
+| Ohio DOE ESSA Report Cards | School performance | Not machine-readable yet — Phase 5.2 |
+| EPA TRI | Facility-level toxic releases | Planned — Phase 2.2 future enhancement |
+| OSM Overpass API | Accessibility infrastructure | Planned — Phase 6 |
 
 ---
 
@@ -210,17 +218,4 @@ It's as important to be clear about what's out of scope:
 
 ---
 
-## Session Sequencing Recommendation
-
-For maximum impact with limited time, the recommended order is:
-
-1. **Fix Tab 2 + add 311** (Phase 1.1–1.3) — Quick wins; makes the platform reliable
-2. **Lead service line map** (Phase 2.1) — Highest civic urgency; most visible gap vs. peer cities
-3. **EPA EJScreen** (Phase 2.2) — Free API; high impact; builds on existing flood risk work
-4. **Racial equity metrics** (Phase 3.1) — Census data already in system; new tab or expanded view
-5. **Connected Communities zoning impact** (Phase 3.3) — Permit data already in system; timely given 2024 reform
-6. **HUD affordable housing** (Phase 4.2) — Completes the displacement picture; free public API
-
----
-
-*This roadmap was informed by the March 2026 Cincinnati Civic Research Report (see `CINCINNATI_RESEARCH_REPORT.md`). It should be reviewed and updated each session as priorities shift and new data sources become available.*
+*This roadmap is updated each session. For session-by-session change history, see `PROGRESS.md`. For the research basis behind priorities, see `CINCINNATI_RESEARCH_REPORT.md`.*
