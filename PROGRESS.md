@@ -6,6 +6,46 @@
 
 ## Session Log
 
+### Session 12 — Polish Pass + Phase 2 Address Lookup + Blood Lead Research (March 2026)
+
+**Goal:** Polish existing features before new phase work; add address-level lookup to Lead Safety; research blood lead case data availability.
+
+**Polish pass (no new features — fixes and accuracy):**
+- `src/tabs/NeighborhoodExplorer/index.tsx` — corrected EJ methodology tooltip: now accurately describes AirToxScreen 2019 via ArcGIS (not CSV composite); discloses EJScreen offline since Feb 2025
+- `src/tabs/Roadmap/index.tsx` — Lead Safety marked Completed; "Air Quality & Environmental Burden" marked Completed (AirToxScreen); "Environmental Justice Cumulative Impact Map" updated to In Progress; stale EJScreen API references removed throughout
+- `PROGRESS.md` — Session 11 entry rewritten to reflect AirToxScreen pivot accurately
+- `PROJECT_ROADMAP.md` — Full reconciliation: Phase 1 marked complete with accurate records; Phase 2.1 updated to match Lead Safety tab as built; Data Sources table replaced with status-based format; Lead Safety added to Current State table; Session Sequencing section removed (was stale to-do list)
+
+**Address lookup — Lead Safety tab:**
+
+New `AddressSearchCard` component added to `src/tabs/LeadSafety/index.tsx`. Lets residents search for their specific street address in the GCWW replacement program dataset and see:
+- Private-side and public-side material type (with human-readable labels: PB → Lead, CU → Copper, GS → Galvanized)
+- Current program status (Complete / In Progress / Pending)
+- Public-side replacement date if applicable
+- Color-coded risk badge per material type
+- Clear "not found" message explaining dataset scope (6,400 program lines, not 33,449 city-wide)
+- Link to GCWW's interactive ArcGIS map for address-level detail when no match found
+
+New `searchLeadByAddress(query)` function added to `src/utils/api.ts` — queries `b4xq-u3su` with `upper(address) LIKE '%TERM%'`, returns up to 10 results ordered by address.
+
+`DataGapsCard` updated: blood lead section now links to the 2024 Lead Annual Report PDF directly and states we're pursuing a public records request for the census tract table powering those maps.
+
+**Blood lead case data research:**
+The Cincinnati Health Dept's 2024 Lead Annual Report contains census tract maps (testing rates + elevated prevalence, 2015–2024 avg) but not a downloadable table. The EPA's Ohio census-tract blood lead dataset is restricted under the Privacy Act. The Ohio Public Health Warehouse has an interactive web tool with tract-level data but no public API. **Recommended path:** Public records request to Cincinnati Health Dept for the census tract aggregate table. Small-cell suppression likely limits disclosure for low-count tracts.
+
+**Files modified:**
+- `src/utils/api.ts` — added `searchLeadByAddress()`
+- `src/tabs/LeadSafety/index.tsx` — added `AddressSearchCard`, `materialLabel()`, `materialRisk()`, `statusLabel()` helpers; updated `DataGapsCard` blood lead section; wired `AddressSearchCard` into layout above neighborhood cards
+- `src/tabs/NeighborhoodExplorer/index.tsx` — EJ methodology tooltip corrected
+- `src/tabs/Roadmap/index.tsx` — status updates and stale references removed
+- `PROGRESS.md`, `PROJECT_ROADMAP.md` — documentation reconciliation
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+**Next:** Phase 3 — Racial Equity Dashboard (Census ACS data by race, per neighborhood). All data sources already in system.
+
+---
+
 ### Session 11 — Phase 2 Continued: EJScreen Environmental Justice Dimension (March 2026)
 
 **Goal:** Add EPA EJScreen environmental justice indicators as a new scored dimension in the Neighborhood Explorer.

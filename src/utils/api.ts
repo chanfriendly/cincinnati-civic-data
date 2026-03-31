@@ -803,6 +803,32 @@ export async function fetchLeadReplacements(
   }
 }
 
+/**
+ * Search GCWW lead service line records by street address.
+ *
+ * Queries b4xq-u3su with a case-insensitive LIKE match on the address field.
+ * Returns up to 10 matching records so residents can check if their specific
+ * address is enrolled in the replacement program and what its current status is.
+ *
+ * The query normalises the search term to upper-case to match the dataset's
+ * capitalisation, and escapes single quotes to prevent SODA injection.
+ */
+export async function searchLeadByAddress(query: string): Promise<LeadReplacementRecord[]> {
+  const term = query.trim().toUpperCase().replace(/'/g, "''");
+  if (term.length < 3) return [];
+  try {
+    const resp = await fetchSODA<LeadReplacementRecord>('b4xq-u3su', {
+      $where: `upper(address) LIKE '%${term}%'`,
+      $select: 'address,adminarea,privatematerialtype,publicmaterialtype,status,publicreplacedate',
+      $limit: 10,
+      $order: 'address ASC',
+    });
+    return resp.data;
+  } catch {
+    return [];
+  }
+}
+
 // ─── EPA EJScreen ─────────────────────────────────────────────────────────────
 
 /**

@@ -24,6 +24,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 import {
   fetchNeighborhoodLeadStats,
   fetchLeadReplacements,
+  searchLeadByAddress,
   stripNeighborhoodName,
 } from '../../utils/api';
 import type { LeadReplacementRecord } from '../../utils/api';
@@ -617,6 +618,186 @@ function CityWideComparisonCard() {
   );
 }
 
+// ── Material code helpers ─────────────────────────────────────────────────────
+
+function materialLabel(code: string | undefined): string {
+  if (!code) return 'Unknown';
+  const c = code.toUpperCase();
+  if (c === 'PB') return 'Lead';
+  if (c === 'CU') return 'Copper';
+  if (c === 'GS' || c === 'GI') return 'Galvanized';
+  if (c === 'LDNR') return 'Lead (do not replace)';
+  if (c === 'UN' || c === 'UNK') return 'Unknown';
+  return code; // pass through any other codes as-is
+}
+
+function materialRisk(code: string | undefined): { label: string; color: string; bg: string } {
+  if (!code) return { label: 'Unknown', color: 'text-gray-700', bg: 'bg-gray-50' };
+  const c = code.toUpperCase();
+  if (c === 'PB' || c === 'LDNR') return { label: 'Lead — action recommended', color: 'text-red-700', bg: 'bg-red-50' };
+  if (c === 'GS' || c === 'GI') return { label: 'Galvanized — may carry lead deposits', color: 'text-orange-700', bg: 'bg-orange-50' };
+  if (c === 'UN' || c === 'UNK') return { label: 'Unknown material', color: 'text-yellow-700', bg: 'bg-yellow-50' };
+  if (c === 'CU') return { label: 'Copper — lower risk', color: 'text-green-700', bg: 'bg-green-50' };
+  return { label: code, color: 'text-gray-700', bg: 'bg-gray-50' };
+}
+
+function statusLabel(status: string | undefined): string {
+  if (!status) return 'Unknown';
+  const s = status.toUpperCase();
+  if (s === 'COMPLETE') return 'Replacement complete';
+  if (s === 'IN PROGRESS' || s === 'INPROGRESS') return 'Replacement in progress';
+  if (s === 'PENDING') return 'Pending replacement';
+  if (s === 'SCHEDULED') return 'Scheduled';
+  return status;
+}
+
+/**
+ * Address lookup card — lets residents check if their specific address is
+ * enrolled in the GCWW lead service line replacement program.
+ *
+ * Queries b4xq-u3su with a LIKE match on the address field. The dataset covers
+ * ~6,400 program lines, not the full city-wide inventory of 33,449, so a
+ * "not found" result doesn't confirm a copper line — it means the address hasn't
+ * been formally evaluated and enrolled in the program yet.
+ */
+function AddressSearchCard() {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<LeadReplacementRecord[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState(false);
+
+  async function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (query.trim().length < 3) return;
+    setLoading(true);
+    setSearched(false);
+    try {
+      const data = await searchLeadByAddress(query);
+      setResults(data);
+    } catch {
+      setResults([]);
+    } finally {
+      setLoading(false);
+      setSearched(true);
+    }
+  }
+
+  return (
+    <DataCard
+      title="Look Up Your Address"
+      loading={false}
+      error={null}
+    >
+      <p className="text-sm text-gray-600 mb-4">
+        Check if your address is enrolled in GCWW's lead service line replacement program
+        and see its current status.
+      </p>
+
+      <form onSubmit={handleSearch} className="flex gap-2 mb-4">
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Enter street address, e.g. 1600 Vine St"
+          className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A4A6B]"
+          minLength={3}
+          aria-label="Street address"
+        />
+        <button
+          type="submit"
+          disabled={loading || query.trim().length < 3}
+          className="px-4 py-2 bg-[#1A4A6B] text-white text-sm font-medium rounded-lg hover:bg-[#15395a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {loading ? 'Searching…' : 'Search'}
+        </button>
+      </form>
+
+      {/* Results */}
+      {searched && results !== null && (
+        results.length === 0 ? (
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-700">
+            <p className="font-semibold mb-1">No results found for "{query}"</p>
+            <p className="text-gray-600">
+              This address may not be enrolled in GCWW's formal replacement program yet —
+              the dataset covers ~6,400 evaluated lines, not all 33,449 citywide. It does{' '}
+              <strong>not</strong> confirm a copper or lead-free line.
+            </p>
+            <p className="text-gray-600 mt-2">
+              For address-level detail, use the{' '}
+              <a
+                href="https://gcww.maps.arcgis.com/apps/webappviewer/index.html?id=0a170c268c694e46a8a4e394630df0bd"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-[#1A4A6B]"
+              >
+                GCWW interactive service line map
+              </a>.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <p className="text-xs text-gray-500">
+              {results.length} result{results.length !== 1 ? 's' : ''} from the GCWW replacement program
+            </p>
+            {results.map((r, i) => {
+              const risk = materialRisk(r.privatematerialtype);
+              return (
+                <div key={i} className={`rounded-lg border p-4 ${risk.bg}`}>
+                  <div className="flex items-start justify-between gap-2 flex-wrap">
+                    <div>
+                      <p className="font-semibold text-sm text-gray-900">{r.address ?? 'Unknown address'}</p>
+                      {r.adminarea && (
+                        <p className="text-xs text-gray-500 mt-0.5">{r.adminarea}</p>
+                      )}
+                    </div>
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${risk.color} ${risk.bg} border`}>
+                      {risk.label}
+                    </span>
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700">
+                    <div>
+                      <span className="text-gray-500">Private-side material: </span>
+                      <span className="font-medium">{materialLabel(r.privatematerialtype)}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Public-side material: </span>
+                      <span className="font-medium">{materialLabel(r.publicmaterialtype)}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Program status: </span>
+                      <span className="font-medium">{statusLabel(r.status)}</span>
+                    </div>
+                    {r.publicreplacedate && (
+                      <div>
+                        <span className="text-gray-500">Public-side replaced: </span>
+                        <span className="font-medium">{r.publicreplacedate.slice(0, 10)}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            <p className="text-xs text-gray-500 mt-2">
+              Note: "Private-side" is the pipe from the curb to your home (your responsibility).
+              "Public-side" is the pipe from the main to the curb (GCWW's responsibility).
+              Both must be lead-free for safe water.
+            </p>
+          </div>
+        )
+      )}
+
+      {/* Always-on context note */}
+      <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-xs text-blue-900">
+        <strong>Coverage note:</strong> This dataset tracks ~6,400 service lines formally
+        enrolled in GCWW's replacement program — not the full city-wide inventory of 33,449
+        lead or unknown lines. If your address doesn't appear, contact GCWW at{' '}
+        <a href="tel:5135914600" className="underline">(513) 591-4600</a> to request an
+        assessment.
+      </div>
+    </DataCard>
+  );
+}
+
 /** Data transparency / gaps card */
 function DataGapsCard() {
   return (
@@ -629,12 +810,23 @@ function DataGapsCard() {
         <div className="flex gap-3 items-start">
           <span className="text-lg shrink-0">🩸</span>
           <div>
-            <p className="font-semibold">Blood lead case data is not available by neighborhood</p>
+            <p className="font-semibold">Blood lead case rates by neighborhood are not yet machine-readable</p>
             <p className="text-gray-600 mt-0.5">
-              Cincinnati Health Dept. tracks blood lead cases but does not publish neighborhood-level
-              counts publicly — likely due to small-cell suppression to protect privacy. This makes
-              it impossible to show which neighborhoods have the highest pediatric lead burden. We've
-              flagged this as a data partnership opportunity with Cincinnati Health.
+              The Cincinnati Health Department's{' '}
+              <a
+                href="https://www.cincinnati-oh.gov/sites/health/assets/2024-LEAD-ANNUAL-REPORT.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-[#1A4A6B]"
+              >
+                2024 Lead Annual Report
+              </a>{' '}
+              contains census tract maps of testing rates and elevated prevalence (2015–2024 averages),
+              but the underlying data isn't published in a downloadable format. We're pursuing a
+              public records request for the census tract table that powers those maps — if successful,
+              this tab will show which neighborhoods have the highest pediatric lead burden alongside
+              the service line data. Small-cell suppression may limit tract-level disclosure for
+              low-count areas.
             </p>
           </div>
         </div>
@@ -724,6 +916,9 @@ export default function LeadSafety() {
           ))}
         </select>
       </div>
+
+      {/* Address lookup — resident-facing, above neighborhood cards */}
+      <AddressSearchCard />
 
       {/* Two-column grid for the per-neighborhood cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
