@@ -6,6 +6,32 @@
 
 ## Session Log
 
+### Session 14 — Unified Equity Visualization (April 2026)
+
+**Goal:** Consolidate four separate bar charts (income, poverty, homeownership, mortgage) into a single unified panel with three selectable views.
+
+**Design decision:** User reviewed three mockup options (HTML prototype at `public/equity-mockups.html`) and chose to offer all three simultaneously via a tab switcher — same approach as the mockup's tab UI, now implemented in production React.
+
+**Terminology fix:** Applied journalistic standard throughout — "White Non-Hispanic (White NH)" on first prose use, "White NH" on subsequent uses. Consistent with AP Style and CFPB HMDA conventions.
+
+**Files created:**
+- `src/tabs/RacialEquity/UnifiedEquitySection.tsx` — unified panel combining ACS racial equity + HMDA mortgage data with 3 view modes:
+  - **A · Gap Chart**: Diverging BarChart (recharts) per metric; White NH = 0 reference line; group color when better, red when worse
+  - **B · Profile Grid**: 4×4 CSS grid matrix (groups × metrics); color-coded cells; mini inline bars; gap delta vs. White NH in each cell
+  - **C · Opportunity Chain**: Three connected stage panels (Income → Homeownership → Mortgage); dark headline callout with key gap stats; gap summary tiles at bottom
+- `public/equity-mockups.html` — standalone HTML prototype used to present options to user (not part of the app build)
+
+**Files modified:**
+- `src/tabs/NeighborhoodProfiles/index.tsx` — replaced separate `RacialEquitySection` + `MortgageLendingSection` imports with single `UnifiedEquitySection`
+
+**Architecture note:** `Section.tsx` and `MortgageSection.tsx` are retained (not deleted) — they remain the transplant-ready building blocks if the unified section is later promoted to its own tab. `UnifiedEquitySection.tsx` is the production component.
+
+**Default view:** Profile Grid (B) — most data-dense, easiest to scan for neighborhood comparison.
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+---
+
 ### Session 13 — Phase 3: Racial Equity + HMDA Mortgage Lending (March 2026)
 
 **Goal:** Begin Phase 3 (Racial Equity Dashboard) with race-disaggregated ACS metrics embedded in Neighborhood Profiles, structured for easy transplant to a standalone tab.

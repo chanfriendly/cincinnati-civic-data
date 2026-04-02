@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Racial Equity — Visualization Concepts</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  .tab-btn { transition: all 0.15s; }
+  .tab-btn.active { background: #1A4A6B; color: white; }
+  .tab-btn:not(.active) { background: #F3F4F6; color: #374151; }
+  .tab-btn:not(.active):hover { background: #E5E7EB; }
+  .fade-in { animation: fadeIn 0.2s ease-in; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .chain-arrow { color: #9CA3AF; font-size: 20px; }
+  .metric-label { font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen p-6">
+
+<div class="max-w-2xl mx-auto">
+
+  <!-- Header -->
+  <div class="mb-6">
+    <div class="flex items-center gap-3 mb-2">
+      <div class="w-2 h-6 rounded" style="background:#1A4A6B"></div>
+      <h1 class="text-lg font-bold text-gray-900">Racial Equity — Visualization Concepts</h1>
+    </div>
+    <p class="text-sm text-gray-500 ml-5">
+      Illustrative data for <strong>Avondale</strong>. Three approaches to consolidating income, poverty,
+      homeownership, and mortgage lending data into a single, readable view.
+    </p>
+    <!-- Population pill bar -->
+    <div class="ml-5 mt-3">
+      <div class="text-xs text-gray-500 mb-1">Population · 12,792 residents</div>
+      <div class="flex h-4 rounded overflow-hidden w-full">
+        <div style="width:76.3%;background:#1A4A6B" title="Black 76.3%"></div>
+        <div style="width:10.4%;background:#2E7D5A" title="White NH 10.4%"></div>
+        <div style="width:7.3%;background:#D97706" title="Hispanic 7.3%"></div>
+        <div style="width:1.5%;background:#8B5CF6" title="Asian 1.5%"></div>
+        <div style="width:4.5%;background:#D1D5DB" title="Other 4.5%"></div>
+      </div>
+      <div class="flex gap-3 mt-1 text-xs text-gray-500">
+        <span><span style="color:#1A4A6B">■</span> Black 76%</span>
+        <span><span style="color:#2E7D5A">■</span> White NH 10%</span>
+        <span><span style="color:#D97706">■</span> Hispanic 7%</span>
+        <span><span style="color:#8B5CF6">■</span> Asian 2%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab switcher -->
+  <div class="flex gap-2 mb-4">
+    <button class="tab-btn active text-sm font-medium px-4 py-2 rounded-lg" onclick="showTab(0, this)">
+      A · Equity Gap Chart
+    </button>
+    <button class="tab-btn text-sm font-medium px-4 py-2 rounded-lg" onclick="showTab(1, this)">
+      B · Profile Grid
+    </button>
+    <button class="tab-btn text-sm font-medium px-4 py-2 rounded-lg" onclick="showTab(2, this)">
+      C · Opportunity Chain
+    </button>
+  </div>
+  <p class="text-xs text-gray-400 mb-4" id="tab-desc">
+    One diverging chart replaces four bar charts. Shows each group's gap from White NH across all metrics simultaneously — the consistent leftward pattern for Black residents is immediately visible.
+  </p>
+
+  <!-- Tab A: Equity Gap Chart -->
+  <div id="tab-0" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 fade-in">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-semibold text-gray-900">Equity Gaps vs. White Non-Hispanic Residents</h2>
+      <span class="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">Option A</span>
+    </div>
+
+    <!-- Legend -->
+    <div class="flex items-center gap-4 mb-5 text-xs text-gray-500">
+      <div class="flex items-center gap-1.5">
+        <div class="w-3 h-3 rounded-sm bg-red-300 opacity-80"></div>
+        <span>Worse than White NH</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <div class="w-3 h-3 rounded-sm bg-emerald-300 opacity-80"></div>
+        <span>Better than White NH</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <div class="w-px h-4 bg-gray-400"></div>
+        <span>White NH = 0</span>
+      </div>
+    </div>
+
+    <!-- Metric: Income -->
+    <div class="mb-5">
+      <div class="flex items-baseline justify-between mb-2">
+        <span class="metric-label text-gray-600">Median Household Income</span>
+        <span class="text-xs text-gray-400">¢ earned per $1 White NH earns · White NH = $72k</span>
+      </div>
+      <!-- bars: domain -80 to +20, zero at 80/100 = 80% -->
+      <div id="income-chart" class="space-y-1.5"></div>
+    </div>
+
+    <div class="border-t border-gray-50 mb-5"></div>
+
+    <!-- Metric: Poverty -->
+    <div class="mb-5">
+      <div class="flex items-baseline justify-between mb-2">
+        <span class="metric-label text-gray-600">Poverty Rate</span>
+        <span class="text-xs text-gray-400">pp difference from White NH · White NH = 16.1% · ↑ worse</span>
+      </div>
+      <div id="poverty-chart" class="space-y-1.5"></div>
+    </div>
+
+    <div class="border-t border-gray-50 mb-5"></div>
+
+    <!-- Metric: Homeownership -->
+    <div class="mb-5">
+      <div class="flex items-baseline justify-between mb-2">
+        <span class="metric-label text-gray-600">Homeownership Rate</span>
+        <span class="text-xs text-gray-400">pp difference from White NH · White NH = 52.3%</span>
+      </div>
+      <div id="ownership-chart" class="space-y-1.5"></div>
+    </div>
+
+    <div class="border-t border-gray-50 mb-5"></div>
+
+    <!-- Metric: Mortgage -->
+    <div class="mb-0">
+      <div class="flex items-baseline justify-between mb-2">
+        <span class="metric-label text-gray-600">Mortgage Approval Rate</span>
+        <span class="text-xs text-gray-400">pp difference from White NH · White NH = 83.9%</span>
+      </div>
+      <div id="mortgage-chart" class="space-y-1.5"></div>
+    </div>
+
+    <div class="mt-5 pt-4 border-t border-gray-100 text-xs text-gray-400">
+      Sources: ACS 5-Year 2022 · CFPB HMDA LAR 2022 · Illustrative neighborhood data
+    </div>
+  </div>
+
+
+  <!-- Tab B: Profile Grid -->
+  <div id="tab-1" class="hidden bg-white rounded-xl shadow-sm border border-gray-100 p-5 fade-in">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-semibold text-gray-900">Race × Opportunity Matrix</h2>
+      <span class="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded">Option B</span>
+    </div>
+    <p class="text-xs text-gray-500 mb-4">
+      4 metrics × 4 groups in one compact table. Cell shading shows relative performance
+      within each metric. Replaces 4 separate charts.
+    </p>
+
+    <!-- Column headers -->
+    <div class="grid grid-cols-5 gap-1.5 mb-1">
+      <div></div>
+      <div class="text-center">
+        <div class="text-xs font-semibold pb-1 border-b-2" style="color:#1A4A6B;border-color:#1A4A6B">Black</div>
+        <div class="text-xs text-gray-400 mt-1">76% of pop.</div>
+      </div>
+      <div class="text-center">
+        <div class="text-xs font-semibold pb-1 border-b-2" style="color:#2E7D5A;border-color:#2E7D5A">White NH</div>
+        <div class="text-xs text-gray-400 mt-1">10% of pop.</div>
+      </div>
+      <div class="text-center">
+        <div class="text-xs font-semibold pb-1 border-b-2" style="color:#8B5CF6;border-color:#8B5CF6">Asian</div>
+        <div class="text-xs text-gray-400 mt-1">2% of pop.</div>
+      </div>
+      <div class="text-center">
+        <div class="text-xs font-semibold pb-1 border-b-2" style="color:#D97706;border-color:#D97706">Hispanic</div>
+        <div class="text-xs text-gray-400 mt-1">7% of pop.</div>
+      </div>
+    </div>
+
+    <!-- Rows -->
+    <div id="matrix-rows" class="space-y-1.5 mt-2"></div>
+
+    <!-- County benchmark row -->
+    <div class="mt-4 pt-3 border-t border-gray-100 grid grid-cols-5 gap-1.5">
+      <div class="text-xs text-gray-400 pr-2 flex items-center">
+        <span class="metric-label">County avg mortgage</span>
+      </div>
+      <div class="text-center py-1.5 rounded text-xs bg-gray-50">
+        <div class="font-semibold text-gray-700">67.8%</div>
+        <div class="text-gray-400 text-[10px]">−16.1pp</div>
+      </div>
+      <div class="text-center py-1.5 rounded text-xs bg-gray-50">
+        <div class="font-semibold text-gray-700">83.0%</div>
+        <div class="text-gray-400 text-[10px]">county ref</div>
+      </div>
+      <div class="text-center py-1.5 rounded text-xs bg-gray-50">
+        <div class="font-semibold text-gray-700">82.4%</div>
+        <div class="text-gray-400 text-[10px]">−0.6pp</div>
+      </div>
+      <div class="text-center py-1.5 rounded text-xs bg-gray-50">
+        <div class="font-semibold text-gray-700">71.5%</div>
+        <div class="text-gray-400 text-[10px]">−11.5pp</div>
+      </div>
+    </div>
+
+    <div class="mt-4 pt-3 border-t border-gray-100 text-xs text-gray-400">
+      Cell shading: dark = strongest performance on that metric · County mortgage data from CFPB HMDA LAR 2022
+    </div>
+  </div>
+
+
+  <!-- Tab C: Opportunity Chain -->
+  <div id="tab-2" class="hidden bg-white rounded-xl shadow-sm border border-gray-100 p-5 fade-in">
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="font-semibold text-gray-900">The Opportunity Chain</h2>
+      <span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded">Option C</span>
+    </div>
+    <p class="text-xs text-gray-500 mb-5">
+      Wealth-building works through three linked stages. Disparities at each stage
+      compound into the next — showing that mortgage approval gaps don't happen in isolation.
+    </p>
+
+    <!-- Headline finding -->
+    <div class="bg-gray-900 text-white rounded-lg p-3.5 mb-5">
+      <div class="text-xs text-gray-400 mb-1 uppercase tracking-wide">Key finding · Avondale</div>
+      <p class="text-sm font-medium leading-snug">
+        Black residents earn <strong class="text-yellow-300">39¢ per $1</strong> earned by White NH residents —
+        and face a <strong class="text-yellow-300">20pp gap</strong> in mortgage approval.
+        Poverty and homeownership disparities connect these two outcomes.
+      </p>
+    </div>
+
+    <!-- Chain visualization -->
+    <div class="flex items-stretch gap-0">
+
+      <!-- Stage 1: Income -->
+      <div class="flex-1 border border-gray-200 rounded-l-xl p-4">
+        <div class="metric-label text-gray-400 mb-2">Stage 1</div>
+        <div class="text-sm font-bold text-gray-800 mb-3">Income</div>
+        <div class="space-y-2" id="chain-income"></div>
+        <div class="mt-3 pt-2 border-t border-gray-100">
+          <div class="text-xs text-gray-400">Poverty rate</div>
+          <div class="space-y-1 mt-1" id="chain-poverty"></div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div class="flex items-center justify-center w-8 flex-shrink-0 text-gray-300">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"/>
+        </svg>
+      </div>
+
+      <!-- Stage 2: Homeownership -->
+      <div class="flex-1 border border-gray-200 p-4">
+        <div class="metric-label text-gray-400 mb-2">Stage 2</div>
+        <div class="text-sm font-bold text-gray-800 mb-3">Home Equity</div>
+        <div class="space-y-2" id="chain-ownership"></div>
+        <div class="mt-3 pt-2 border-t border-gray-100 text-xs text-gray-400">
+          Homeownership = primary wealth-building vehicle for most families
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div class="flex items-center justify-center w-8 flex-shrink-0 text-gray-300">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"/>
+        </svg>
+      </div>
+
+      <!-- Stage 3: Mortgage -->
+      <div class="flex-1 border border-gray-200 rounded-r-xl p-4">
+        <div class="metric-label text-gray-400 mb-2">Stage 3</div>
+        <div class="text-sm font-bold text-gray-800 mb-3">Credit Access</div>
+        <div class="space-y-2" id="chain-mortgage"></div>
+        <div class="mt-3 pt-2 border-t border-gray-100 text-xs text-gray-400">
+          Approval rates from CFPB HMDA LAR 2022, all loan types
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Gap summary bar -->
+    <div class="mt-4 grid grid-cols-3 gap-1.5">
+      <div class="bg-red-50 rounded-lg p-3 text-center">
+        <div class="text-lg font-bold" style="color:#1A4A6B">39¢</div>
+        <div class="text-xs text-gray-500 mt-0.5">per $1 (income gap)</div>
+      </div>
+      <div class="bg-red-50 rounded-lg p-3 text-center">
+        <div class="text-lg font-bold" style="color:#1A4A6B">−10pp</div>
+        <div class="text-xs text-gray-500 mt-0.5">homeownership gap</div>
+      </div>
+      <div class="bg-red-50 rounded-lg p-3 text-center">
+        <div class="text-lg font-bold" style="color:#1A4A6B">−20pp</div>
+        <div class="text-xs text-gray-500 mt-0.5">mortgage approval gap</div>
+      </div>
+    </div>
+
+    <div class="mt-4 pt-3 border-t border-gray-100 text-xs text-gray-400">
+      Sources: ACS 5-Year 2022 · CFPB HMDA LAR 2022 · Illustrative neighborhood data
+    </div>
+  </div>
+
+</div><!-- end max-w-2xl -->
+
+<script>
+const GROUPS = [
+  { key: "black",    label: "Black",    color: "#1A4A6B", income: 28000, poverty: 38.2, ownership: 42.1, mortgage: 63.4 },
+  { key: "white",    label: "White NH", color: "#2E7D5A", income: 72000, poverty: 16.1, ownership: 52.3, mortgage: 83.9 },
+  { key: "asian",    label: "Asian",    color: "#8B5CF6", income: 58000, poverty: 8.4,  ownership: 61.2, mortgage: 81.5 },
+  { key: "hispanic", label: "Hispanic", color: "#D97706", income: 41000, poverty: 24.7, ownership: 38.8, mortgage: 71.5 },
+];
+const W = GROUPS.find(g => g.key === "white");
+const NON_WHITE = GROUPS.filter(g => g.key !== "white");
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+
+const TAB_DESCS = [
+  "One diverging chart replaces four bar charts. Shows each group's gap from White NH across all metrics simultaneously — the consistent leftward pattern for Black residents is immediately visible.",
+  "A compact 4×4 matrix replaces four separate charts. Scan across a row to compare groups on one metric; scan down a column to see a group's full profile. Cell shading encodes relative performance.",
+  "A narrative pipeline shows how income, homeownership, and mortgage access connect. Designed for advocates and journalists — tells the story that four separate charts leave implicit.",
+];
+
+function showTab(idx, btn) {
+  [0,1,2].forEach(i => {
+    document.getElementById(`tab-${i}`).classList.add("hidden");
+    document.getElementById(`tab-${i}`).classList.remove("fade-in");
+  });
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  const el = document.getElementById(`tab-${idx}`);
+  el.classList.remove("hidden");
+  setTimeout(() => el.classList.add("fade-in"), 10);
+  btn.classList.add("active");
+  document.getElementById("tab-desc").textContent = TAB_DESCS[idx];
+}
+
+// ── Option A: Diverging Gap Chart ─────────────────────────────────────────────
+
+function makeDivergingBar(container, groups, computeGap, domain, betterIsPositive) {
+  const [minD, maxD] = domain;
+  const range = maxD - minD;
+  const zeroAt = ((-minD) / range) * 100;
+
+  groups.forEach(g => {
+    const gap = computeGap(g);
+    const isPos = gap >= 0;
+    const barW = (Math.abs(gap) / range) * 100;
+    const isGood = betterIsPositive ? isPos : !isPos;
+    const barColor = isGood ? g.color : "#EF4444";
+    const barOpacity = "cc"; // hex opacity
+
+    const row = document.createElement("div");
+    row.className = "flex items-center gap-2";
+    row.innerHTML = `
+      <div style="width:72px;text-align:right;font-size:11px;color:#6B7280;flex-shrink:0">${g.label}</div>
+      <div style="flex:1;position:relative;height:22px">
+        <!-- zero line -->
+        <div style="position:absolute;top:0;bottom:0;width:1px;background:#9CA3AF;left:${zeroAt}%;z-index:2"></div>
+        <!-- bar -->
+        <div style="position:absolute;top:3px;bottom:3px;border-radius:3px;background:${barColor};opacity:0.8;
+          ${isPos
+            ? `left:${zeroAt}%;width:${Math.min(barW, 100 - zeroAt)}%`
+            : `right:${100 - zeroAt}%;width:${Math.min(barW, zeroAt)}%`
+          }"></div>
+      </div>
+      <div style="width:50px;font-size:11px;font-weight:600;color:${isGood ? g.color : '#EF4444'}">
+        ${gap >= 0 ? "+" : ""}${gap.toFixed(gap < 10 && gap > -10 ? 1 : 0)}${typeof gap === "number" && Math.abs(gap) <= 100 ? "pp" : "¢"}
+      </div>
+    `;
+    container.appendChild(row);
+  });
+
+  // White NH baseline marker
+  const ref = document.createElement("div");
+  ref.className = "flex items-center gap-2";
+  ref.innerHTML = `
+    <div style="width:72px;text-align:right;font-size:11px;color:#9CA3AF;flex-shrink:0">White NH</div>
+    <div style="flex:1;position:relative;height:6px">
+      <div style="position:absolute;top:0;bottom:0;width:2px;background:#2E7D5A;left:${zeroAt}%;border-radius:2px"></div>
+    </div>
+    <div style="width:50px;font-size:11px;color:#9CA3AF">0 (ref)</div>
+  `;
+  container.appendChild(ref);
+}
+
+// Income chart: gap in ¢ per $1, domain -80 to +20
+makeDivergingBar(
+  document.getElementById("income-chart"),
+  NON_WHITE,
+  g => +(g.income / W.income * 100 - 100).toFixed(0),
+  [-80, 20],
+  true
+);
+
+// Override the "pp" suffix for income (it's ¢)
+document.querySelectorAll("#income-chart > div > div:last-child").forEach((el, i) => {
+  if (i < 3) { // non-white groups
+    const text = el.textContent;
+    el.textContent = text.replace("pp", "¢");
+  }
+});
+
+// Poverty chart: gap in pp, positive = more poverty = WORSE, domain -15 to +35
+makeDivergingBar(
+  document.getElementById("poverty-chart"),
+  NON_WHITE,
+  g => +(g.poverty - W.poverty).toFixed(1),
+  [-15, 35],
+  false  // betterIsPositive = false: more poverty (positive) is WORSE
+);
+
+// Homeownership chart: gap in pp, domain -20 to +15
+makeDivergingBar(
+  document.getElementById("ownership-chart"),
+  NON_WHITE,
+  g => +(g.ownership - W.ownership).toFixed(1),
+  [-20, 15],
+  true
+);
+
+// Mortgage chart: gap in pp, domain -25 to +5
+makeDivergingBar(
+  document.getElementById("mortgage-chart"),
+  NON_WHITE,
+  g => +(g.mortgage - W.mortgage).toFixed(1),
+  [-25, 5],
+  true
+);
+
+
+// ── Option B: Profile Grid ─────────────────────────────────────────────────────
+
+const MATRIX_METRICS = [
+  {
+    label: "Median Income", note: "ACS B19013", higher_better: true,
+    values: GROUPS.map(g => ({ key: g.key, raw: g.income, display: `$${(g.income/1000).toFixed(0)}k` })),
+    max: 80000,
+  },
+  {
+    label: "Poverty Rate", note: "ACS B17001", higher_better: false,
+    values: GROUPS.map(g => ({ key: g.key, raw: g.poverty, display: `${g.poverty}%` })),
+    max: 50,
+  },
+  {
+    label: "Homeownership", note: "ACS B25003", higher_better: true,
+    values: GROUPS.map(g => ({ key: g.key, raw: g.ownership, display: `${g.ownership}%` })),
+    max: 75,
+  },
+  {
+    label: "Mortgage Approval", note: "HMDA 2022", higher_better: true,
+    values: GROUPS.map(g => ({ key: g.key, raw: g.mortgage, display: `${g.mortgage}%` })),
+    max: 100,
+  },
+];
+
+const GROUP_ORDER = ["black", "white", "asian", "hispanic"];
+const GROUP_COLORS = { black: "#1A4A6B", white: "#2E7D5A", asian: "#8B5CF6", hispanic: "#D97706" };
+
+const matrixContainer = document.getElementById("matrix-rows");
+MATRIX_METRICS.forEach(m => {
+  const whiteVal = m.values.find(v => v.key === "white").raw;
+
+  const row = document.createElement("div");
+  row.className = "grid gap-1.5";
+  row.style.gridTemplateColumns = "1fr 1fr 1fr 1fr 1fr";
+
+  // Row label
+  const label = document.createElement("div");
+  label.className = "flex flex-col justify-center pr-2";
+  label.innerHTML = `
+    <div style="font-size:11px;font-weight:600;color:#374151">${m.label}</div>
+    <div style="font-size:9px;color:#9CA3AF">${m.note}</div>
+  `;
+  row.appendChild(label);
+
+  GROUP_ORDER.forEach(key => {
+    const v = m.values.find(v => v.key === key);
+    const gap = m.higher_better
+      ? +(v.raw - whiteVal).toFixed(1)
+      : +(whiteVal - v.raw).toFixed(1); // poverty: inverted
+    const isWorse = gap < 0;
+    const isWhite = key === "white";
+
+    // Cell shading: intensity based on how good/bad
+    const pct = v.raw / m.max;
+    const isGoodCell = m.higher_better ? pct > 0.55 : pct < 0.3;
+
+    const cell = document.createElement("div");
+    cell.style.cssText = `
+      padding: 8px 6px;
+      border-radius: 8px;
+      text-align: center;
+      background: ${isWhite ? "#F9FAFB" : isGoodCell ? GROUP_COLORS[key] + "18" : "#FEF2F2"};
+      border: 1px solid ${isWhite ? "#E5E7EB" : isGoodCell ? GROUP_COLORS[key] + "44" : "#FECACA"};
+    `;
+
+    const pctBar = Math.round((v.raw / m.max) * 100);
+    cell.innerHTML = `
+      <div style="font-size:13px;font-weight:700;color:${isWhite ? "#374151" : GROUP_COLORS[key]}">${v.display}</div>
+      ${!isWhite ? `<div style="font-size:9px;margin-top:2px;color:${isWorse ? '#EF4444' : '#10B981'}">
+        ${gap >= 0 ? "▲" : "▼"} ${Math.abs(gap)}${m.label.includes("Income") ? "k" : "pp"}
+      </div>` : `<div style="font-size:9px;color:#9CA3AF;margin-top:2px">baseline</div>`}
+      <div style="height:3px;background:#E5E7EB;border-radius:2px;margin-top:5px;overflow:hidden">
+        <div style="height:100%;background:${GROUP_COLORS[key]};width:${pctBar}%;border-radius:2px;opacity:0.7"></div>
+      </div>
+    `;
+    row.appendChild(cell);
+  });
+
+  matrixContainer.appendChild(row);
+});
+
+
+// ── Option C: Opportunity Chain ───────────────────────────────────────────────
+
+function makeChainBars(containerId, valueKey, maxVal, formatFn) {
+  const container = document.getElementById(containerId);
+  GROUPS.forEach(g => {
+    const val = g[valueKey];
+    const pct = Math.round((val / maxVal) * 100);
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+        <div style="width:52px;font-size:10px;color:#6B7280;text-align:right;flex-shrink:0">${g.label}</div>
+        <div style="flex:1;height:14px;background:#F3F4F6;border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${g.color};border-radius:3px;opacity:0.85"></div>
+        </div>
+        <div style="width:36px;font-size:10px;font-weight:600;color:${g.color}">${formatFn(val)}</div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+makeChainBars("chain-income", "income", 80000, v => `$${(v/1000).toFixed(0)}k`);
+makeChainBars("chain-poverty", "poverty", 70, v => `${v}%`);
+makeChainBars("chain-ownership", "ownership", 80, v => `${v}%`);
+makeChainBars("chain-mortgage", "mortgage", 100, v => `${v}%`);
+
+</script>
+</body>
+</html>
