@@ -858,10 +858,18 @@ export default function NeighborhoodProfiles() {
               )}
             </div>
 
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={fireEmsByType.slice(0, 8)}>
+            <ResponsiveContainer width="100%" height={340}>
+              <BarChart data={fireEmsByType.slice(0, 8)} margin={{ bottom: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="type" angle={-45} textAnchor="end" height={80} />
+                <XAxis
+                  dataKey="type"
+                  angle={-40}
+                  textAnchor="end"
+                  height={110}
+                  tick={{ fontSize: 11 }}
+                  tickFormatter={(v: string) => v.length > 20 ? v.slice(0, 18) + '…' : v}
+                  interval={0}
+                />
                 <YAxis />
                 <Tooltip />
                 <Bar dataKey="count" fill="#FF5722" />

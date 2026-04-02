@@ -98,12 +98,6 @@ const RoadmapIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }
   </svg>
 )
 
-const OwnerIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-      d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c0 1.306.835 2.418 2 2.83" />
-  </svg>
-)
 
 const DisplacementIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
   <svg
@@ -150,7 +144,6 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
     { id: 'police', icon: <PoliceIcon />, labelKey: 'nav.police' },
     { id: 'explorer', icon: <ExplorerIcon />, labelKey: 'nav.explorer' },
     { id: 'displacement', icon: <DisplacementIcon />, labelKey: 'nav.displacement' },
-    { id: 'owner', icon: <OwnerIcon />, labelKey: 'nav.owner' },
     { id: 'lead', icon: <LeadIcon />, labelKey: 'nav.lead' },
     { id: 'accessibility', icon: <AccessibilityIcon />, labelKey: 'nav.accessibility' },
     { id: 'roadmap', icon: <RoadmapIcon />, labelKey: 'nav.roadmap' },

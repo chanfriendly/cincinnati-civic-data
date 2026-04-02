@@ -12,7 +12,6 @@ const PoliceAccountability = React.lazy(() => import('./tabs/PoliceAccountabilit
 const NeighborhoodExplorer = React.lazy(() => import('./tabs/NeighborhoodExplorer'))
 const Roadmap = React.lazy(() => import('./tabs/Roadmap'))
 const DisplacementTab = React.lazy(() => import('./tabs/Displacement'))
-const OwnerActivity = React.lazy(() => import('./tabs/OwnerActivity'))
 const Accessibility = React.lazy(() => import('./tabs/Accessibility'))
 const LeadSafety = React.lazy(() => import('./tabs/LeadSafety'))
 
@@ -73,12 +72,6 @@ const AppContent: React.FC = () => {
         return (
           <Suspense fallback={<TabLoadingFallback />}>
             <DisplacementTab />
-          </Suspense>
-        )
-      case 'owner':
-        return (
-          <Suspense fallback={<TabLoadingFallback />}>
-            <OwnerActivity />
           </Suspense>
         )
       default:

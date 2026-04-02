@@ -554,7 +554,9 @@ export default function PoliceAccountability() {
           >
             <p className="text-xs text-gray-500 italic mb-3">
               Race of subjects involved in use-of-force incidents, from the CPD Subjects table (4gu6-tz3f).
-              Covers 2021–2024. This is a separate record from the incidents table and may differ slightly in count.
+              Covers 2021–2024. This is a separate record from the incidents table and may differ slightly in count.{' '}
+              <strong>UNKNOWN</strong> means the officer did not record the subject's race in the incident report —
+              it does not indicate a separate demographic category.
             </p>
             {forceSubjectsByRace.length > 0 ? (
               <ResponsiveContainer width="100%" height={280}>

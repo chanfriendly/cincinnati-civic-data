@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { fetchSODA, fetchNeighborhoodCensusStats, normalizeNeighborhoodName, stripNeighborhoodName } from '../../utils/api'
 import { normalize } from '../../utils/scoring'
+import OwnerActivity from '../OwnerActivity'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -261,6 +262,8 @@ const QuadrantPlot: React.FC<{ record: DisplacementRecord }> = ({ record }) => {
 // ─── Main component ────────────────────────────────────────────────────────────
 
 const DisplacementTab: React.FC = () => {
+  const [activeSection, setActiveSection] = useState<'displacement' | 'owner'>('displacement')
+
   // ── Data state ──────────────────────────────────────────────────────────────
   const [snaNames, setSnaNames] = useState<string[]>([])
   const [censusMap, setCensusMap] = useState<Map<string, { medianHouseholdIncome: number | null; rentBurdenRate: number | null }> | null>(null)
@@ -732,6 +735,34 @@ const DisplacementTab: React.FC = () => {
   // ─── Render ───────────────────────────────────────────────────────────────────
   return (
     <div className="max-w-7xl mx-auto">
+
+      {/* Section sub-tabs */}
+      <div className="mb-6 border-b border-gray-200">
+        <div className="flex gap-0">
+          {([
+            { id: 'displacement', label: 'Displacement Index' },
+            { id: 'owner',        label: 'Owner / Developer Search' },
+          ] as const).map(sec => (
+            <button
+              key={sec.id}
+              onClick={() => setActiveSection(sec.id)}
+              className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${
+                activeSection === sec.id
+                  ? 'border-[#1A4A6B] text-[#1A4A6B]'
+                  : 'border-transparent text-gray-500 hover:text-[#1A4A6B]'
+              }`}
+            >
+              {sec.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Owner / Developer Search */}
+      {activeSection === 'owner' && <OwnerActivity />}
+
+      {/* Displacement Index content */}
+      {activeSection === 'displacement' && <>
 
       {/* Header */}
       <div className="mb-6">
@@ -1280,6 +1311,8 @@ const DisplacementTab: React.FC = () => {
           </div>
         </div>
       )}
+
+      </>}
 
     </div>
   )

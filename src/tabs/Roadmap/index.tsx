@@ -130,8 +130,8 @@ const SECTIONS: RoadmapSection[] = [
       {
         title: 'Property Ownership & LLC Network Map',
         status: 'needs-partner',
-        description: 'A deeper "Who Owns Cincinnati" tool connecting shell companies and LLCs across the CAGIS parcel database — linking parcel ownership with Ohio Secretary of State corporate records to map full portfolio networks. The Owner Watch tab provides a permit-level starting point using open data.',
-        why: 'The Owner Watch tab shows permit applicants and CRA recipients, but CAGIS parcel ownership data would allow tracking across the full property portfolio — including properties with no active permits. That deeper linkage requires a partnership.',
+        description: 'A deeper "Who Owns Cincinnati" tool connecting shell companies and LLCs across the CAGIS parcel database — linking parcel ownership with Ohio Secretary of State corporate records to map full portfolio networks. The Owner / Developer Search in Housing Justice provides a permit-level starting point using open data.',
+        why: 'The Owner / Developer Search shows permit applicants and CRA recipients, but CAGIS parcel ownership data would allow tracking across the full property portfolio — including properties with no active permits. That deeper linkage requires a partnership.',
         dataSource: 'CAGIS Parcel Data (owner name field) + Ohio Secretary of State LLC Registry',
         dataSourceUrl: 'https://businesssearch.ohiosos.gov/',
         relatedOrgs: ['Housing Opportunities Made Equal (HOME Cincy)', 'COHHIO'],
@@ -147,10 +147,10 @@ const SECTIONS: RoadmapSection[] = [
       {
         title: 'Owner / Developer Activity Tracker',
         status: 'completed',
-        description: 'Search any owner name or LLC to see all their permit activity, housing unit removals, CRA subsidies, and neighborhood presence city-wide — Cincinnati\'s version of JustFix NYC\'s "Who Owns What." Now live in the Owner Watch tab.',
+        description: 'Search any owner name or LLC to see all their permit activity, housing unit removals, CRA subsidies, and neighborhood presence city-wide — Cincinnati\'s version of JustFix NYC\'s "Who Owns What." Now live in the Housing Justice tab under "Owner / Developer Search."',
         why: 'Large landlords and developers frequently hold properties under multiple LLC names, making their full portfolio and violation history invisible. Searching permit applicant names surfaces those patterns using open data.',
         dataSource: 'Cincinnati Open Data: Housing Unit Activity (xedz-tk7q), Commercial CRA Abatements (m76i-p5p9)',
-        tab: 'Owner Watch',
+        tab: 'Housing Justice',
         relatedOrgs: ['Housing Opportunities Made Equal (HOME Cincy)', 'Legal Aid Society of Greater Cincinnati'],
       },
       {
@@ -443,12 +443,15 @@ const ItemCard: React.FC<{ item: RoadmapItem }> = ({ item }) => (
     </div>
 
     {item.relatedOrgs && item.relatedOrgs.length > 0 && (
-      <div className="mt-3 flex flex-wrap gap-1">
-        {item.relatedOrgs.map(org => (
-          <span key={org} className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">
-            {org}
-          </span>
-        ))}
+      <div className="mt-3">
+        <p className="text-xs text-gray-400 mb-1">Organizations you may be interested in supporting:</p>
+        <div className="flex flex-wrap gap-1">
+          {item.relatedOrgs.map(org => (
+            <span key={org} className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">
+              {org}
+            </span>
+          ))}
+        </div>
       </div>
     )}
   </div>
