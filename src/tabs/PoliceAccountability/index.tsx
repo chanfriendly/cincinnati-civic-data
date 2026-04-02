@@ -120,7 +120,7 @@ export default function PoliceAccountability() {
   const forceByNeighborhoodQ = useSODA('748b-sht4', {
     $select: 'sna_neighborhood,count(*) as count',
     $group: 'sna_neighborhood',
-    $where: forceWhere,
+    $where: `${forceWhere} AND sna_neighborhood IS NOT NULL`,
     $order: 'count DESC',
     $limit: 10,
   });
@@ -542,6 +542,11 @@ export default function PoliceAccountability() {
             ) : (
               <EmptyState message={t('police.noData', 'No data available')} />
             )}
+            <p className="text-xs text-gray-400 italic mt-2">
+              A small number of incidents (~37 in 2024) have no SNA neighborhood assigned — these span multiple
+              districts and include incidents outside city limits or on roads that don't map to a neighborhood
+              boundary. They are excluded from this chart.
+            </p>
             <DataAttribution source={t('police.attributionForce', 'Use of Force')} uid="748b-sht4" />
           </DataCard>
 
