@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useSODA } from '../../hooks/useSODA';
 import { formatCurrency, fetchSODA, fetchNeighborhoodCensusStats, stripNeighborhoodName } from '../../utils/api';
 import type { NeighborhoodCensusStats } from '../../utils/api';
+import RacialEquitySection from '../RacialEquity/Section';
+import MortgageLendingSection from '../RacialEquity/MortgageSection';
 import {
   DataCard,
   EmptyState,
@@ -874,6 +876,14 @@ export default function NeighborhoodProfiles() {
           uid="vnsz-a3wp"
         />
       </DataCard>
+
+      {/* Racial Equity — race-disaggregated income, poverty, homeownership */}
+      {/* Self-contained component: transplant to own tab by wrapping in a tab shell */}
+      <RacialEquitySection neighborhood={selectedNeighborhood} />
+
+      {/* Mortgage Lending — HMDA approval rates by race */}
+      {/* Self-contained component: transplant to own tab by wrapping in a tab shell */}
+      <MortgageLendingSection neighborhood={selectedNeighborhood} />
 
     </div>
   );

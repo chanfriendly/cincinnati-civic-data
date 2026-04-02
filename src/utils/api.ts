@@ -1,4 +1,4 @@
-import type { SODAQueryParams, OHGOIncident, OHGOCamera, OHGOConstruction, NeighborhoodDisabilityStats, NeighborhoodLeadStats, NeighborhoodEJStats } from '../types';
+import type { SODAQueryParams, OHGOIncident, OHGOCamera, OHGOConstruction, NeighborhoodDisabilityStats, NeighborhoodLeadStats, NeighborhoodEJStats, NeighborhoodRacialEquityStats, NeighborhoodHMDAStats } from '../types';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -856,4 +856,62 @@ export async function fetchNeighborhoodEJStats(): Promise<Map<string, Neighborho
   })();
 
   return _ejCachePromise;
+}
+
+// ─── Racial Equity ────────────────────────────────────────────────────────────
+
+/**
+ * Pre-computed ACS race-disaggregated equity statistics per neighborhood.
+ * Built by `scripts/build_racial_equity.py` from ACS 5-Year 2022.
+ *
+ * Returns an empty Map if the build script hasn't been run yet.
+ * The RacialEquitySection handles this gracefully with a build notice.
+ */
+let _racialEquityCachePromise: Promise<Map<string, NeighborhoodRacialEquityStats>> | null = null;
+
+export async function fetchNeighborhoodRacialEquityStats(): Promise<Map<string, NeighborhoodRacialEquityStats>> {
+  if (_racialEquityCachePromise) return _racialEquityCachePromise;
+
+  _racialEquityCachePromise = (async () => {
+    const resp = await fetch('/data/neighborhood_racial_equity.json');
+    if (!resp.ok) throw new Error(`Racial equity data not found: HTTP ${resp.status}`);
+    const raw: Record<string, NeighborhoodRacialEquityStats> = await resp.json();
+    const map = new Map<string, NeighborhoodRacialEquityStats>();
+    for (const [key, val] of Object.entries(raw)) {
+      map.set(key, val);
+    }
+    return map;
+  })();
+
+  return _racialEquityCachePromise;
+}
+
+// ─── HMDA Mortgage Lending ────────────────────────────────────────────────────
+
+/**
+ * Pre-computed CFPB HMDA mortgage lending outcomes per neighborhood.
+ * Built by `scripts/build_hmda.py` from the HMDA Data Browser API (no auth).
+ *
+ * Includes a special '_county' key with Hamilton County totals — used for the
+ * county-level benchmark display at the top of the mortgage section.
+ *
+ * Returns an empty Map if the build script hasn't been run yet.
+ */
+let _hmdaCachePromise: Promise<Map<string, NeighborhoodHMDAStats>> | null = null;
+
+export async function fetchNeighborhoodHMDAStats(): Promise<Map<string, NeighborhoodHMDAStats>> {
+  if (_hmdaCachePromise) return _hmdaCachePromise;
+
+  _hmdaCachePromise = (async () => {
+    const resp = await fetch('/data/neighborhood_hmda.json');
+    if (!resp.ok) throw new Error(`HMDA data not found: HTTP ${resp.status}`);
+    const raw: Record<string, NeighborhoodHMDAStats> = await resp.json();
+    const map = new Map<string, NeighborhoodHMDAStats>();
+    for (const [key, val] of Object.entries(raw)) {
+      map.set(key, val);
+    }
+    return map;
+  })();
+
+  return _hmdaCachePromise;
 }

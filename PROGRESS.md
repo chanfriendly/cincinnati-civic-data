@@ -6,6 +6,83 @@
 
 ## Session Log
 
+### Session 13 — Phase 3: Racial Equity + HMDA Mortgage Lending (March 2026)
+
+**Goal:** Begin Phase 3 (Racial Equity Dashboard) with race-disaggregated ACS metrics embedded in Neighborhood Profiles, structured for easy transplant to a standalone tab.
+
+**Architecture decision:** Built as a self-contained `RacialEquitySection` component in `src/tabs/RacialEquity/Section.tsx` rather than inline in Neighborhood Profiles. This means promoting it to its own tab later requires only: wrapping in a tab shell, adding a nav entry, and wiring into App.tsx. The section itself doesn't move. Transplant path is documented in the component's header comment.
+
+**Data source:** ACS 5-Year 2022 — tables B03002 (population by race), B19013 (median income by race), B17001 (poverty by race), B25003 (tenure/homeownership by race). Same Census API already in use for income/rent data.
+
+**Files created:**
+- `scripts/build_racial_equity.py` — fetches 25 ACS variables for 226 Hamilton County tracts, maps to neighborhoods via nearest centroid (same pattern as build_disability.py), computes poverty rates + homeownership rates from raw counts, population-weights income medians as approx, writes JSON
+- `public/data/neighborhood_racial_equity.json` — placeholder `{}` until script is run
+- `src/tabs/RacialEquity/Section.tsx` — self-contained component showing population composition, income gap callout, and comparison bar charts for income/poverty/homeownership by race group (Black, White NH, Asian, Hispanic)
+
+**Files modified:**
+- `src/types/index.ts` — added `NeighborhoodRacialEquityStats` interface
+- `src/utils/api.ts` — added `NeighborhoodRacialEquityStats` import + `fetchNeighborhoodRacialEquityStats()` with cache
+- `src/tabs/NeighborhoodProfiles/index.tsx` — imported `RacialEquitySection`; mounted at bottom of profile tab with comment marking transplant point
+
+**What the section shows (once build script is run):**
+1. Population composition bar (racial breakdown of neighborhood pop)
+2. Key disparities callout — Black/White NH income gap in ¢ on the dollar; homeownership gap in percentage points
+3. Median household income by race (horizontal bar chart)
+4. Poverty rate by race (horizontal bar chart)
+5. Homeownership rate by race (horizontal bar chart)
+6. Methodology note (income is approx; poverty/homeownership are exact from counts)
+7. Urban League "State of Black Cincinnati" citation
+
+**Suppression handling:** Census suppresses cells with < 15 sample households. Null values render as "—" in the UI; metrics with no valid data for any group show "Insufficient data for this neighborhood."
+
+**Racial equity build status:** User ran `python3 scripts/build_racial_equity.py`; 47 neighborhoods populated. Sample data confirmed plausible: West End Black income $19,811 vs White NH $129,333 (15¢/$1); large homeownership gaps in Mt. Airy, Winton Hills, West Price Hill.
+
+---
+
+**Phase 3.2 — HMDA Mortgage Lending (same session continuation)**
+
+**Goal:** Add race-disaggregated mortgage lending approval rates (CFPB HMDA 2022) to Neighborhood Profiles, structured as a transplantable component like RacialEquitySection.
+
+**Data source:** CFPB HMDA Data Browser API (`ffiec.cfpb.gov/v2/data-browser-api/view/aggregations`), no auth required. Home-purchase loans (`loan_purposes=1`) in Hamilton County (`counties=39061`), 2022. Race variable queried separately from Hispanic/Latino ethnicity (HMDA architecture — ethnicity is not a race code).
+
+**Build script:** `scripts/build_hmda.py`
+- County-level aggregation for benchmark rates (stored as `_county` key)
+- Tract-level by race for neighborhood-level rates
+- Actions 1+2 = approved, 3 = denied
+- Suppresses rates with < 10 applications per group
+- Falls back to county rates for neighborhoods with no tract-level data (source='county_fallback')
+
+**Files created:**
+- `scripts/build_hmda.py` — fetches CFPB HMDA, maps tracts to neighborhoods, outputs approval rates by race
+- `public/data/neighborhood_hmda.json` — placeholder `{}` until script is run
+- `src/tabs/RacialEquity/MortgageSection.tsx` — self-contained component: approval gap callout, horizontal bar chart with county reference line, application volume table
+
+**Files modified:**
+- `src/types/index.ts` — added `HMDARaceStats` and `NeighborhoodHMDAStats` interfaces
+- `src/utils/api.ts` — added `fetchNeighborhoodHMDAStats()` with `_hmdaCachePromise` cache
+- `src/tabs/NeighborhoodProfiles/index.tsx` — imported `MortgageLendingSection`; mounted below `RacialEquitySection`
+
+**What the section shows (once build script is run):**
+1. County-level White NH vs Black approval rate benchmark (header callout)
+2. Key disparities callout — approval gap between Black and White NH applicants in this neighborhood
+3. Approval rate bar chart by race (with county-level dashed reference line)
+4. Application volume table (approved / denied / total per group)
+5. CFPB Data Browser + Urban League citations
+
+**CFPB API debugging (hard-won knowledge, do not re-litigate):**
+- The API is behind Akamai CDN which blocks Python urllib by TLS fingerprint. All calls use `curl` subprocess.
+- The aggregations endpoint allows max 2 "filter criteria" (counties/years are free; races, ethnicities, actions_taken, loan_purposes each count as one). Exceeding 2 returns HTTP 400 with `{"errorType":"provide-two-or-less-filter-criteria"}`.
+- Commas in parameter values must be literal, not percent-encoded (%2C breaks the parser). `urllib.parse.urlencode` encodes them by default — fixed via custom `build_qs()` helper.
+- `loan_purposes=1` (home-purchase-only filter) cannot be combined with both `races` and `actions_taken` without exceeding the 2-criterion limit. The script drops it; all loan types are included. This is disclosed in the UI methodology note.
+- Tract-level data uses `variable=census_tract` with `actions_taken=1` and `actions_taken=3` as separate calls per race (2 criteria each: races + actions_taken). This is the most reliable pattern.
+
+**Pending:**
+- [ ] Run `python3 scripts/build_hmda.py` to populate the JSON and confirm tract-level data is now working. Expected: county gap ~15pp (White 83% / Black 68%), neighborhoods with enough volume should show tract-level variation.
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+---
+
 ### Session 12 — Polish Pass + Phase 2 Address Lookup + Blood Lead Research (March 2026)
 
 **Goal:** Polish existing features before new phase work; add address-level lookup to Lead Safety; research blood lead case data availability.
