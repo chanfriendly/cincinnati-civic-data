@@ -737,8 +737,8 @@ const DisplacementTab: React.FC = () => {
     <div className="max-w-7xl mx-auto">
 
       {/* Section sub-tabs */}
-      <div className="mb-6 border-b border-gray-200">
-        <div className="flex gap-0">
+      <div className="bg-white rounded-lg shadow-sm border-b border-gray-200 mb-6">
+        <div className="flex flex-wrap">
           {([
             { id: 'displacement', label: 'Displacement Index' },
             { id: 'owner',        label: 'Owner / Developer Search' },
@@ -746,10 +746,10 @@ const DisplacementTab: React.FC = () => {
             <button
               key={sec.id}
               onClick={() => setActiveSection(sec.id)}
-              className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${
+              className={`flex-1 px-4 py-3 text-sm font-medium border-b-2 transition ${
                 activeSection === sec.id
                   ? 'border-[#1A4A6B] text-[#1A4A6B]'
-                  : 'border-transparent text-gray-500 hover:text-[#1A4A6B]'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
               {sec.label}
