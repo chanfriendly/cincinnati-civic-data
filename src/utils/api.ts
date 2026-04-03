@@ -307,15 +307,18 @@ export async function queryCAGISItem(
 
 /**
  * Cincinnati zoning designation for a given point.
- * Source: CAGIS "Cincinnati Zoning - Open Data" FeatureServer layer 37.
- *   https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/OpenData/FeatureServer/37
- * Key attributes vary by layer — use outFields=* and inspect attributes at runtime.
+ * Source: CAGIS "cincizone_dissolved_labeled" FeatureServer layer 0.
+ *   https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/cincizone_dissolved_labeled/FeatureServer/0
+ * Fields: code (int 1-9), category (e.g. "Single Family", "Commercial")
+ * NOTE: OpenData/FeatureServer/37 (previous source) became inaccessible in 2026.
  */
 export async function fetchZoning(lat: number, lng: number) {
-  return queryCAGISPoint(
-    'https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/OpenData/FeatureServer/37',
+  const results = await queryCAGISPoint(
+    'https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/cincizone_dissolved_labeled/FeatureServer/0',
     lat, lng
   );
+  // Normalize to field names the UI already expects
+  return results.map(r => ({ ...r, ZONING: r.category, NAME: r.category }));
 }
 
 /**
@@ -346,18 +349,15 @@ export async function fetchHistoricDistrict(lat: number, lng: number) {
 
 /**
  * Cincinnati parks within a given radius (miles) of a point.
- * Source: CAGIS "Cincinnati_Parks_and_Greenspace" — FeatureServer layer 46.
- *   https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/OpenData/FeatureServer/46
+ * Source: CAGIS "Parks_and_Green_Spaces" FeatureServer layer 0.
+ *   https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/Parks_and_Green_Spaces/FeatureServer/0
+ * Fields: SHORT_NAME, PARKTYPE, Shape__Area (sq meters)
  *
- * NOTE: Layer 34 (old Hamilton County parks) was removed from CAGIS in early 2026.
- * Layer 46 is the replacement. Field names changed:
- *   NAME → PARK_NAME   |   PARKTYPE → PARK_DESIGNATION   |   ACREAGE → PARK_SIZE_ACRES
- *
- * Public-access filter: keep only "Local *" designations (city-managed parks open
- * to the public). Excludes Private, Military, Service, Research, and Easement types.
+ * NOTE: OpenData/FeatureServer/46 (previous source) became inaccessible in 2026.
+ * Public-access filter: exclude Schools, Cemeteries, and private facilities.
+ * Results are normalized to the field names the UI expects (PARK_NAME, PARK_DESIGNATION, PARK_SIZE_ACRES).
  */
 export async function fetchNearbyParks(lat: number, lng: number, radiusMiles = 0.5) {
-  // ArcGIS envelope (bounding box) query
   const delta = radiusMiles / 69; // ~degrees per mile at Cincinnati's latitude
   const envelope = `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`;
   const params = new URLSearchParams({
@@ -365,21 +365,30 @@ export async function fetchNearbyParks(lat: number, lng: number, radiusMiles = 0
     geometryType: 'esriGeometryEnvelope',
     spatialRel: 'esriSpatialRelIntersects',
     inSR: '4326',
-    outFields: 'PARK_NAME,PARK_DESIGNATION,PARK_SIZE_ACRES,PARK_ADDRESS',
+    outFields: 'SHORT_NAME,PARKTYPE,Shape__Area',
     returnGeometry: 'false',
     resultRecordCount: '8',
-    // Only include publicly accessible local parks / recreation / conservation areas.
-    where: "PARK_DESIGNATION IN ('Local Park', 'Local Conservation Area', 'Local Recreation Area', 'Local Historic or Cultural Area', 'National Monument or Landmark')",
+    where: "PARKTYPE NOT IN ('Schools-Private', 'Schools-Public', 'Cemetery', 'Other Private', 'Clubs-Members Only')",
     f: 'json',
   });
   try {
     const qResp = await fetch(
-      `https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/OpenData/FeatureServer/46/query?${params.toString()}`
+      `https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/Parks_and_Green_Spaces/FeatureServer/0/query?${params.toString()}`
     );
     if (!qResp.ok) throw new Error(`Parks HTTP ${qResp.status}`);
     const data = await qResp.json();
     if (data.error) throw new Error(data.error.message ?? 'Parks error');
-    return ((data.features ?? []) as CAGISFeature[]).map(f => f.attributes ?? {});
+    // Normalize to field names the UI already expects
+    return ((data.features ?? []) as CAGISFeature[]).map(f => {
+      const a = f.attributes ?? {};
+      const sqMeters = typeof a.Shape__Area === 'number' ? a.Shape__Area : 0;
+      return {
+        ...a,
+        PARK_NAME: a.SHORT_NAME,
+        PARK_DESIGNATION: a.PARKTYPE,
+        PARK_SIZE_ACRES: sqMeters > 0 ? (sqMeters / 4046.86).toFixed(1) : null,
+      } as Record<string, unknown>;
+    });
   } catch {
     return [];
   }

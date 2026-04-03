@@ -132,12 +132,19 @@ export default function AddressLookup() {
     noAddress
   );
 
+  // One year ago in ISO format for crime date filters
+  const oneYearAgo = useMemo(() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 1);
+    return d.toISOString().slice(0, 10);
+  }, []);
+
   // PDI crime: latitude_x/longitude_x are text columns — use string comparison
   const crimeOld = useSODA(
     'k59e-2pvf',
     selectedAddress
       ? {
-          $where: bboxWhereText('latitude_x', 'longitude_x', 400),
+          $where: `${bboxWhereText('latitude_x', 'longitude_x', 400)} AND date_reported >= '${oneYearAgo}'`,
           $limit: 100,
           $order: 'date_reported DESC',
         }
@@ -150,7 +157,7 @@ export default function AddressLookup() {
     '7aqy-xrv9',
     selectedAddress
       ? {
-          $where: bboxWhere('latitude_x', 'longitude_x', 400),
+          $where: `${bboxWhere('latitude_x', 'longitude_x', 400)} AND datereported >= '${oneYearAgo}'`,
           $limit: 100,
           $order: 'datereported DESC',
         }
