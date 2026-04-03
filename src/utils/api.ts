@@ -345,14 +345,19 @@ export async function fetchHistoricDistrict(lat: number, lng: number) {
 }
 
 /**
- * Cincinnati/Hamilton County parks within a given radius (miles) of a point.
- * Source: CAGIS "Hamilton County Parks and Greenspace - Open Data" FeatureServer layer 34.
- *   https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/OpenData/FeatureServer/34
- * Uses a bounding box envelope query to find parks within the radius.
- * Returns all fields (outFields=*); key attributes include NAME, ACREAGE, and TYPE.
+ * Cincinnati parks within a given radius (miles) of a point.
+ * Source: CAGIS "Cincinnati_Parks_and_Greenspace" — FeatureServer layer 46.
+ *   https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/OpenData/FeatureServer/46
+ *
+ * NOTE: Layer 34 (old Hamilton County parks) was removed from CAGIS in early 2026.
+ * Layer 46 is the replacement. Field names changed:
+ *   NAME → PARK_NAME   |   PARKTYPE → PARK_DESIGNATION   |   ACREAGE → PARK_SIZE_ACRES
+ *
+ * Public-access filter: keep only "Local *" designations (city-managed parks open
+ * to the public). Excludes Private, Military, Service, Research, and Easement types.
  */
 export async function fetchNearbyParks(lat: number, lng: number, radiusMiles = 0.5) {
-  // ArcGIS envelope (bounding box) query — simpler than a true buffer
+  // ArcGIS envelope (bounding box) query
   const delta = radiusMiles / 69; // ~degrees per mile at Cincinnati's latitude
   const envelope = `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`;
   const params = new URLSearchParams({
@@ -360,17 +365,16 @@ export async function fetchNearbyParks(lat: number, lng: number, radiusMiles = 0
     geometryType: 'esriGeometryEnvelope',
     spatialRel: 'esriSpatialRelIntersects',
     inSR: '4326',
-    outFields: '*',
+    outFields: 'PARK_NAME,PARK_DESIGNATION,PARK_SIZE_ACRES,PARK_ADDRESS',
     returnGeometry: 'false',
     resultRecordCount: '8',
-    // Exclude non-public / non-park greenspace types.
-    // Full PARKTYPE value list confirmed against CAGIS layer 34 (754 features, 16 types).
-    where: "PARKTYPE NOT IN ('Schools-Private', 'Schools-Public', 'Cemetery', 'Private Commercial', 'Clubs-Members Only', 'Other Private')",
+    // Only include publicly accessible local parks / recreation / conservation areas.
+    where: "PARK_DESIGNATION IN ('Local Park', 'Local Conservation Area', 'Local Recreation Area', 'Local Historic or Cultural Area', 'National Monument or Landmark')",
     f: 'json',
   });
   try {
     const qResp = await fetch(
-      `https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/OpenData/FeatureServer/34/query?${params.toString()}`
+      `https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/OpenData/FeatureServer/46/query?${params.toString()}`
     );
     if (!qResp.ok) throw new Error(`Parks HTTP ${qResp.status}`);
     const data = await qResp.json();

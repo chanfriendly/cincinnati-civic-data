@@ -6,6 +6,29 @@
 
 ## Session Log
 
+### Session 19 — Address Lookup Parks Bug Fix + Tab Visualization Redesign (April 2026)
+
+**Goal:** Fix broken parks card (reported empty), then redesign Tab 1 visualizations to match the semantic grouping style of Neighborhood Profiles.
+
+**Bug fix — Parks (CAGIS layer 34 removed):**
+- CAGIS silently removed layer 34 (Hamilton County Parks) from their FeatureServer. All parks queries were returning HTTP 400 "Invalid URL".
+- Layer 46 (`Cincinnati_Parks_and_Greenspace`) is the replacement. Field names changed: `NAME` → `PARK_NAME`, `PARKTYPE` → `PARK_DESIGNATION`, `SHAPE__Area` → `PARK_SIZE_ACRES`.
+- Updated `fetchNearbyParks()` in `src/utils/api.ts` to use layer 46 with new WHERE clause filtering `PARK_DESIGNATION IN ('Local Park', 'Local Conservation Area', ...)`.
+- Updated parks render in `AddressLookup/index.tsx` to use `PARK_NAME`, `PARK_DESIGNATION`, `PARK_SIZE_ACRES` (now shows acreage in acres, e.g. "19.7 ac").
+
+**Address Lookup visualization redesign:**
+- **Quick Status Bar**: 6-chip row (Zoning / Flood / Crime / Bus Stops / Schools / Parks) appears immediately after address selection. Animated pulse skeleton during loading. Crime count color-codes by severity (green/yellow/orange). Flood zone color-codes by risk.
+- **Property Record**: Tabbed card (Overview | Inspections | Abatements & Blight) consolidates 3 formerly separate DataCards. Overview tab shows 4 KPI tiles (Inspections / Violations / Abatements / Blight Flags) + contextual alert banners for violations and blight, or a green "clean record" message if all zero. Inspections tab = full inspection list. Abatements & Blight tab = abatements list + PLAP records.
+- **Safety & Environment section**: Nearby Crime card redesigned — large count with severity color, category breakdown horizontal mini-bars (top 6 categories), then recent incidents list. FEMA Flood Zone card unchanged.
+- **Location Context section**: Zoning + Historic District side-by-side (unchanged content, now clearly labeled).
+- **Amenities & Access**: Single tabbed card (Parks | Schools | Transit) with count badges on each tab. Consolidates 3 formerly separate DataCards. All content preserved from individual cards.
+- **Traffic & Infrastructure section**: OHGO cards (3) unchanged — now clearly grouped under a section header.
+- **Tab state**: `propertyTab` and `amenitiesTab` useState hooks added. `crimeByCategory` useMemo computes category breakdown.
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+---
+
 ### Session 18 — School Proximity + Transit Equity + Neighborhood Comparison (April 2026)
 
 **Goal:** Three roadmap items: Phase 5.1 (school proximity in Address Lookup), Phase 5.2 (transit equity gap analysis), Phase 6 (neighborhood comparison tool).

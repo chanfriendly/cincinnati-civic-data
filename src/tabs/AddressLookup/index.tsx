@@ -483,6 +483,25 @@ export default function AddressLookup() {
   const crimeLoading = crimeOld.loading || crimeNew.loading;
   const crimeError = crimeOld.error || crimeNew.error;
 
+  // ── UI tab state ──────────────────────────────────────────────────────────────
+  const [propertyTab, setPropertyTab] = useState<'overview' | 'violations' | 'abatements'>('overview');
+  const [amenitiesTab, setAmenitiesTab] = useState<'parks' | 'schools' | 'transit'>('parks');
+
+  // Group crime by category for a quick breakdown chart
+  const crimeByCategory = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const crime of mergedCrime) {
+      const cat = String(crime.stars_category || crime.offense_type || crime.offense || 'Unknown');
+      counts[cat] = (counts[cat] || 0) + 1;
+    }
+    return Object.entries(counts).sort(([, a], [, b]) => b - a).slice(0, 6);
+  }, [mergedCrime]);
+
+  // Violations — inspections that failed
+  const violations = (inspections.data || []).filter(
+    (i: any) => /fail|viol|notice/i.test(String(i.data_status ?? ''))
+  );
+
   return (
     <div className="space-y-6">
       {/* Address Search */}
@@ -543,7 +562,84 @@ export default function AddressLookup() {
 
       {selectedAddress && (
         <>
-          {/* Plain English Summary — shown right under the address selector */}
+          {/* ── Quick Status Bar ─────────────────────────────────────────────── */}
+          <div className="bg-white rounded-lg shadow-sm px-5 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">At a Glance</p>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              {/* Zoning */}
+              <div className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+                <span className="text-base mb-0.5">🏙</span>
+                <span className="text-[10px] text-gray-400 uppercase tracking-wide">Zoning</span>
+                {zoningStatus === 'loading' ? (
+                  <span className="h-4 w-10 bg-gray-200 animate-pulse rounded mt-0.5" />
+                ) : (
+                  <span className="text-xs font-bold text-[#1A4A6B] mt-0.5 truncate max-w-full">
+                    {zoning[0] ? String(zoning[0].ZONING ?? 'See card') : 'Outside'}
+                  </span>
+                )}
+              </div>
+              {/* Flood Zone */}
+              <div className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+                <span className="text-base mb-0.5">🌊</span>
+                <span className="text-[10px] text-gray-400 uppercase tracking-wide">Flood</span>
+                {floodStatus === 'loading' ? (
+                  <span className="h-4 w-10 bg-gray-200 animate-pulse rounded mt-0.5" />
+                ) : (() => {
+                  const zone = floodZone[0] ? String(floodZone[0].FLD_ZONE ?? 'X') : 'X';
+                  const isHigh = ['AE','A','AO','AH','VE','V'].includes(zone);
+                  return (
+                    <span className={`text-xs font-bold mt-0.5 ${isHigh ? 'text-orange-600' : 'text-green-600'}`}>
+                      Zone {zone}
+                    </span>
+                  );
+                })()}
+              </div>
+              {/* Crime */}
+              <div className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+                <span className="text-base mb-0.5">🚨</span>
+                <span className="text-[10px] text-gray-400 uppercase tracking-wide">Crime</span>
+                {crimeLoading ? (
+                  <span className="h-4 w-8 bg-gray-200 animate-pulse rounded mt-0.5" />
+                ) : (
+                  <span className={`text-xs font-bold mt-0.5 ${mergedCrime.length > 10 ? 'text-orange-600' : mergedCrime.length > 0 ? 'text-yellow-600' : 'text-green-600'}`}>
+                    {mergedCrime.length} nearby
+                  </span>
+                )}
+              </div>
+              {/* Transit */}
+              <div className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+                <span className="text-base mb-0.5">🚌</span>
+                <span className="text-[10px] text-gray-400 uppercase tracking-wide">Stops</span>
+                {loadingTransit ? (
+                  <span className="h-4 w-8 bg-gray-200 animate-pulse rounded mt-0.5" />
+                ) : (
+                  <span className="text-xs font-bold text-[#1A4A6B] mt-0.5">{transitStops.length} stops</span>
+                )}
+              </div>
+              {/* Schools */}
+              <div className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+                <span className="text-base mb-0.5">🏫</span>
+                <span className="text-[10px] text-gray-400 uppercase tracking-wide">Schools</span>
+                {loadingSchools ? (
+                  <span className="h-4 w-8 bg-gray-200 animate-pulse rounded mt-0.5" />
+                ) : (
+                  <span className="text-xs font-bold text-[#1A4A6B] mt-0.5">{nearbySchools.length} nearby</span>
+                )}
+              </div>
+              {/* Parks */}
+              <div className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+                <span className="text-base mb-0.5">🌳</span>
+                <span className="text-[10px] text-gray-400 uppercase tracking-wide">Parks</span>
+                {parksStatus === 'loading' ? (
+                  <span className="h-4 w-8 bg-gray-200 animate-pulse rounded mt-0.5" />
+                ) : (
+                  <span className="text-xs font-bold text-[#1A4A6B] mt-0.5">{nearbyParks.length} nearby</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Plain English Summary ─────────────────────────────────────────── */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-lg font-semibold text-gray-900">
@@ -560,9 +656,7 @@ export default function AddressLookup() {
               </button>
             </div>
             {aiSummary ? (
-              <div className="prose prose-sm max-w-none">
-                {renderMarkdown(aiSummary)}
-              </div>
+              <div className="prose prose-sm max-w-none">{renderMarkdown(aiSummary)}</div>
             ) : aiError ? (
               <p className="text-sm text-red-600">{aiError}</p>
             ) : (
@@ -572,78 +666,156 @@ export default function AddressLookup() {
             )}
           </div>
 
-          {/* Two-column grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Inspections & Violations */}
-            <DataCard
-              title={t('addressLookup.inspections', 'Inspections & Violations')}
-              loading={inspections.loading}
-              error={inspections.error}
-              empty={!inspections.data || inspections.data.length === 0}
-            >
-              {inspections.data && inspections.data.length > 0 ? (
-                <div className="space-y-3">
-                  {inspections.data.slice(0, 10).map((inspection: any, idx: number) => {
-                    const status = inspection.data_status ?? '';
-                    const isFailed = /fail|viol|notice/i.test(status);
-                    return (
-                      <div
-                        key={idx}
-                        className={`border-b border-gray-200 pb-2 last:border-b-0 ${
-                          isFailed ? 'bg-yellow-50 px-2 py-1 rounded' : ''
-                        }`}
-                      >
-                        <div className={`text-sm font-medium ${
-                          isFailed ? 'text-red-900' : 'text-gray-900'
-                        }`}>
-                          {inspection.comp_type_desc || t('addressLookup.unknown', 'Unknown')}
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          {formatDate(inspection.entered_date)} — {status}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <EmptyState message={t('addressLookup.noInspections', 'No inspections found')} />
-              )}
-              <DataAttribution
-                source={t('addressLookup.attributionInspections', 'Inspections & Violations')}
-                uid="ivda-umw7"
-              />
-            </DataCard>
+          {/* ── Section: Property Record ──────────────────────────────────────── */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Property Record</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
 
-            {/* Tax Abatements */}
-            <DataCard
-              title={t('addressLookup.taxAbatements', 'Tax Abatements')}
-              loading={taxAbatements.loading}
-              error={taxAbatements.error}
-              empty={!taxAbatements.data || taxAbatements.data.length === 0}
-            >
-              {taxAbatements.data && taxAbatements.data.length > 0 ? (
-                <div className="space-y-3">
-                  {taxAbatements.data.slice(0, 10).map((abatement: any, idx: number) => (
-                    <div key={idx} className="border-b border-gray-200 pb-2 last:border-b-0">
-                      <div className="text-sm font-medium text-gray-900">
-                        {abatement.type || t('addressLookup.unknown', 'Unknown')}
-                      </div>
-                      <div className="text-xs text-gray-600">
-                        Neighborhood: {abatement.neighborhood}
-                      </div>
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            {/* Tab switcher */}
+            <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-5 self-start w-fit">
+              {(['overview', 'violations', 'abatements'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setPropertyTab(tab)}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition-colors ${
+                    propertyTab === tab ? 'bg-white text-[#1A4A6B] shadow-sm' : 'text-gray-500 hover:text-gray-800'
+                  }`}
+                >
+                  {tab === 'violations' ? 'Inspections' : tab === 'abatements' ? 'Abatements & Blight' : 'Overview'}
+                </button>
+              ))}
+            </div>
+
+            {/* Overview tab */}
+            {propertyTab === 'overview' && (
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className={`text-2xl font-bold ${inspections.loading ? 'text-gray-300' : inspections.data?.length ? 'text-[#C8861A]' : 'text-gray-400'}`}>
+                      {inspections.loading ? '—' : inspections.data?.length ?? 0}
                     </div>
-                  ))}
+                    <div className="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">Inspections</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className={`text-2xl font-bold ${inspections.loading ? 'text-gray-300' : violations.length > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {inspections.loading ? '—' : violations.length}
+                    </div>
+                    <div className="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">Violations</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className={`text-2xl font-bold ${taxAbatements.loading ? 'text-gray-300' : taxAbatements.data?.length ? 'text-[#1A4A6B]' : 'text-gray-400'}`}>
+                      {taxAbatements.loading ? '—' : taxAbatements.data?.length ?? 0}
+                    </div>
+                    <div className="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">Abatements</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className={`text-2xl font-bold ${blight.loading ? 'text-gray-300' : blight.data?.length ? 'text-red-600' : 'text-green-600'}`}>
+                      {blight.loading ? '—' : blight.data?.length ?? 0}
+                    </div>
+                    <div className="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">Blight Flags</div>
+                  </div>
                 </div>
-              ) : (
-                <EmptyState message={t('addressLookup.noAbatements', 'No abatements found')} />
-              )}
-              <DataAttribution
-                source={t('addressLookup.attributionAbatements', 'Tax Abatements')}
-                uid="tkp7-yf64"
-              />
-            </DataCard>
+                {violations.length > 0 && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2 text-xs text-yellow-800">
+                    ⚠ {violations.length} inspection violation{violations.length > 1 ? 's' : ''} found — see the Inspections tab for details.
+                  </div>
+                )}
+                {blight.data && blight.data.length > 0 && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-800 mt-2">
+                    🏚 {blight.data.length} blight flag{blight.data.length > 1 ? 's' : ''} nearby — see Abatements & Blight tab.
+                  </div>
+                )}
+                {!inspections.loading && !taxAbatements.loading && !blight.loading &&
+                  !inspections.data?.length && !taxAbatements.data?.length && !blight.data?.length && (
+                  <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                    ✓ No inspections, abatements, or blight records found for this address.
+                  </p>
+                )}
+              </>
+            )}
 
-            {/* Nearby Crime */}
+            {/* Inspections tab */}
+            {propertyTab === 'violations' && (
+              <>
+                <p className="text-xs text-gray-500 italic mb-3">
+                  Building and code enforcement inspection records within 200m.
+                </p>
+                {inspections.loading ? (
+                  <p className="text-sm text-gray-400">Loading…</p>
+                ) : inspections.data && inspections.data.length > 0 ? (
+                  <div className="space-y-3">
+                    {inspections.data.slice(0, 10).map((inspection: any, idx: number) => {
+                      const status = inspection.data_status ?? '';
+                      const isFailed = /fail|viol|notice/i.test(status);
+                      return (
+                        <div key={idx} className={`border-b border-gray-200 pb-2 last:border-b-0 ${isFailed ? 'bg-yellow-50 px-2 py-1 rounded' : ''}`}>
+                          <div className={`text-sm font-medium ${isFailed ? 'text-red-900' : 'text-gray-900'}`}>
+                            {inspection.comp_type_desc || 'Unknown'}
+                          </div>
+                          <div className="text-xs text-gray-600">{formatDate(inspection.entered_date)} — {status}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <EmptyState message="No inspections found nearby" />
+                )}
+                <DataAttribution source="Inspections & Violations" uid="ivda-umw7" />
+              </>
+            )}
+
+            {/* Abatements & Blight tab */}
+            {propertyTab === 'abatements' && (
+              <>
+                <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Tax Abatements</div>
+                {taxAbatements.loading ? (
+                  <p className="text-sm text-gray-400">Loading…</p>
+                ) : taxAbatements.data && taxAbatements.data.length > 0 ? (
+                  <div className="space-y-2 mb-5">
+                    {taxAbatements.data.slice(0, 8).map((ab: any, idx: number) => (
+                      <div key={idx} className="border-b border-gray-100 pb-2 last:border-b-0">
+                        <div className="text-sm font-medium text-gray-900">{ab.type || 'Unknown'}</div>
+                        <div className="text-xs text-gray-500">Neighborhood: {ab.neighborhood}</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 mb-5">No tax abatements found nearby.</p>
+                )}
+                <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Blight & Property Maintenance</div>
+                <p className="text-xs text-gray-500 italic mb-3">
+                  Properties flagged under Cincinnati's PLAP program — vacant buildings, overgrown lots, structural hazards.
+                </p>
+                {blight.loading ? (
+                  <p className="text-sm text-gray-400">Loading…</p>
+                ) : blight.data && blight.data.length > 0 ? (
+                  <div className="space-y-2">
+                    <div className="text-lg font-bold text-[#C8861A]">{blight.data.length}</div>
+                    <div className="text-sm text-gray-600">blight records found nearby</div>
+                    {blight.data.slice(0, 5).map((record: any, idx: number) => (
+                      <div key={idx} className="text-xs text-gray-600 border-t pt-2">
+                        {record.sr_sub_type} — {formatDate(record.sr_recd_date)}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">No blight records found nearby.</p>
+                )}
+                <DataAttribution source="Tax Abatements · PLAP Blight" uid="tkp7-yf64" />
+              </>
+            )}
+          </div>
+
+          {/* ── Section: Safety & Environment ────────────────────────────────── */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Safety &amp; Environment</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Nearby Crime — improved with category breakdown */}
             <DataCard
               title={t('addressLookup.crime', 'Nearby Crime (400m)')}
               loading={crimeLoading}
@@ -651,180 +823,50 @@ export default function AddressLookup() {
               empty={mergedCrime.length === 0}
             >
               {mergedCrime.length > 0 ? (
-                <div className="space-y-3">
-                  <div className="text-sm text-gray-900 font-medium">
-                    {t('addressLookup.crimeCount', `Total: ${mergedCrime.length} incidents`)}
+                <>
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className={`text-3xl font-bold ${mergedCrime.length > 15 ? 'text-red-600' : mergedCrime.length > 5 ? 'text-yellow-600' : 'text-gray-700'}`}>
+                      {mergedCrime.length}
+                    </span>
+                    <span className="text-sm text-gray-500">incidents in the past year</span>
                   </div>
-                  {mergedCrime.slice(0, 8).map((crime: any, idx: number) => (
-                    <div key={idx} className="border-b border-gray-200 pb-2 last:border-b-0">
-                      <div className="text-sm font-medium text-gray-900">
-                        {crime.stars_category || crime.offense_type || crime.offense || t('addressLookup.unknown', 'Unknown')}
-                      </div>
-                      <div className="text-xs text-gray-600">
-                        {formatDate(crime.date_reported || crime.datereported)}
-                      </div>
+                  {crimeByCategory.length > 0 && (
+                    <div className="mb-4 space-y-1.5">
+                      {crimeByCategory.map(([cat, count]) => (
+                        <div key={cat}>
+                          <div className="flex justify-between text-xs mb-0.5">
+                            <span className="text-gray-700 truncate max-w-[80%]">{cat}</span>
+                            <span className="text-gray-400 font-medium ml-1">{count}</span>
+                          </div>
+                          <div className="h-1.5 bg-gray-100 rounded-full">
+                            <div
+                              className="h-1.5 rounded-full bg-[#C8861A]"
+                              style={{ width: `${(count / crimeByCategory[0][1]) * 100}%` }}
+                            />
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  )}
+                  <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Recent incidents</div>
+                  <div className="space-y-2">
+                    {mergedCrime.slice(0, 5).map((crime: any, idx: number) => (
+                      <div key={idx} className="border-b border-gray-100 pb-1.5 last:border-0">
+                        <div className="text-xs font-medium text-gray-900">
+                          {crime.stars_category || crime.offense_type || crime.offense || 'Unknown'}
+                        </div>
+                        <div className="text-[10px] text-gray-400">{formatDate(crime.date_reported || crime.datereported)}</div>
+                      </div>
+                    ))}
+                  </div>
+                </>
               ) : (
                 <EmptyState message={t('addressLookup.noCrime', 'No crime records found nearby')} />
               )}
-              <DataAttribution
-                source={t('addressLookup.attributionCrime', 'PDI Crime Incidents + STARS')}
-                uid="k59e-2pvf"
-              />
+              <DataAttribution source="CPD STARS + PDI Crime" uid="7aqy-xrv9" />
             </DataCard>
 
-            {/* PLAP Blight */}
-            <DataCard
-              title={t('addressLookup.blight', 'Blight & Property Maintenance')}
-              loading={blight.loading}
-              error={blight.error}
-              empty={!blight.data || blight.data.length === 0}
-            >
-              <p className="text-xs text-gray-500 italic mb-3">
-                {t('addressLookup.blightDef', '"Blight" refers to properties flagged under Cincinnati\'s PLAP program for code violations — vacant buildings, overgrown lots, structural hazards, or public nuisances.')}
-              </p>
-              {blight.data && blight.data.length > 0 ? (
-                <div className="space-y-2">
-                  <div className="text-lg font-bold text-[#C8861A]">
-                    {blight.data.length}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {t('addressLookup.blightRecords', 'blight records found nearby')}
-                  </div>
-                  {blight.data.slice(0, 5).map((record: any, idx: number) => (
-                    <div key={idx} className="text-xs text-gray-600 border-t pt-2">
-                      {record.sr_sub_type} — {formatDate(record.sr_recd_date)}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <EmptyState message={t('addressLookup.noBlight', 'No blight records found nearby')} />
-              )}
-              <DataAttribution
-                source={t('addressLookup.attributionBlight', 'PLAP Blight')}
-                uid="pk9w-99n6"
-              />
-            </DataCard>
-
-            {/* Transit Proximity */}
-            <DataCard
-              title={t('addressLookup.transit', 'Transit Stops (within 0.5 mi)')}
-              loading={loadingTransit}
-              error={null}
-              empty={transitStops.length === 0}
-            >
-              {transitStops.length > 0 ? (
-                <div className="space-y-3">
-                  {transitStops.map((stop, idx) => (
-                    <div key={idx} className="border-b border-gray-200 pb-2 last:border-b-0">
-                      <div className="text-sm font-medium text-gray-900">
-                        {stop.stop_name}
-                      </div>
-                      <div className="text-xs text-gray-600">
-                        {stop.distance.toFixed(2)} mi{stop.routes.length > 0 ? ` • Routes: ${stop.routes.join(', ')}` : ''}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <EmptyState message={t('addressLookup.noTransit', 'No stops within 0.5 miles')} />
-              )}
-            </DataCard>
-
-            {/* ── Nearby Schools ──────────────────────────────────────────── */}
-            <DataCard
-              title="Nearby Schools (within 1 mi)"
-              loading={loadingSchools}
-              error={null}
-              empty={nearbySchools.length === 0}
-            >
-              {nearbySchools.length > 0 ? (
-                <div className="space-y-3">
-                  {nearbySchools.slice(0, 8).map((school, idx) => {
-                    const typeLC = school.type.toLowerCase();
-                    const badgeClass =
-                      typeLC.includes('elementary') ? 'bg-green-100 text-green-800' :
-                      typeLC.includes('middle')     ? 'bg-blue-100 text-blue-800'   :
-                      typeLC.includes('high')       ? 'bg-purple-100 text-purple-800' :
-                                                      'bg-gray-100 text-gray-700';
-                    const isPublic = school.fund?.toLowerCase() === 'public';
-                    return (
-                      <div key={idx} className="border-b border-gray-100 pb-2 last:border-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="text-sm font-medium text-gray-900 leading-tight">
-                            {school.name}
-                          </p>
-                          <span className="text-xs text-gray-400 shrink-0 mt-0.5">
-                            {school.distance.toFixed(2)} mi
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                          {school.type && (
-                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${badgeClass}`}>
-                              {school.type}
-                            </span>
-                          )}
-                          {school.grade && (
-                            <span className="text-[10px] text-gray-500">Grades {school.grade}</span>
-                          )}
-                          <span className={`text-[10px] font-medium ${isPublic ? 'text-[#1A4A6B]' : 'text-gray-500'}`}>
-                            {isPublic ? '● Public' : '○ Private'}
-                          </span>
-                        </div>
-                        {school.district && (
-                          <p className="text-[10px] text-gray-400 mt-0.5 truncate">{school.district}</p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <EmptyState message="No schools found within 1 mile" />
-              )}
-              <DataAttribution
-                source="School Locations — CAGIS Hamilton County"
-                url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis"
-              />
-            </DataCard>
-
-            {/* ── CAGIS: Zoning ───────────────────────────────────────────── */}
-            <DataCard
-              title={t('addressLookup.zoning', 'Zoning Designation')}
-              loading={zoningStatus === 'loading'}
-              error={zoningStatus === 'error' ? 'Zoning data unavailable (CAGIS)' : null}
-            >
-              {zoningStatus === 'done' && zoning.length > 0 ? (
-                <div>
-                  {zoning.map((z, i) => {
-                    // Layer 4 attrs: ZONING (code), ZONE_TYPE (class), DIS_NAME (description)
-                    const code = String(z.ZONING ?? z.NAME ?? z.ZONE ?? z.ZONING_CODE ?? 'Unknown');
-                    const desc = String(z.DIS_NAME ?? z.DESCRIPTION ?? z.ZONE_CLASS ?? z.FULL_NAME ?? '');
-                    const zoneType = String(z.ZONE_TYPE ?? '');
-                    return (
-                      <div key={i} className="flex items-start gap-3">
-                        <span className="mt-0.5 px-2 py-0.5 rounded text-sm font-bold bg-[#1A4A6B] text-white shrink-0">
-                          {code}
-                        </span>
-                        <div>
-                          {desc && <p className="text-sm text-gray-700">{desc}</p>}
-                          {zoneType && <p className="text-xs text-gray-500">{zoneType}</p>}
-                          <p className="text-xs text-gray-500 mt-1">
-                            Affects what can be built, renovated, or operated at this address.
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : zoningStatus === 'done' ? (
-                <EmptyState message="Address outside Cincinnati zoning boundary" />
-              ) : null}
-              <DataAttribution source="Zoning Designation — CAGIS" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
-            </DataCard>
-
-            {/* ── CAGIS: FEMA Flood Zone ───────────────────────────────────── */}
+            {/* FEMA Flood Zone */}
             <DataCard
               title={t('addressLookup.flood', 'FEMA Flood Hazard Zone')}
               loading={floodStatus === 'loading'}
@@ -837,9 +879,7 @@ export default function AddressLookup() {
                     const isHighRisk = ['AE', 'A', 'AO', 'AH', 'VE', 'V'].includes(zone);
                     return (
                       <div key={i} className="flex items-start gap-3">
-                        <span className={`mt-0.5 px-2 py-0.5 rounded text-sm font-bold shrink-0 ${
-                          isHighRisk ? 'bg-orange-600 text-white' : 'bg-green-600 text-white'
-                        }`}>
+                        <span className={`mt-0.5 px-2 py-0.5 rounded text-sm font-bold shrink-0 ${isHighRisk ? 'bg-orange-600 text-white' : 'bg-green-600 text-white'}`}>
                           Zone {zone}
                         </span>
                         <div>
@@ -864,8 +904,46 @@ export default function AddressLookup() {
               ) : null}
               <DataAttribution source="FEMA National Flood Hazard Layer (NFHL)" url="https://msc.fema.gov/portal/home" />
             </DataCard>
+          </div>
 
-            {/* ── CAGIS: Historic District ─────────────────────────────────── */}
+          {/* ── Section: Location Context ─────────────────────────────────────── */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Location Context</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Zoning */}
+            <DataCard
+              title={t('addressLookup.zoning', 'Zoning Designation')}
+              loading={zoningStatus === 'loading'}
+              error={zoningStatus === 'error' ? 'Zoning data unavailable (CAGIS)' : null}
+            >
+              {zoningStatus === 'done' && zoning.length > 0 ? (
+                <div>
+                  {zoning.map((z, i) => {
+                    const code = String(z.ZONING ?? z.NAME ?? z.ZONE ?? z.ZONING_CODE ?? 'Unknown');
+                    const desc = String(z.DIS_NAME ?? z.DESCRIPTION ?? z.ZONE_CLASS ?? z.FULL_NAME ?? '');
+                    const zoneType = String(z.ZONE_TYPE ?? '');
+                    return (
+                      <div key={i} className="flex items-start gap-3">
+                        <span className="mt-0.5 px-2 py-0.5 rounded text-sm font-bold bg-[#1A4A6B] text-white shrink-0">{code}</span>
+                        <div>
+                          {desc && <p className="text-sm text-gray-700">{desc}</p>}
+                          {zoneType && <p className="text-xs text-gray-500">{zoneType}</p>}
+                          <p className="text-xs text-gray-500 mt-1">Affects what can be built, renovated, or operated at this address.</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : zoningStatus === 'done' ? (
+                <EmptyState message="Address outside Cincinnati zoning boundary" />
+              ) : null}
+              <DataAttribution source="Zoning — CAGIS" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
+            </DataCard>
+
+            {/* Historic District */}
             <DataCard
               title={t('addressLookup.historic', 'Historic District')}
               loading={historicStatus === 'loading'}
@@ -883,13 +961,9 @@ export default function AddressLookup() {
                         <div>
                           <p className="text-sm font-semibold text-gray-900">{name}</p>
                           {(cls || year) && (
-                            <p className="text-xs text-gray-500">
-                              {[cls, year ? `Designated ${year}` : ''].filter(Boolean).join(' · ')}
-                            </p>
+                            <p className="text-xs text-gray-500">{[cls, year ? `Designated ${year}` : ''].filter(Boolean).join(' · ')}</p>
                           )}
-                          <p className="text-xs text-gray-500 mt-1">
-                            Renovation and exterior work may require Historic Preservation approval.
-                          </p>
+                          <p className="text-xs text-gray-500 mt-1">Renovation and exterior work may require Historic Preservation approval.</p>
                         </div>
                       </div>
                     );
@@ -900,44 +974,144 @@ export default function AddressLookup() {
               ) : null}
               <DataAttribution source="Cincinnati Historic Districts — CAGIS" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
             </DataCard>
+          </div>
 
-            {/* ── CAGIS: Nearby Parks ──────────────────────────────────────── */}
-            <DataCard
-              title={t('addressLookup.parks', 'Nearby Parks (within 0.5 mi)')}
-              loading={parksStatus === 'loading'}
-              error={parksStatus === 'error' ? 'Parks data unavailable (CAGIS)' : null}
-            >
-              {parksStatus === 'done' && nearbyParks.length > 0 ? (
-                <div className="space-y-2">
-                  {nearbyParks.slice(0, 5).map((p, i) => {
-                    // Confirmed layer attrs: NAME, SHORT_NAME, PARKTYPE, SHAPE__Area
-                    const name = String(p.SHORT_NAME ?? p.NAME ?? `Park ${i + 1}`);
-                    const acres = '';  // SHAPE__Area units unknown; omit display
-                    const type = String(p.PARKTYPE ?? '');
-                    const nbhd = '';
-                    return (
-                      <div key={i} className="flex items-center justify-between border-b border-gray-100 pb-1 last:border-0">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">{name}</p>
-                          {(type || nbhd) && (
-                            <p className="text-xs text-gray-500">
-                              {[type, nbhd].filter(Boolean).join(' · ')}
-                            </p>
-                          )}
+          {/* ── Section: Amenities & Access ───────────────────────────────────── */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Amenities &amp; Access</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            {/* Tab switcher */}
+            <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-5 self-start w-fit">
+              {(['parks', 'schools', 'transit'] as const).map((tab) => {
+                const counts = { parks: nearbyParks.length, schools: nearbySchools.length, transit: transitStops.length };
+                const loading = { parks: parksStatus === 'loading', schools: loadingSchools, transit: loadingTransit };
+                return (
+                  <button
+                    key={tab}
+                    onClick={() => setAmenitiesTab(tab)}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition-colors flex items-center gap-1.5 ${
+                      amenitiesTab === tab ? 'bg-white text-[#1A4A6B] shadow-sm' : 'text-gray-500 hover:text-gray-800'
+                    }`}
+                  >
+                    {tab === 'parks' ? '🌳' : tab === 'schools' ? '🏫' : '🚌'}
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    {!loading[tab] && (
+                      <span className={`text-[10px] rounded-full px-1.5 py-0.5 font-bold ${
+                        amenitiesTab === tab ? 'bg-[#1A4A6B] text-white' : 'bg-gray-200 text-gray-600'
+                      }`}>
+                        {counts[tab]}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Parks tab */}
+            {amenitiesTab === 'parks' && (
+              <>
+                {parksStatus === 'loading' ? (
+                  <p className="text-sm text-gray-400">Loading parks…</p>
+                ) : nearbyParks.length > 0 ? (
+                  <div className="space-y-2">
+                    {nearbyParks.slice(0, 6).map((p, i) => {
+                      const name = String(p.PARK_NAME ?? `Park ${i + 1}`);
+                      const acres = p.PARK_SIZE_ACRES != null ? `${Number(p.PARK_SIZE_ACRES).toFixed(1)} ac` : '';
+                      const designation = String(p.PARK_DESIGNATION ?? '');
+                      return (
+                        <div key={i} className="flex items-center justify-between border-b border-gray-100 pb-1.5 last:border-0">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">{name}</p>
+                            {designation && <p className="text-xs text-gray-500">{designation}</p>}
+                          </div>
+                          {acres && <span className="text-xs text-[#1A4A6B] font-medium shrink-0 ml-2">{acres}</span>}
                         </div>
-                        {acres && (
-                          <span className="text-xs text-[#1A4A6B] font-medium shrink-0 ml-2">{acres}</span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : parksStatus === 'done' ? (
-                <EmptyState message="No parks found within 0.5 miles" />
-              ) : null}
-              <DataAttribution source="Parks and Greenspace — CAGIS" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
-            </DataCard>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <EmptyState message="No parks found within 0.5 miles" />
+                )}
+                <DataAttribution source="Cincinnati Parks & Greenspace — CAGIS" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
+              </>
+            )}
 
+            {/* Schools tab */}
+            {amenitiesTab === 'schools' && (
+              <>
+                {loadingSchools ? (
+                  <p className="text-sm text-gray-400">Loading schools…</p>
+                ) : nearbySchools.length > 0 ? (
+                  <div className="space-y-3">
+                    {nearbySchools.slice(0, 8).map((school, idx) => {
+                      const typeLC = school.type.toLowerCase();
+                      const badgeClass =
+                        typeLC.includes('elementary') ? 'bg-green-100 text-green-800' :
+                        typeLC.includes('middle')     ? 'bg-blue-100 text-blue-800'   :
+                        typeLC.includes('high')       ? 'bg-purple-100 text-purple-800' :
+                                                        'bg-gray-100 text-gray-700';
+                      const isPublic = school.fund?.toLowerCase() === 'public';
+                      return (
+                        <div key={idx} className="border-b border-gray-100 pb-2 last:border-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="text-sm font-medium text-gray-900 leading-tight">{school.name}</p>
+                            <span className="text-xs text-gray-400 shrink-0 mt-0.5">{school.distance.toFixed(2)} mi</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                            {school.type && (
+                              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${badgeClass}`}>{school.type}</span>
+                            )}
+                            {school.grade && <span className="text-[10px] text-gray-500">Grades {school.grade}</span>}
+                            <span className={`text-[10px] font-medium ${isPublic ? 'text-[#1A4A6B]' : 'text-gray-500'}`}>
+                              {isPublic ? '● Public' : '○ Private'}
+                            </span>
+                          </div>
+                          {school.district && <p className="text-[10px] text-gray-400 mt-0.5 truncate">{school.district}</p>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <EmptyState message="No schools found within 1 mile" />
+                )}
+                <DataAttribution source="Countywide School Locations — CAGIS" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
+              </>
+            )}
+
+            {/* Transit tab */}
+            {amenitiesTab === 'transit' && (
+              <>
+                {loadingTransit ? (
+                  <p className="text-sm text-gray-400">Loading transit stops…</p>
+                ) : transitStops.length > 0 ? (
+                  <div className="space-y-3">
+                    {transitStops.map((stop, idx) => (
+                      <div key={idx} className="border-b border-gray-200 pb-2 last:border-b-0">
+                        <div className="text-sm font-medium text-gray-900">{stop.stop_name}</div>
+                        <div className="text-xs text-gray-600">
+                          {stop.distance.toFixed(2)} mi{stop.routes.length > 0 ? ` · Routes: ${stop.routes.join(', ')}` : ''}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState message={t('addressLookup.noTransit', 'No stops within 0.5 miles')} />
+                )}
+                <DataAttribution source="SORTA GTFS Bus Stops" uid="sorta-stops" />
+              </>
+            )}
+          </div>
+
+          {/* ── Section: Traffic & Infrastructure ────────────────────────────── */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Traffic &amp; Infrastructure</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* ── OHGO: Traffic & Road Conditions ──────────────────────────── */}
             <DataCard
               title="Active Traffic Incidents (1 mi)"
