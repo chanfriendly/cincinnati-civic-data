@@ -6,6 +6,31 @@
 
 ## Session Log
 
+### Session 15 — Visualization Consolidation: Public Safety, City Services, Development (April 2026)
+
+**Goal:** Consolidate semantically-related data cards in Neighborhood Profiles into unified, multi-view panels — same philosophy as `UnifiedEquitySection`. Motivated by user wanting to "combine ideas but still show in a digestable, understandable way."
+
+**Process:** Built an HTML prototype (`public/section-mockups.html`) presenting three consolidation options side-by-side; user approved all three.
+
+**Section reordering:** `UnifiedEquitySection` promoted near the top of the tab (directly under Income & Housing). Sections reorganized into semantic groups with lightweight gray divider labels: Economic Profile → Public Safety → City Services → Development & Land Use → Public Health.
+
+**Files created:**
+- `src/tabs/NeighborhoodProfiles/PublicSafetySection.tsx` — combines CPD crime (PDI `k59e-2pvf` + STARS `7aqy-xrv9`) and CFD Fire/EMS (`vnsz-a3wp`) into one tabbed card with three views: Overview (side-by-side ranked bar lists), Crime Detail (full bar chart), Fire & EMS Detail (full bar chart). Shared KPI row shows CPD incidents / CFD dispatches / Total.
+- `src/tabs/NeighborhoodProfiles/CityServicesSection.tsx` — combines 311 requests (`gcej-gmiw`) and Community Perceptions survey (`gdf4-fqik`) in a two-column layout. Left: 311 KPIs + top request types. Right: resident satisfaction survey bars sorted descending by score (user requested).
+- `src/tabs/NeighborhoodProfiles/DevelopmentSection.tsx` — combines Building Permits (`uhjb-xac9`), Tax Abatements (`tkp7-yf64`), and Blight/PLAP (`pk9w-99n6`). KPI row + demolition alert banner + permit-by-type bar chart with demolitions highlighted red via Recharts `Cell`.
+- `public/section-mockups.html` — standalone HTML prototype used for user review (not part of app build).
+
+**Files modified:**
+- `src/tabs/NeighborhoodProfiles/index.tsx` — removed ~200 lines of now-redundant `useSODA` calls and `useMemo` computed values (crime, fire/ems, 311, perceptions, permits, tax abatements, blight). Replaced 7 old `DataCard` blocks with 3 component calls. Added semantic section dividers throughout.
+
+**Architecture note:** All three new section components are self-contained (own data fetching, own state). Each carries a TRANSPLANT NOTE in its header — promoting any of them to their own tab requires only wrapping in a tab shell and adding a nav entry.
+
+**Key dual-key pattern:** `DevelopmentSection` accepts both `nbhSoQL` (UPPER CASE, used for permits/blight) and `neighborhood` (Title Case, used for tax abatements `ccd_neigh` field) because the datasets use different neighborhood name casing.
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+---
+
 ### Session 14 — Unified Equity Visualization (April 2026)
 
 **Goal:** Consolidate four separate bar charts (income, poverty, homeownership, mortgage) into a single unified panel with three selectable views.

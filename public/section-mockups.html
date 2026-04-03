@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Section Consolidation Mockups</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F3F4F6; color: #111827; padding: 24px; }
+    h1 { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #6B7280; margin-bottom: 4px; }
+    .subtitle { font-size: 12px; color: #9CA3AF; margin-bottom: 28px; }
+    .group { margin-bottom: 40px; }
+    .group-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .group-label { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #6B7280; }
+    .group-line { flex: 1; height: 1px; background: #E5E7EB; }
+    .card { background: #fff; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.08); padding: 24px; }
+    .card-title { font-size: 16px; font-weight: 700; color: #1A4A6B; margin-bottom: 4px; }
+    .card-meta { font-size: 12px; color: #9CA3AF; margin-bottom: 18px; }
+
+    /* ── KPI row ── */
+    .kpi-row { display: flex; gap: 12px; margin-bottom: 20px; }
+    .kpi { flex: 1; border-radius: 8px; padding: 12px 14px; }
+    .kpi-value { font-size: 24px; font-weight: 800; line-height: 1; }
+    .kpi-label { font-size: 11px; margin-top: 4px; }
+    .kpi-blue { background: #EFF6FF; }
+    .kpi-blue .kpi-value { color: #1A4A6B; }
+    .kpi-blue .kpi-label { color: #60A5FA; }
+    .kpi-orange { background: #FFF7ED; }
+    .kpi-orange .kpi-value { color: #C8861A; }
+    .kpi-orange .kpi-label { color: #F59E0B; }
+    .kpi-red { background: #FEF2F2; }
+    .kpi-red .kpi-value { color: #DC2626; }
+    .kpi-red .kpi-label { color: #F87171; }
+    .kpi-green { background: #F0FDF4; }
+    .kpi-green .kpi-value { color: #16A34A; }
+    .kpi-green .kpi-label { color: #4ADE80; }
+    .kpi-amber { background: #FFFBEB; }
+    .kpi-amber .kpi-value { color: #D97706; }
+    .kpi-amber .kpi-label { color: #FCD34D; }
+    .kpi-purple { background: #F5F3FF; }
+    .kpi-purple .kpi-value { color: #7C3AED; }
+    .kpi-purple .kpi-label { color: #A78BFA; }
+
+    /* ── Tabs ── */
+    .tab-bar { display: flex; gap: 4px; border-bottom: 1px solid #E5E7EB; margin-bottom: 18px; }
+    .tab { padding: 7px 14px; font-size: 12px; font-weight: 600; color: #6B7280; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; border-radius: 4px 4px 0 0; }
+    .tab:hover { color: #1A4A6B; background: #F9FAFB; }
+    .tab.active { color: #1A4A6B; border-bottom-color: #1A4A6B; background: #EFF6FF; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Side-by-side ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .col-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #9CA3AF; margin-bottom: 10px; }
+
+    /* ── Horizontal bar list ── */
+    .hbar-list { display: flex; flex-direction: column; gap: 8px; }
+    .hbar-row { display: flex; flex-direction: column; gap: 3px; }
+    .hbar-meta { display: flex; justify-content: space-between; font-size: 12px; }
+    .hbar-label { color: #374151; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+    .hbar-count { color: #9CA3AF; font-weight: 600; }
+    .hbar-track { background: #F3F4F6; border-radius: 99px; height: 6px; }
+    .hbar-fill { height: 6px; border-radius: 99px; }
+
+    /* ── Overview split (Public Safety) ── */
+    .agency-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .agency-block { border: 1px solid #F3F4F6; border-radius: 8px; padding: 14px; }
+    .agency-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 2px; }
+    .agency-total { font-size: 22px; font-weight: 800; margin-bottom: 2px; }
+    .agency-sub { font-size: 11px; color: #6B7280; margin-bottom: 12px; }
+
+    /* ── Perception bars ── */
+    .perception-row { display: flex; flex-direction: column; gap: 10px; }
+    .perc-item { display: flex; flex-direction: column; gap: 3px; }
+    .perc-meta { display: flex; justify-content: space-between; font-size: 12px; }
+    .perc-label { color: #374151; }
+    .perc-score { font-weight: 700; color: #1A4A6B; }
+    .perc-track { background: #F3F4F6; border-radius: 99px; height: 7px; }
+    .perc-fill { height: 7px; border-radius: 99px; background: #1A4A6B; }
+
+    /* ── Development card specifics ── */
+    .dev-summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .dev-kpi { padding: 14px; border-radius: 8px; }
+    .dev-kpi-value { font-size: 28px; font-weight: 800; line-height: 1; }
+    .dev-kpi-label { font-size: 11px; margin-top: 4px; }
+    .dev-kpi-sub { font-size: 10px; margin-top: 2px; }
+
+    .demolition-alert { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 7px; padding: 10px 14px; margin-bottom: 16px; font-size: 12px; color: #991B1B; display: flex; align-items: center; gap: 8px; }
+    .demolition-alert strong { font-weight: 700; }
+
+    .chart-wrap { position: relative; height: 220px; }
+
+    /* ── 311 specific ── */
+    .resolution-row { display: flex; gap: 8px; margin-bottom: 16px; }
+    .res-box { flex: 1; background: #F9FAFB; border-radius: 7px; padding: 10px; text-align: center; }
+    .res-value { font-size: 18px; font-weight: 800; color: #1A4A6B; }
+    .res-label { font-size: 10px; color: #6B7280; margin-top: 2px; }
+
+    .note { font-size: 11px; color: #9CA3AF; font-style: italic; margin-top: 14px; padding-top: 12px; border-top: 1px solid #F3F4F6; }
+
+    /* ── Legend ── */
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #6B7280; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+    canvas { max-height: 220px; }
+  </style>
+</head>
+<body>
+
+<h1>Section Consolidation Mockups</h1>
+<p class="subtitle">Three proposed consolidations — Public Safety · City Services · Development & Land Use</p>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     GROUP 1: PUBLIC SAFETY
+     Crime + Fire & EMS → one tabbed card
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="group">
+  <div class="group-header">
+    <span class="group-label">Public Safety</span>
+    <div class="group-line"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Public Safety</div>
+    <div class="card-meta">Police (CPD) + Fire & EMS (CFD) incidents · Apr 2024 – Apr 2025</div>
+
+    <!-- KPI row shared across tabs -->
+    <div class="kpi-row">
+      <div class="kpi kpi-blue">
+        <div class="kpi-value">612</div>
+        <div class="kpi-label">CPD Incidents</div>
+      </div>
+      <div class="kpi kpi-orange">
+        <div class="kpi-value">847</div>
+        <div class="kpi-label">CFD Dispatches</div>
+      </div>
+      <div class="kpi kpi-purple">
+        <div class="kpi-value">1,459</div>
+        <div class="kpi-label">Total Incidents</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar" id="ps-tabs">
+      <div class="tab active" data-group="ps" data-tab="overview">Overview</div>
+      <div class="tab" data-group="ps" data-tab="crime">Crime Detail</div>
+      <div class="tab" data-group="ps" data-tab="ems">Fire & EMS Detail</div>
+    </div>
+
+    <!-- Overview tab: side-by-side agency mini-lists -->
+    <div class="tab-panel active" id="ps-overview">
+      <div class="agency-split">
+        <div class="agency-block">
+          <div class="agency-name" style="color:#1A4A6B;">Cincinnati Police</div>
+          <div class="agency-total" style="color:#1A4A6B;">612</div>
+          <div class="agency-sub">top 5 offense categories</div>
+          <div class="hbar-list">
+            <div class="hbar-row">
+              <div class="hbar-meta"><span class="hbar-label">Theft / Larceny</span><span class="hbar-count">148</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#1A4A6B;"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-meta"><span class="hbar-label">Assault</span><span class="hbar-count">112</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:76%;background:#1A4A6B;opacity:.8;"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-meta"><span class="hbar-label">Drug Offense</span><span class="hbar-count">89</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:60%;background:#1A4A6B;opacity:.65;"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-meta"><span class="hbar-label">Criminal Mischief</span><span class="hbar-count">64</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:43%;background:#1A4A6B;opacity:.5;"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-meta"><span class="hbar-label">Burglary</span><span class="hbar-count">51</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:34%;background:#1A4A6B;opacity:.4;"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="agency-block">
+          <div class="agency-name" style="color:#FF5722;">Cincinnati Fire / EMS</div>
+          <div class="agency-total" style="color:#FF5722;">847</div>
+          <div class="agency-sub">top 5 dispatch types</div>
+          <div class="hbar-list">
+            <div class="hbar-row">
+              <div class="hbar-meta"><span class="hbar-label">Medical Emergency</span><span class="hbar-count">234</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#FF5722;"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-meta"><span class="hbar-label">Falls</span><span class="hbar-count">163</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:70%;background:#FF5722;opacity:.8;"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-meta"><span class="hbar-label">Breathing Problems</span><span class="hbar-count">104</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:44%;background:#FF5722;opacity:.65;"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-meta"><span class="hbar-label">Cardiac Arrest</span><span class="hbar-count">77</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:33%;background:#FF5722;opacity:.5;"></div></div>
+            </div>
+            <div class="hbar-row">
+              <div class="hbar-meta"><span class="hbar-label">Overdose</span><span class="hbar-count">61</span></div>
+              <div class="hbar-track"><div class="hbar-fill" style="width:26%;background:#FF5722;opacity:.4;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="note">Sourced from CPD STARS dataset (7aqy-xrv9 + k59e-2pvf) and CFD incidents (vnsz-a3wp). Incident counts reflect activity within the selected date range.</p>
+    </div>
+
+    <!-- Crime Detail tab -->
+    <div class="tab-panel" id="ps-crime">
+      <div class="chart-wrap">
+        <canvas id="crime-chart"></canvas>
+      </div>
+      <p class="note">CPD crime incidents by offense category. Source: PDI legacy (k59e-2pvf) + STARS (7aqy-xrv9).</p>
+    </div>
+
+    <!-- EMS Detail tab -->
+    <div class="tab-panel" id="ps-ems">
+      <div class="chart-wrap">
+        <canvas id="ems-chart"></canvas>
+      </div>
+      <p class="note">All incidents dispatched to Cincinnati Fire Department. Source: CFD Incidents (vnsz-a3wp).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     GROUP 2: CITY SERVICES
+     311 + Community Perceptions → split-column card
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="group">
+  <div class="group-header">
+    <span class="group-label">City Services</span>
+    <div class="group-line"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">City Services</div>
+    <div class="card-meta">311 request volume (neighborhood-level) · Resident satisfaction survey (city-wide)</div>
+
+    <div class="two-col">
+      <!-- Left: 311 -->
+      <div>
+        <div class="col-label">311 Non-Emergency Requests</div>
+        <div class="resolution-row">
+          <div class="res-box">
+            <div class="res-value">418</div>
+            <div class="res-label">Total Requests</div>
+          </div>
+          <div class="res-box">
+            <div class="res-value" style="color:#D97706;">73</div>
+            <div class="res-label">Still Open</div>
+          </div>
+          <div class="res-box">
+            <div class="res-value" style="color:#16A34A;">4.2d</div>
+            <div class="res-label">Avg Resolution</div>
+          </div>
+        </div>
+        <div class="col-label" style="margin-bottom:8px;">Top request types</div>
+        <div class="hbar-list">
+          <div class="hbar-row">
+            <div class="hbar-meta"><span class="hbar-label">Pothole / Street Repair</span><span class="hbar-count">87</span></div>
+            <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#6366F1;"></div></div>
+          </div>
+          <div class="hbar-row">
+            <div class="hbar-meta"><span class="hbar-label">Abandoned Vehicle</span><span class="hbar-count">64</span></div>
+            <div class="hbar-track"><div class="hbar-fill" style="width:74%;background:#6366F1;opacity:.8;"></div></div>
+          </div>
+          <div class="hbar-row">
+            <div class="hbar-meta"><span class="hbar-label">Illegal Dumping</span><span class="hbar-count">52</span></div>
+            <div class="hbar-track"><div class="hbar-fill" style="width:60%;background:#6366F1;opacity:.65;"></div></div>
+          </div>
+          <div class="hbar-row">
+            <div class="hbar-meta"><span class="hbar-label">Street Light Outage</span><span class="hbar-count">38</span></div>
+            <div class="hbar-track"><div class="hbar-fill" style="width:44%;background:#6366F1;opacity:.5;"></div></div>
+          </div>
+          <div class="hbar-row">
+            <div class="hbar-meta"><span class="hbar-label">Graffiti Removal</span><span class="hbar-count">29</span></div>
+            <div class="hbar-track"><div class="hbar-fill" style="width:33%;background:#6366F1;opacity:.4;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Community Perceptions -->
+      <div>
+        <div class="col-label">Resident Satisfaction Survey (1–5)</div>
+        <div class="perception-row">
+          <div class="perc-item">
+            <div class="perc-meta"><span class="perc-label">Overall Quality of Life</span><span class="perc-score">3.4 / 5</span></div>
+            <div class="perc-track"><div class="perc-fill" style="width:68%;"></div></div>
+          </div>
+          <div class="perc-item">
+            <div class="perc-meta"><span class="perc-label">Feeling of Safety</span><span class="perc-score">3.1 / 5</span></div>
+            <div class="perc-track"><div class="perc-fill" style="width:62%;"></div></div>
+          </div>
+          <div class="perc-item">
+            <div class="perc-meta"><span class="perc-label">Police Services</span><span class="perc-score">3.0 / 5</span></div>
+            <div class="perc-track"><div class="perc-fill" style="width:60%;"></div></div>
+          </div>
+          <div class="perc-item">
+            <div class="perc-meta"><span class="perc-label">Fire & Ambulance</span><span class="perc-score">3.9 / 5</span></div>
+            <div class="perc-track"><div class="perc-fill" style="width:78%;"></div></div>
+          </div>
+          <div class="perc-item">
+            <div class="perc-meta"><span class="perc-label">Parks & Recreation</span><span class="perc-score">3.5 / 5</span></div>
+            <div class="perc-track"><div class="perc-fill" style="width:70%;"></div></div>
+          </div>
+          <div class="perc-item">
+            <div class="perc-meta"><span class="perc-label">City Maintenance</span><span class="perc-score">3.2 / 5</span></div>
+            <div class="perc-track"><div class="perc-fill" style="width:64%;"></div></div>
+          </div>
+          <div class="perc-item">
+            <div class="perc-meta"><span class="perc-label">Quality of City Services</span><span class="perc-score">3.3 / 5</span></div>
+            <div class="perc-track"><div class="perc-fill" style="width:66%;"></div></div>
+          </div>
+        </div>
+        <p class="note" style="margin-top:10px;">Survey ratings are city-wide averages — not specific to this neighborhood.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     GROUP 3: DEVELOPMENT & LAND USE
+     Permits + Abatements + Blight → single card
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="group">
+  <div class="group-header">
+    <span class="group-label">Development &amp; Land Use</span>
+    <div class="group-line"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Development Activity</div>
+    <div class="card-meta">Building permits · Tax abatements · Blight & property maintenance</div>
+
+    <!-- 3-KPI summary -->
+    <div class="dev-summary">
+      <div class="dev-kpi" style="background:#EFF6FF;">
+        <div class="dev-kpi-value" style="color:#1A4A6B;">47</div>
+        <div class="dev-kpi-label" style="color:#3B82F6;">Building Permits</div>
+        <div class="dev-kpi-sub" style="color:#93C5FD;">structural only, excl. trade permits</div>
+      </div>
+      <div class="dev-kpi" style="background:#F0FDF4;">
+        <div class="dev-kpi-value" style="color:#16A34A;">$2.3M</div>
+        <div class="dev-kpi-label" style="color:#22C55E;">Tax Abatement Value</div>
+        <div class="dev-kpi-sub" style="color:#86EFAC;">12 active abatements</div>
+      </div>
+      <div class="dev-kpi" style="background:#FFF7ED;">
+        <div class="dev-kpi-value" style="color:#C8861A;">23</div>
+        <div class="dev-kpi-label" style="color:#F59E0B;">Blight Records</div>
+        <div class="dev-kpi-sub" style="color:#FCD34D;">active PLAP complaints</div>
+      </div>
+    </div>
+
+    <!-- Demolition alert if relevant -->
+    <div class="demolition-alert">
+      <span>⚠</span>
+      <span><strong>3 demolition permits</strong> issued in this period — flagged for displacement tracking.</span>
+    </div>
+
+    <!-- Permits breakdown chart -->
+    <div class="col-label" style="margin-bottom:10px;">Permits by type</div>
+    <div class="chart-wrap">
+      <canvas id="permits-chart"></canvas>
+    </div>
+
+    <p class="note">Permits: Cincinnati Open Data (uhjb-xac9). Abatements: Tax Abatement dataset (tkp7-yf64). Blight: PLAP (pk9w-99n6).</p>
+  </div>
+</div>
+
+<script>
+// ── Tab switching ───────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const group = tab.dataset.group;
+    const target = tab.dataset.tab;
+    document.querySelectorAll(`[data-group="${group}"]`).forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll(`#${group}-overview, #${group}-crime, #${group}-ems`).forEach(p => p.classList.remove('active'));
+    document.getElementById(`${group}-${target}`)?.classList.add('active');
+  });
+});
+
+// ── Crime chart ─────────────────────────────────────────────────
+new Chart(document.getElementById('crime-chart'), {
+  type: 'bar',
+  data: {
+    labels: ['Theft / Larceny', 'Assault', 'Drug Offense', 'Criminal Mischief', 'Burglary', 'Robbery', 'Vandalism', 'Other'],
+    datasets: [{
+      data: [148, 112, 89, 64, 51, 38, 27, 83],
+      backgroundColor: '#1A4A6B',
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { font: { size: 11 } } },
+      y: { ticks: { font: { size: 11 } } }
+    }
+  }
+});
+
+// ── EMS chart ───────────────────────────────────────────────────
+new Chart(document.getElementById('ems-chart'), {
+  type: 'bar',
+  data: {
+    labels: ['Medical Emergency', 'Falls', 'Breathing Problems', 'Cardiac Arrest', 'Overdose', 'Psychiatric', 'Vehicle Accident', 'Other'],
+    datasets: [{
+      data: [234, 163, 104, 77, 61, 44, 38, 126],
+      backgroundColor: '#FF5722',
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { font: { size: 11 } } },
+      y: { ticks: { font: { size: 11 } } }
+    }
+  }
+});
+
+// ── Permits chart ───────────────────────────────────────────────
+new Chart(document.getElementById('permits-chart'), {
+  type: 'bar',
+  data: {
+    labels: ['Residential Renovation', 'New Construction', 'Commercial', 'Demolition', 'Addition / Alteration', 'Accessory Structure'],
+    datasets: [{
+      data: [18, 11, 8, 3, 5, 2],
+      backgroundColor: ['#C8861A','#C8861A','#C8861A','#DC2626','#C8861A','#C8861A'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.raw === 3 && ctx.label === 'Demolition' ? ' 3 (flagged)' : ` ${ctx.raw}`
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { font: { size: 11 } } },
+      y: { ticks: { font: { size: 11 } } }
+    }
+  }
+});
+</script>
+</body>
+</html>

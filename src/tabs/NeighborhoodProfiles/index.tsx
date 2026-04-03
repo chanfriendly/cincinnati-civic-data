@@ -4,20 +4,14 @@ import { useSODA } from '../../hooks/useSODA';
 import { formatCurrency, fetchSODA, fetchNeighborhoodCensusStats, stripNeighborhoodName } from '../../utils/api';
 import type { NeighborhoodCensusStats } from '../../utils/api';
 import UnifiedEquitySection from '../RacialEquity/UnifiedEquitySection';
+import PublicSafetySection from './PublicSafetySection';
+import CityServicesSection from './CityServicesSection';
+import DevelopmentSection from './DevelopmentSection';
 import {
   DataCard,
   EmptyState,
   DataAttribution,
 } from '../../components/ui';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
 
 // Neighborhoods sourced from CPD crime dataset (k59e-2pvf) — only Cincinnati
 // proper neighborhoods with actual data are included. Separate municipalities
@@ -115,78 +109,6 @@ export default function NeighborhoodProfiles() {
   // Escape single quotes for SoQL string literals (e.g. O'Bryonville → O''Bryonville)
   const nbhSoQL = nbhUpper.replace(/'/g, "''");
 
-  // Crime data (combined old + new)
-  // cpd_neighborhood values are UPPER CASE in both datasets (e.g. 'AVONDALE')
-  // k59e-2pvf: neighborhood field is cpd_neighborhood; date is date_reported; offense is offense
-  // 7aqy-xrv9: neighborhood field is cpd_neighborhood; date is datereported; offense is stars_category
-  const crimeOld = useSODA('k59e-2pvf', {
-    $where: `cpd_neighborhood='${nbhSoQL}' AND date_reported >= '${startDate}' AND date_reported <= '${endDate}'`,
-    $limit: 1000,
-  });
-  const crimeOldCount = useSODA('k59e-2pvf', {
-    $where: `cpd_neighborhood='${nbhSoQL}' AND date_reported >= '${startDate}' AND date_reported <= '${endDate}'`,
-    $select: 'count(*) as total',
-  });
-
-  const crimeNew = useSODA('7aqy-xrv9', {
-    $where: `cpd_neighborhood='${nbhSoQL}' AND datereported >= '${startDate}' AND datereported <= '${endDate}'`,
-    $limit: 1000,
-  });
-  const crimeNewCount = useSODA('7aqy-xrv9', {
-    $where: `cpd_neighborhood='${nbhSoQL}' AND datereported >= '${startDate}' AND datereported <= '${endDate}'`,
-    $select: 'count(*) as total',
-  });
-
-  const crimeByType = useMemo(() => {
-    const combined = [...(crimeOld.data || []), ...(crimeNew.data || [])];
-    const counts: { [key: string]: number } = {};
-    combined.forEach((record: any) => {
-      // Old dataset uses `offense`; new STARS dataset uses `stars_category`
-      const type = record.stars_category || record.offense || 'Unknown';
-      counts[type] = (counts[type] || 0) + 1;
-    });
-    return Object.entries(counts)
-      .map(([type, count]) => ({ type, count }))
-      .sort((a, b) => b.count - a.count);
-  }, [crimeOld.data, crimeNew.data]);
-
-  // Building permits — UID uhjb-xac9; neighborhood field is UPPER CASE.
-  // Fetch up to 500 records for the breakdown chart, plus a separate count
-  // query for the true total (large neighborhoods exceed the 500 record limit).
-  // Excludes trade/service permits (mechanical, plumbing, electrical, fire suppression)
-  // so only structural building permits are counted and charted.
-  const PERMIT_TYPE_FILTER =
-    " AND (permittypemapped IS NULL OR (" +
-    "lower(permittypemapped) NOT LIKE '%mechanical%' AND " +
-    "lower(permittypemapped) NOT LIKE '%plumbing%' AND " +
-    "lower(permittypemapped) NOT LIKE '%electrical%' AND " +
-    "lower(permittypemapped) NOT LIKE '%fire suppression%' AND " +
-    "lower(permittypemapped) != 'hvac'))";
-  const permitsWhere = `neighborhood='${nbhSoQL}' AND neighborhood != 'N/A'${PERMIT_TYPE_FILTER}`;
-
-  const permits = useSODA('uhjb-xac9', {
-    $where: permitsWhere,
-    $limit: 500,
-  });
-  const permitsCount = useSODA('uhjb-xac9', {
-    $where: permitsWhere,
-    $select: 'count(*) as total',
-  });
-
-  const permitsByType = useMemo(() => {
-    const counts: { [key: string]: number } = {};
-    (permits.data || []).forEach((permit: any) => {
-      const type = permit.permittypemapped || permit.permittype || 'Other';
-      counts[type] = (counts[type] || 0) + 1;
-    });
-    return Object.entries(counts)
-      .map(([type, count]) => ({ type, count }))
-      .sort((a, b) => b.count - a.count);
-  }, [permits.data]);
-
-  const demolitionCount = permitsByType.find((p) => p.type.toLowerCase().includes('demolition'))
-    ?.count || 0;
-
   // Food safety — neighborhood field is UPPER CASE; date field is action_date.
   // Dataset is per-violation (one row per violation per inspection), so the same
   // business can appear many times. Filter out 'N/A' geocoding failures and
@@ -220,154 +142,6 @@ export default function NeighborhoodProfiles() {
     return facilitiesWithViolation;
   }, [foodSafety.data]);
 
-  // Tax abatements — field is ccd_neigh, Title Case (matches dropdown values)
-  const taxAbatements = useSODA('tkp7-yf64', {
-    $where: `ccd_neigh='${selectedNeighborhood.replace(/'/g, "''")}'`,
-    $limit: 500,
-  });
-
-  const abatementTotal = useMemo(() => {
-    let total = 0;
-    (taxAbatements.data || []).forEach((item: any) => {
-      total += parseFloat(item.abatement_value || item.incentive_amount || 0);
-    });
-    return total;
-  }, [taxAbatements.data]);
-
-  // PLAP/Blight — neighborhood field is UPPER CASE
-  const blight = useSODA('pk9w-99n6', {
-    $where: `neighborhood='${nbhSoQL}'`,
-    $limit: 500,
-  });
-  const blightCount = useSODA('pk9w-99n6', {
-    $where: `neighborhood='${nbhSoQL}'`,
-    $select: 'count(*) as total',
-  });
-
-  // Community perceptions — gdf4-fqik is a city-wide resident survey.
-  // Each row is a respondent; columns are Likert-scale ratings (1–5).
-  // There is no neighborhood field — these are city-wide averages.
-  const perceptions = useSODA('gdf4-fqik', {
-    $limit: 1000,
-  });
-
-  // Key survey categories to display with friendly labels
-  const PERCEPTION_METRICS = [
-    { key: 'overall_quality_of_life_in', label: 'Overall Quality of Life' },
-    { key: 'overall_feeling_of_safety',  label: 'Feeling of Safety' },
-    { key: 'police_services',            label: 'Police Services' },
-    { key: 'fire_and_ambulance_services',label: 'Fire & Ambulance' },
-    { key: 'city_parks_and_recreation',  label: 'Parks & Recreation' },
-    { key: 'the_maintenance_of_city',    label: 'City Maintenance' },
-    { key: 'overall_quality_of_services',label: 'Quality of City Services' },
-    { key: 'overall_image_of_the_city',  label: 'City Image' },
-  ];
-
-  const perceptionAverages = useMemo(() => {
-    if (!perceptions.data || perceptions.data.length === 0) return [];
-    return PERCEPTION_METRICS.map(({ key, label }) => {
-      const values = (perceptions.data as any[])
-        .map((r: any) => parseFloat(r[key]))
-        .filter((v) => !isNaN(v) && v >= 1 && v <= 5);
-      const avg = values.length > 0
-        ? values.reduce((a: number, b: number) => a + b, 0) / values.length
-        : null;
-      return { label, avg: avg !== null ? Math.round(avg * 10) / 10 : null };
-    }).filter((m) => m.avg !== null);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [perceptions.data]);
-
-  // Fire & EMS — neighborhood field is UPPER CASE; date field is create_time_incident.
-  const fireEms = useSODA('vnsz-a3wp', {
-    $where: `neighborhood='${nbhSoQL}' AND create_time_incident >= '${startDate}' AND create_time_incident <= '${endDate}'`,
-    $limit: 500,
-  });
-  const fireEmsCount = useSODA('vnsz-a3wp', {
-    $where: `neighborhood='${nbhSoQL}' AND create_time_incident >= '${startDate}' AND create_time_incident <= '${endDate}'`,
-    $select: 'count(*) as total',
-  });
-
-  // Recent records (2025+) lack cfd_incident_type_group/incident_type_desc and only
-  // populate incident_type_id, which follows the pattern "CATEGORY - PROTOCOL_CODE"
-  // (e.g. "BREATH - 6C1", "STROKE - 28C1F CLEAR EVIDENCE"). Extract the prefix word
-  // and map to a human-readable label so the chart doesn't collapse to "Other".
-  const INCIDENT_ID_LABEL: Record<string, string> = {
-    ABDOM: 'Abdominal Pain', ALLERGIC: 'Allergic Reaction', ASSAULT: 'Assault',
-    BACK: 'Back Pain', BITE: 'Animal Bite', BREATH: 'Breathing Problems',
-    BURN: 'Burns', CARDIAC: 'Cardiac Arrest', CHPN: 'Chest Pain',
-    DIABETIC: 'Diabetic Emergency', DROWN: 'Drowning', EMS: 'Medical Emergency',
-    FALL: 'Falls', FALLS: 'Falls', FAINT: 'Fainting / Unconscious',
-    FIRE: 'Fire', FALARM: 'Fire Alarm', FALCID: 'False Alarm',
-    HAZMAT: 'Hazmat', HEADACHE: 'Headache', HEMOR: 'Hemorrhage',
-    INFOF: 'Administrative', OD: 'Overdose', OBSTETRIC: 'Obstetric',
-    PAIN: 'Pain', PSYCH: 'Psychiatric', RESCUE: 'Rescue',
-    SICK: 'Illness', STROKE: 'Stroke', STUCK: 'Stuck in Elevator',
-    TRAUMATIC: 'Traumatic Injury', UNCONSCIOUS: 'Unconscious', VEHICLE: 'Vehicle Accident',
-  };
-
-  const fireEmsByType = useMemo(() => {
-    const counts: { [key: string]: number } = {};
-    (fireEms.data || []).forEach((incident: any) => {
-      // 1. cfd_incident_type_group — populated for older records, best grouping
-      // 2. incident_type_id prefix — "BREATH - 6C1" → "Breathing Problems"
-      // 3. incident_type_desc — fallback for any remaining older records
-      let type: string = incident.cfd_incident_type_group || incident.incident_type_desc || '';
-      if (!type && incident.incident_type_id) {
-        const raw = String(incident.incident_type_id).replace(/^=/, '');
-        const prefix = raw.split(/[\s-]/)[0].toUpperCase();
-        type = INCIDENT_ID_LABEL[prefix] ?? raw;
-      }
-      counts[type || 'Other'] = (counts[type || 'Other'] || 0) + 1;
-    });
-    return Object.entries(counts)
-      .map(([type, count]) => ({ type, count }))
-      .sort((a, b) => b.count - a.count);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fireEms.data]);
-
-  // 311 Service Requests — UID gcej-gmiw; neighborhood field is neighborhood (UPPER CASE).
-  // Date field is date_created; sr_type_desc is the human-readable category.
-  // We fetch up to 1000 records for breakdown + a separate count query for the true total.
-  const requests311 = useSODA('gcej-gmiw', {
-    $where: `neighborhood='${nbhSoQL}' AND date_created >= '${startDate}' AND date_created <= '${endDate}'`,
-    $limit: 1000,
-  });
-  const requests311Count = useSODA('gcej-gmiw', {
-    $where: `neighborhood='${nbhSoQL}' AND date_created >= '${startDate}' AND date_created <= '${endDate}'`,
-    $select: 'count(*) as total',
-  });
-
-  const requests311ByType = useMemo(() => {
-    const counts: { [key: string]: number } = {};
-    (requests311.data || []).forEach((req: any) => {
-      const type = req.sr_type_desc || req.group_title || req.sr_type || 'Other';
-      counts[type] = (counts[type] || 0) + 1;
-    });
-    return Object.entries(counts)
-      .map(([type, count]) => ({ type, count }))
-      .sort((a, b) => b.count - a.count);
-  }, [requests311.data]);
-
-  // Average resolution time in days for closed requests in the selected window
-  const avgResolutionDays = useMemo(() => {
-    const closed = (requests311.data || []).filter((req: any) => req.date_closed && req.date_created);
-    if (closed.length === 0) return null;
-    const totalDays = closed.reduce((sum: number, req: any) => {
-      const created = new Date(req.date_created).getTime();
-      const closedDate = new Date(req.date_closed).getTime();
-      const days = (closedDate - created) / (1000 * 60 * 60 * 24);
-      return sum + (days >= 0 ? days : 0);
-    }, 0);
-    return Math.round(totalDays / closed.length * 10) / 10;
-  }, [requests311.data]);
-
-  const openRequestCount = useMemo(() => {
-    return (requests311.data || []).filter((req: any) => {
-      const status = (req.sr_status || '').toLowerCase();
-      return status.includes('open') || status.includes('pending') || status.includes('assigned');
-    }).length;
-  }, [requests311.data]);
-
   // Per-neighborhood ACS census data — loaded from /data/neighborhood_acs.json
   // via fetchNeighborhoodCensusStats(). Falls back to null values while loading.
   const [censusStats, setCensusStats] = useState<Map<string, NeighborhoodCensusStats> | null>(null);
@@ -385,9 +159,6 @@ export default function NeighborhoodProfiles() {
     const key = CENSUS_KEY_OVERRIDE[selectedNeighborhood] ?? stripNeighborhoodName(selectedNeighborhood);
     return censusStats.get(key) ?? null;
   }, [censusStats, selectedNeighborhood]);
-
-  const crimeLoading = crimeOld.loading || crimeNew.loading;
-  const crimeError = crimeOld.error || crimeNew.error;
 
   return (
     <div className="space-y-6">
@@ -460,6 +231,11 @@ export default function NeighborhoodProfiles() {
         </div>
       </div>
 
+      <div className="flex items-center gap-3 pt-2">
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Economic Profile</span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
+
       {/* Income & Housing — per-neighborhood ACS data */}
       <DataCard
         title={t('neighborhood.censusData', 'Income & Housing')}
@@ -525,106 +301,35 @@ export default function NeighborhoodProfiles() {
         />
       </DataCard>
 
-      {/* Crime Section */}
-      <DataCard
-        title={t('neighborhood.crime', 'Crime & Public Safety')}
-        loading={crimeLoading}
-        error={crimeError}
-        empty={crimeByType.length === 0}
-        className="print-page"
-      >
-        <p className="text-xs text-gray-500 italic mb-3">
-          {t('neighborhood.crimeDef', 'Incidents reported to Cincinnati Police Department within the selected date range, broken down by offense category. Sourced from the PDI legacy dataset and the current STARS system.')}
-        </p>
-        {crimeByType.length > 0 ? (
-          <div className="space-y-4">
-            <div className="text-2xl font-bold text-[#C8861A]">
-              {(
-                parseInt((crimeOldCount.data as any)?.[0]?.total || '0', 10) +
-                parseInt((crimeNewCount.data as any)?.[0]?.total || '0', 10)
-              ).toLocaleString()}
-            </div>
-            <div className="text-sm text-gray-600 mb-4">
-              {t('neighborhood.totalIncidents', 'total incidents')} ({startDate} to {endDate})
-              {(
-                parseInt((crimeOldCount.data as any)?.[0]?.total || '0', 10) +
-                parseInt((crimeNewCount.data as any)?.[0]?.total || '0', 10)
-              ) > 2000 && (
-                <span className="ml-1 text-xs text-gray-400">(chart shows sample of 2,000)</span>
-              )}
-            </div>
+      {/* Racial Equity & Mortgage Lending — unified panel with 3 selectable views */}
+      {/* Self-contained: transplant to own tab by wrapping in a tab shell */}
+      <UnifiedEquitySection neighborhood={selectedNeighborhood} />
 
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={crimeByType.slice(0, 10)} margin={{ bottom: 60, left: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="type" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 11 }} tickFormatter={(v: string) => v.length > 22 ? v.slice(0, 20) + '…' : v} />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#1A4A6B" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <EmptyState message={t('neighborhood.noCrime', 'No crime records found')} />
-        )}
-        <DataAttribution
-          source={t('neighborhood.attributionCrime', 'PDI Crime Incidents + STARS')}
-          uid="k59e-2pvf"
-        />
-      </DataCard>
+      <div className="flex items-center gap-3 pt-2">
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Public Safety</span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
 
-      {/* Building Permits */}
-      <DataCard
-        title={t('neighborhood.permits', 'Building Permits')}
-        loading={permits.loading}
-        error={permits.error}
-        empty={!permits.data || permits.data.length === 0}
-        className="print-page"
-      >
-        <p className="text-xs text-gray-500 italic mb-3">
-          {t('neighborhood.permitsDef', 'Structural building permits issued by the city — new construction, renovations, and demolitions. Trade permits (electrical, plumbing, mechanical, HVAC) are excluded.')}
-        </p>
-        {permitsByType.length > 0 ? (
-          <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-4 mb-4">
-              <div className="bg-blue-50 p-3 rounded">
-                <div className="text-2xl font-bold text-[#1A4A6B]">
-                  {parseInt((permitsCount.data as any)?.[0]?.total || '0', 10).toLocaleString()}
-                </div>
-                <div className="text-xs text-gray-600">
-                  {t('neighborhood.totalPermits', 'Total Permits')}
-                </div>
-              </div>
-              {demolitionCount > 0 && (
-                <div className="bg-red-50 p-3 rounded">
-                  <div className="text-2xl font-bold text-red-700">
-                    {demolitionCount}
-                  </div>
-                  <div className="text-xs text-gray-600">
-                    {t('neighborhood.demolitions', 'Demolitions')}
-                  </div>
-                </div>
-              )}
-            </div>
+      <PublicSafetySection nbhSoQL={nbhSoQL} startDate={startDate} endDate={endDate} />
 
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={permitsByType.slice(0, 8)} margin={{ bottom: 60, left: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="type" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 11 }} tickFormatter={(v: string) => v.length > 22 ? v.slice(0, 20) + '…' : v} />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#C8861A" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <EmptyState message={t('neighborhood.noPermits', 'No permits found')} />
-        )}
-        <DataAttribution
-          source={t('neighborhood.attributionPermits', 'Building Permits')}
-          uid="uhjb-xac9"
-        />
-      </DataCard>
+      <div className="flex items-center gap-3 pt-2">
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">City Services</span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
+
+      <CityServicesSection nbhSoQL={nbhSoQL} startDate={startDate} endDate={endDate} />
+
+      <div className="flex items-center gap-3 pt-2">
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Development &amp; Land Use</span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
+
+      <DevelopmentSection nbhSoQL={nbhSoQL} neighborhood={selectedNeighborhood} />
+
+      <div className="flex items-center gap-3 pt-2">
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Public Health</span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
 
       {/* Food Safety */}
       <DataCard
@@ -676,217 +381,6 @@ export default function NeighborhoodProfiles() {
           uid="rg6p-b3h3"
         />
       </DataCard>
-
-      {/* Tax Abatements */}
-      <DataCard
-        title={t('neighborhood.taxAbatements', 'Tax Abatements')}
-        loading={taxAbatements.loading}
-        error={taxAbatements.error}
-        empty={!taxAbatements.data || taxAbatements.data.length === 0}
-        className="print-page"
-      >
-        <p className="text-xs text-gray-500 italic mb-3">
-          {t('neighborhood.taxAbatementsDef', 'City-granted property tax exemptions, typically tied to new construction or rehabilitation projects. High abatement totals can signal investment activity — or tax revenue the neighborhood is not collecting.')}
-        </p>
-        {taxAbatements.data && taxAbatements.data.length > 0 ? (
-          <div className="space-y-3">
-            <div className="bg-green-50 p-3 rounded mb-4">
-              <div className="text-2xl font-bold text-green-700">
-                {taxAbatements.data.length}
-              </div>
-              <div className="text-sm text-gray-600 mb-2">
-                {t('neighborhood.activeAbatements', 'Active Abatements')}
-              </div>
-              <div className="text-lg font-semibold text-green-900">
-                {formatCurrency(abatementTotal)}
-              </div>
-              <div className="text-xs text-gray-600">
-                {t('neighborhood.estimatedValue', 'Estimated Total Value')}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <EmptyState message={t('neighborhood.noAbatements', 'No abatements found')} />
-        )}
-        <DataAttribution
-          source={t('neighborhood.attributionTaxAbatements', 'Tax Abatements')}
-          uid="tkp7-yf64"
-        />
-      </DataCard>
-
-      {/* PLAP / Blight */}
-      <DataCard
-        title={t('neighborhood.blight', 'Blight & Property Maintenance')}
-        loading={blight.loading}
-        error={blight.error}
-        empty={!blight.data || blight.data.length === 0}
-        className="print-page"
-      >
-        <p className="text-xs text-gray-500 italic mb-3">
-          {t('neighborhood.blightDef', '"Blight" refers to properties flagged by Cincinnati\'s Proactive Landlord Accountability Program (PLAP) for code violations — including vacant buildings, overgrown lots, structural issues, or public nuisances.')}
-        </p>
-        {blight.data && blight.data.length > 0 ? (
-          <div className="space-y-2">
-            <div className="text-3xl font-bold text-[#C8861A]">
-              {parseInt((blightCount.data as any)?.[0]?.total || '0', 10).toLocaleString()}
-            </div>
-            <div className="text-sm text-gray-600">
-              {t('neighborhood.blightRecords', 'active blight records in this neighborhood')}
-            </div>
-          </div>
-        ) : (
-          <EmptyState message={t('neighborhood.noBlight', 'No blight records found')} />
-        )}
-        <DataAttribution
-          source={t('neighborhood.attributionBlight', 'PLAP Blight')}
-          uid="pk9w-99n6"
-        />
-      </DataCard>
-
-      {/* Community Perceptions */}
-      <DataCard
-        title={t('neighborhood.communityPerceptions', 'Community Perceptions — City-Wide Survey')}
-        loading={perceptions.loading}
-        error={perceptions.error}
-        empty={perceptionAverages.length === 0}
-        className="print-page"
-      >
-        {perceptionAverages.length > 0 ? (
-          <div className="space-y-3">
-            <p className="text-xs text-gray-500 italic mb-4">
-              City-wide resident survey ratings (scale 1–5). This data is not broken down by neighborhood.
-            </p>
-            {perceptionAverages.map(({ label, avg }) => (
-              <div key={label}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-700">{label}</span>
-                  <span className="font-semibold text-[#1A4A6B]">{avg} / 5</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-civic-blue rounded-full h-2 transition-all"
-                    style={{ width: `${((avg ?? 0) / 5) * 100}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <EmptyState message={t('neighborhood.noPerceptions', 'No perception data found')} />
-        )}
-        <DataAttribution
-          source={t('neighborhood.attributionPerceptions', 'Community Perceptions Survey')}
-          uid="gdf4-fqik"
-        />
-      </DataCard>
-
-      {/* 311 Service Requests */}
-      <DataCard
-        title={t('neighborhood.requests311', '311 Service Requests')}
-        loading={requests311.loading}
-        error={requests311.error}
-        empty={requests311ByType.length === 0}
-        className="print-page"
-      >
-        <p className="text-xs text-gray-500 italic mb-3">
-          {t('neighborhood.requests311Def', 'Non-emergency service requests submitted by residents to the City of Cincinnati — covering issues like potholes, abandoned vehicles, illegal dumping, graffiti, street lights, and more. High open-request counts or long resolution times can signal service delivery disparities.')}
-        </p>
-        {requests311ByType.length > 0 ? (
-          <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              <div className="bg-blue-50 p-3 rounded">
-                <div className="text-2xl font-bold text-[#1A4A6B]">
-                  {parseInt((requests311Count.data as any)?.[0]?.total || '0', 10).toLocaleString()}
-                </div>
-                <div className="text-xs text-gray-600">{t('neighborhood.totalRequests', 'Total Requests')}</div>
-              </div>
-              <div className="bg-amber-50 p-3 rounded">
-                <div className="text-2xl font-bold text-amber-700">
-                  {openRequestCount.toLocaleString()}
-                </div>
-                <div className="text-xs text-gray-600">{t('neighborhood.openRequests', 'Still Open / Pending')}</div>
-              </div>
-              <div className="bg-green-50 p-3 rounded">
-                <div className="text-2xl font-bold text-green-700">
-                  {avgResolutionDays != null ? `${avgResolutionDays}d` : '—'}
-                </div>
-                <div className="text-xs text-gray-600">{t('neighborhood.avgResolution', 'Avg. Resolution Time')}</div>
-              </div>
-            </div>
-
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={requests311ByType.slice(0, 8)} margin={{ bottom: 60, left: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="type" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 11 }}
-                  tickFormatter={(v: string) => v.length > 28 ? v.slice(0, 26) + '…' : v} />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#6366F1" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <EmptyState message={t('neighborhood.no311', 'No service requests found')} />
-        )}
-        <DataAttribution
-          source={t('neighborhood.attribution311', '311 Non-Emergency Service Requests')}
-          uid="gcej-gmiw"
-        />
-      </DataCard>
-
-      {/* Fire & EMS */}
-      <DataCard
-        title={t('neighborhood.fireEms', 'Fire & EMS Incidents')}
-        loading={fireEms.loading}
-        error={fireEms.error}
-        empty={fireEmsByType.length === 0}
-        className="print-page"
-      >
-        <p className="text-xs text-gray-500 italic mb-3">
-          {t('neighborhood.fireEmsDef', 'All incidents dispatched to Cincinnati Fire Department — including fires, medical emergencies, and rescue calls — within the selected date range.')}
-        </p>
-        {fireEmsByType.length > 0 ? (
-          <div className="space-y-4">
-            <div className="text-2xl font-bold text-[#1A4A6B]">
-              {parseInt((fireEmsCount.data as any)?.[0]?.total || '0', 10).toLocaleString()}
-            </div>
-            <div className="text-sm text-gray-600 mb-4">
-              {t('neighborhood.totalIncidents', 'total incidents')}
-              {parseInt((fireEmsCount.data as any)?.[0]?.total || '0', 10) > 500 && (
-                <span className="ml-1 text-xs text-gray-400">(chart shows sample of 500)</span>
-              )}
-            </div>
-
-            <ResponsiveContainer width="100%" height={340}>
-              <BarChart data={fireEmsByType.slice(0, 8)} margin={{ bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="type"
-                  angle={-40}
-                  textAnchor="end"
-                  height={110}
-                  tick={{ fontSize: 11 }}
-                  tickFormatter={(v: string) => v.length > 20 ? v.slice(0, 18) + '…' : v}
-                  interval={0}
-                />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#FF5722" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <EmptyState message={t('neighborhood.noFireEms', 'No incidents found')} />
-        )}
-        <DataAttribution
-          source={t('neighborhood.attributionFireEms', 'Fire & EMS')}
-          uid="vnsz-a3wp"
-        />
-      </DataCard>
-
-      {/* Racial Equity & Mortgage Lending — unified panel with 3 selectable views */}
-      {/* Self-contained: transplant to own tab by wrapping in a tab shell */}
-      <UnifiedEquitySection neighborhood={selectedNeighborhood} />
 
     </div>
   );
