@@ -6,6 +6,63 @@
 
 ## Session Log
 
+### Session 17 — HUD Program Labels (April 2026)
+
+**Goal:** Add plain-English labels to HUD program type codes in `HousingInventorySection.tsx` so residents see "Section 8 – New Construction" instead of "Sec 8 NC".
+
+**Files modified:**
+- `src/tabs/NeighborhoodProfiles/HousingInventorySection.tsx` — two changes:
+  1. Added `PROGRAM_LABELS` const mapping all 13 codes found in the live data to `{ label, description }` objects. Labels are plain-English. Descriptions (one sentence each) appear as a small sub-line under each bar. Hover `title` attribute also carries the description for truncated rows.
+  2. Updated `programColor()` to match against `hudProgramLabel(code).label` instead of the raw code — the old fuzzy matchers ("public housing", "section 8", etc.) were never firing because no HUD code string contains those phrases verbatim. Now Section 8 programs get amber, RAD conversions get rose/pink, 202 elderly programs get purple, 811 disability programs get teal, public housing gets navy.
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+**Next session priorities (in order):**
+1. School proximity in Address Lookup (Phase 5.1) — CPS school location GeoJSON is public
+2. Transit equity gap analysis (Phase 5.2) — SORTA stop data already in system
+3. Neighborhood comparison tool (Phase 6) — side-by-side Explorer dimensions
+
+---
+
+### Session 16 — CLAUDE.md Maintenance Rule + Zoning Reform Tracker + HUD Affordable Housing (April 2026)
+
+**Goal:** Correct the stale "Recommended Next Steps" list, then build the next two phases from the roadmap.
+
+**CLAUDE.md maintenance rule added:** The "Recommended Next Steps" section now has an explicit rule requiring Claude to mark items ✅ when done and 🔄 when in progress every session. Previous items were found to be silently complete (dropdown filtering, park acreage, lead safety, EJScreen — all done in earlier sessions). Stale state corrected.
+
+**Connected Communities Zoning Reform Tracker (Phase 3.3 — now ✅ complete):**
+- New file: `src/tabs/Displacement/ConnectedCommunitiesSection.tsx` — self-contained component
+- Added as third sub-tab "Zoning Reform Tracker" in the Displacement tab
+- Compares Reform Year 1 (Jul 2024–Jun 2025) vs. baseline (Jul 2023–Jun 2024) city-wide
+- Three views:
+  - **City-Wide Summary**: KPI cards (all structural permits + residential permits) with YoY %, top-10 neighborhoods bar list
+  - **By Neighborhood**: Horizontal bar chart showing YoY % change for top-20 neighborhoods; green = growth, red = decline
+  - **By Permit Type**: Grouped bar chart (baseline grey vs. reform blue/red) for residential permit types
+- Reform context banner explains what the ordinance changed (duplexes, ADUs, parking minimums)
+- Trade permits (electrical, plumbing, HVAC) excluded from all counts
+- `Displacement/index.tsx` modified: added import, extended activeSection type to include `'zoning'`, added sub-tab button and conditional render
+
+**HUD Affordable Housing Inventory (Phase 4.2 — 🔄 pending data build):**
+- New file: `scripts/build_hud.py` — queries HUD Multifamily Properties Assisted ArcGIS FeatureServer (public, no auth), filters to Cincinnati bounding box, nearest-centroid maps properties to neighborhoods, outputs by-program unit counts and expiry alerts
+- New file: `public/data/hud_affordable_housing.json` — placeholder `{}` until script is run
+- New interface: `NeighborhoodHUDStats` + `HUDProperty` in `src/types/index.ts`
+- New function: `fetchNeighborhoodHUDStats()` in `src/utils/api.ts`
+- New file: `src/tabs/NeighborhoodProfiles/HousingInventorySection.tsx` — shows assisted units, property count, breakdown by program type (Public Housing / Section 8 / LIHTC etc.), amber alert for subsidies expiring within 5 years, graceful build-notice when JSON is empty
+- `src/tabs/NeighborhoodProfiles/index.tsx` modified: added import, added "Affordable Housing" section divider and `<HousingInventorySection>` between Development and Public Health
+
+**Data build completed (same session):** `python3 scripts/build_hud.py` ran successfully.
+- 28 Cincinnati neighborhoods mapped
+- 114 HUD-assisted properties
+- 8,191 total assisted units
+- Top neighborhoods: North Fairmount (903), Walnut Hills (863), Avondale (700), Over-the-Rhine (637), CBD/Riverfront (621)
+- Expiring subsidies: 0 flagged — HUD's `EXPIRATION_DATE` fields appear sparsely populated in this dataset; the alert system is wired and will activate when dates are present
+
+**Known follow-up for next session:** HUD program type codes in the JSON (e.g. "LMSA", "PD/8 SR", "RAD Mod Rehab Conv", "RAD PH Conv", "202/8 NC") are internal HUD abbreviations. Add a label map to `HousingInventorySection.tsx` so residents see "Section 8 New Construction" instead of "Sec 8 NC". Reference: https://www.huduser.gov/portal/datasets/assthsg.html
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+---
+
 ### Session 15 — Visualization Consolidation: Public Safety, City Services, Development (April 2026)
 
 **Goal:** Consolidate semantically-related data cards in Neighborhood Profiles into unified, multi-view panels — same philosophy as `UnifiedEquitySection`. Motivated by user wanting to "combine ideas but still show in a digestable, understandable way."

@@ -7,6 +7,7 @@ import UnifiedEquitySection from '../RacialEquity/UnifiedEquitySection';
 import PublicSafetySection from './PublicSafetySection';
 import CityServicesSection from './CityServicesSection';
 import DevelopmentSection from './DevelopmentSection';
+import HousingInventorySection from './HousingInventorySection';
 import {
   DataCard,
   EmptyState,
@@ -325,6 +326,13 @@ export default function NeighborhoodProfiles() {
       </div>
 
       <DevelopmentSection nbhSoQL={nbhSoQL} neighborhood={selectedNeighborhood} />
+
+      <div className="flex items-center gap-3 pt-2">
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Affordable Housing</span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
+
+      <HousingInventorySection neighborhood={selectedNeighborhood} />
 
       <div className="flex items-center gap-3 pt-2">
         <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Public Health</span>

@@ -432,3 +432,34 @@ export interface NeighborhoodHMDAStats {
   countyWhiteApprovalRate?: number | null;
   countyBlackApprovalRate?: number | null;
 }
+
+// ─── HUD AFFORDABLE HOUSING ──────────────────────────────────────────────────
+
+export interface HUDProperty {
+  name: string;
+  address: string;
+  totalUnits: number;
+  assistedUnits: number;
+  /** Program types this property participates in */
+  programs: string[];
+  /** Contract/subsidy end date in YYYY-MM-DD, null if unknown */
+  contractEnd: string | null;
+  lat: number;
+  lon: number;
+}
+
+export interface NeighborhoodHUDStats {
+  name: string;
+  totalAssistedUnits: number;
+  propertyCount: number;
+  /** Units per program type: e.g. { "Public Housing": 120, "Section 8": 45 } */
+  byProgram: Record<string, number>;
+  /** Properties with contract end date within 5 years of data pull */
+  expiringProperties: Array<{
+    name: string;
+    address: string;
+    units: number;
+    contractEnd: string;
+  }>;
+  asOf: string;
+}

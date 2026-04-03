@@ -151,28 +151,39 @@ OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...
 
 ## Recommended Next Steps (Priority Order)
 
-> Full phased roadmap: see `PROJECT_ROADMAP.md`. Research basis: see `CINCINNATI_RESEARCH_REPORT.md`.
+> **MAINTENANCE RULE — read before every session:** This list is the authoritative short-term task queue. When a task is finished, mark it ✅ immediately — do not leave completed work unmarked. If a task is partially done or pending validation, mark it 🔄. New tasks discovered mid-session should be appended here. `PROJECT_ROADMAP.md` is the long-horizon roadmap; this list is the sprint board. They must be kept in sync.
 
-### Phase 1 — Foundation Fixes (immediate)
-1. **Wire per-neighborhood Census data into Tab 2** — Explorer already computes neighborhood-level income/rent from `neighborhood_acs.json`. Extract into a shared hook so Tab 2 shows real per-neighborhood numbers.
-2. **Fix neighborhood dropdown (Tab 2)** — Currently shows all 53 neighborhoods even if no data exists. Filter to neighborhoods with at least one crime record.
-3. **Add 311 service requests to Tab 2** — Data exists on Cincinnati Open Data portal; service delivery disparities by neighborhood are a high-value civic transparency addition.
-4. **Live test CAGIS cards (Tab 1)** — Test zoning, flood, historic, and parks with a Downtown address (known flood zone) and Hyde Park address (known not in flood zone).
-5. **Pre-compute park acreage** — 52 sequential CAGIS calls at runtime is slow. Write a Node.js script that generates `public/data/cagis_neighborhood_parks.json` (same pattern as `neighborhood_acs.json`).
+> Research basis: `CINCINNATI_RESEARCH_REPORT.md`
 
-### Phase 2 — Lead & Environmental Health (high priority)
-6. **Lead service line tracker** — Cincinnati has 33,449 lead/unknown service lines remaining; 220 child cases/year. Cincinnati Health Dept. publishes the inventory. No civic-facing map exists — highest-priority new feature.
-7. **EPA EJScreen environmental justice layer** — Free federal API (no auth). Add air toxics, Superfund proximity, and industrial exposure to Neighborhood Explorer as a new EJ dimension.
-8. **Flood infrastructure status** — First Street Foundation probability data + Mill Creek floodwall condition status alongside existing FEMA flood zones.
+### Phase 1 — Foundation Fixes
+1. ✅ **Wire per-neighborhood Census data into Tab 2** — `neighborhood_acs.json` in use; income/rent shown per neighborhood.
+2. ✅ **Fix neighborhood dropdown (Tab 2)** — Filters dynamically to neighborhoods with crime records via STARS API on mount.
+3. ✅ **Add 311 service requests to Tab 2** — Live via `CityServicesSection` (`gcej-gmiw`); shows volume, open count, avg resolution time, top request types.
+4. ✅ **Pre-compute park acreage** — `scripts/build_parks.py` done; `public/data/cagis_neighborhood_parks.json` populated (49 neighborhoods); Explorer uses static file, skips 52 live CAGIS calls.
+5. 🔄 **Live test CAGIS cards (Tab 1)** — Verify zoning, flood, historic, and parks cards with a Downtown address (known flood zone) and Hyde Park address (not in flood zone). No code change needed — manual QA only.
 
-### Phase 3 — Racial Equity (high priority)
-9. **Racial equity metrics by neighborhood** — Census ACS B19001/B25003/B17001 by race tables. Already fetching Census data; new breakdowns. Motivated by Urban League "State of Black Cincinnati" (2024).
-10. **Connected Communities zoning impact tracker** — Track permit applications filed under the June 2024 zoning reform. Permit data already in our system.
+### Phase 2 — Lead & Environmental Health
+6. ✅ **Lead service line tracker** — Full `LeadSafety` tab built: neighborhood inventory, risk ratings, city-wide chart, address lookup, resident guidance. `public/data/lead_service_lines.json` populated.
+7. ✅ **EPA environmental justice layer** — AirToxScreen 2019 via ArcGIS; added as EJ dimension in Neighborhood Explorer (45 neighborhoods). EJScreen offline since Feb 2025 — disclosed in tooltip.
+8. **Flood infrastructure status** — Add Mill Creek barrier/floodwall context to Tab 1 flood zone card. First Street Foundation (paid API) deferred; static Mill Creek context is free.
 
-### Lower Priority
-11. **HUD affordable housing inventory** — Free public API. Section 8, LIHTC, public housing units + subsidy expiration dates.
-12. **Spanish translation review** — Current ES strings are machine-translated.
-13. **Mobile testing** — Tabs 1 and 3 are primary mobile use cases.
+### Phase 3 — Racial Equity & Zoning
+9. ✅ **Racial equity metrics by neighborhood** — `UnifiedEquitySection` built: income/poverty/homeownership by race (ACS) + mortgage approval rates by race (HMDA). Shown in Neighborhood Profiles.
+10. ✅ **Connected Communities zoning reform tracker** — `ConnectedCommunitiesSection.tsx` added as "Zoning Reform Tracker" sub-tab in Displacement tab. Compares Reform Year 1 (Jul 2024–Jun 2025) vs. baseline (Jul 2023–Jun 2024). Three views: city-wide summary, by-neighborhood YoY bar chart, residential permit type breakdown.
+
+### Phase 4 — Affordable Housing & Displacement
+11. ✅ **HUD affordable housing inventory** — `HousingInventorySection.tsx` built and wired into Neighborhood Profiles ("Affordable Housing" section divider). `scripts/build_hud.py` populated `public/data/hud_affordable_housing.json` (28 neighborhoods, 114 properties, 8,191 assisted units). Shows: assisted unit count, property count, units by program type, expiry alert for subsidies ending within 5 years. **Known follow-up:** HUD program type codes in the data (e.g. "LMSA", "PD/8 SR", "RAD PH Conv") are internal HUD abbreviations — consider adding a human-readable label map in `HousingInventorySection.tsx` so residents understand what each program means.
+12. **Eviction data** — Requires partner (Legal Aid Society) for tract-level data. County totals available from Eviction Lab. Do not build without a data partner.
+
+### Phase 5 — Schools & Transit
+13. **School proximity in Address Lookup** — CPS school location GeoJSON is public. Add nearest schools with walk distances to the Tab 1 address card.
+14. **Transit equity gap analysis** — SORTA stop data already in system. Compare stop density by neighborhood vs. income data we already have.
+
+### Lower Priority / Ongoing
+15. ✅ **HUD program type labels** — `PROGRAM_LABELS` map added to `HousingInventorySection.tsx`; all 13 codes in the live data mapped to plain-English labels + one-sentence descriptions. `programColor()` updated to match on labels (fuzzy matchers now actually fire). Reference: https://www.huduser.gov/portal/datasets/assthsg.html
+16. **Spanish translation review** — Current ES strings are machine-translated; needs native speaker review.
+17. **Mobile testing** — Tabs 1 and 3 are primary mobile use cases.
+18. **Neighborhood comparison tool** — Side-by-side Explorer dimensions for any two neighborhoods (useful for grant applications and advocacy).
 
 ## Known Issues & Workarounds
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { fetchSODA, fetchNeighborhoodCensusStats, normalizeNeighborhoodName, stripNeighborhoodName } from '../../utils/api'
 import { normalize } from '../../utils/scoring'
 import OwnerActivity from '../OwnerActivity'
+import ConnectedCommunitiesSection from './ConnectedCommunitiesSection'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -262,7 +263,7 @@ const QuadrantPlot: React.FC<{ record: DisplacementRecord }> = ({ record }) => {
 // ─── Main component ────────────────────────────────────────────────────────────
 
 const DisplacementTab: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<'displacement' | 'owner'>('displacement')
+  const [activeSection, setActiveSection] = useState<'displacement' | 'owner' | 'zoning'>('displacement')
 
   // ── Data state ──────────────────────────────────────────────────────────────
   const [snaNames, setSnaNames] = useState<string[]>([])
@@ -742,6 +743,7 @@ const DisplacementTab: React.FC = () => {
           {([
             { id: 'displacement', label: 'Displacement Index' },
             { id: 'owner',        label: 'Owner / Developer Search' },
+            { id: 'zoning',       label: 'Zoning Reform Tracker' },
           ] as const).map(sec => (
             <button
               key={sec.id}
@@ -760,6 +762,13 @@ const DisplacementTab: React.FC = () => {
 
       {/* Owner / Developer Search */}
       {activeSection === 'owner' && <OwnerActivity />}
+
+      {/* Connected Communities Zoning Reform Tracker */}
+      {activeSection === 'zoning' && (
+        <div className="mt-4">
+          <ConnectedCommunitiesSection />
+        </div>
+      )}
 
       {/* Displacement Index content */}
       {activeSection === 'displacement' && <>

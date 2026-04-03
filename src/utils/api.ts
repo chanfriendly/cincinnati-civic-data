@@ -1,4 +1,4 @@
-import type { SODAQueryParams, OHGOIncident, OHGOCamera, OHGOConstruction, NeighborhoodDisabilityStats, NeighborhoodLeadStats, NeighborhoodEJStats, NeighborhoodRacialEquityStats, NeighborhoodHMDAStats } from '../types';
+import type { SODAQueryParams, OHGOIncident, OHGOCamera, OHGOConstruction, NeighborhoodDisabilityStats, NeighborhoodLeadStats, NeighborhoodEJStats, NeighborhoodRacialEquityStats, NeighborhoodHMDAStats, NeighborhoodHUDStats } from '../types';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -914,4 +914,25 @@ export async function fetchNeighborhoodHMDAStats(): Promise<Map<string, Neighbor
   })();
 
   return _hmdaCachePromise;
+}
+
+// ─── HUD Affordable Housing ───────────────────────────────────────────────────
+
+let _hudCachePromise: Promise<Map<string, NeighborhoodHUDStats>> | null = null;
+
+export async function fetchNeighborhoodHUDStats(): Promise<Map<string, NeighborhoodHUDStats>> {
+  if (_hudCachePromise) return _hudCachePromise;
+
+  _hudCachePromise = (async () => {
+    const resp = await fetch('/data/hud_affordable_housing.json');
+    if (!resp.ok) throw new Error(`HUD data not found: HTTP ${resp.status}`);
+    const raw: Record<string, NeighborhoodHUDStats> = await resp.json();
+    const map = new Map<string, NeighborhoodHUDStats>();
+    for (const [key, val] of Object.entries(raw)) {
+      map.set(key, val);
+    }
+    return map;
+  })();
+
+  return _hudCachePromise;
 }
