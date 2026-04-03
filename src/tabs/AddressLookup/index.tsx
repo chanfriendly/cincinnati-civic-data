@@ -49,6 +49,21 @@ interface NearbyStop {
   routes: string[];
 }
 
+interface SchoolRecord {
+  name: string;
+  type: string;   // "Elementary School", "Middle School", "High School", etc.
+  grade: string;  // "K-6", "7-12", etc.
+  fund: string;   // "Public" | "Private"
+  district: string;
+  address: string;
+  lat: number;
+  lon: number;
+}
+
+interface NearbySchool extends SchoolRecord {
+  distance: number; // miles
+}
+
 type CAGISStatus = 'idle' | 'loading' | 'done' | 'error';
 
 export default function AddressLookup() {
@@ -192,6 +207,35 @@ export default function AddressLookup() {
       })
       .catch(() => setTransitStops([]))
       .finally(() => setLoadingTransit(false));
+  }, [selectedAddress]);
+
+  // ── Nearby schools (static JSON — same pattern as transit stops) ─────────────
+  const [nearbySchools, setNearbySchools] = useState<NearbySchool[]>([]);
+  const [loadingSchools, setLoadingSchools] = useState(false);
+
+  useEffect(() => {
+    if (!selectedAddress) return;
+
+    setLoadingSchools(true);
+    fetch('/data/schools.json')
+      .then((res) => res.json())
+      .then((schools: SchoolRecord[]) => {
+        const nearby = schools
+          .map((school) => ({
+            ...school,
+            distance: distanceMiles(
+              selectedAddress.lat,
+              selectedAddress.lng,
+              school.lat,
+              school.lon
+            ),
+          }))
+          .filter((s) => s.distance <= 1.0)
+          .sort((a, b) => a.distance - b.distance);
+        setNearbySchools(nearby);
+      })
+      .catch(() => setNearbySchools([]))
+      .finally(() => setLoadingSchools(false));
   }, [selectedAddress]);
 
   // ── CAGIS geographic context ─────────────────────────────────────────────────
@@ -687,6 +731,62 @@ export default function AddressLookup() {
               ) : (
                 <EmptyState message={t('addressLookup.noTransit', 'No stops within 0.5 miles')} />
               )}
+            </DataCard>
+
+            {/* ── Nearby Schools ──────────────────────────────────────────── */}
+            <DataCard
+              title="Nearby Schools (within 1 mi)"
+              loading={loadingSchools}
+              error={null}
+              empty={nearbySchools.length === 0}
+            >
+              {nearbySchools.length > 0 ? (
+                <div className="space-y-3">
+                  {nearbySchools.slice(0, 8).map((school, idx) => {
+                    const typeLC = school.type.toLowerCase();
+                    const badgeClass =
+                      typeLC.includes('elementary') ? 'bg-green-100 text-green-800' :
+                      typeLC.includes('middle')     ? 'bg-blue-100 text-blue-800'   :
+                      typeLC.includes('high')       ? 'bg-purple-100 text-purple-800' :
+                                                      'bg-gray-100 text-gray-700';
+                    const isPublic = school.fund?.toLowerCase() === 'public';
+                    return (
+                      <div key={idx} className="border-b border-gray-100 pb-2 last:border-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="text-sm font-medium text-gray-900 leading-tight">
+                            {school.name}
+                          </p>
+                          <span className="text-xs text-gray-400 shrink-0 mt-0.5">
+                            {school.distance.toFixed(2)} mi
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                          {school.type && (
+                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${badgeClass}`}>
+                              {school.type}
+                            </span>
+                          )}
+                          {school.grade && (
+                            <span className="text-[10px] text-gray-500">Grades {school.grade}</span>
+                          )}
+                          <span className={`text-[10px] font-medium ${isPublic ? 'text-[#1A4A6B]' : 'text-gray-500'}`}>
+                            {isPublic ? '● Public' : '○ Private'}
+                          </span>
+                        </div>
+                        {school.district && (
+                          <p className="text-[10px] text-gray-400 mt-0.5 truncate">{school.district}</p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <EmptyState message="No schools found within 1 mile" />
+              )}
+              <DataAttribution
+                source="School Locations — CAGIS Hamilton County"
+                url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis"
+              />
             </DataCard>
 
             {/* ── CAGIS: Zoning ───────────────────────────────────────────── */}

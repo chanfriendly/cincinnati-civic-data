@@ -6,6 +6,36 @@
 
 ## Session Log
 
+### Session 18 — School Proximity + Transit Equity + Neighborhood Comparison (April 2026)
+
+**Goal:** Three roadmap items: Phase 5.1 (school proximity in Address Lookup), Phase 5.2 (transit equity gap analysis), Phase 6 (neighborhood comparison tool).
+
+**School Proximity — Address Lookup (Phase 5.1 ✅):**
+- New file: `public/data/schools.json` — 309 Hamilton County schools from CAGIS `OpenData/FeatureServer/32` (Countywide_School_Locations layer). Fields: name, type, grade, fund, district, address, lat/lon.
+- `src/tabs/AddressLookup/index.tsx` — added `SchoolRecord` + `NearbySchool` interfaces, `nearbySchools` state + `useEffect` that loads JSON and filters to schools ≤ 1 mile from the address. Added "Nearby Schools" DataCard in the grid after Transit Stops. Shows type badge (color-coded by level), grade range, public/private indicator, and distance in miles.
+- File size: 58 KB (tiny; same static-JSON-filter-in-browser pattern as transit stops).
+
+**Transit Equity Gap Analysis (Phase 5.2 ✅):**
+- New file: `scripts/` (inline build) → `public/data/neighborhood_transit_equity.json` — 50 neighborhoods, each with stopCount (SORTA stops within 0.4 mi of centroid), medianIncome (nearest-centroid ACS mapping), lat/lon. 4.5 KB.
+- New file: `src/tabs/NeighborhoodProfiles/TransitEquitySection.tsx` — self-contained. Shows: 3-KPI row (stop count / rank / city median), equity label with 4 quadrant categories (transit-rich low-income = green equity win; transit gap low-income = red concern; transit-rich high-income = navy; car-dependent high-income = amber), Recharts ScatterChart of all 50 neighborhoods with selected one highlighted in amber and median reference lines, quadrant legend.
+- `src/tabs/NeighborhoodProfiles/index.tsx` — added import + "Transportation" section divider + `<TransitEquitySection>` between City Services and Development.
+
+**Neighborhood Comparison Tool (Phase 6 ✅):**
+- New file: `src/tabs/NeighborhoodExplorer/NeighborhoodComparison.tsx` — receives `scores` and `dimensions` from Explorer (no extra data loading). Two selectors (A vs B). Shows: overall winner banner with composite scores, horizontal grouped BarChart (navy = A, amber = B), detail table with scores + raw metric values + per-dimension winner badges.
+- `src/tabs/NeighborhoodExplorer/index.tsx` — added import + `rightView` state + "Rankings & Map" / "Compare Neighborhoods" tab-switcher pill. When Compare is active, replaces the map + rankings with the comparison panel.
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+**CLAUDE.md items marked ✅:** items 13 (school proximity), 14 (transit equity), plus comparison tool noted.
+
+**Next session priorities:**
+- Spanish translation review (item 16) — current ES strings are machine-translated
+- Mobile testing (item 17) — Tabs 1 and 3 are primary mobile use cases
+- Eviction data (item 12) — blocked on data partner (Legal Aid Society)
+- Flood infrastructure status (item 8) — static Mill Creek context card for Tab 1
+
+---
+
 ### Session 17 — HUD Program Labels (April 2026)
 
 **Goal:** Add plain-English labels to HUD program type codes in `HousingInventorySection.tsx` so residents see "Section 8 – New Construction" instead of "Sec 8 NC".

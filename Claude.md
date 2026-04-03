@@ -176,14 +176,14 @@ OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...
 12. **Eviction data** — Requires partner (Legal Aid Society) for tract-level data. County totals available from Eviction Lab. Do not build without a data partner.
 
 ### Phase 5 — Schools & Transit
-13. **School proximity in Address Lookup** — CPS school location GeoJSON is public. Add nearest schools with walk distances to the Tab 1 address card.
-14. **Transit equity gap analysis** — SORTA stop data already in system. Compare stop density by neighborhood vs. income data we already have.
+13. ✅ **School proximity in Address Lookup** — `public/data/schools.json` built from CAGIS layer 32 (309 Hamilton County schools). "Nearby Schools (within 1 mi)" DataCard added to Tab 1, filters static JSON in-browser (same pattern as transit stops). Shows type badge, grade, public/private, district, distance.
+14. ✅ **Transit equity gap analysis** — `public/data/neighborhood_transit_equity.json` built (50 neighborhoods, stop count + income). `TransitEquitySection.tsx` added to Neighborhood Profiles under "Transportation" divider. ScatterChart plots all neighborhoods; 4 quadrant equity labels; selected neighborhood highlighted.
 
 ### Lower Priority / Ongoing
 15. ✅ **HUD program type labels** — `PROGRAM_LABELS` map added to `HousingInventorySection.tsx`; all 13 codes in the live data mapped to plain-English labels + one-sentence descriptions. `programColor()` updated to match on labels (fuzzy matchers now actually fire). Reference: https://www.huduser.gov/portal/datasets/assthsg.html
 16. **Spanish translation review** — Current ES strings are machine-translated; needs native speaker review.
 17. **Mobile testing** — Tabs 1 and 3 are primary mobile use cases.
-18. **Neighborhood comparison tool** — Side-by-side Explorer dimensions for any two neighborhoods (useful for grant applications and advocacy).
+18. ✅ **Neighborhood comparison tool** — `NeighborhoodComparison.tsx` added to Explorer. Two-neighborhood selector + horizontal grouped BarChart (navy vs amber) + detail table with raw metrics + per-dimension winner badges. Accessible via "Compare Neighborhoods" pill tab in the Explorer right panel.
 
 ## Known Issues & Workarounds
 

@@ -8,6 +8,7 @@ import DimensionPanel from './DimensionPanel';
 import ChoroplethMap from './ChoroplethMap';
 import TopNeighborhoods from './TopNeighborhoods';
 import DetailDrawer from './DetailDrawer';
+import NeighborhoodComparison from './NeighborhoodComparison';
 
 // Inline GeoJSON types (avoids @types/geojson dependency)
 type GeoJSONFeature = { type: 'Feature'; properties: Record<string, unknown>; geometry: { type: string; coordinates: number[][][] | number[][][][] } };
@@ -813,6 +814,9 @@ export default function NeighborhoodExplorer() {
     );
   }, []);
 
+  // Right-panel view toggle: map/rankings vs. comparison tool
+  const [rightView, setRightView] = useState<'rankings' | 'compare'>('rankings');
+
   const anyDimensionEnabled = dimensions.some((d) => d.enabled && d.available);
   const selectedScore = scores.find(
     (s) => s.name.toLowerCase() === selectedNeighborhood?.toLowerCase()
@@ -860,8 +864,37 @@ export default function NeighborhoodExplorer() {
           />
         </div>
 
-        {/* Right: Map and Details */}
+        {/* Right: Map/Rankings or Comparison tool */}
         <div className="lg:col-span-2 flex flex-col gap-6">
+
+          {/* View toggle */}
+          <div className="flex gap-1 bg-gray-200 rounded-lg p-1 self-start">
+            <button
+              onClick={() => setRightView('rankings')}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                rightView === 'rankings'
+                  ? 'bg-white text-[#1A4A6B] shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {t('explorer.viewRankings', 'Rankings & Map')}
+            </button>
+            <button
+              onClick={() => setRightView('compare')}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                rightView === 'compare'
+                  ? 'bg-white text-[#1A4A6B] shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {t('explorer.viewCompare', 'Compare Neighborhoods')}
+            </button>
+          </div>
+
+          {rightView === 'compare' ? (
+            <NeighborhoodComparison scores={scores} dimensions={dimensions} />
+          ) : (
+            <>
           {/* Map — fixed height so TopNeighborhoods always has space below */}
           <div className="h-[500px]">
             {!anyDimensionEnabled ? (
@@ -899,6 +932,8 @@ export default function NeighborhoodExplorer() {
               language={language as 'en' | 'es'}
             />
           </div>
+            </>
+          )}
         </div>
       </div>
 

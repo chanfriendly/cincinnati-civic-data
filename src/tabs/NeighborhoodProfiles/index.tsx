@@ -8,6 +8,7 @@ import PublicSafetySection from './PublicSafetySection';
 import CityServicesSection from './CityServicesSection';
 import DevelopmentSection from './DevelopmentSection';
 import HousingInventorySection from './HousingInventorySection';
+import TransitEquitySection from './TransitEquitySection';
 import {
   DataCard,
   EmptyState,
@@ -319,6 +320,13 @@ export default function NeighborhoodProfiles() {
       </div>
 
       <CityServicesSection nbhSoQL={nbhSoQL} startDate={startDate} endDate={endDate} />
+
+      <div className="flex items-center gap-3 pt-2">
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Transportation</span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
+
+      <TransitEquitySection neighborhood={selectedNeighborhood} />
 
       <div className="flex items-center gap-3 pt-2">
         <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Development &amp; Land Use</span>
