@@ -21,6 +21,10 @@
 /* ── Leaflet map fix ─────────────────────────────────────────────────────── */
 .leaflet-container { font-family: inherit; }
 
+/* ── Scrollbar hide utility (used by TabNav) ─────────────────────────────── */
+.scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
 /* ── Skeleton animation ──────────────────────────────────────────────────── */
 @keyframes skeleton-pulse {
   0%, 100% { opacity: 1; }

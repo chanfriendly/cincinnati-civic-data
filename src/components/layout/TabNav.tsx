@@ -137,6 +137,30 @@ const AccessibilityIcon: React.FC<{ className?: string }> = ({ className = 'w-5 
 
 const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
   const { t } = useTranslation()
+  const scrollRef = React.useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft] = React.useState(false)
+  const [canScrollRight, setCanScrollRight] = React.useState(false)
+
+  const updateScrollState = React.useCallback(() => {
+    const el = scrollRef.current
+    if (!el) return
+    setCanScrollLeft(el.scrollLeft > 0)
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1)
+  }, [])
+
+  React.useEffect(() => {
+    updateScrollState()
+    const el = scrollRef.current
+    if (!el) return
+    el.addEventListener('scroll', updateScrollState)
+    const ro = new ResizeObserver(updateScrollState)
+    ro.observe(el)
+    return () => { el.removeEventListener('scroll', updateScrollState); ro.disconnect() }
+  }, [updateScrollState])
+
+  const scroll = (dir: 'left' | 'right') => {
+    scrollRef.current?.scrollBy({ left: dir === 'right' ? 200 : -200, behavior: 'smooth' })
+  }
 
   const tabs: TabConfig[] = [
     { id: 'address', icon: <AddressIcon />, labelKey: 'nav.address' },
@@ -154,8 +178,36 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
       className="bg-white shadow-sm border-b border-gray-100 sticky top-[72px] z-40"
       aria-label="Main navigation"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex overflow-x-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        {/* Left fade + arrow */}
+        {canScrollLeft && (
+          <>
+            <div className="absolute left-4 sm:left-6 lg:left-8 top-0 bottom-0 w-12 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+            <button
+              onClick={() => scroll('left')}
+              className="absolute left-4 sm:left-6 lg:left-8 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-7 h-7 rounded-full bg-white border border-gray-200 shadow-sm text-gray-500 hover:text-[#1A4A6B] hover:border-[#1A4A6B] transition-colors"
+              aria-label="Scroll tabs left"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            </button>
+          </>
+        )}
+
+        {/* Right fade + arrow */}
+        {canScrollRight && (
+          <>
+            <div className="absolute right-4 sm:right-6 lg:right-8 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+            <button
+              onClick={() => scroll('right')}
+              className="absolute right-4 sm:right-6 lg:right-8 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-7 h-7 rounded-full bg-white border border-gray-200 shadow-sm text-gray-500 hover:text-[#1A4A6B] hover:border-[#1A4A6B] transition-colors"
+              aria-label="Scroll tabs right"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            </button>
+          </>
+        )}
+
+        <div ref={scrollRef} className="flex overflow-x-auto scrollbar-hide">
           {tabs.map((tab) => (
             <button
               key={tab.id}
