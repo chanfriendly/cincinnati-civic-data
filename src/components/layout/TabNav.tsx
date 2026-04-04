@@ -155,7 +155,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
       aria-label="Main navigation"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex overflow-x-auto sm:overflow-x-visible">
+        <div className="flex overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab.id}
