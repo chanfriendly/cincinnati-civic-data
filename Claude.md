@@ -182,7 +182,7 @@ OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...
 ### Lower Priority / Ongoing
 15. ✅ **HUD program type labels** — `PROGRAM_LABELS` map added to `HousingInventorySection.tsx`; all 13 codes in the live data mapped to plain-English labels + one-sentence descriptions. `programColor()` updated to match on labels (fuzzy matchers now actually fire). Reference: https://www.huduser.gov/portal/datasets/assthsg.html
 16. **Spanish translation review** — Current ES strings are machine-translated; needs native speaker review.
-17. **Mobile testing** — Tabs 1 and 3 are primary mobile use cases.
+17. 🔄 **Mobile testing** — Tabs 1 and 3 are primary mobile use cases. In progress — pending user confirmation.
 18. ✅ **Neighborhood comparison tool** — `NeighborhoodComparison.tsx` added to Explorer. Two-neighborhood selector + horizontal grouped BarChart (navy vs amber) + detail table with raw metrics + per-dimension winner badges. Accessible via "Compare Neighborhoods" pill tab in the Explorer right panel.
 
 ## Known Issues & Workarounds

@@ -6,6 +6,27 @@
 
 ## Session Log
 
+### Session 20 — Flood Infrastructure Context + Spanish Disclaimer (April 2026)
+
+**Goal:** Item 8 (Mill Creek / flood infrastructure context in Address Lookup) + Spanish AI-translation disclaimer in Roadmap tab + mark mobile testing as in-progress.
+
+**Flood zone card expansion (`src/tabs/AddressLookup/index.tsx`):**
+- Updated the FEMA Flood Hazard Zone card with two new contextual blocks that appear for high-risk zones (AE, A, AO, AH, VE, V):
+  - **Cincinnati Flood Infrastructure panel** (blue): Explains the Mill Creek watershed (30-mile corridor through west side), the Mill Creek Barrier (MSDGC flood gate near Ohio River confluence), and which areas are and aren't protected by the floodwall. Residents in Roselawn, Norwood, and north of I-74 are outside the protected zone.
+  - **What to do panel** (orange): Three numbered action steps — (1) get NFIP flood insurance, homeowner's policy doesn't cover flooding, (2) check elevation certificate to potentially lower premium, (3) apply for LOMA through FEMA if you think you're mismapped. LOMA link included.
+- For low-risk (Zone X) properties: added a note that 25% of NFIP claims come from outside high-risk zones, with link to floodsmart.gov.
+- Refactored the conditional render to use an IIFE `(() => {...})()` pattern to hoist the `highRiskZones` and `isAnyHighRisk` variables for use across both the zone badges and the contextual panels.
+
+**Spanish AI disclaimer (`src/tabs/Roadmap/index.tsx`):**
+- Converted `Roadmap` from an implicit-return arrow function to a function with body, adding `useLanguage` hook.
+- Added a conditional amber banner (shown when `language === 'es'`) above the page header. Banner is written in Spanish explaining that translations were AI-generated and haven't been reviewed by a native speaker, with an invitation to volunteer as a reviewer.
+
+**CLAUDE.md:** Item 17 (Mobile testing) marked 🔄 — in progress, pending user confirmation.
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+---
+
 ### Session 19 — Address Lookup Parks Bug Fix + Tab Visualization Redesign (April 2026)
 
 **Goal:** Fix broken parks card (reported empty), then redesign Tab 1 visualizations to match the semantic grouping style of Neighborhood Profiles.

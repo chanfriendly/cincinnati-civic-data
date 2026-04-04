@@ -1,4 +1,5 @@
 import React from 'react'
+import { useLanguage } from '../../context/LanguageContext'
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
@@ -473,8 +474,27 @@ const Legend: React.FC = () => (
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-const Roadmap: React.FC = () => (
+const Roadmap: React.FC = () => {
+  const { language } = useLanguage()
+
+  return (
   <div className="max-w-5xl mx-auto">
+
+    {/* Spanish AI-translation disclaimer — shown only when language is ES */}
+    {language === 'es' && (
+      <div className="mb-6 flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
+        <span className="text-amber-500 text-lg shrink-0 mt-0.5">⚠️</span>
+        <div>
+          <p className="text-sm font-semibold text-amber-800 mb-1">Nota sobre la traducción al español</p>
+          <p className="text-xs text-amber-700 leading-relaxed">
+            Las traducciones al español en este sitio fueron generadas por inteligencia artificial y aún
+            no han sido revisadas por un hablante nativo. Es posible que haya errores de redacción o
+            terminología. Si deseas colaborar como revisor voluntario o tienes comentarios sobre la
+            traducción, por favor escríbenos — tu aportación es muy bienvenida.
+          </p>
+        </div>
+      </div>
+    )}
 
     {/* Page header */}
     <div className="mb-8">
@@ -644,6 +664,7 @@ const Roadmap: React.FC = () => (
       </div>
     </div>
   </div>
-)
+  )
+}
 
 export default Roadmap

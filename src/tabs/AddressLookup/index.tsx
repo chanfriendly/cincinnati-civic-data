@@ -879,34 +879,113 @@ export default function AddressLookup() {
               loading={floodStatus === 'loading'}
               error={floodStatus === 'error' ? 'Flood data unavailable (FEMA NFHL)' : null}
             >
-              {floodStatus === 'done' && floodZone.length > 0 ? (
-                <div>
-                  {floodZone.map((f, i) => {
-                    const zone = String(f.FLD_ZONE ?? 'Unknown');
-                    const isHighRisk = ['AE', 'A', 'AO', 'AH', 'VE', 'V'].includes(zone);
-                    return (
-                      <div key={i} className="flex items-start gap-3">
-                        <span className={`mt-0.5 px-2 py-0.5 rounded text-sm font-bold shrink-0 ${isHighRisk ? 'bg-orange-600 text-white' : 'bg-green-600 text-white'}`}>
-                          Zone {zone}
-                        </span>
-                        <div>
-                          <p className="text-sm text-gray-700">
-                            {isHighRisk
-                              ? 'Special Flood Hazard Area — flood insurance may be required for federally-backed mortgages.'
-                              : 'Minimal flood hazard — outside the special flood hazard area.'}
+              {floodStatus === 'done' && floodZone.length > 0 ? (() => {
+                const highRiskZones = ['AE', 'A', 'AO', 'AH', 'VE', 'V'];
+                const isAnyHighRisk = floodZone.some(f => highRiskZones.includes(String(f.FLD_ZONE ?? '')));
+                return (
+                  <div className="space-y-3">
+                    {floodZone.map((f, i) => {
+                      const zone = String(f.FLD_ZONE ?? 'Unknown');
+                      const isHighRisk = highRiskZones.includes(zone);
+                      return (
+                        <div key={i} className="flex items-start gap-3">
+                          <span className={`mt-0.5 px-2 py-0.5 rounded text-sm font-bold shrink-0 ${isHighRisk ? 'bg-orange-600 text-white' : 'bg-green-600 text-white'}`}>
+                            Zone {zone}
+                          </span>
+                          <div>
+                            <p className="text-sm text-gray-700">
+                              {isHighRisk
+                                ? 'Special Flood Hazard Area — at least a 1% annual chance of flooding. Flood insurance is required for federally-backed mortgages.'
+                                : 'Minimal flood hazard — outside the special flood hazard area.'}
+                            </p>
+                            {String(f.ZONE_SUBTY ?? '') && (
+                              <p className="text-xs text-gray-500 mt-1">{String(f.ZONE_SUBTY)}</p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {/* Mill Creek infrastructure context — shown for high-risk properties */}
+                    {isAnyHighRisk && (
+                      <div className="pt-2 border-t border-gray-100 space-y-3">
+                        <div className="rounded-lg bg-blue-50 border border-blue-100 p-3">
+                          <p className="text-xs font-semibold text-blue-800 mb-1.5">Cincinnati Flood Infrastructure</p>
+                          <p className="text-xs text-blue-700 leading-relaxed">
+                            Most of Cincinnati&apos;s flood risk comes from the <strong>Mill Creek watershed</strong>, a 30-mile
+                            corridor running from Butler County through Norwood, Westwood, and Lower Price Hill before
+                            joining the Ohio River. MSDGC operates the <strong>Mill Creek Barrier</strong> — a movable flood
+                            gate near the river confluence — along with several miles of levees that protect portions of
+                            the lower watershed. However, large sections upstream (including Roselawn, Norwood, and
+                            communities north of I-74) are outside the protected zone.
                           </p>
-                          {String(f.ZONE_SUBTY ?? '') && (
-                            <p className="text-xs text-gray-500 mt-1">{String(f.ZONE_SUBTY)}</p>
-                          )}
+                        </div>
+                        <div className="rounded-lg bg-orange-50 border border-orange-100 p-3">
+                          <p className="text-xs font-semibold text-orange-800 mb-2">What to do if you&apos;re in a flood zone</p>
+                          <div className="space-y-2">
+                            <div className="flex items-start gap-2">
+                              <span className="text-orange-500 font-bold text-xs mt-0.5 shrink-0">1.</span>
+                              <p className="text-xs text-orange-700">
+                                <strong>Get flood insurance.</strong> Your homeowner&apos;s policy does not cover flooding.
+                                Purchase through the National Flood Insurance Program (NFIP) — federally-backed mortgages
+                                (FHA, VA, Fannie Mae) require it in SFHA zones.
+                              </p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <span className="text-orange-500 font-bold text-xs mt-0.5 shrink-0">2.</span>
+                              <p className="text-xs text-orange-700">
+                                <strong>Check your elevation certificate.</strong> If your structure is elevated above
+                                the base flood elevation, your NFIP premium can be significantly lower. Contact Hamilton
+                                County or your insurance agent for records.
+                              </p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <span className="text-orange-500 font-bold text-xs mt-0.5 shrink-0">3.</span>
+                              <p className="text-xs text-orange-700">
+                                <strong>Think you&apos;re mismapped?</strong> You can apply for a{' '}
+                                <a
+                                  href="https://www.fema.gov/flood-maps/change-your-flood-zone/single-lot-or-structure"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="underline text-orange-800"
+                                >
+                                  Letter of Map Amendment (LOMA)
+                                </a>{' '}
+                                through FEMA to correct your flood zone designation at no cost.
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              ) : floodStatus === 'done' ? (
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded text-sm font-bold bg-green-600 text-white">Zone X</span>
-                  <p className="text-sm text-gray-700">Minimal flood hazard area.</p>
+                    )}
+
+                    {/* Low-risk note */}
+                    {!isAnyHighRisk && (
+                      <p className="text-xs text-gray-500 pt-1">
+                        Zone X properties can still flood from local drainage issues — 25% of NFIP claims come
+                        from outside high-risk zones. Flood insurance is available and affordable for lower-risk
+                        properties through the{' '}
+                        <a href="https://www.floodsmart.gov" target="_blank" rel="noopener noreferrer" className="underline">
+                          NFIP
+                        </a>.
+                      </p>
+                    )}
+                  </div>
+                );
+              })() : floodStatus === 'done' ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded text-sm font-bold bg-green-600 text-white">Zone X</span>
+                    <p className="text-sm text-gray-700">Minimal flood hazard area.</p>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Zone X properties can still flood from local drainage issues — 25% of NFIP claims come
+                    from outside high-risk zones. Flood insurance is available and affordable for lower-risk
+                    properties through the{' '}
+                    <a href="https://www.floodsmart.gov" target="_blank" rel="noopener noreferrer" className="underline">
+                      NFIP
+                    </a>.
+                  </p>
                 </div>
               ) : null}
               <DataAttribution source="FEMA National Flood Hazard Layer (NFHL)" url="https://msc.fema.gov/portal/home" />
