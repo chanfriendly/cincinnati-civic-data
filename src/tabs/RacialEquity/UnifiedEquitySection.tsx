@@ -428,9 +428,9 @@ interface UnifiedEquitySectionProps {
 type ViewMode = 'gap' | 'grid' | 'chain';
 
 const VIEWS: { id: ViewMode; label: string; desc: string }[] = [
-  { id: 'gap',   label: 'A · Gap Chart',         desc: 'Diverging bars showing each group\'s gap from White NH across all four metrics.' },
-  { id: 'grid',  label: 'B · Profile Grid',       desc: 'Compact matrix — scan a row to compare groups, or a column to see one group\'s full profile.' },
-  { id: 'chain', label: 'C · Opportunity Chain',  desc: 'Income → homeownership → mortgage access as linked stages of wealth-building.' },
+  { id: 'gap',   label: 'Compare gaps',   desc: 'Bars showing how each racial group\'s income, poverty, homeownership, and mortgage approval compare to the White non-Hispanic average in this neighborhood.' },
+  { id: 'grid',  label: 'Full breakdown', desc: 'Side-by-side grid of all four metrics across all racial groups — scan across a row to compare groups, or down a column to see one group\'s full profile.' },
+  { id: 'chain', label: 'Wealth pathway', desc: 'Traces how income leads to homeownership, which leads to mortgage access — three linked stages of economic mobility shown as connected steps.' },
 ];
 
 export default function UnifiedEquitySection({ neighborhood }: UnifiedEquitySectionProps) {

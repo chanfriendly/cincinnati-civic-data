@@ -90,16 +90,21 @@ public/data/neighborhood_acs.json  226 Hamilton County Census tracts (ACS 2022, 
 | SORTA GTFS | Bus stop locations | Static file |
 | USDA Food Access | Food desert data | None |
 
+#### Integrated (previously listed as "planned")
+
+| Source | Purpose | Status | Notes |
+|--------|---------|--------|-------|
+| Cincinnati Open Data: 311 (`gcej-gmiw`) | Service request volume, open count, resolution time | ✅ Live | `CityServicesSection.tsx` in Tab 2; queries Socrata live by neighborhood + date range |
+| CFPB HMDA (2022) | Mortgage lending by race and census tract | ✅ Live | `public/data/neighborhood_hmda.json` (built by `scripts/build_hmda.py`); shown in `UnifiedEquitySection.tsx` in Tab 2 |
+| Cincinnati Health Dept. Lead Inventory | Lead service line map by neighborhood | ✅ Live | `public/data/lead_service_lines.json`; shown in Lead Safety tab |
+| HUD Subsidized Households | Affordable housing inventory + expiration dates | ✅ Live | `public/data/hud_affordable_housing.json` (built by `scripts/build_hud.py`); shown in `HousingInventorySection.tsx` in Tab 2 |
+| EPA AirToxScreen 2019 (via ArcGIS) | Environmental justice / air toxics scores | ✅ Live (partial) | `public/data/neighborhood_ejscreen.json`; used as EJ dimension in Explorer. **Note: EJScreen has been offline since Feb 2025 — disclosed in UI tooltip. Data is 2019 vintage.** |
+
 #### Planned / Future APIs (not yet integrated)
 
 | Source | Purpose | Auth | Notes |
 |--------|---------|------|-------|
-| Cincinnati Health Dept. Lead Inventory | Lead service line map | None (public) | `https://www.cincinnati-oh.gov/health/chd-programs/lead-poisoning-prevention/` |
-| EPA EJScreen API | Environmental justice scores (air, Superfund, industrial) | None (public) | `https://ejscreen.epa.gov/mapper/ejscreenRESTbroker.aspx` |
-| HUD Subsidized Households | Affordable housing inventory + expiration dates | None (public API) | `https://www.huduser.gov/portal/datasets/assthsg.html` |
-| CFPB HMDA | Mortgage lending by race and census tract | None (public) | `https://ffiec.cfpb.gov/api/public/` |
-| Cincinnati Open Data: 311 | Service request volume and resolution time | None | Look up UID on data.cincinnati-oh.gov |
-| First Street Foundation | Property-level flood probability over 30 years | API key | `https://firststreet.org/` |
+| First Street Foundation | Property-level flood probability over 30 years | API key | Deferred — paid API. `https://firststreet.org/` |
 
 ## Critical Patterns — Do Not Break
 
@@ -191,5 +196,6 @@ OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...
 - **Neighborhood Explorer GeoJSON** — Tries 4 CAGIS URLs with 8s timeouts. If all fail, map won't render but scoring still works. Fallback: embed a static `public/data/cincinnati_neighborhoods.geojson`.
 - **Community Perceptions Survey** — No neighborhood field exists in `gdf4-fqik`. Data is shown as city-wide averages with a clear disclaimer.
 - **Building permits address filter** — Uses `within_circle(location,...)` which requires a `location` geo_point field. If a "No such column: location" error appears, switch to bounding box lat/lon filter.
-- **OHGO traffic** — Only covers Ohio-managed roads (interstates, state routes), not Cincinnati city streets.
+- **OHGO traffic** — Only covers Ohio-managed roads (interstates, state routes), not Cincinnati city streets. A coverage note is now shown in the UI above the Traffic & Infrastructure section.
 - **Census tract→neighborhood mapping** — Uses closest centroid; tracts straddling boundaries go to nearest neighborhood centroid.
+- **AI summary outputs (pending reassessment)** — The "Plain English Summary" in Address Lookup and the Q&A in Police Accountability use `minimax/minimax-m2.5` via OpenRouter. Output quality, framing, and disclosure have not been formally reviewed. Key questions: Is the "factual, not alarmist" prompt producing outputs residents trust? Should raw data points be shown so users can verify? Should there be an explicit "AI-generated" disclosure? See `TODO(reassess-ai-summary)` comment in `src/tabs/AddressLookup/index.tsx`.

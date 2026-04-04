@@ -6,6 +6,40 @@
 
 ## Session Log
 
+### Session 21 — Audit: Data Accuracy Review + UX Clarity Pass (April 2026)
+
+**Goal:** Formal audit of data source documentation, plain-language methodology rewrites in Neighborhood Explorer, UX clarity improvements across tabs.
+
+**CLAUDE.md — data source table corrected:**
+- The "Planned / Future APIs" table was significantly outdated. Moved 311, HMDA, Lead Safety, HUD Housing, and EPA EJScreen into a new "Integrated (previously listed as planned)" table with accurate status and file locations.
+- The only genuinely unbuilt planned item is First Street Foundation (paid API, deferred).
+
+**Neighborhood Explorer — methodology tooltips rewritten (`src/tabs/NeighborhoodExplorer/index.tsx`):**
+- All 10 dimension `methodology` strings rewritten from technical developer language to plain English for a general public audience.
+- Each now leads with "What this measures:" and closes with the data source.
+- Added explicit caveats where warranted: crime under-reporting, transit frequency vs. stop count, blight enforcement bias, park quality vs. acreage, centroid-based flood proxy, EJScreen offline status, permit activity as a gentrification signal as well as investment signal.
+
+**Racial Equity section — view button labels renamed (`src/tabs/RacialEquity/UnifiedEquitySection.tsx`):**
+- "A · Gap Chart" → "Compare gaps" (with expanded description)
+- "B · Profile Grid" → "Full breakdown"
+- "C · Opportunity Chain" → "Wealth pathway"
+- Descriptions expanded to be self-explanatory without clicking into each view.
+
+**Address Lookup — three UX clarity fixes (`src/tabs/AddressLookup/index.tsx`):**
+- Added OHGO road coverage note above the Traffic & Infrastructure section: clarifies that data only covers state-managed roads (interstates, state routes), not city streets.
+- Added geocoding hint below the search box: "Type at least 3 characters to search — results are limited to Cincinnati addresses."
+- Added `TODO(reassess-ai-summary)` comment block above `handleAiSummary` listing 4 specific questions for a future review of AI output quality and disclosure.
+
+**CLAUDE.md — AI summary flag added to Known Issues:**
+- Documents the pending reassessment of AI summary outputs in Address Lookup and Police Accountability.
+
+**TypeScript status:** ✅ `tsc --noEmit` passes clean (0 errors).
+
+**Audit finding — crime marker disclaimer already existed:**
+- The audit flagged missing crime jitter disclosure; this was a false positive. Line 562 already has: "Crime locations shown at approximate block level for privacy." No change needed.
+
+---
+
 ### Session 20 — Flood Infrastructure Context + Spanish Disclaimer (April 2026)
 
 **Goal:** Item 8 (Mill Creek / flood infrastructure context in Address Lookup) + Spanish AI-translation disclaimer in Roadmap tab + mark mobile testing as in-progress.

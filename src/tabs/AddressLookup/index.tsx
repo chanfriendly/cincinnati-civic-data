@@ -454,6 +454,13 @@ export default function AddressLookup() {
     });
   }, [selectedAddress, mergedCrime]);
 
+  // TODO(reassess-ai-summary): The AI summary prompt and output quality need a deliberate review
+  // pass. Questions to address:
+  //   1. Is the model's framing (factual, not alarmist) producing outputs residents actually trust?
+  //   2. Should we show the raw data points being sent so users can verify the summary?
+  //   3. Is 2-3 paragraphs the right length, or is a bullet-point format more scannable?
+  //   4. Should we add a "this summary is AI-generated" disclosure in the UI?
+  // See CLAUDE.md "Known Issues" for context. — flagged April 2026
   const handleAiSummary = useCallback(async () => {
     if (!selectedAddress) return;
 
@@ -547,6 +554,7 @@ export default function AddressLookup() {
             </ul>
           )}
         </div>
+        <p className="text-xs text-gray-400 mt-1.5">Type at least 3 characters to search — results are limited to Cincinnati addresses.</p>
       </div>
 
       {/* Map container — always in DOM so mapContainer ref is always set.
@@ -1196,6 +1204,9 @@ export default function AddressLookup() {
             <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Traffic &amp; Infrastructure</span>
             <div className="flex-1 h-px bg-gray-200" />
           </div>
+          <p className="text-xs text-gray-500 -mt-3">
+            Coverage note: OHGO data comes from the Ohio Dept. of Transportation and covers state-managed roads only — interstates (I-71, I-75, I-74) and state routes. Incidents on Cincinnati city streets are not included.
+          </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* ── OHGO: Traffic & Road Conditions ──────────────────────────── */}
