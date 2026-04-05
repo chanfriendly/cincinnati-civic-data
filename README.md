@@ -1,5 +1,8 @@
 # Cincinnati Civic Data Platform
 
+<img width="2484" height="1486" alt="image" src="https://github.com/user-attachments/assets/f7fb7fad-a254-4e45-928a-6fab3540f10f" />
+
+
 ## Project Overview
 
 The Cincinnati Civic Data Platform is a React-based web application that empowers residents and civic organizations to explore and understand Cincinnati's neighborhoods through aggregated open data. The platform combines demographics, housing, crime, police accountability, displacement risk, transportation, environmental health, and racial equity data into an accessible interface designed for civic participation, research, and community engagement.
