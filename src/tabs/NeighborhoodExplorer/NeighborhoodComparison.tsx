@@ -8,6 +8,7 @@
  */
 
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer,
@@ -61,6 +62,7 @@ interface Props {
 }
 
 export default function NeighborhoodComparison({ scores, dimensions }: Props) {
+  const { t } = useTranslation();
   const [nameA, setNameA] = useState<string>('');
   const [nameB, setNameB] = useState<string>('');
 
@@ -86,19 +88,20 @@ export default function NeighborhoodComparison({ scores, dimensions }: Props) {
     if (!scoreA || !scoreB) return [];
     return activeDims.map((dim) => ({
       dim: dim.id,
-      label: dim.id.charAt(0).toUpperCase() + dim.id.slice(1),
-      [nameA]: scoreA.dimensionScores[dim.id] ?? 0,
-      [nameB]: scoreB.dimensionScores[dim.id] ?? 0,
+      label: t(dim.labelKey),
+      [nameA]: scoreA.dimensionScores[dim.id],   // keep null — don't coerce to 0
+      [nameB]: scoreB.dimensionScores[dim.id],
       rawA: getRaw(scoreA, dim.id),
       rawB: getRaw(scoreB, dim.id),
       higherIsBetter: dim.higherIsBetter,
     }));
-  }, [scoreA, scoreB, activeDims, nameA, nameB]);
+  }, [scoreA, scoreB, activeDims, nameA, nameB, t]);
 
-  // Per-dimension winner
+  // Per-dimension winner — null means no data, treat as no edge
   function winner(row: (typeof chartData)[0]) {
-    const a = row[nameA] as number;
-    const b = row[nameB] as number;
+    const a = row[nameA] as number | null;
+    const b = row[nameB] as number | null;
+    if (a === null || b === null) return 'tie';
     if (a === b) return 'tie';
     return a > b ? 'A' : 'B';
   }
@@ -262,21 +265,21 @@ export default function NeighborhoodComparison({ scores, dimensions }: Props) {
                 <tbody className="divide-y divide-gray-100">
                   {chartData.map((row) => {
                     const w = winner(row);
-                    const scoreAVal = row[nameA] as number;
-                    const scoreBVal = row[nameB] as number;
+                    const scoreAVal = row[nameA] as number | null;
+                    const scoreBVal = row[nameB] as number | null;
                     return (
                       <tr key={row.dim} className="hover:bg-gray-50">
-                        <td className="py-2 pr-3 text-gray-700 font-medium capitalize">{row.label}</td>
+                        <td className="py-2 pr-3 text-gray-700 font-medium">{row.label}</td>
                         <td className="py-2 px-2 text-right">
                           <span className={`font-semibold ${w === 'A' ? 'text-[#1A4A6B]' : 'text-gray-500'}`}>
-                            {scoreAVal}/100
+                            {scoreAVal !== null ? `${scoreAVal}/100` : '—'}
                           </span>
                           <br />
                           <span className="text-gray-400">{formatRaw(row.dim, row.rawA)}</span>
                         </td>
                         <td className="py-2 px-2 text-right">
                           <span className={`font-semibold ${w === 'B' ? 'text-[#C8861A]' : 'text-gray-500'}`}>
-                            {scoreBVal}/100
+                            {scoreBVal !== null ? `${scoreBVal}/100` : '—'}
                           </span>
                           <br />
                           <span className="text-gray-400">{formatRaw(row.dim, row.rawB)}</span>
