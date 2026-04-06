@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../context/LanguageContext';
 import { computeScores } from '../../utils/scoring';
-import { fetchSODA, distanceMiles, normalizeNeighborhoodName, calculateCentroid, fetchNearbyParks, fetchFloodZone, fetchFARAHamilton, fetchNeighborhoodEJStats } from '../../utils/api';
+import { fetchSODA, distanceMiles, normalizeNeighborhoodName, stripNeighborhoodName, calculateCentroid, fetchNearbyParks, fetchFloodZone, fetchFARAHamilton, fetchNeighborhoodEJStats } from '../../utils/api';
 import type { Dimension, NeighborhoodRawMetrics, DimensionId } from '../../types';
 import DimensionPanel from './DimensionPanel';
 import ChoroplethMap from './ChoroplethMap';
@@ -556,16 +556,25 @@ export default function NeighborhoodExplorer() {
         }
 
         if (staticData) {
-          // Static JSON found — apply directly, no CAGIS calls needed
+          // Static JSON found — apply directly, no CAGIS calls needed.
+          // Static file keys are stripped lowercase (e.g. "clifton", "overtherine").
+          // rawDataMap keys are Title Case (e.g. "Clifton", "Over-the-Rhine").
+          // Build a reverse lookup so each static entry merges into the correct row.
           setRawDataMap((prev) => {
             const updated = new Map(prev);
-            for (const [name, val] of Object.entries(staticData!)) {
-              const existing = updated.get(name) ?? {};
+            const strippedToRaw = new Map<string, string>();
+            for (const key of updated.keys()) {
+              strippedToRaw.set(stripNeighborhoodName(key), key);
+            }
+            for (const [strippedName, val] of Object.entries(staticData!)) {
+              const rawKey = strippedToRaw.get(strippedName) ?? strippedName;
+              const existing = updated.get(rawKey) ?? {};
               const pop = (existing as any).population ?? 10000;
-              updated.set(name, {
+              const acreage = val.totalArea / 4046.86; // convert sq meters → acres
+              updated.set(rawKey, {
                 ...existing,
-                parkTotalAcres: val.totalArea,
-                parkAcresPer1000: pop > 0 ? val.totalArea / (pop / 1000) : 0,
+                parkTotalAcres: acreage,
+                parkAcresPer1000: pop > 0 ? acreage / (pop / 1000) : 0,
               });
             }
             return updated;
@@ -761,9 +770,16 @@ export default function NeighborhoodExplorer() {
 
         setRawDataMap((prev) => {
           const updated = new Map(prev);
-          for (const [key, stats] of ejMap) {
-            const existing = updated.get(key) ?? {};
-            updated.set(key, {
+          // EJ map keys are stripped lowercase; rawDataMap keys are Title Case.
+          // Build reverse lookup to merge into the correct existing entry.
+          const strippedToRaw = new Map<string, string>();
+          for (const key of updated.keys()) {
+            strippedToRaw.set(stripNeighborhoodName(key), key);
+          }
+          for (const [strippedKey, stats] of ejMap) {
+            const rawKey = strippedToRaw.get(strippedKey) ?? strippedKey;
+            const existing = updated.get(rawKey) ?? {};
+            updated.set(rawKey, {
               ...existing,
               ejPollutionIndex:   stats.ejIndex    ?? undefined,
               ejCancerPctile:     stats.cancerPctile    ?? undefined,
