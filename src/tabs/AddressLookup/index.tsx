@@ -9,7 +9,7 @@ import {
   fetchOHGOIncidents, fetchOHGOCameras, fetchOHGOConstruction, ohgoEnabled,
 } from '../../utils/api';
 import type { OHGOIncident, OHGOCamera, OHGOConstruction } from '../../types';
-import { DataCard, EmptyState, DataAttribution } from '../../components/ui';
+import { DataCard, EmptyState, DataAttribution, CouncilPanel } from '../../components/ui';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -1198,6 +1198,16 @@ export default function AddressLookup() {
               </>
             )}
           </div>
+
+          {/* ── Section: Your Representatives ─────────────────────────────────── */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Your Representatives</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          <DataCard title="Cincinnati City Council">
+            <CouncilPanel compact />
+          </DataCard>
 
           {/* ── Section: Traffic & Infrastructure ────────────────────────────── */}
           <div className="flex items-center gap-3">

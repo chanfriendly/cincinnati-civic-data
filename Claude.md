@@ -12,7 +12,8 @@ A React/TypeScript web application that aggregates public civic data for Cincinn
 
 ## Quick Reference
 
-- Progress log: `PROGRESS.md` — **read this first every session**
+- **Changelog (failures + decisions):** `CHANGELOG.md` — **read this first every session**
+- Progress log: `PROGRESS.md` — narrative session history; read after CHANGELOG
 - All API calls: `src/utils/api.ts` — the heart of the app
 - TypeScript interfaces: `src/types/index.ts`
 - Tab components: `src/tabs/`
@@ -21,10 +22,24 @@ A React/TypeScript web application that aggregates public civic data for Cincinn
 
 ## Starting a Session
 
-1. Read `PROGRESS.md` to see where we left off and what's pending.
-2. Run `npm run dev` and open <http://localhost:5173> to verify the app starts.
-3. Check browser console for any regressions before making changes.
-4. After completing work, update `PROGRESS.md` with what changed and why.
+1. Read `CHANGELOG.md` — known failures, design decisions, and gotchas. This prevents repeating dead ends.
+2. Read `PROGRESS.md` — to see where we left off and what's pending.
+3. Run `npm run dev` and open <http://localhost:5173> to verify the app starts.
+4. Check browser console for any regressions before making changes.
+5. After completing work, update `PROGRESS.md` with what changed and why. If you hit a dead end or make an irreversible architectural decision, add it to `CHANGELOG.md` before pivoting.
+
+## Known Failures (Quick Reference)
+
+> Full detail and rationale in `CHANGELOG.md`. This is the quick-glance list.
+
+- **Socrata auth header** — `X-App-Token` header causes CORS 403. Use `$$app_token` as a query param instead.
+- **SODA key encoding** — Never percent-encode `$where`, `$limit`, etc. Only values get `encodeURIComponent`.
+- **Building permits derived view** — `tsjj-dcaf` has no queryable columns. Use `uhjb-xac9`.
+- **CAGIS Parks layer 34** — Removed by CAGIS, causes HTTP 400. Use layer 46. Field names changed.
+- **HUD program color matching** — Fuzzy string match on raw codes (e.g. "LMSA") never fires. Use the explicit `PROGRAM_LABELS` map in `HousingInventorySection.tsx`.
+- **EJScreen API** — Offline since Feb 2025. Use pre-built `neighborhood_ejscreen.json` (2019 data). Do not query live.
+- **Community Perceptions** — `gdf4-fqik` has no neighborhood field. City-wide only.
+- **SORTA routes** — `sorta_stops.json` has `routes: []` for all stops. Use stop count, not route count.
 
 ## Project Architecture
 

@@ -1,3 +1,4 @@
+export { default as CouncilPanel } from './CouncilPanel';
 export { default as DataAttribution } from './DataAttribution';
 export { default as DataCard } from './DataCard';
 export { default as EmptyState } from './EmptyState';

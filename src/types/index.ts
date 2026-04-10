@@ -433,6 +433,49 @@ export interface NeighborhoodHMDAStats {
   countyBlackApprovalRate?: number | null;
 }
 
+// ─── ACCOUNTABILITY: CITY COUNCIL ────────────────────────────────────────────
+
+/**
+ * A single Cincinnati City Council member.
+ * Data lives in public/data/cincinnati_council.json.
+ *
+ * Cincinnati elects all 9 council members at-large — there are no geographic
+ * districts. Every Cincinnati resident is represented by all 9 members.
+ *
+ * email_verified: false means the email was inferred from the standard
+ * firstname.lastname@cincinnati-oh.gov pattern and should be confirmed at
+ * https://www.cincinnati-oh.gov/council/council-members/ before use.
+ */
+export interface CouncilMember {
+  id: string;
+  name: string;
+  title: string;
+  email: string;
+  email_verified: boolean;
+  website: string;
+  photo_url: string | null;
+  committees: string[];
+  notes: string;
+}
+
+export interface CincinnatiCouncil {
+  _meta: {
+    description: string;
+    last_updated: string;
+    election_year: number;
+    term_start: string;
+    term_end: string;
+    structure: string;
+    note: string;
+    clerk_phone: string;
+    clerk_email: string;
+    council_url: string;
+    verify_url: string;
+    email_pattern_note: string;
+  };
+  members: CouncilMember[];
+}
+
 // ─── HUD AFFORDABLE HOUSING ──────────────────────────────────────────────────
 
 export interface HUDProperty {

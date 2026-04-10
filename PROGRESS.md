@@ -6,6 +6,42 @@
 
 ## Session Log
 
+### Session 22 — Accountability Layer Phase 1: "Who Represents Me" + CHANGELOG scaffolding (April 2026)
+
+**Goal:** Lay the accountability foundation — CHANGELOG.md, known failures, council panel.
+
+**CHANGELOG.md created:**
+- New file documenting all known failures, dead ends, design decisions, and the full session log going back to session 1. This is now the mandatory first read every session (Claude.md updated to reflect this).
+- Legistar API blocker documented: `webapi.legistar.com/v1/cincinnati` returns "LegistarConnectionString not set up" — Cincinnati has not enabled API access. Do not attempt live Legistar queries. Workarounds logged (deep links to web UI, one-time static scrape, Cincinnati Open Data fallback).
+- At-large structure noted: Cincinnati elects all 9 council members citywide. There are no geographic council districts. "Who represents me" = all 9 members.
+
+**Claude.md updated:**
+- Quick Reference section now leads with CHANGELOG.md (was PROGRESS.md).
+- Starting a Session: CHANGELOG is now step 1; added step 5 requiring CHANGELOG update on dead ends.
+- Added "Known Failures (Quick Reference)" section with 8 bullet-point gotchas at the top level for quick scanning.
+
+**"Who represents me" feature (Phase 1 Accountability):**
+
+New files:
+- `public/data/cincinnati_council.json` — hand-curated data for all 9 council members (2026–2027 term, elected Nov 2025). Includes name, title, email, website, email_verified flag. Three emails (Ryan James, Evan Nolan, Seth Walsh) inferred from pattern and marked `email_verified: false`. Includes `_meta` block with clerk phone, council URL, at-large note.
+- `src/types/index.ts` — added `CouncilMember` and `CincinnatiCouncil` interfaces under new `// ─── ACCOUNTABILITY: CITY COUNCIL ───` section.
+- `src/components/ui/CouncilPanel.tsx` — shared component with two variants: `compact=true` (collapsible list for Address Lookup) and full grid (for Neighborhood Profiles). Shows avatar initials, name, title, email link, city page link, Clerk of Council contact, DataAttribution. Blue "at-large" explainer in both variants.
+- `src/components/ui/index.ts` — CouncilPanel added to barrel export.
+
+Integrations:
+- `src/tabs/AddressLookup/index.tsx` — "Your Representatives" section added between Amenities & Access and Traffic & Infrastructure. Uses `compact` variant. Shows immediately after address is confirmed.
+- `src/tabs/NeighborhoodProfiles/index.tsx` — "Your Representatives" section added after Affordable Housing. Uses full grid variant. Dynamic intro text: "You've seen the data for [Neighborhood]. These are the 9 people who represent you at City Hall."
+
+**Audit:**
+- `tsc --noEmit` — ✅ 0 errors
+- `vite build` — ✅ clean build, `CouncilPanel` chunk appears in bundle output (9.64 kB / 2.61 kB gzip)
+
+**Next session priorities (Phase 2 — Legistar):**
+- Legistar API is blocked. Choose a workaround before building: deep links only, static scrape, or Cincinnati Open Data. Decision needed before code.
+- Phase 3: Action opportunities (public comment windows, meeting agendas, civic orgs directory)
+
+---
+
 ### Session 21 — Audit: Data Accuracy Review + UX Clarity Pass (April 2026)
 
 **Goal:** Formal audit of data source documentation, plain-language methodology rewrites in Neighborhood Explorer, UX clarity improvements across tabs.

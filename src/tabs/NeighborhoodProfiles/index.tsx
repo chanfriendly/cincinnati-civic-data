@@ -11,6 +11,7 @@ import HousingInventorySection from './HousingInventorySection';
 import TransitEquitySection from './TransitEquitySection';
 import {
   DataCard,
+  CouncilPanel,
   EmptyState,
   DataAttribution,
 } from '../../components/ui';
@@ -341,6 +342,19 @@ export default function NeighborhoodProfiles() {
       </div>
 
       <HousingInventorySection neighborhood={selectedNeighborhood} />
+
+      {/* ── Accountability: Your Representatives ────────────────────────────── */}
+      <div className="flex items-center gap-3 pt-2">
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Your Representatives</span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
+
+      <DataCard title="Cincinnati City Council">
+        <p className="text-xs text-gray-500 italic mb-4">
+          You've seen the data for {selectedNeighborhood}. These are the 9 people who represent you at Cincinnati City Hall and make decisions that shape it.
+        </p>
+        <CouncilPanel />
+      </DataCard>
 
       <div className="flex items-center gap-3 pt-2">
         <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Public Health</span>

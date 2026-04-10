@@ -1,0 +1,117 @@
+{
+  "_meta": {
+    "description": "Cincinnati City Council members — elected Nov 4, 2025 for the 2026–2027 term.",
+    "last_updated": "2026-04-10",
+    "election_year": 2025,
+    "term_start": "2026-01",
+    "term_end": "2027-12",
+    "structure": "at-large",
+    "note": "Cincinnati elects all 9 council members citywide. There are no geographic districts — every Cincinnati resident is represented by all 9 members.",
+    "clerk_phone": "513-352-3246",
+    "clerk_email": "councilclerk@cincinnati-oh.gov",
+    "council_url": "https://www.cincinnati-oh.gov/council/",
+    "verify_url": "https://www.cincinnati-oh.gov/council/council-members/",
+    "email_pattern_note": "Emails follow firstname.lastname@cincinnati-oh.gov. Three marked email_verified:false were inferred from the pattern — verify at the council website before using."
+  },
+  "members": [
+    {
+      "id": "kearney",
+      "name": "Jan-Michele Lemon Kearney",
+      "title": "Vice Mayor",
+      "email": "jan-michele.kearney@cincinnati-oh.gov",
+      "email_verified": true,
+      "website": "https://www.cincinnati-oh.gov/council/council-members/jan-michele-lemon-kearney/",
+      "photo_url": null,
+      "committees": [],
+      "notes": "Top vote-getter in 2025 election."
+    },
+    {
+      "id": "albi",
+      "name": "Anna Albi",
+      "title": "Councilmember",
+      "email": "anna.albi@cincinnati-oh.gov",
+      "email_verified": true,
+      "website": "https://www.cincinnati-oh.gov/council/council-members/anna-albi/",
+      "photo_url": null,
+      "committees": [],
+      "notes": ""
+    },
+    {
+      "id": "cramerding",
+      "name": "Jeff Cramerding",
+      "title": "Councilmember",
+      "email": "jeff.cramerding@cincinnati-oh.gov",
+      "email_verified": true,
+      "website": "https://www.cincinnati-oh.gov/council/council-members/jeff-cramerding/",
+      "photo_url": null,
+      "committees": [],
+      "notes": ""
+    },
+    {
+      "id": "james",
+      "name": "Ryan James",
+      "title": "Councilmember",
+      "email": "ryan.james@cincinnati-oh.gov",
+      "email_verified": false,
+      "website": "https://www.cincinnati-oh.gov/council/council-members/ryan-james/",
+      "photo_url": null,
+      "committees": [],
+      "notes": "Newcomer; youngest Black member elected to Cincinnati City Council."
+    },
+    {
+      "id": "jeffreys",
+      "name": "Mark Jeffreys",
+      "title": "Councilmember",
+      "email": "mark.jeffreys@cincinnati-oh.gov",
+      "email_verified": true,
+      "website": "https://www.cincinnati-oh.gov/council/council-members/mark-jeffreys/",
+      "photo_url": null,
+      "committees": [],
+      "notes": ""
+    },
+    {
+      "id": "johnson",
+      "name": "Scotty Johnson",
+      "title": "Councilmember",
+      "email": "scotty.johnson@cincinnati-oh.gov",
+      "email_verified": true,
+      "website": "https://www.cincinnati-oh.gov/council/council-members/scotty-johnson/",
+      "photo_url": null,
+      "committees": [],
+      "notes": ""
+    },
+    {
+      "id": "nolan",
+      "name": "Evan Nolan",
+      "title": "Councilmember",
+      "email": "evan.nolan@cincinnati-oh.gov",
+      "email_verified": false,
+      "website": "https://www.cincinnati-oh.gov/council/council-members/evan-nolan/",
+      "photo_url": null,
+      "committees": [],
+      "notes": ""
+    },
+    {
+      "id": "owens",
+      "name": "Meeka Owens",
+      "title": "Councilmember",
+      "email": "meeka.owens@cincinnati-oh.gov",
+      "email_verified": true,
+      "website": "https://www.cincinnati-oh.gov/council/council-members/meeka-owens/",
+      "photo_url": null,
+      "committees": [],
+      "notes": ""
+    },
+    {
+      "id": "walsh",
+      "name": "Seth Walsh",
+      "title": "Councilmember",
+      "email": "seth.walsh@cincinnati-oh.gov",
+      "email_verified": false,
+      "website": "https://www.cincinnati-oh.gov/council/council-members/seth-walsh/",
+      "photo_url": null,
+      "committees": [],
+      "notes": "Also running for Ohio Treasurer in 2026."
+    }
+  ]
+}
