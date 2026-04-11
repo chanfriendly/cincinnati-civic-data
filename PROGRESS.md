@@ -6,6 +6,37 @@
 
 ## Session Log
 
+### Session 23 — Accountability Layer: Council panel refinements + Legistar investigation + Roadmap Accountability section (April 2026)
+
+**Legistar API — confirmed fully blocked:**
+- Tested both `cincinnati` and `cincinnatioh` client tokens against `webapi.legistar.com/v1/{client}/`
+- `cincinnati`: returns "LegistarConnectionString not set up in InSite for client: cincinnati"
+- `cincinnatioh`: returns HTTP 500 DB errors — token is unrecognized in routing table
+- All API endpoints also return HTTP 403 "Key or Token is required" — the API requires credentials the city has not made public
+- Cincinnati's Legistar web UI (`cincinnatioh.legistar.com`) is public but the API is locked behind city IT
+- **Decision for Phase 2:** Deep links into Legistar web UI as Phase 2a (zero maintenance, immediately actionable). Targeted static scrape of key issue categories as Phase 2b, contingent on building city relationships.
+
+**Council panel refinements:**
+- `public/data/cincinnati_council.json` — cleaned up: removed `email_verified` field (all verified by Christian), added `phone` field (Kearney: 513-352-5205, Johnson: 513-352-4610 confirmed from city site), added `photo_note` to `_meta` (city website does not publish profile photos in HTML — initials avatars are the right design), corrected URL pattern to `council-member-{slug}`, promoted Scotty Johnson title to "President Pro Tem"
+- `src/types/index.ts` — updated `CouncilMember` interface: removed `email_verified`, added `phone: string | null`, updated `_meta` shape
+- `src/components/ui/CouncilPanel.tsx` — removed `email_verified` UI, added phone display for members with direct lines, added `LegistarCallout` subcomponent (amber banner explaining API lock + Legistar web link + ask-your-rep CTA), added "Leadership" subsection for Vice Mayor + President Pro Tem, consistent with updated JSON
+
+**Roadmap: Accountability & Civic Action section added:**
+- New `id: 'accountability'` section inserted before "Open Questions" with 4 items:
+  1. City Council Voting Records (`seeking-data`) — explicitly names Legistar as the blocker and frames it as a simple config change any council member can request
+  2. Public Comment & Civic Engagement Windows (`planned`) — council/planning/MSD calendars matched to issues user is viewing
+  3. City Budget & Spending Tracker (`planned`) — per-neighborhood spending from Cincinnati's annual budget + CIP
+  4. Civic Organizations Directory (`planned`) — contextual org surfacing alongside relevant data
+
+**Audit:** ✅ `tsc --noEmit` — 0 errors. ✅ `vite build` — clean, 4.30s.
+
+**Next session priorities (Phase 2 — Legistar):**
+- Decision confirmed: deep links as Phase 2a
+- Build: in the CouncilPanel's Legistar callout, add a deep-link button to relevant Legistar searches (e.g. "Browse recent legislation →" linking to `cincinnatioh.legistar.com/Legislation.aspx`)
+- Consider whether to scrape a static snapshot of the last 2 years of ordinances for offline reference
+
+---
+
 ### Session 22 — Accountability Layer Phase 1: "Who Represents Me" + CHANGELOG scaffolding (April 2026)
 
 **Goal:** Lay the accountability foundation — CHANGELOG.md, known failures, council panel.

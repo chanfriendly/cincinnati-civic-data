@@ -449,13 +449,14 @@ export interface NeighborhoodHMDAStats {
 export interface CouncilMember {
   id: string;
   name: string;
+  /** "Vice Mayor" | "President Pro Tem" | "Councilmember" */
   title: string;
   email: string;
-  email_verified: boolean;
+  /** Direct line if published; null for most members (use clerk for general contact) */
+  phone: string | null;
   website: string;
   photo_url: string | null;
   committees: string[];
-  notes: string;
 }
 
 export interface CincinnatiCouncil {
@@ -471,7 +472,7 @@ export interface CincinnatiCouncil {
     clerk_email: string;
     council_url: string;
     verify_url: string;
-    email_pattern_note: string;
+    photo_note: string;
   };
   members: CouncilMember[];
 }
