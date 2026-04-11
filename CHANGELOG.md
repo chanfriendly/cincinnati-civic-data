@@ -7,8 +7,8 @@
 ## Current Status
 
 **Phase:** Post-foundation — feature complete on core tabs, refinement in progress  
-**Last updated:** 2026-04-09  
-**Active focus:** AI summary reassessment, mobile testing, Spanish translation review  
+**Last updated:** 2026-04-11  
+**Active focus:** Accountability layer (council panel live, Legistar unlock CTA, civic org directory complete)  
 **Live site:** https://cincinnati-civic-data.vercel.app  
 **TypeScript:** ✅ `tsc --noEmit` passing clean (0 errors) as of Session 21
 
@@ -123,6 +123,11 @@ The API infrastructure exists but the city has not enabled it. **Do not attempt 
 | 19 | Apr 2026 | CAGIS parks bug fix (layer 34 → 46), Address Lookup visualization redesign |
 | 20 | Apr 2026 | Mill Creek flood infrastructure context, Spanish AI-translation disclaimer |
 | 21 | Apr 2026 | Data accuracy audit, Explorer methodology tooltips rewritten for public, UX clarity pass |
+| 22 | Apr 2026 | Architecture principles codified: distill > display, data-to-action, Cincinnati-first, permanent > band-aid |
+| 23 | Apr 2026 | Accountability layer: CouncilPanel (all 9 at-large members), Roadmap accountability section, Legistar investigation |
+| 24 | Apr 2026 | Legistar Phase 2a: LegistarBridge with 3 deep links + pre-filled unlock mailto CTA |
+| 25 | Apr 2026 | Civic org directory: 19 orgs, 7 categories, CivicOrgsPanel (contextual + full), integrated into NeighborhoodProfiles and CouncilPanel |
+| 26 | Apr 2026 | Contextual orgs in Tab 1 (lead, blight, crime), lead service line card with neighborhood lookup, CivicCalendar public comment component |
 
 ---
 
@@ -130,8 +135,10 @@ The API infrastructure exists but the city has not enabled it. **Do not attempt 
 
 *Current sprint priorities. See `Claude.md` "Recommended Next Steps" for the full prioritized list.*
 
-1. 🔄 Manual QA of CAGIS cards (Tab 1) with a Downtown and Hyde Park address
-2. 🔄 Mobile testing — Tabs 1 and 3 are primary mobile use cases
-3. AI summary reassessment — see `TODO(reassess-ai-summary)` in `AddressLookup/index.tsx`
-4. Spanish translation review — needs native speaker
-5. Flood infrastructure — static Mill Creek context (free, no API key required)
+1. ✅ **Contextual org surfacing in Tab 1** — lead, blight/violations, and high-crime sections surface relevant orgs contextually
+2. ✅ **Public comment calendar** — `CivicCalendar` in Tab 1; recurring Council / Planning / BZA / CDBG schedule
+3. 🔄 Manual QA of CAGIS cards (Tab 1) with a Downtown and Hyde Park address
+4. 🔄 Mobile testing — Tabs 1 and 3 are primary mobile use cases
+5. AI summary reassessment — see `TODO(reassess-ai-summary)` in `AddressLookup/index.tsx`
+6. Spanish translation review — needs native speaker
+7. **Verify lead card** with real Cincinnati address in high-risk neighborhood (Avondale, Westwood)

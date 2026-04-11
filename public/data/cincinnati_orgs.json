@@ -1,0 +1,214 @@
+{
+  "_meta": {
+    "description": "Curated directory of Cincinnati civic organizations, surfaced contextually alongside relevant data. Maintained by hand — no API will replace local knowledge of who works on what in this city.",
+    "last_updated": "2026-04-10",
+    "categories": {
+      "housing-eviction": "Housing & Eviction",
+      "environmental-health": "Environmental Health",
+      "police-accountability": "Police Accountability & Civil Rights",
+      "food-access": "Food Access",
+      "transit-equity": "Transit & Transportation",
+      "economic-development": "Economic Development",
+      "civic-engagement": "Civic Engagement"
+    },
+    "service_types": {
+      "direct_service": "Direct Service — provides help directly to individuals",
+      "organizing": "Organizing & Advocacy — builds community power for systemic change",
+      "both": "Direct Service + Organizing"
+    },
+    "note": "Verified April 2026. Some contact details may change — always confirm on the org's website before referring residents."
+  },
+  "organizations": [
+    {
+      "id": "legal-aid-greater-cincinnati",
+      "name": "Legal Aid Society of Greater Cincinnati",
+      "website": "https://lascinti.org/",
+      "phone": "513-241-9400",
+      "phone_alt": "1-800-582-2682",
+      "email": "info@lascinti.org",
+      "mission": "Free civil legal aid to low-income residents — eviction defense, foreclosure prevention, landlord-tenant disputes. One of the most critical resources for residents facing housing instability.",
+      "categories": ["housing-eviction", "civic-engagement"],
+      "service_type": "direct_service"
+    },
+    {
+      "id": "home-cincy",
+      "name": "Housing Opportunities Made Equal (HOME Cincinnati)",
+      "website": "https://www.homecincy.org/",
+      "phone": "513-721-4663",
+      "email": null,
+      "mission": "Fair housing enforcement, counseling, and education for renters and homebuyers facing discrimination. Files fair housing complaints on behalf of residents.",
+      "categories": ["housing-eviction", "economic-development"],
+      "service_type": "both"
+    },
+    {
+      "id": "otr-community-housing",
+      "name": "Over-the-Rhine Community Housing",
+      "website": "https://www.otrch.org/",
+      "phone": "513-621-5775",
+      "email": null,
+      "mission": "Preserves and develops permanently affordable housing in OTR and adjacent neighborhoods. Operates a community land trust to keep housing off the speculative market.",
+      "categories": ["housing-eviction", "economic-development"],
+      "service_type": "both"
+    },
+    {
+      "id": "price-hill-will",
+      "name": "Price Hill Will",
+      "website": "https://pricehillwill.org/",
+      "phone": "513-661-1968",
+      "email": null,
+      "mission": "Neighborhood CDC driving community-led revitalization in Price Hill — housing rehab, small business support, arts, and community organizing.",
+      "categories": ["housing-eviction", "economic-development", "civic-engagement"],
+      "service_type": "both"
+    },
+    {
+      "id": "communities-act-now",
+      "name": "Communities Act Now (CAN)",
+      "website": "https://www.cincycan.org",
+      "phone": null,
+      "email": null,
+      "mission": "Organizing against discriminatory lending, predatory real estate, biased policing, and reckless displacement in communities of color. Works through neighborhood-level member networks.",
+      "categories": ["housing-eviction", "economic-development", "police-accountability"],
+      "service_type": "organizing"
+    },
+    {
+      "id": "cincinnati-caa",
+      "name": "Cincinnati-Hamilton County Community Action Agency",
+      "website": "https://www.cincy-caa.org",
+      "phone": "513-569-1840",
+      "email": null,
+      "mission": "Emergency rent and utility assistance for households in crisis, plus long-term stability programs for low-income families.",
+      "categories": ["housing-eviction"],
+      "service_type": "direct_service"
+    },
+    {
+      "id": "gcww-lead",
+      "name": "Greater Cincinnati Water Works — Lead Program",
+      "website": "https://www.cincinnati-oh.gov/water/leadprogram/",
+      "phone": "513-651-5323",
+      "email": "lead@gcww.cincinnati-oh.gov",
+      "mission": "Manages the 100% city-funded lead service line replacement program and provides free water testing. If your service line is lead, GCWW replaces it at no cost.",
+      "categories": ["environmental-health"],
+      "service_type": "direct_service"
+    },
+    {
+      "id": "cincinnati-health-lead",
+      "name": "Cincinnati Health Department — Lead Poisoning Prevention",
+      "website": "https://www.cincinnati-oh.gov/health/chd-programs/environmental-health/lead-poisoning-prevention-program/",
+      "phone": "513-357-7400",
+      "email": null,
+      "mission": "Free blood lead testing for children, free water filters, and coordination of lead abatement for homes with children under 6.",
+      "categories": ["environmental-health"],
+      "service_type": "direct_service"
+    },
+    {
+      "id": "groundwork-orv",
+      "name": "Groundwork Ohio River Valley",
+      "website": "https://www.groundworkorv.org/",
+      "phone": "513-301-0310",
+      "email": "info@groundworkorv.org",
+      "mission": "Environmental justice work rooted in youth workforce development, community air quality monitoring, and building green infrastructure in under-resourced neighborhoods.",
+      "categories": ["environmental-health", "economic-development"],
+      "service_type": "both"
+    },
+    {
+      "id": "green-umbrella",
+      "name": "Green Umbrella",
+      "website": "https://greenumbrella.org",
+      "phone": "513-541-1538",
+      "email": "info@greenumbrella.org",
+      "mission": "Greater Cincinnati's regional sustainability network — convenes organizations across sectors on climate, environmental justice, and green infrastructure initiatives.",
+      "categories": ["environmental-health"],
+      "service_type": "organizing"
+    },
+    {
+      "id": "cincinnati-naacp",
+      "name": "Cincinnati NAACP",
+      "website": "https://cincinnatinaacp.com/",
+      "phone": "513-281-1900",
+      "email": "info@cincinnatinaacp.com",
+      "mission": "Racial equity, civil rights, and police accountability through advocacy, organizing, and legal action. Runs a mobile civic engagement unit for voter registration and rights education.",
+      "categories": ["police-accountability", "civic-engagement", "environmental-health"],
+      "service_type": "both"
+    },
+    {
+      "id": "freestore-foodbank",
+      "name": "Freestore Foodbank",
+      "website": "https://freestorefoodbank.org/",
+      "phone": "513-241-1064",
+      "email": "info@freestorefoodbank.org",
+      "mission": "The region's largest hunger-relief organization — food pantries, mobile markets, and school-based programs serving 110,000+ people annually.",
+      "categories": ["food-access"],
+      "service_type": "direct_service"
+    },
+    {
+      "id": "st-vincent-de-paul",
+      "name": "Society of St. Vincent de Paul Cincinnati",
+      "website": "https://www.svdpcincinnati.org/",
+      "phone": "513-562-8841",
+      "email": null,
+      "mission": "Parish-based network providing food, emergency financial assistance, and utility support. 13 locations across Cincinnati.",
+      "categories": ["food-access", "housing-eviction"],
+      "service_type": "direct_service"
+    },
+    {
+      "id": "sustainable-cincy",
+      "name": "Sustainable Cincy",
+      "website": "https://www.sustainablecincy.org/",
+      "phone": "513-951-8994",
+      "email": "hello@sustainablecincy.org",
+      "mission": "Grassroots coalition for equitable transit access, walkable neighborhoods, and sustainable development across Greater Cincinnati.",
+      "categories": ["transit-equity", "environmental-health"],
+      "service_type": "organizing"
+    },
+    {
+      "id": "changinggears",
+      "name": "ChangingGears",
+      "website": "https://changing-gears.org/",
+      "phone": "513-357-2004",
+      "email": "hello@changing-gears.org",
+      "mission": "Makes vehicle ownership accessible to people moving out of poverty — removing the transportation barrier that keeps people from jobs and opportunity.",
+      "categories": ["transit-equity", "economic-development"],
+      "service_type": "direct_service"
+    },
+    {
+      "id": "lisc-cincinnati",
+      "name": "LISC Cincinnati",
+      "website": "https://www.lisc.org/cincinnati/",
+      "phone": "513-621-0900",
+      "email": null,
+      "mission": "Local Initiatives Support Corporation — capital and technical assistance to community developers and CDCs building affordable housing and neighborhood infrastructure.",
+      "categories": ["economic-development", "housing-eviction"],
+      "service_type": "both"
+    },
+    {
+      "id": "cincinnati-development-fund",
+      "name": "Cincinnati Development Fund",
+      "website": "https://cindevfund.org",
+      "phone": "513-721-7211",
+      "email": "info@cindevfund.org",
+      "mission": "Community development financial institution providing capital and technical assistance to small businesses and community developers in underserved markets.",
+      "categories": ["economic-development"],
+      "service_type": "direct_service"
+    },
+    {
+      "id": "greater-cincinnati-voter-collaborative",
+      "name": "Greater Cincinnati Voter Collaborative",
+      "website": "https://cincyvotes.org/",
+      "phone": "513-204-9743",
+      "email": null,
+      "mission": "Nonpartisan alliance running year-round voter registration, civic training, and neighborhood engagement to close voter participation gaps.",
+      "categories": ["civic-engagement"],
+      "service_type": "organizing"
+    },
+    {
+      "id": "lwv-cincinnati",
+      "name": "League of Women Voters — Cincinnati Area",
+      "website": "https://www.lwvcincinnati.org",
+      "phone": "513-281-8683",
+      "email": "info@lwvcincinnati.org",
+      "mission": "Nonpartisan civic organization encouraging informed participation — voter guides, candidate forums, and policy advocacy on democracy and good governance issues.",
+      "categories": ["civic-engagement"],
+      "service_type": "organizing"
+    }
+  ]
+}

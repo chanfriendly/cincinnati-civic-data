@@ -6,6 +6,146 @@
 
 ## Session Log
 
+### Session 26 — Contextual Orgs in Tab 1 + Public Comment Calendar (April 2026)
+
+**Goal:** Close the data-to-action loop at the address level (Task A) and surface civic meeting windows as action opportunities (Task B).
+
+**Task A: Contextual org surfacing in Address Lookup**
+
+Three new contextual `CivicOrgsPanel` injections in Tab 1, each triggered by data that's already being loaded:
+
+1. **Blight/violations** — When PLAP blight flags or inspection violations are found, a `categories={['housing-eviction']}` panel appears below the Property Record overview. Surfaces Legal Aid, HOME Cincinnati, Price Hill Will, etc.
+
+2. **High crime** — When 10+ incidents in the past year are within 400m, a `categories={['police-accountability']}` panel appears below the crime card. Threshold chosen to avoid showing this for isolated incidents (a bar or two doesn't mean a resident needs police accountability orgs).
+
+3. **Lead risk** — New lead service line card added to the Safety & Environment section. Pulls from `public/data/lead_service_lines.json` by neighborhood. Requires neighborhood name from Mapbox geocoding context.
+
+**Neighborhood extraction from Mapbox:**
+- Updated `MapboxFeature` type (was previously narrowed to just `place_name` and `center`)
+- `handleAddressSelect` now reads `feature.context` array and looks for the item with `id.startsWith('neighborhood.')`
+- Stored in `selectedAddress.neighborhood`
+- Lead lookup in `useEffect` strips the neighborhood name with `stripNeighborhoodName()` and looks up `lead_service_lines.json`
+
+**Lead risk card:**
+- `leadRiskLevel` computed from `lead + galvanized / total`. High if >15% or if few known + many unknown. Moderate if any lead/galvanized or >30% unknown. Low otherwise.
+- Card shows: risk badge, 4-metric grid (total / lead+galv / unknown / replaced), contextual guidance text, and "what you can do" action steps
+- `categories={['environmental-health']}` panel embedded directly inside the card — surfaces GCWW Lead Program and Cincinnati Health Dept Lead Poisoning Prevention
+
+**Task B: Public Comment Calendar**
+
+New `CivicCalendar` component (`src/components/ui/CivicCalendar.tsx`):
+- Generates upcoming meeting dates using known Cincinnati recurring schedules:
+  - City Council: 1st & 3rd Wednesdays at 6:30 PM
+  - Planning Commission: 1st Wednesday at 9:00 AM (same day, morning)
+  - Board of Zoning Appeals: 3rd Monday at 9:00 AM
+  - CDBG Public Comment: April–May annual window surfaced as standing alert
+- No external API — pure date math from known schedules. Permanent value.
+- Each card shows: body name, date/time, description, agenda link, livestream link (Council), "Public comment" badge
+- Cards within 3 days get an orange urgency ring; within 7 days get a blue ring
+- `compact` prop for sidebar use (less detail, just agenda link)
+- Placed in Tab 1 as new "Civic Action Windows" section between Representatives and Traffic & Infrastructure
+
+**Files changed:**
+- `src/components/ui/CivicCalendar.tsx` — new component
+- `src/components/ui/index.ts` — `CivicCalendar` exported
+- `src/tabs/AddressLookup/index.tsx`:
+  - `MapboxFeature` / `MapboxContext` interfaces added
+  - `LeadNeighborhoodRecord` / `LeadServiceData` interfaces added
+  - `suggestions` state typed to `MapboxFeature[]`
+  - `handleAddressSelect` updated to extract neighborhood from Mapbox context
+  - `leadRecord` state + `useEffect` for neighborhood-keyed lead lookup
+  - `leadRiskLevel` derived value (useMemo)
+  - CivicOrgsPanel imported; CivicCalendar imported; stripNeighborhoodName imported
+  - Contextual org panels for blight/violations, high crime, lead
+  - Lead service line card in Safety & Environment section
+  - CivicCalendar in new Civic Action Windows section
+
+**Audit:** ✅ `tsc --noEmit` — 0 errors. ✅ `vite build` — clean, 4.40s.
+
+**Design decisions:**
+- Crime org panel threshold is 10 incidents (not 0) — want it to feel like a signal, not noise. Showing police accountability orgs for 1 nearby incident in the past year would be misleading.
+- Lead card only shows when `selectedAddress.neighborhood` is populated from Mapbox context. If Mapbox doesn't return a neighborhood (can happen for rural or poorly mapped addresses), the card is simply absent — better than showing wrong data.
+- Calendar uses computed recurring dates, not scraped agendas — avoids the "permanent vs. band-aid" trap. These schedules are stable and publicly known.
+
+**Next session options:**
+- Mobile QA pass on Tabs 1 and 3
+- AI summary reassessment (see TODO in AddressLookup)
+- Verify lead card shows correctly for a neighborhood with known lead risk (e.g., Avondale, Westwood)
+- Spot-check that Mapbox context extraction works for real Cincinnati addresses
+
+---
+
+### Session 25 — Civic Organizations Directory (Phase 3) (April 2026)
+
+**Goal:** Build a contextual civic org directory that surfaces relevant organizations alongside data — the "data to action" loop closing for residents who see a problem and want to know who to call.
+
+**Decision: Skip Phase 2b (static ordinance scrape).** Applied the "permanent over band-aid" principle: a static ordinance snapshot would be made obsolete the moment Cincinnati enables the Legistar API. Civic org directory has permanent value — no API will tell a resident which Cincinnati organization handles their specific issue.
+
+**Files created:**
+
+- **`public/data/cincinnati_orgs.json`** — 19 verified Cincinnati civic organizations across 7 categories (housing-eviction, environmental-health, police-accountability, food-access, transit-equity, economic-development, civic-engagement). Each org has: id, name, website, phone, email, mission, categories[], service_type (direct_service | organizing | both). All verified April 2026.
+
+- **`src/components/ui/CivicOrgsPanel.tsx`** — Dual-mode component:
+  - **Contextual mode** (when `categories` prop provided): filters orgs matching any supplied category, sorts direct_service orgs first, no filter tabs. Returns null if no matches.
+  - **Full directory mode** (no `categories` prop): filter tab bar with per-category counts, 2-column org grid, shows category tags on cards.
+  - `OrgCard` subcomponent: name + service type badge (teal/violet/sky), mission text, category tags (contextual mode suppresses these), contact links (website, phone, alt phone, email).
+
+**`src/types/index.ts` additions:**
+- `CivicOrgCategory` union type (7 categories)
+- `CivicOrgServiceType` union type
+- `CivicOrg` interface
+- `CincinnatiOrgsData` interface
+
+**Integration points:**
+
+1. **`src/tabs/NeighborhoodProfiles/index.tsx`** — Full directory added as "Resources & Organizations" section at the bottom of the tab. Intro text references the selected neighborhood: "You've seen the data for {neighborhood}. Here are organizations working on the issues this data surfaces."
+
+2. **`src/components/ui/CouncilPanel.tsx`** — Contextual `CivicOrgsPanel categories={['civic-engagement']}` added below the Legistar bridge in the full variant only. Framed as "Organizations helping residents engage with city government."
+
+3. **`src/components/ui/index.ts`** — `CivicOrgsPanel` exported from the barrel.
+
+4. **`src/tabs/Roadmap/index.tsx`** — Civic Organizations Directory item updated from `planned` → `completed` with updated description reflecting the 19-org directory and contextual surfacing.
+
+**Audit:** ✅ `tsc --noEmit` — 0 errors. ✅ `vite build` — clean, 4.24s.
+
+**Next session options:**
+- Contextual org surfacing in Address Lookup (Tab 1) — e.g., when lead service lines detected in a neighborhood, surface GCWW + Cincinnati Health Dept in the lead card
+- Public comment calendar — CDBG hearings, Planning Commission, City Council meetings surfaced as action windows
+- Spanish translation review (machine-translated ES strings need native speaker QA)
+- Mobile QA pass on Tabs 1 and 3
+
+---
+
+### Session 24 — Legistar Phase 2a: Deep links + Unlock CTA (April 2026)
+
+**Goal:** Turn the Legistar gap into a civic action — not just "voting records unavailable" but "here's how to browse them directly and here's how to ask your council to open the API."
+
+**`CouncilPanel.tsx` — `LegistarCallout` replaced by `LegistarBridge`:**
+
+Full redesign of the Legistar section. Compact variant (Address Lookup) and full variant (Neighborhood Profiles) both now include:
+
+1. **Three quick-link cards** linking directly into Cincinnati's public Legistar web UI:
+   - "Browse legislation" → `cincinnatioh.legistar.com/Legislation.aspx`
+   - "Meeting calendar" → `cincinnatioh.legistar.com/Calendar.aspx`
+   - "Meeting minutes & video" → Legistar minutes/records page
+
+2. **Pre-filled "unlock" email** via `mailto:councilclerk@cincinnati-oh.gov` — subject pre-set to "Request: Enable Legistar Public API Access" with a clear, respectful body explaining what the API would unlock and that it's a simple IT configuration change. CTA button: "Email Council to unlock →"
+
+Added four new SVG icons to support the section: `DocumentIcon`, `CalendarIcon`, `SpeakerIcon` (already had `LockIcon`).
+
+**`UNLOCK_EMAIL_HREF` const** — pre-encoded mailto string built at module level (not inside component) to avoid re-computing on every render.
+
+**Rationale:** The most impactful Phase 2a is making the data gap itself actionable. A resident who wants voting records and gets a pre-filled email can send it in 10 seconds. That's the accountability loop closing in real time — data surfacing a gap, platform providing the action.
+
+**Audit:** ✅ `tsc --noEmit` — 0 errors. ✅ `vite build` — clean, 4.27s. CouncilPanel chunk 9.6 kB → 16.1 kB (expected; new icons + bridge section).
+
+**Next session — Phase 2b options:**
+- Static scrape of recent Cincinnati ordinances (housing, police, infrastructure, zoning) → `public/data/cincinnati_legislation.json` — lets us surface specific votes without API access
+- Phase 3: Action opportunities (public comment calendar, CDBG hearings, Planning Commission)
+- Civic org directory (contextual, tied to issue type shown)
+
+---
+
 ### Session 23 — Accountability Layer: Council panel refinements + Legistar investigation + Roadmap Accountability section (April 2026)
 
 **Legistar API — confirmed fully blocked:**

@@ -405,8 +405,8 @@ const SECTIONS: RoadmapSection[] = [
       },
       {
         title: 'Civic Organizations Directory',
-        status: 'planned',
-        description: 'A curated directory of Cincinnati organizations working on housing, policing, environmental justice, food access, and civic engagement — surfaced contextually alongside relevant data. When you\'re looking at lead service line data, you should see GCWW contacts. When you\'re looking at eviction data, you should see Legal Aid.',
+        status: 'completed',
+        description: 'A curated directory of 19 Cincinnati organizations working on housing, policing, environmental justice, food access, and civic engagement — surfaced contextually alongside relevant data. Appears in Neighborhood Profiles and alongside the City Council panel. When you\'re looking at eviction data, you see Legal Aid. When you\'re looking at council contacts, you see civic engagement organizations.',
         why: 'Awareness without a path to action is frustrating. Most residents don\'t know which organizations to contact about a given issue, and most organizations don\'t have easy ways for residents to find them. This closes that gap.',
         relatedOrgs: ['Legal Aid Society of Greater Cincinnati', 'Housing Opportunities Made Equal (HOME Cincy)', 'NAACP Cincinnati', 'Cincinnati Fair Housing', 'Price Hill Will', 'Over-the-Rhine Community Housing', 'Freestore Foodbank', 'LISC Cincinnati'],
       },

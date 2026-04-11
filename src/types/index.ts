@@ -433,6 +433,50 @@ export interface NeighborhoodHMDAStats {
   countyBlackApprovalRate?: number | null;
 }
 
+// ─── ACCOUNTABILITY: CIVIC ORGANIZATIONS ─────────────────────────────────────
+
+export type CivicOrgCategory =
+  | 'housing-eviction'
+  | 'environmental-health'
+  | 'police-accountability'
+  | 'food-access'
+  | 'transit-equity'
+  | 'economic-development'
+  | 'civic-engagement';
+
+export type CivicOrgServiceType = 'direct_service' | 'organizing' | 'both';
+
+/**
+ * A single Cincinnati civic organization.
+ * Data lives in public/data/cincinnati_orgs.json.
+ * Curated by hand — no API will know that Legal Aid is who to call
+ * about an eviction in Walnut Hills.
+ */
+export interface CivicOrg {
+  id: string;
+  name: string;
+  website: string;
+  phone: string | null;
+  /** Alternate/toll-free number if available */
+  phone_alt?: string;
+  email: string | null;
+  /** 1–2 sentence plain-English mission, written for residents not donors */
+  mission: string;
+  categories: CivicOrgCategory[];
+  service_type: CivicOrgServiceType;
+}
+
+export interface CincinnatiOrgsData {
+  _meta: {
+    description: string;
+    last_updated: string;
+    categories: Record<CivicOrgCategory, string>;
+    service_types: Record<CivicOrgServiceType, string>;
+    note: string;
+  };
+  organizations: CivicOrg[];
+}
+
 // ─── ACCOUNTABILITY: CITY COUNCIL ────────────────────────────────────────────
 
 /**

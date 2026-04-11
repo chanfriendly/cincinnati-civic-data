@@ -9,7 +9,8 @@ import {
   fetchOHGOIncidents, fetchOHGOCameras, fetchOHGOConstruction, ohgoEnabled,
 } from '../../utils/api';
 import type { OHGOIncident, OHGOCamera, OHGOConstruction } from '../../types';
-import { DataCard, EmptyState, DataAttribution, CouncilPanel } from '../../components/ui';
+import { DataCard, EmptyState, DataAttribution, CouncilPanel, CivicOrgsPanel, CivicCalendar } from '../../components/ui';
+import { stripNeighborhoodName } from '../../utils/api';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -64,6 +65,31 @@ interface NearbySchool extends SchoolRecord {
   distance: number; // miles
 }
 
+// Mapbox geocoding feature — includes context array for neighborhood extraction
+interface MapboxContext {
+  id: string;   // e.g. "neighborhood.1234", "place.5678"
+  text: string; // e.g. "Over-the-Rhine"
+}
+
+interface MapboxFeature {
+  place_name: string;
+  center: [number, number];
+  context?: MapboxContext[];
+}
+
+// Lead service line data shape (from public/data/lead_service_lines.json)
+interface LeadNeighborhoodRecord {
+  name: string;
+  total: number;
+  lead: number;
+  unknown: number;
+  galvanized: number;
+  copper: number;
+  replaced: number;
+  asOf: string;
+}
+type LeadServiceData = Record<string, LeadNeighborhoodRecord>;
+
 type CAGISStatus = 'idle' | 'loading' | 'done' | 'error';
 
 export default function AddressLookup() {
@@ -71,7 +97,7 @@ export default function AddressLookup() {
   const { language } = useLanguage();
   const [selectedAddress, setSelectedAddress] = useState<GeocodedAddress | null>(null);
   const [searchInput, setSearchInput] = useState('');
-  const [suggestions, setSuggestions] = useState<{ place_name: string; center: [number, number] }[]>([]);
+  const [suggestions, setSuggestions] = useState<MapboxFeature[]>([]);
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
@@ -245,6 +271,28 @@ export default function AddressLookup() {
       .finally(() => setLoadingSchools(false));
   }, [selectedAddress]);
 
+  // ── Lead service line lookup by neighborhood ─────────────────────────────────
+  const [leadRecord, setLeadRecord] = useState<LeadNeighborhoodRecord | null>(null);
+
+  useEffect(() => {
+    if (!selectedAddress?.neighborhood) {
+      setLeadRecord(null);
+      return;
+    }
+    const key = stripNeighborhoodName(selectedAddress.neighborhood);
+    fetch('/data/lead_service_lines.json')
+      .then((res) => res.json())
+      .then((data: LeadServiceData) => {
+        // Try exact stripped key first, then scan all keys for closest match
+        const directMatch = data[key];
+        if (directMatch) { setLeadRecord(directMatch); return; }
+        // Fallback: scan all keys
+        const entry = Object.entries(data).find(([k]) => k === key || stripNeighborhoodName(k) === key);
+        setLeadRecord(entry ? entry[1] : null);
+      })
+      .catch(() => setLeadRecord(null));
+  }, [selectedAddress?.neighborhood]);
+
   // ── CAGIS geographic context ─────────────────────────────────────────────────
   const [zoning, setZoning] = useState<Record<string, unknown>[]>([]);
   const [zoningStatus, setZoningStatus] = useState<CAGISStatus>('idle');
@@ -334,7 +382,8 @@ export default function AddressLookup() {
           `?country=US&bbox=-84.82,39.03,-84.26,39.35&types=address&access_token=${apiKey}`
         );
         const data = await res.json();
-        setSuggestions((data.features ?? []).slice(0, 6));
+        // Keep full feature so handleAddressSelect can read .context for neighborhood
+        setSuggestions((data.features ?? []).slice(0, 6) as MapboxFeature[]);
       } catch {
         setSuggestions([]);
       }
@@ -343,13 +392,18 @@ export default function AddressLookup() {
 
   // When a suggestion is clicked: geocode is already done (Mapbox returns center in the feature)
   const handleAddressSelect = useCallback(
-    (feature: { place_name: string; center: [number, number] }) => {
+    (feature: MapboxFeature) => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
 
       const addr = feature.place_name.split(',')[0].trim();
       const parts = addr.split(/\s+/);
       const streetNum = parts[0];
       const streetName = parts.slice(1).join(' ');
+
+      // Extract neighborhood from Mapbox context (id prefix "neighborhood.")
+      const neighborhoodCtx = feature.context?.find((c) => c.id.startsWith('neighborhood.'));
+      // Fall back to locality (e.g. "Cincinnati") if no neighborhood in context
+      const neighborhood = neighborhoodCtx?.text ?? undefined;
 
       setSelectedAddress({
         lat: feature.center[1],
@@ -358,6 +412,7 @@ export default function AddressLookup() {
         street: addr,
         streetNum,
         streetName,
+        neighborhood,
       });
       setSearchInput(feature.place_name);
       setSuggestions([]);
@@ -515,6 +570,20 @@ export default function AddressLookup() {
   const violations = (inspections.data || []).filter(
     (i: any) => /fail|viol|notice/i.test(String(i.data_status ?? ''))
   );
+
+  // Lead risk level derived from neighborhood data
+  const leadRiskLevel: 'high' | 'moderate' | 'low' | null = useMemo(() => {
+    if (!leadRecord) return null;
+    const { total, lead, unknown, galvanized } = leadRecord;
+    if (total === 0) return null;
+    const riskLines = lead + galvanized; // galvanized can leach lead
+    const unknownLines = unknown;
+    const riskPct = riskLines / total;
+    const unknownPct = unknownLines / total;
+    if (riskPct > 0.15 || (riskPct > 0 && unknownPct > 0.4)) return 'high';
+    if (riskPct > 0 || unknownPct > 0.3) return 'moderate';
+    return 'low';
+  }, [leadRecord]);
 
   return (
     <div className="space-y-6">
@@ -748,6 +817,18 @@ export default function AddressLookup() {
                     ✓ No inspections, abatements, or blight records found for this address.
                   </p>
                 )}
+
+                {/* Contextual orgs — surface when property issues are found */}
+                {!inspections.loading && !blight.loading &&
+                  (violations.length > 0 || (blight.data && blight.data.length > 0)) && (
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Organizations that can help</p>
+                    <CivicOrgsPanel
+                      categories={['housing-eviction']}
+                      intro="These organizations provide free legal aid, tenant advocacy, and housing services to Cincinnati residents dealing with violations or blight."
+                    />
+                  </div>
+                )}
               </>
             )}
 
@@ -879,6 +960,16 @@ export default function AddressLookup() {
                 <EmptyState message={t('addressLookup.noCrime', 'No crime records found nearby')} />
               )}
               <DataAttribution source="CPD STARS + PDI Crime" uid="7aqy-xrv9" />
+              {/* Contextual orgs for high crime areas */}
+              {!crimeLoading && mergedCrime.length > 10 && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Community resources</p>
+                  <CivicOrgsPanel
+                    categories={['police-accountability']}
+                    intro="Organizations working on public safety, police accountability, and community advocacy in Cincinnati."
+                  />
+                </div>
+              )}
             </DataCard>
 
             {/* FEMA Flood Zone */}
@@ -999,6 +1090,80 @@ export default function AddressLookup() {
               <DataAttribution source="FEMA National Flood Hazard Layer (NFHL)" url="https://msc.fema.gov/portal/home" />
             </DataCard>
           </div>
+
+          {/* ── Lead Service Line Risk ─────────────────────────────────────────── */}
+          {selectedAddress?.neighborhood && leadRecord && leadRiskLevel !== null && (
+            <DataCard title="Lead Service Line Risk">
+              {(() => {
+                const { name, total, lead, unknown, galvanized, replaced, asOf } = leadRecord;
+                const riskLines = lead + galvanized;
+                const riskColor =
+                  leadRiskLevel === 'high'     ? 'text-red-600'    :
+                  leadRiskLevel === 'moderate' ? 'text-orange-600' : 'text-green-600';
+                const riskBg =
+                  leadRiskLevel === 'high'     ? 'bg-red-50 border-red-200'    :
+                  leadRiskLevel === 'moderate' ? 'bg-orange-50 border-orange-200' : 'bg-green-50 border-green-200';
+                const riskLabel =
+                  leadRiskLevel === 'high'     ? 'Elevated Risk' :
+                  leadRiskLevel === 'moderate' ? 'Moderate Risk' : 'Lower Risk';
+
+                return (
+                  <div className="space-y-4">
+                    {/* Summary banner */}
+                    <div className={`rounded-lg border px-4 py-3 ${riskBg}`}>
+                      <div className="flex items-baseline gap-2 mb-1">
+                        <span className={`text-2xl font-bold ${riskColor}`}>{riskLabel}</span>
+                        <span className="text-xs text-gray-500">{name}</span>
+                      </div>
+                      <p className={`text-xs leading-relaxed ${leadRiskLevel === 'high' ? 'text-red-800' : leadRiskLevel === 'moderate' ? 'text-orange-800' : 'text-green-800'}`}>
+                        {leadRiskLevel === 'high'
+                          ? `${riskLines} of ${total} service lines in ${name} are lead or galvanized — materials that can leach lead into drinking water. Request a free inspection from GCWW.`
+                          : leadRiskLevel === 'moderate'
+                          ? `${riskLines > 0 ? `${riskLines} lead/galvanized lines detected.` : ''} ${unknown > 0 ? `${unknown} lines have unknown material — may warrant testing.` : ''} Consider requesting a water test.`
+                          : `${replaced} lines replaced, ${lead + galvanized === 0 ? 'no known lead/galvanized lines' : `${riskLines} may still need attention`} in ${name}.`}
+                      </p>
+                    </div>
+
+                    {/* Breakdown */}
+                    <div className="grid grid-cols-4 gap-2 text-center">
+                      {[
+                        { label: 'Total', value: total, color: 'text-gray-700' },
+                        { label: 'Lead/Galv.', value: riskLines, color: riskLines > 0 ? 'text-red-600' : 'text-gray-400' },
+                        { label: 'Unknown', value: unknown, color: unknown > 0 ? 'text-orange-600' : 'text-gray-400' },
+                        { label: 'Replaced', value: replaced, color: replaced > 0 ? 'text-green-600' : 'text-gray-400' },
+                      ].map(({ label, value, color }) => (
+                        <div key={label} className="bg-gray-50 rounded-lg py-2">
+                          <div className={`text-lg font-bold ${color}`}>{value}</div>
+                          <div className="text-[10px] text-gray-400 uppercase tracking-wide">{label}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {leadRiskLevel !== 'low' && (
+                      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
+                        <p className="text-xs font-semibold text-blue-800 mb-1">What you can do</p>
+                        <ul className="text-xs text-blue-700 space-y-1 list-none">
+                          <li>→ <strong>Call GCWW</strong> at (513) 591-7700 to request a free lead service line inspection and replacement program enrollment.</li>
+                          <li>→ <strong>Get a free water test</strong> through the Cincinnati Health Department's Lead Poisoning Prevention Program.</li>
+                          <li>→ Use a certified NSF-53 filter on drinking water taps while awaiting replacement.</li>
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Contextual orgs */}
+                    <div className="pt-2 border-t border-gray-100">
+                      <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Contact these programs directly</p>
+                      <CivicOrgsPanel
+                        categories={['environmental-health']}
+                        intro={`GCWW and the Cincinnati Health Department both have free lead programs. Data shown is for ${name} (as of ${asOf}).`}
+                      />
+                    </div>
+                  </div>
+                );
+              })()}
+              <DataAttribution source="Cincinnati Health Dept. Lead Service Line Inventory" url="https://www.cincinnati-oh.gov/health/health-lived-here/lead-poisoning-prevention/" />
+            </DataCard>
+          )}
 
           {/* ── Section: Location Context ─────────────────────────────────────── */}
           <div className="flex items-center gap-3">
@@ -1208,6 +1373,31 @@ export default function AddressLookup() {
           <DataCard title="Cincinnati City Council">
             <CouncilPanel compact />
           </DataCard>
+
+          {/* ── Section: Civic Action Windows ─────────────────────────────────── */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Civic Action Windows</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex items-baseline justify-between mb-1">
+              <h3 className="text-lg font-semibold text-gray-900">Upcoming Public Meetings</h3>
+              <a
+                href="https://cincinnatioh.legistar.com/Calendar.aspx"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-[#1A4A6B] hover:underline shrink-0 ml-3"
+              >
+                Full calendar →
+              </a>
+            </div>
+            <p className="text-xs text-gray-500 mb-4">
+              These are the meetings where Cincinnati residents can speak directly to the people making decisions
+              about your neighborhood — zoning, development, policing, housing, and budget.
+            </p>
+            <CivicCalendar weeksAhead={8} />
+          </div>
 
           {/* ── Section: Traffic & Infrastructure ────────────────────────────── */}
           <div className="flex items-center gap-3">

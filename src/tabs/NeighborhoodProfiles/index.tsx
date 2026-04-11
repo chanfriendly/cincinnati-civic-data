@@ -11,6 +11,7 @@ import HousingInventorySection from './HousingInventorySection';
 import TransitEquitySection from './TransitEquitySection';
 import {
   DataCard,
+  CivicOrgsPanel,
   CouncilPanel,
   EmptyState,
   DataAttribution,
@@ -409,6 +410,18 @@ export default function NeighborhoodProfiles() {
         <DataAttribution
           source={t('neighborhood.attributionFoodSafety', 'Food Safety')}
           uid="rg6p-b3h3"
+        />
+      </DataCard>
+
+      {/* ── Resources & Organizations ──────────────────────────────────────── */}
+      <div className="flex items-center gap-3 pt-2">
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Resources &amp; Organizations</span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
+
+      <DataCard title="Cincinnati Civic Organizations">
+        <CivicOrgsPanel
+          intro={`These organizations work on the issues surfaced in ${selectedNeighborhood}'s data. Direct service orgs can help residents immediately — organizing groups build the power to change the conditions that create these problems.`}
         />
       </DataCard>
 

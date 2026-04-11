@@ -12,6 +12,7 @@
 import React, { useState } from 'react'
 import councilData from '../../../public/data/cincinnati_council.json'
 import type { CouncilMember, CincinnatiCouncil } from '../../types'
+import CivicOrgsPanel from './CivicOrgsPanel'
 import DataAttribution from './DataAttribution'
 
 const council = councilData as CincinnatiCouncil
@@ -43,6 +44,27 @@ const LockIcon = () => (
   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
       d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+  </svg>
+)
+
+const DocumentIcon = () => (
+  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+  </svg>
+)
+
+const CalendarIcon = () => (
+  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+  </svg>
+)
+
+const SpeakerIcon = () => (
+  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+      d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
   </svg>
 )
 
@@ -145,25 +167,132 @@ const MemberCard: React.FC<{ member: CouncilMember; compact?: boolean }> = ({
   )
 }
 
-// ── Legistar callout ──────────────────────────────────────────────────────────
+// ── Pre-filled "unlock the API" email ─────────────────────────────────────────
 
-const LegistarCallout: React.FC<{ compact?: boolean }> = ({ compact = false }) => (
-  <div className={`border border-amber-200 bg-amber-50 rounded-lg flex gap-2.5 ${compact ? 'px-3 py-2' : 'px-4 py-3'}`}>
-    <span className="text-amber-500 mt-0.5 shrink-0"><LockIcon /></span>
-    <div>
-      <p className={`font-semibold text-amber-900 ${compact ? 'text-[11px]' : 'text-xs'}`}>
-        Voting records not yet available
-      </p>
-      <p className={`text-amber-800 mt-0.5 leading-snug ${compact ? 'text-[10px]' : 'text-xs'}`}>
-        Cincinnati City Council uses{' '}
-        <a href="https://cincinnatioh.legistar.com/Calendar.aspx" target="_blank" rel="noopener noreferrer"
-          className="underline hover:text-amber-900">Legistar</a>{' '}
-        for legislation and votes, but has not enabled public API access. Enabling it is a simple
-        configuration change. Ask your council members to open this data.
-      </p>
+const UNLOCK_EMAIL_HREF =
+  'mailto:councilclerk@cincinnati-oh.gov' +
+  '?subject=' + encodeURIComponent('Request: Enable Legistar Public API Access') +
+  '&body=' + encodeURIComponent(
+    'Dear Clerk of Council,\n\n' +
+    'I am writing to request that Cincinnati City Council enable public API access to its ' +
+    'Legistar legislative records system (webapi.legistar.com).\n\n' +
+    'The Cincinnati Civic Data platform (cincinnati-civic-data.vercel.app) uses open public ' +
+    'data to help residents understand their city. Enabling the Legistar API would allow the ' +
+    'platform to surface council voting records and legislation alongside neighborhood data — ' +
+    'connecting policy decisions to their real-world effects on Cincinnati residents.\n\n' +
+    'This is a simple configuration change that many other Legistar-using cities have already ' +
+    'made. I ask that City Council direct IT to enable public access.\n\n' +
+    'Thank you for your consideration.'
+  )
+
+// ── Legistar bridge section ───────────────────────────────────────────────────
+
+interface LegistarBridgeProps { compact?: boolean }
+
+const LegistarBridge: React.FC<LegistarBridgeProps> = ({ compact = false }) => {
+  const links = [
+    {
+      label: 'Browse legislation',
+      sub: 'Ordinances, resolutions, amendments',
+      href: 'https://cincinnatioh.legistar.com/Legislation.aspx',
+      Icon: DocumentIcon,
+    },
+    {
+      label: 'Meeting calendar',
+      sub: 'Upcoming council & committee meetings',
+      href: 'https://cincinnatioh.legistar.com/Calendar.aspx',
+      Icon: CalendarIcon,
+    },
+    {
+      label: 'Meeting minutes & video',
+      sub: 'Past meeting records and recordings',
+      href: 'https://cincinnatioh.legistar.com/DepartmentDetail.aspx?ID=28923&GUID=5D0B8ED4-4C4B-4BE2-812D-4AE3640DECB0',
+      Icon: SpeakerIcon,
+    },
+  ]
+
+  if (compact) {
+    return (
+      <div className="border border-amber-200 bg-amber-50 rounded-lg px-3 py-2.5 space-y-2">
+        <div className="flex gap-2 items-start">
+          <span className="text-amber-500 mt-0.5 shrink-0"><LockIcon /></span>
+          <div>
+            <p className="text-[11px] font-semibold text-amber-900">Voting records locked</p>
+            <p className="text-[10px] text-amber-800 mt-0.5 leading-snug">
+              Council uses Legistar but hasn't enabled the public API.
+              Browse records directly, or ask them to open it.
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-x-3 gap-y-1 pl-5">
+          {links.map(({ label, href, Icon }) => (
+            <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1 text-[10px] text-[#1A4A6B] hover:underline font-medium">
+              <Icon />{label}
+            </a>
+          ))}
+        </div>
+        <a href={UNLOCK_EMAIL_HREF}
+          className="flex items-center gap-1.5 pl-5 text-[10px] text-amber-700 hover:text-amber-900 font-semibold">
+          <EnvelopeIcon />
+          Ask Council to unlock voting records →
+        </a>
+      </div>
+    )
+  }
+
+  return (
+    <div className="border border-amber-200 bg-amber-50 rounded-lg px-4 py-3 space-y-3">
+      {/* Header */}
+      <div className="flex gap-2.5 items-start">
+        <span className="text-amber-500 mt-0.5 shrink-0"><LockIcon /></span>
+        <div>
+          <p className="text-sm font-semibold text-amber-900">Voting records not yet integrated</p>
+          <p className="text-xs text-amber-800 mt-0.5 leading-snug">
+            Cincinnati City Council uses{' '}
+            <a href="https://cincinnatioh.legistar.com" target="_blank" rel="noopener noreferrer"
+              className="underline hover:text-amber-900 font-medium">Legistar</a>{' '}
+            for all legislation and votes. The records are public on their website, but the city
+            has not enabled API access — which would let this platform surface voting records
+            alongside neighborhood data. It's a simple configuration change.
+          </p>
+        </div>
+      </div>
+
+      {/* Quick links */}
+      <div>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-amber-700 mb-1.5">
+          Browse public records directly
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          {links.map(({ label, sub, href, Icon }) => (
+            <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+              className="flex items-start gap-2 bg-white border border-amber-200 rounded-md px-3 py-2 hover:border-amber-400 hover:shadow-sm transition-all group">
+              <span className="text-amber-500 mt-0.5 shrink-0 group-hover:text-amber-700"><Icon /></span>
+              <div>
+                <p className="text-xs font-semibold text-gray-800 group-hover:text-[#1A4A6B] leading-tight">{label}</p>
+                <p className="text-[10px] text-gray-500 leading-tight mt-0.5">{sub}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Unlock CTA */}
+      <div className="border-t border-amber-200 pt-2.5 flex items-center justify-between gap-3 flex-wrap">
+        <p className="text-xs text-amber-800">
+          <span className="font-semibold">Help open this data:</span>{' '}
+          Enabling the Legistar API is a one-time IT configuration. Other cities have done it.
+        </p>
+        <a href={UNLOCK_EMAIL_HREF}
+          className="shrink-0 flex items-center gap-1.5 text-xs font-semibold bg-amber-700 text-white px-3 py-1.5 rounded-md hover:bg-amber-800 transition-colors whitespace-nowrap">
+          <EnvelopeIcon />
+          Email Council to unlock →
+        </a>
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 // ── Main component ────────────────────────────────────────────────────────────
 
@@ -218,7 +347,7 @@ const CouncilPanel: React.FC<CouncilPanelProps> = ({ compact = false }) => {
           </div>
         </div>
 
-        <LegistarCallout compact />
+        <LegistarBridge compact />
 
         <DataAttribution source="Cincinnati City Council — Cincinnati.gov" url={_meta.verify_url} />
       </div>
@@ -273,7 +402,15 @@ const CouncilPanel: React.FC<CouncilPanelProps> = ({ compact = false }) => {
         </a>
       </div>
 
-      <LegistarCallout />
+      <LegistarBridge />
+
+      {/* Civic engagement orgs — contextually relevant alongside the council panel */}
+      <div>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
+          Civic Engagement Organizations
+        </p>
+        <CivicOrgsPanel categories={['civic-engagement']} />
+      </div>
 
       <DataAttribution
         source={`Cincinnati City Council — Cincinnati.gov · Elected Nov 2025 · Term ends Dec ${_meta.term_end}`}

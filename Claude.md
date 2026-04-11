@@ -24,9 +24,20 @@ A React/TypeScript web application that aggregates public civic data for Cincinn
 
 1. Read `CHANGELOG.md` — known failures, design decisions, and gotchas. This prevents repeating dead ends.
 2. Read `PROGRESS.md` — to see where we left off and what's pending.
-3. Run `npm run dev` and open <http://localhost:5173> to verify the app starts.
-4. Check browser console for any regressions before making changes.
-5. After completing work, update `PROGRESS.md` with what changed and why. If you hit a dead end or make an irreversible architectural decision, add it to `CHANGELOG.md` before pivoting.
+3. **Sync the Roadmap** — open `src/tabs/Roadmap/index.tsx` and scan the `SECTIONS` array. Any item whose `status` no longer matches reality should be updated before new work begins: `'planned'` → `'in-progress'` → `'completed'`, or `'seeking-data'` if a source turned out to be unavailable. The Roadmap is public-facing — stale statuses erode trust.
+4. Run `npm run dev` and open <http://localhost:5173> to verify the app starts.
+5. Check browser console for any regressions before making changes.
+6. After completing work: update `PROGRESS.md` with what changed and why, sync any newly completed Roadmap items, and add any dead ends or architectural decisions to `CHANGELOG.md` before pivoting.
+
+## Architecture Principles
+
+These guide every feature decision. When evaluating new work, run it through these before building:
+
+- **Distill, don't display** — every data point should answer "what does this mean and what should I do?" not just "here's another chart." Fewer surfaces, more synthesis.
+- **Data to action** — surface who made the decision, what civic opening exists, and which organization is already working on it. Awareness without a path to action is a dead end.
+- **Cincinnati first, then portable** — deep local specificity (council members by name, Cincinnati orgs by mission, Cincinnati history) before any generic abstraction. Don't dilute with common denominators prematurely.
+- **Permanent over band-aid** — before building a workaround, ask: will this be made obsolete when the real data source opens? If yes, skip it and invest in something that has permanent value. Example: a static ordinance scrape becomes useless the moment the Legistar API is enabled. A civic org directory never becomes useless.
+- **Build the data model first** — for features blocked by a future API (Legistar voting records), design the TypeScript interface and UI shell now so wiring it in later is fast.
 
 ## Known Failures (Quick Reference)
 
