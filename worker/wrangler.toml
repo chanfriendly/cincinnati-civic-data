@@ -5,6 +5,13 @@ compatibility_date = "2024-01-01"
 # Environment: secrets are set via `wrangler secret put CENSUS_API_KEY` etc.
 # Do NOT hardcode keys here.
 
+# KV namespace for civic counters (e.g. Legistar email count).
+# To create: cd worker && wrangler kv:namespace create CIVIC_COUNTERS
+# Then replace the id below with the output ID from that command.
+[[kv_namespaces]]
+binding = "CIVIC_COUNTERS"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+
 [env.production]
 routes = [
   # Replace {your-pages-project} with your actual Cloudflare Pages domain

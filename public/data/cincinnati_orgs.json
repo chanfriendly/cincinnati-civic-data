@@ -1,7 +1,7 @@
 {
   "_meta": {
     "description": "Curated directory of Cincinnati civic organizations, surfaced contextually alongside relevant data. Maintained by hand — no API will replace local knowledge of who works on what in this city.",
-    "last_updated": "2026-04-10",
+    "last_updated": "2026-04-12",
     "categories": {
       "housing-eviction": "Housing & Eviction",
       "environmental-health": "Environmental Health",
@@ -26,7 +26,7 @@
       "phone": "513-241-9400",
       "phone_alt": "1-800-582-2682",
       "email": "info@lascinti.org",
-      "mission": "Free civil legal aid to low-income residents — eviction defense, foreclosure prevention, landlord-tenant disputes. One of the most critical resources for residents facing housing instability.",
+      "mission": "If you've received an eviction notice or are in a landlord dispute, call them first. They provide free legal representation to low-income residents and can appear in court with you.",
       "categories": ["housing-eviction", "civic-engagement"],
       "service_type": "direct_service"
     },
@@ -36,7 +36,7 @@
       "website": "https://www.homecincy.org/",
       "phone": "513-721-4663",
       "email": null,
-      "mission": "Fair housing enforcement, counseling, and education for renters and homebuyers facing discrimination. Files fair housing complaints on behalf of residents.",
+      "mission": "If a landlord denied you housing, raised your rent suddenly, or treated you differently because of your race, family status, or disability — HOME can file a fair housing complaint on your behalf, for free.",
       "categories": ["housing-eviction", "economic-development"],
       "service_type": "both"
     },
@@ -46,7 +46,7 @@
       "website": "https://www.otrch.org/",
       "phone": "513-621-5775",
       "email": null,
-      "mission": "Preserves and develops permanently affordable housing in OTR and adjacent neighborhoods. Operates a community land trust to keep housing off the speculative market.",
+      "mission": "If you want to stay in OTR or nearby neighborhoods as rents rise, OTRCH maintains permanently affordable rental units. Contact them about availability or to get on a waiting list.",
       "categories": ["housing-eviction", "economic-development"],
       "service_type": "both"
     },
@@ -56,7 +56,7 @@
       "website": "https://pricehillwill.org/",
       "phone": "513-661-1968",
       "email": null,
-      "mission": "Neighborhood CDC driving community-led revitalization in Price Hill — housing rehab, small business support, arts, and community organizing.",
+      "mission": "If you live in Price Hill and need housing rehab help, local resource connections, or want to get involved in shaping your neighborhood — Price Hill Will runs community programs and organizing.",
       "categories": ["housing-eviction", "economic-development", "civic-engagement"],
       "service_type": "both"
     },
@@ -66,7 +66,7 @@
       "website": "https://www.cincycan.org",
       "phone": null,
       "email": null,
-      "mission": "Organizing against discriminatory lending, predatory real estate, biased policing, and reckless displacement in communities of color. Works through neighborhood-level member networks.",
+      "mission": "If your neighborhood is facing buyouts, displacement, predatory lending, or biased policing, CAN organizes collective neighborhood responses. Join a member network to add your voice to the fight.",
       "categories": ["housing-eviction", "economic-development", "police-accountability"],
       "service_type": "organizing"
     },
@@ -76,27 +76,27 @@
       "website": "https://www.cincy-caa.org",
       "phone": "513-569-1840",
       "email": null,
-      "mission": "Emergency rent and utility assistance for households in crisis, plus long-term stability programs for low-income families.",
+      "mission": "If you can't pay rent or utilities this month, call the CAA for emergency assistance. They serve households in crisis and can sometimes help prevent eviction.",
       "categories": ["housing-eviction"],
       "service_type": "direct_service"
     },
     {
       "id": "gcww-lead",
       "name": "Greater Cincinnati Water Works — Lead Program",
-      "website": "https://www.cincinnati-oh.gov/water/leadprogram/",
+      "website": "https://www.cincinnati-oh.gov/water/",
       "phone": "513-651-5323",
       "email": "lead@gcww.cincinnati-oh.gov",
-      "mission": "Manages the 100% city-funded lead service line replacement program and provides free water testing. If your service line is lead, GCWW replaces it at no cost.",
+      "mission": "If your service line is lead or unknown, call or email to get it replaced at no cost to you. The city covers 100% of replacement costs. They also provide free water testing kits.",
       "categories": ["environmental-health"],
       "service_type": "direct_service"
     },
     {
       "id": "cincinnati-health-lead",
       "name": "Cincinnati Health Department — Lead Poisoning Prevention",
-      "website": "https://www.cincinnati-oh.gov/health/chd-programs/environmental-health/lead-poisoning-prevention-program/",
+      "website": "https://www.cincinnati-oh.gov/health/chd-programs/lead-poisoning-prevention/",
       "phone": "513-357-7400",
       "email": null,
-      "mission": "Free blood lead testing for children, free water filters, and coordination of lead abatement for homes with children under 6.",
+      "mission": "If you have a child under 6, call for a free blood lead test and free water filters. They can also coordinate lead abatement for your home at no cost.",
       "categories": ["environmental-health"],
       "service_type": "direct_service"
     },
@@ -106,7 +106,7 @@
       "website": "https://www.groundworkorv.org/",
       "phone": "513-301-0310",
       "email": "info@groundworkorv.org",
-      "mission": "Environmental justice work rooted in youth workforce development, community air quality monitoring, and building green infrastructure in under-resourced neighborhoods.",
+      "mission": "If you're concerned about air quality or environmental conditions in your neighborhood, Groundwork monitors local air and runs community programs. Contact them to get involved or report a concern.",
       "categories": ["environmental-health", "economic-development"],
       "service_type": "both"
     },
@@ -116,7 +116,7 @@
       "website": "https://greenumbrella.org",
       "phone": "513-541-1538",
       "email": "info@greenumbrella.org",
-      "mission": "Greater Cincinnati's regional sustainability network — convenes organizations across sectors on climate, environmental justice, and green infrastructure initiatives.",
+      "mission": "If you want to connect with environmental advocacy efforts across the region, Green Umbrella convenes the Cincinnati-area sustainability network and can connect you with groups working on your specific concern.",
       "categories": ["environmental-health"],
       "service_type": "organizing"
     },
@@ -126,7 +126,7 @@
       "website": "https://cincinnatinaacp.com/",
       "phone": "513-281-1900",
       "email": "info@cincinnatinaacp.com",
-      "mission": "Racial equity, civil rights, and police accountability through advocacy, organizing, and legal action. Runs a mobile civic engagement unit for voter registration and rights education.",
+      "mission": "If you've experienced police misconduct or a civil rights violation, the NAACP can support documentation, legal referrals, and public advocacy. They also run voter registration and community rights education.",
       "categories": ["police-accountability", "civic-engagement", "environmental-health"],
       "service_type": "both"
     },
@@ -136,7 +136,7 @@
       "website": "https://freestorefoodbank.org/",
       "phone": "513-241-1064",
       "email": "info@freestorefoodbank.org",
-      "mission": "The region's largest hunger-relief organization — food pantries, mobile markets, and school-based programs serving 110,000+ people annually.",
+      "mission": "If you need food, use their website to find the nearest pantry or mobile market — they serve 110,000+ people annually across the region with no income verification required at most locations.",
       "categories": ["food-access"],
       "service_type": "direct_service"
     },
@@ -146,7 +146,7 @@
       "website": "https://www.svdpcincinnati.org/",
       "phone": "513-562-8841",
       "email": null,
-      "mission": "Parish-based network providing food, emergency financial assistance, and utility support. 13 locations across Cincinnati.",
+      "mission": "If you need emergency food, rent help, or utility assistance, find your nearest SVdP location — 13 parish-based sites across Cincinnati provide direct help, often same day.",
       "categories": ["food-access", "housing-eviction"],
       "service_type": "direct_service"
     },
@@ -156,7 +156,7 @@
       "website": "https://www.sustainablecincy.org/",
       "phone": "513-951-8994",
       "email": "hello@sustainablecincy.org",
-      "mission": "Grassroots coalition for equitable transit access, walkable neighborhoods, and sustainable development across Greater Cincinnati.",
+      "mission": "If you want Cincinnati to invest in better transit, safer streets, or walkable neighborhoods, Sustainable Cincy coordinates regional advocacy campaigns. Sign up for action alerts to weigh in on key decisions.",
       "categories": ["transit-equity", "environmental-health"],
       "service_type": "organizing"
     },
@@ -166,17 +166,17 @@
       "website": "https://changing-gears.org/",
       "phone": "513-357-2004",
       "email": "hello@changing-gears.org",
-      "mission": "Makes vehicle ownership accessible to people moving out of poverty — removing the transportation barrier that keeps people from jobs and opportunity.",
+      "mission": "If you need a car to get to work or school but can't afford one, ChangingGears may be able to help — they assist people moving out of poverty to make vehicle ownership possible.",
       "categories": ["transit-equity", "economic-development"],
       "service_type": "direct_service"
     },
     {
       "id": "lisc-cincinnati",
       "name": "LISC Cincinnati",
-      "website": "https://www.lisc.org/cincinnati/",
+      "website": "https://www.lisc.org/greater-cincinnati/",
       "phone": "513-621-0900",
       "email": null,
-      "mission": "Local Initiatives Support Corporation — capital and technical assistance to community developers and CDCs building affordable housing and neighborhood infrastructure.",
+      "mission": "If your community organization needs capital or technical assistance for housing development or neighborhood projects, LISC provides lending and support to CDCs and developers in underserved Cincinnati neighborhoods.",
       "categories": ["economic-development", "housing-eviction"],
       "service_type": "both"
     },
@@ -186,7 +186,7 @@
       "website": "https://cindevfund.org",
       "phone": "513-721-7211",
       "email": "info@cindevfund.org",
-      "mission": "Community development financial institution providing capital and technical assistance to small businesses and community developers in underserved markets.",
+      "mission": "If you run a small business or community development organization in an underserved area and need financing, CDF provides loans that traditional banks won't make.",
       "categories": ["economic-development"],
       "service_type": "direct_service"
     },
@@ -196,17 +196,17 @@
       "website": "https://cincyvotes.org/",
       "phone": "513-204-9743",
       "email": null,
-      "mission": "Nonpartisan alliance running year-round voter registration, civic training, and neighborhood engagement to close voter participation gaps.",
+      "mission": "If you're not registered to vote, or want to help register others in your community, GCVC runs year-round registration drives and civic training across Cincinnati neighborhoods.",
       "categories": ["civic-engagement"],
       "service_type": "organizing"
     },
     {
       "id": "lwv-cincinnati",
       "name": "League of Women Voters — Cincinnati Area",
-      "website": "https://www.lwvcincinnati.org",
+      "website": "https://my.lwv.org/ohio/cincinnati-area",
       "phone": "513-281-8683",
       "email": "info@lwvcincinnati.org",
-      "mission": "Nonpartisan civic organization encouraging informed participation — voter guides, candidate forums, and policy advocacy on democracy and good governance issues.",
+      "mission": "Before an election, check LWV for nonpartisan voter guides and candidate comparisons — they host forums and publish endorsement-free information on local races and ballot issues.",
       "categories": ["civic-engagement"],
       "service_type": "organizing"
     }

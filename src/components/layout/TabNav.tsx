@@ -125,6 +125,13 @@ const LeadIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) =
   </svg>
 )
 
+const OwnerIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+  </svg>
+)
+
 const AccessibilityIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <circle cx="12" cy="4" r="1.5" strokeWidth={2} />
@@ -162,15 +169,18 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
     scrollRef.current?.scrollBy({ left: dir === 'right' ? 200 : -200, behavior: 'smooth' })
   }
 
+  // Tab order tells a story: personal → neighborhood → housing justice → owner patterns
+  // → environmental health → police → compare → transport → what's coming
   const tabs: TabConfig[] = [
-    { id: 'address', icon: <AddressIcon />, labelKey: 'nav.address' },
-    { id: 'neighborhood', icon: <NeighborhoodIcon />, labelKey: 'nav.neighborhood' },
-    { id: 'police', icon: <PoliceIcon />, labelKey: 'nav.police' },
-    { id: 'explorer', icon: <ExplorerIcon />, labelKey: 'nav.explorer' },
-    { id: 'displacement', icon: <DisplacementIcon />, labelKey: 'nav.displacement' },
-    { id: 'lead', icon: <LeadIcon />, labelKey: 'nav.lead' },
-    { id: 'accessibility', icon: <AccessibilityIcon />, labelKey: 'nav.accessibility' },
-    { id: 'roadmap', icon: <RoadmapIcon />, labelKey: 'nav.roadmap' },
+    { id: 'address',        icon: <AddressIcon />,       labelKey: 'nav.address' },
+    { id: 'neighborhood',   icon: <NeighborhoodIcon />,  labelKey: 'nav.neighborhood' },
+    { id: 'displacement',   icon: <DisplacementIcon />,  labelKey: 'nav.displacement' },
+    { id: 'owner',          icon: <OwnerIcon />,         labelKey: 'nav.owner' },
+    { id: 'lead',           icon: <LeadIcon />,          labelKey: 'nav.lead' },
+    { id: 'police',         icon: <PoliceIcon />,        labelKey: 'nav.police' },
+    { id: 'explorer',       icon: <ExplorerIcon />,      labelKey: 'nav.explorer' },
+    { id: 'accessibility',  icon: <AccessibilityIcon />, labelKey: 'nav.accessibility' },
+    { id: 'roadmap',        icon: <RoadmapIcon />,       labelKey: 'nav.roadmap' },
   ]
 
   return (

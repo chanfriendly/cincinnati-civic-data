@@ -111,6 +111,51 @@ export default {
       });
     }
 
+    // ── Civic counters (KV-backed) ─────────────────────────────────────────────
+    // GET  /api/counter/:name  → { count: N }
+    // POST /api/counter/:name  → increments by 1, returns { count: N }
+    //
+    // Requires the CIVIC_COUNTERS KV namespace to be bound in wrangler.toml.
+    // Used for the Legistar email CTA counter in CouncilPanel.
+    if (pathname.startsWith('/api/counter/')) {
+      const counterName = pathname.replace('/api/counter/', '').replace(/[^a-zA-Z0-9_-]/g, '')
+      if (!counterName) {
+        return new Response(
+          JSON.stringify({ error: 'Counter name required' }),
+          { status: 400, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
+        )
+      }
+
+      const kv = env.CIVIC_COUNTERS
+      if (!kv) {
+        // KV namespace not configured — return a graceful placeholder
+        return new Response(
+          JSON.stringify({ count: null, error: 'Counter storage not configured' }),
+          { status: 503, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
+        )
+      }
+
+      const raw = await kv.get(counterName)
+      let count = raw ? parseInt(raw, 10) : 0
+
+      if (request.method === 'POST') {
+        count += 1
+        await kv.put(counterName, String(count))
+      }
+
+      return new Response(
+        JSON.stringify({ count }),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+            ...CORS_HEADERS,
+          }
+        }
+      )
+    }
+
     // ── Not found ──────────────────────────────────────────────────────────────
     return new Response(
       JSON.stringify({ error: 'Not found', path: pathname }),

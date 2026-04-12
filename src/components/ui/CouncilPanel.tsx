@@ -9,7 +9,7 @@
  * Loaded at module level (tiny static file, no async needed).
  */
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import councilData from '../../../public/data/cincinnati_council.json'
 import type { CouncilMember, CincinnatiCouncil } from '../../types'
 import CivicOrgsPanel from './CivicOrgsPanel'
@@ -185,11 +185,45 @@ const UNLOCK_EMAIL_HREF =
     'Thank you for your consideration.'
   )
 
+// ── Legistar email counter hook ────────────────────────────────────────────────
+// Fetches the live count of residents who have sent the Legistar unlock email.
+// If the Worker isn't configured, count stays null and the counter is hidden.
+
+const WORKER_URL = import.meta.env.VITE_WORKER_URL as string | undefined
+const COUNTER_KEY = 'legistar-emails'
+
+function useLegistarCounter() {
+  const [count, setCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!WORKER_URL) return
+    fetch(`${WORKER_URL}/api/counter/${COUNTER_KEY}`)
+      .then(r => r.ok ? r.json() : null)
+      .then((d: { count: number | null } | null) => {
+        if (d && typeof d.count === 'number') setCount(d.count)
+      })
+      .catch(() => {/* graceful: counter stays hidden */})
+  }, [])
+
+  const increment = () => {
+    if (!WORKER_URL) return
+    fetch(`${WORKER_URL}/api/counter/${COUNTER_KEY}`, { method: 'POST' })
+      .then(r => r.ok ? r.json() : null)
+      .then((d: { count: number | null } | null) => {
+        if (d && typeof d.count === 'number') setCount(d.count)
+      })
+      .catch(() => {/* silent */})
+  }
+
+  return { count, increment }
+}
+
 // ── Legistar bridge section ───────────────────────────────────────────────────
 
 interface LegistarBridgeProps { compact?: boolean }
 
 const LegistarBridge: React.FC<LegistarBridgeProps> = ({ compact = false }) => {
+  const { count, increment } = useLegistarCounter()
   const links = [
     {
       label: 'Browse legislation',
@@ -232,10 +266,13 @@ const LegistarBridge: React.FC<LegistarBridgeProps> = ({ compact = false }) => {
             </a>
           ))}
         </div>
-        <a href={UNLOCK_EMAIL_HREF}
+        <a href={UNLOCK_EMAIL_HREF} onClick={increment}
           className="flex items-center gap-1.5 pl-5 text-[10px] text-amber-700 hover:text-amber-900 font-semibold">
           <EnvelopeIcon />
           Ask Council to unlock voting records →
+          {count !== null && (
+            <span className="ml-1 text-[9px] font-normal text-amber-600">({count.toLocaleString()} sent)</span>
+          )}
         </a>
       </div>
     )
@@ -280,11 +317,18 @@ const LegistarBridge: React.FC<LegistarBridgeProps> = ({ compact = false }) => {
 
       {/* Unlock CTA */}
       <div className="border-t border-amber-200 pt-2.5 flex items-center justify-between gap-3 flex-wrap">
-        <p className="text-xs text-amber-800">
-          <span className="font-semibold">Help open this data:</span>{' '}
-          Enabling the Legistar API is a one-time IT configuration. Other cities have done it.
-        </p>
-        <a href={UNLOCK_EMAIL_HREF}
+        <div>
+          <p className="text-xs text-amber-800">
+            <span className="font-semibold">Help open this data:</span>{' '}
+            Enabling the Legistar API is a one-time IT configuration. Other cities have done it.
+          </p>
+          {count !== null && (
+            <p className="text-[10px] text-amber-600 mt-0.5">
+              {count.toLocaleString()} {count === 1 ? 'resident has' : 'residents have'} sent this request.
+            </p>
+          )}
+        </div>
+        <a href={UNLOCK_EMAIL_HREF} onClick={increment}
           className="shrink-0 flex items-center gap-1.5 text-xs font-semibold bg-amber-700 text-white px-3 py-1.5 rounded-md hover:bg-amber-800 transition-colors whitespace-nowrap">
           <EnvelopeIcon />
           Email Council to unlock →

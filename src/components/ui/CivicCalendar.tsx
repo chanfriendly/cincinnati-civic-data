@@ -90,24 +90,30 @@ function generateUpcomingMeetings(weeksAhead = 8): MeetingEvent[] {
           description: 'Regular Council session — public speaks at the start of the meeting. Sign up to speak at City Hall or online.',
           publicComment: true,
           agendaUrl: 'https://cincinnatioh.legistar.com/Calendar.aspx',
-          livestreamUrl: 'https://www.youtube.com/@CincinnatiCityCouncil',
+          livestreamUrl: 'https://www.cincinnati-oh.gov/citicable/',
           note: 'Schedule subject to change. Verify agenda 48h before meeting.',
         })
       }
     }
 
-    // ── Planning Commission (1st Wednesday at 9:00 AM) ──────────────────────
-    const planningDate = at9am(nthWeekdayOfMonth(year, month, 3, 1))
-    if (planningDate >= today && planningDate <= cutoff) {
-      events.push({
-        date: planningDate,
-        body: 'Cincinnati Planning Commission',
-        type: 'planning',
-        description: 'Reviews zoning changes, major development projects, and land use plans. Public comment accepted on agenda items.',
-        publicComment: true,
-        agendaUrl: 'https://www.cincinnati-oh.gov/planning/boards-and-commissions/planning-commission/',
-        note: 'Same day as Council (1st Wednesday) — morning session.',
-      })
+    // ── Planning Commission (1st & 3rd Fridays at 9:00 AM) ─────────────────
+    const planningFridays = [
+      nthWeekdayOfMonth(year, month, 5, 1), // 1st Friday
+      nthWeekdayOfMonth(year, month, 5, 3), // 3rd Friday
+    ]
+    for (const d of planningFridays) {
+      const planningDate = at9am(d)
+      if (planningDate >= today && planningDate <= cutoff) {
+        events.push({
+          date: planningDate,
+          body: 'Cincinnati Planning Commission',
+          type: 'planning',
+          description: 'Reviews zoning changes, major development projects, and land use plans. Public comment accepted on agenda items — sign up in advance.',
+          publicComment: true,
+          agendaUrl: 'https://www.cincinnati-oh.gov/planning/about-city-planning/city-planning-commission/',
+          note: 'Contact planning@cincinnati-oh.gov or 513-352-4845 to confirm agenda items.',
+        })
+      }
     }
 
     // ── Board of Zoning Appeals (3rd Monday at 9:00 AM) ────────────────────
@@ -119,7 +125,8 @@ function generateUpcomingMeetings(weeksAhead = 8): MeetingEvent[] {
         type: 'bza',
         description: 'Hears requests for variances, conditional uses, and appeals of zoning decisions. Neighbors may speak on cases affecting their properties.',
         publicComment: true,
-        agendaUrl: 'https://www.cincinnati-oh.gov/planning/boards-and-commissions/board-of-zoning-appeals/',
+        agendaUrl: 'https://www.cincinnati-oh.gov/buildings/hearings-appeals/zoning-board-of-appeals/',
+        note: 'Contact boards@cincinnati-oh.gov or 513-352-1559 to check the agenda.',
       })
     }
   }
@@ -139,7 +146,7 @@ function generateUpcomingMeetings(weeksAhead = 8): MeetingEvent[] {
         type: 'cdbg',
         description: `Community Development Block Grant public comment period (${currentYear}). Cincinnati accepts written and in-person comment on how federal CDBG funds are spent on housing, infrastructure, and anti-poverty programs.`,
         publicComment: true,
-        agendaUrl: 'https://www.cincinnati-oh.gov/cityofcincinnati/community-development-block-grant-cdbg/',
+        agendaUrl: 'https://www.cincinnati-oh.gov/stimulus/funding/community-development-block-grant-cdbg/',
         note: `Comment period typically April 1 – May 31, ${currentYear}.`,
       })
     }
@@ -276,7 +283,7 @@ const CivicCalendar: React.FC<CivicCalendarProps> = ({ weeksAhead = 8, compact =
                       rel="noopener noreferrer"
                       className="text-[11px] text-gray-500 hover:text-gray-700 underline-offset-2 hover:underline"
                     >
-                      Livestream
+                      Watch on CitiCable
                     </a>
                   )}
                   {meeting.publicComment && (

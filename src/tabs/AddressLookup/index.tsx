@@ -1043,7 +1043,7 @@ export default function AddressLookup() {
                               <p className="text-xs text-orange-700">
                                 <strong>Think you&apos;re mismapped?</strong> You can apply for a{' '}
                                 <a
-                                  href="https://www.fema.gov/flood-maps/change-your-flood-zone/single-lot-or-structure"
+                                  href="https://hazards.fema.gov/femaportal/onlinelomc/signin"
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="underline text-orange-800"

@@ -3,6 +3,8 @@ import { fetchSODA, fetchNeighborhoodCensusStats, normalizeNeighborhoodName, str
 import { normalize } from '../../utils/scoring'
 import OwnerActivity from '../OwnerActivity'
 import ConnectedCommunitiesSection from './ConnectedCommunitiesSection'
+import CivicOrgsPanel from '../../components/ui/CivicOrgsPanel'
+import type { CivicOrgCategory } from '../../types'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -20,6 +22,68 @@ const CENSUS_KEY_OVERRIDE: Record<string, string> = {
   'English Woods':     'englishwoodsnorthfairmount',
   'Lower Price Hill':  'lowerpricehillqueensgate',
   'Millvale':          'millvale',
+}
+
+// ─── Phase synthesis config ────────────────────────────────────────────────────
+// For each phase: plain-English interpretation + recommended action + which
+// org categories to surface. This is the "information to action" translation layer.
+
+interface PhaseSynthesis {
+  headline: string
+  interpretation: string
+  action: string
+  orgCategories: CivicOrgCategory[]
+  bgColor: string
+  borderColor: string
+  textColor: string
+}
+
+const PHASE_SYNTHESIS: Record<'active' | 'vulnerable' | 'gentrifying' | 'stable' | 'insufficient', PhaseSynthesis> = {
+  active: {
+    headline: 'Active displacement is occurring here',
+    interpretation:
+      'High renter vulnerability combined with strong development pressure means residents are at immediate risk of being pushed out. Incomes are low relative to rents, and significant construction activity is transforming the market.',
+    action:
+      'If you live here, act now: document everything, get legal help early (before receiving an eviction notice), and connect with organizing groups that are fighting displacement in this neighborhood.',
+    orgCategories: ['housing-eviction'],
+    bgColor: 'bg-red-50', borderColor: 'border-red-200', textColor: 'text-red-900',
+  },
+  vulnerable: {
+    headline: 'Neighborhood is vulnerable — development pressure could arrive soon',
+    interpretation:
+      'Residents here face economic vulnerability (high rent burden, lower incomes) but major development pressure hasn\'t fully arrived yet. Historically, vulnerable neighborhoods become targets once adjacent areas are "developed." The window to organize is now.',
+    action:
+      'Connect with housing and community development organizations before pressure accelerates. Building a stabilization strategy now — community land trusts, tenant organizing, zoning engagement — is far more effective than reacting after displacement begins.',
+    orgCategories: ['housing-eviction', 'economic-development'],
+    bgColor: 'bg-orange-50', borderColor: 'border-orange-200', textColor: 'text-orange-900',
+  },
+  gentrifying: {
+    headline: 'Development pressure is arriving — resident protection is the question',
+    interpretation:
+      'Strong construction activity and investment is coming in, but residents aren\'t automatically protected from rising rents and displacement. This is early-stage gentrification: if incomes don\'t rise alongside rents, longtime residents get pushed out.',
+    action:
+      'Engage the public process: attend Planning Commission hearings before major projects are approved, comment on zoning changes, and ask developers what\'s in it for current residents. Check the "Zoning Reform" tab to see how Connected Communities is playing out here.',
+    orgCategories: ['housing-eviction', 'civic-engagement'],
+    bgColor: 'bg-yellow-50', borderColor: 'border-yellow-200', textColor: 'text-yellow-900',
+  },
+  stable: {
+    headline: 'Currently stable',
+    interpretation:
+      'Neither high vulnerability nor strong development pressure at the moment. Stability isn\'t permanent — conditions change, and the neighborhoods that are stable today are often the ones surprised by rapid change tomorrow.',
+    action:
+      'Stay engaged with your neighborhood\'s civic process. Attending Planning Commission meetings before large projects are approved is the lowest-cost way to protect stability.',
+    orgCategories: ['civic-engagement'],
+    bgColor: 'bg-green-50', borderColor: 'border-green-200', textColor: 'text-green-900',
+  },
+  insufficient: {
+    headline: 'Not enough data to classify',
+    interpretation:
+      'We couldn\'t find sufficient data to reliably score this neighborhood across all four dimensions. This may reflect a smaller population, fewer reported permits, or gaps in available public data.',
+    action:
+      'Your neighborhood community council may have local context not captured in city data. You can also check the Neighborhood Profiles tab for whatever data is available.',
+    orgCategories: ['civic-engagement'],
+    bgColor: 'bg-gray-50', borderColor: 'border-gray-200', textColor: 'text-gray-700',
+  },
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -932,6 +996,27 @@ const DisplacementTab: React.FC = () => {
                 </div>
 
                 <div className="p-5 flex flex-col gap-6">
+
+                  {/* Synthesis: What this means + What to do */}
+                  {(() => {
+                    const syn = PHASE_SYNTHESIS[selectedRecord.phase]
+                    return (
+                      <div className={`rounded-lg border ${syn.borderColor} ${syn.bgColor} px-4 py-3 space-y-2`}>
+                        <p className={`text-sm font-semibold ${syn.textColor}`}>{syn.headline}</p>
+                        <p className="text-xs text-gray-700 leading-relaxed">{syn.interpretation}</p>
+                        <div className="pt-1 border-t border-gray-200">
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-0.5">What to do</p>
+                          <p className="text-xs text-gray-700 leading-relaxed">{syn.action}</p>
+                        </div>
+                        <div className="pt-2">
+                          <CivicOrgsPanel
+                            categories={syn.orgCategories}
+                            intro="Organizations working on this:"
+                          />
+                        </div>
+                      </div>
+                    )
+                  })()}
 
                   {/* Section 1: Two-Axis Profile */}
                   <div>
