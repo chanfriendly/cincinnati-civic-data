@@ -180,6 +180,24 @@ function daysUntil(d: Date): number {
   return Math.ceil((d.getTime() - today.getTime()) / 86400000)
 }
 
+// ── Pre-filled "unlock the API" email (same as CouncilPanel) ─────────────────
+
+const UNLOCK_EMAIL_HREF =
+  'mailto:councilclerk@cincinnati-oh.gov' +
+  '?subject=' + encodeURIComponent('Request: Enable Legistar Public API Access') +
+  '&body=' + encodeURIComponent(
+    'Dear Clerk of Council,\n\n' +
+    'I am writing to request that Cincinnati City Council enable public API access to its ' +
+    'Legistar legislative records system (webapi.legistar.com).\n\n' +
+    'The Cincinnati Civic Data platform (cincinnati-civic-data.vercel.app) uses open public ' +
+    'data to help residents understand their city. Enabling the Legistar API would allow the ' +
+    'platform to surface council voting records and legislation alongside neighborhood data — ' +
+    'connecting policy decisions to their real-world effects on Cincinnati residents.\n\n' +
+    'This is a simple configuration change that many other Legistar-using cities have already ' +
+    'made. I ask that City Council direct IT to enable public access.\n\n' +
+    'Thank you for your consideration.'
+  )
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 interface CivicCalendarProps {
@@ -290,27 +308,29 @@ const CivicCalendar: React.FC<CivicCalendarProps> = ({ weeksAhead = 8, compact =
         )
       })}
 
-      <p className="text-[10px] text-gray-400 pt-1">
-        Schedules are based on Cincinnati's standard recurring calendar.
-        Verify specific dates on{' '}
-        <a
-          href="https://cincinnatioh.legistar.com/Calendar.aspx"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline"
-        >
-          Legistar
-        </a>{' '}
-        or the{' '}
-        <a
-          href="https://www.cincinnati-oh.gov/cityofcincinnati/calendar-and-events/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline"
-        >
-          city's calendar
-        </a>.
-      </p>
+      <div className="pt-2 border-t border-gray-100 space-y-1.5">
+        <p className="text-[10px] text-gray-400 leading-relaxed">
+          Dates are computed from Cincinnati's standard recurring schedule — Council cancels or adds sessions
+          occasionally.{' '}
+          <a
+            href="https://cincinnatioh.legistar.com/Calendar.aspx"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            Verify on Legistar
+          </a>{' '}
+          before attending.
+          Live agendas would be automatic if Cincinnati{' '}
+          <a
+            href={UNLOCK_EMAIL_HREF}
+            className="underline text-amber-700 font-medium"
+          >
+            enabled its Legistar API
+          </a>
+          {' '}— a one-time IT change other cities have already made.
+        </p>
+      </div>
     </div>
   )
 }
