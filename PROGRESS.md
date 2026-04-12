@@ -6,6 +6,52 @@
 
 ## Session Log
 
+### Session 27 — Owner Activity Tab Redesign (April 2026)
+
+**Goal:** Rebuild the Owner Activity tab around the advocate/organizer use case, with address as the primary entry point rather than name search.
+
+**Primary user:** Advocate or organizer wanting to identify who is responsible for a problem property and document their track record city-wide.
+
+**Core flow:** Address → enforcement record → "who filed permits here" → pivot to full portfolio.
+
+**Data limitations discovered:**
+- No parcel ownership API exists in CAGIS (all probed URLs 404)
+- PLAP dataset has no owner name field
+- The only ownership signal available is `companyname` from building permits (`uhjb-xac9`) — the permit applicant, often the owner or their LLC. The UI is explicit about this.
+- Address-to-permit lookup tested and confirmed: `upper(originaladdress1) LIKE '${num} ${firstWordOfStreet}%'` works reliably.
+
+**Two-mode tab:**
+
+Mode 1 — By Address (primary):
+- Mapbox geocoding (same pattern as Tab 1)
+- Bounding box queries for PLAP blight (pk9w-99n6) and inspections (ivda-umw7) within 300m
+- Address-string query for permits (uhjb-xac9) to surface `companyname`
+- Enforcement summary: blight flags / inspections / violations stat grid
+- Permit filer cards: each company that filed at the address gets a card with count + "See all their properties →" pivot button
+- `CivicOrgsPanel categories={['housing-eviction']}` when blight or violations found
+
+Mode 2 — By Owner / LLC (existing, refined):
+- Name search across housing unit activity (xedz-tk7q), CRA subsidies (m76i-p5p9), building permits (uhjb-xac9)
+- Portfolio summary: total permits / units removed / city subsidies / neighborhoods
+- "Displacement signal" alert when unit removals > 0
+- "Subsidies while removing" alert when both signals present together
+- Unit removal table, subsidies table, permit history table
+- `CivicOrgsPanel` framed as "bring this research to these organizations"
+
+**Pivot mechanism:** The "See all their properties →" button in address mode pre-fills the owner name input and immediately triggers the search — navigating to owner mode in one click.
+
+**Design principle applied:** Lead with synthesis, not tables. The summary stat grid and signal alerts (displacement, subsidies-while-displacing) appear before any detail tables, so an advocate reads the verdict before the evidence.
+
+**Files changed:**
+- `src/tabs/OwnerActivity/index.tsx` — full rewrite
+- `src/tabs/Roadmap/index.tsx` — updated Owner Activity description
+
+**Audit:** ✅ `tsc --noEmit` — 0 errors. ✅ `vite build` — clean, 4.62s.
+
+**Next:** Broader "information to action" audit of the whole site — what story are we telling, and are our visualizations serving the transition from data to action?
+
+---
+
 ### Session 26 — Contextual Orgs in Tab 1 + Public Comment Calendar (April 2026)
 
 **Goal:** Close the data-to-action loop at the address level (Task A) and surface civic meeting windows as action opportunities (Task B).

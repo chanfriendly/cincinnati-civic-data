@@ -148,7 +148,7 @@ const SECTIONS: RoadmapSection[] = [
       {
         title: 'Owner / Developer Activity Tracker',
         status: 'completed',
-        description: 'Search any owner name or LLC to see all their permit activity, housing unit removals, CRA subsidies, and neighborhood presence city-wide — Cincinnati\'s version of JustFix NYC\'s "Who Owns What." Now live in the Housing Justice tab under "Owner / Developer Search."',
+        description: 'Start with an address to see its enforcement record and who filed permits there — then follow that name to their full portfolio city-wide. Surfaces displacement signals (unit removals, subsidies-while-removing), violation history, and contextual housing orgs.',
         why: 'Large landlords and developers frequently hold properties under multiple LLC names, making their full portfolio and violation history invisible. Searching permit applicant names surfaces those patterns using open data.',
         dataSource: 'Cincinnati Open Data: Housing Unit Activity (xedz-tk7q), Commercial CRA Abatements (m76i-p5p9)',
         tab: 'Housing Justice',
