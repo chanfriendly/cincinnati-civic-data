@@ -38,6 +38,7 @@ These guide every feature decision. When evaluating new work, run it through the
 - **Cincinnati first, then portable** — deep local specificity (council members by name, Cincinnati orgs by mission, Cincinnati history) before any generic abstraction. Don't dilute with common denominators prematurely.
 - **Permanent over band-aid** — before building a workaround, ask: will this be made obsolete when the real data source opens? If yes, skip it and invest in something that has permanent value. Example: a static ordinance scrape becomes useless the moment the Legistar API is enabled. A civic org directory never becomes useless.
 - **Build the data model first** — for features blocked by a future API (Legistar voting records), design the TypeScript interface and UI shell now so wiring it in later is fast.
+- **Measured vs modeled — disclose load-bearingly** — when a visualization combines primary-source data (e.g. ACS percentiles) with a model applied from outside the local geography (e.g. ITEP Ohio incidence), tag each with a visible badge. "Modeled" content needs its caveats and sourcing directly adjacent to the chart, not in a footnote. The Tax & Revenue tab is the canonical implementation of this pattern.
 
 ## Known Failures (Quick Reference)
 
@@ -54,7 +55,7 @@ These guide every feature decision. When evaluating new work, run it through the
 
 ## Project Architecture
 
-### The Seven Tabs
+### The Tabs
 
 | Tab | Path | Status | Description |
 |-----|------|--------|-------------|
@@ -62,8 +63,10 @@ These guide every feature decision. When evaluating new work, run it through the
 | Neighborhood Profiles | `src/tabs/NeighborhoodProfiles/` | Partial | Pick a neighborhood; show crime trends, permits, inspections, blight, survey, income |
 | Police Accountability | `src/tabs/PoliceAccountability/` | Working | CPD traffic/pedestrian stops, use-of-force, OIS — charts by race/district + AI Q&A |
 | Neighborhood Explorer | `src/tabs/NeighborhoodExplorer/` | Mostly working | Choropleth map ranking all 52 neighborhoods across 9 scored dimensions |
-| Displacement | `src/tabs/Displacement/` | Stub | Gentrification tracking — not yet implemented |
-| Owner Activity | `src/tabs/OwnerActivity/` | Stub | Landlord/developer search — not yet implemented |
+| Displacement | `src/tabs/Displacement/` | Partial | Zoning Reform Tracker live; wider displacement features in progress |
+| Owner Activity | `src/tabs/OwnerActivity/` | Working | Advocate/organizer view: address-first lookup → permit-filer portfolio pivot |
+| Tax & Revenue | `src/tabs/TaxRevenue/` | Working | Cincinnati income-tax rate history, ACS household-income percentiles, ITEP Ohio modeled tax burden, City general fund revenue by source. Uses **Measured vs Modeled** badges to distinguish primary-source facts from modeled estimates |
+| Limitations | `src/tabs/Limitations/` | Working | Public methodology + limitations page: neighborhood boundary ambiguity (SNA vs Community Council), data vintages, AI disclosures, known gaps. Cross-linked from every tab that surfaces modeled or imputed data |
 | Roadmap | `src/tabs/Roadmap/` | Working | Static public roadmap |
 
 ### Key Files
@@ -100,6 +103,7 @@ public/data/neighborhood_acs.json  226 Hamilton County Census tracts (ACS 2022, 
 | Community Perceptions | `gdf4-fqik` | **none** — city-wide survey only | — | |
 | Use of Force | `748b-sht4` | — | `date_of_incident` | |
 | OIS | `r6qu-muts` | — | `date` | |
+| City General Fund Revenue | `a9hy-bv25` | — | `fiscal_year` | Tax & Revenue tab. `resource_name` is classified into 9 revenue categories by `classifyRevenue()` in `api.ts` (deterministic string match — do not add AI/LLM classification) |
 
 **Critical:** `uhjb-xac9` is the canonical Building Permits dataset. `tsjj-dcaf` is a derived view with no queryable columns — do not use it.
 
@@ -125,6 +129,9 @@ public/data/neighborhood_acs.json  226 Hamilton County Census tracts (ACS 2022, 
 | Cincinnati Health Dept. Lead Inventory | Lead service line map by neighborhood | ✅ Live | `public/data/lead_service_lines.json`; shown in Lead Safety tab |
 | HUD Subsidized Households | Affordable housing inventory + expiration dates | ✅ Live | `public/data/hud_affordable_housing.json` (built by `scripts/build_hud.py`); shown in `HousingInventorySection.tsx` in Tab 2 |
 | EPA AirToxScreen 2019 (via ArcGIS) | Environmental justice / air toxics scores | ✅ Live (partial) | `public/data/neighborhood_ejscreen.json`; used as EJ dimension in Explorer. **Note: EJScreen has been offline since Feb 2025 — disclosed in UI tooltip. Data is 2019 vintage.** |
+| Census ACS 5-Year (B19080) | Cincinnati household income percentiles (p20/p40/p60/p80/p95), 2012–2023 | ✅ Live | `public/data/cincinnati_income_percentiles.json` (built by `scripts/build_income_percentiles.py`). **FIPS place code for Cincinnati is `15000`, not `14000`.** Shown in Tax & Revenue tab |
+| ITEP Who Pays? 7th edition (Oct 2024) | Ohio state + local effective tax rate by income group | ✅ Live | `public/data/itep_ohio_incidence.json`. Statewide incidence used as Cincinnati proxy — disclosed as **modeled**, not measured. Shown in Tax & Revenue tab and Limitations tab |
+| City of Cincinnati Finance Dept — Tax Rate History | Municipal income tax rate timeline | ✅ Live | `public/data/cincinnati_tax_rate_history.json`. Only verified rates included (1.8% from 2020-10-02; 2.1% prior). Earlier rates lack primary-source ordinance citations — **do not fabricate** |
 
 #### Planned / Future APIs (not yet integrated)
 
@@ -210,11 +217,17 @@ OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...
 13. ✅ **School proximity in Address Lookup** — `public/data/schools.json` built from CAGIS layer 32 (309 Hamilton County schools). "Nearby Schools (within 1 mi)" DataCard added to Tab 1, filters static JSON in-browser (same pattern as transit stops). Shows type badge, grade, public/private, district, distance.
 14. ✅ **Transit equity gap analysis** — `public/data/neighborhood_transit_equity.json` built (50 neighborhoods, stop count + income). `TransitEquitySection.tsx` added to Neighborhood Profiles under "Transportation" divider. ScatterChart plots all neighborhoods; 4 quadrant equity labels; selected neighborhood highlighted.
 
+### Phase 6 — Transparency & Methodology
+19. ✅ **Tax & Revenue tab** — `src/tabs/TaxRevenue/index.tsx`. Four sections: (a) municipal income tax rate history; (b) ACS B19080 household income percentiles 2012–2023 (LineChart); (c) ITEP Ohio modeled state+local tax burden by income group (BarChart, heavily disclosed); (d) City general fund revenue composition by source (stacked BarChart, `a9hy-bv25` with deterministic `classifyRevenue()`).
+20. ✅ **Limitations & Methodology tab** — `src/tabs/Limitations/index.tsx`. Dedicated public methodology page covering: neighborhood boundary ambiguity (SNA vs Community Council, Oakley example, contested areas, centroid mapping), data vintages table, known data gaps, political structure (at-large council, Legistar blockage), AI-generated content disclosures, tax modeling, language/translation, and contribute CTA.
+
 ### Lower Priority / Ongoing
 15. ✅ **HUD program type labels** — `PROGRAM_LABELS` map added to `HousingInventorySection.tsx`; all 13 codes in the live data mapped to plain-English labels + one-sentence descriptions. `programColor()` updated to match on labels (fuzzy matchers now actually fire). Reference: https://www.huduser.gov/portal/datasets/assthsg.html
 16. **Spanish translation review** — Current ES strings are machine-translated; needs native speaker review.
 17. 🔄 **Mobile testing** — Tabs 1 and 3 are primary mobile use cases. In progress — pending user confirmation.
 18. ✅ **Neighborhood comparison tool** — `NeighborhoodComparison.tsx` added to Explorer. Two-neighborhood selector + horizontal grouped BarChart (navy vs amber) + detail table with raw metrics + per-dimension winner badges. Accessible via "Compare Neighborhoods" pill tab in the Explorer right panel.
+21. **Tax & Revenue — next extensions** — (a) Cincinnati EITC / CTC state-level changes (Ohio Dept of Taxation); (b) per-neighborhood effective tax burden once a Cincinnati-specific incidence model becomes available; (c) expenditure-side companion: City general fund *spending* by category and neighborhood (complements the revenue view).
+22. **Limitations tab — community contributions** — wire a "submit a correction / share a source" path (GitHub issue template or form) so advocates can add primary-source citations for pre-1989 rate history, SNA vs. CCB mappings they've authenticated, and domain-specific caveats.
 
 ## Known Issues & Workarounds
 

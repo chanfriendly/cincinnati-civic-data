@@ -6,11 +6,11 @@
 
 ## Current Status
 
-**Phase:** Post-foundation — feature complete on core tabs, refinement in progress  
-**Last updated:** 2026-04-11  
-**Active focus:** Accountability layer (council panel live, Legistar unlock CTA, civic org directory complete)  
+**Phase:** Post-foundation — feature complete on core tabs, transparency + accountability layer in progress  
+**Last updated:** 2026-04-17  
+**Active focus:** Tax & Revenue transparency tab + public Limitations & Methodology tab  
 **Live site:** https://cincinnati-civic-data.vercel.app  
-**TypeScript:** ✅ `tsc --noEmit` passing clean (0 errors) as of Session 21
+**TypeScript:** ✅ `tsc --noEmit` passing clean (0 errors) as of Session 28
 
 ---
 
@@ -29,6 +29,8 @@
 | Ongoing | SORTA route data | Expected `routes` field in `sorta_stops.json` to be populated | All stops have `routes: []` — the GTFS static export doesn't include route assignments at stop level | Transit scoring uses stop *count*, not route count. Do not rebuild on assumption of route data |
 | Ongoing | EJScreen live API | Planned to query EPA EJScreen API live | EJScreen has been offline since Feb 2025 | Use pre-built `public/data/neighborhood_ejscreen.json` (2019 vintage). Disclose offline status in UI tooltip. Do not attempt live queries |
 | Ongoing | Community Perceptions by neighborhood | Tried to filter `gdf4-fqik` by neighborhood | Dataset has no neighborhood column — it's a city-wide resident survey | Show city-wide averages with clear disclaimer. Cannot be broken out per neighborhood with current data |
+| Apr 2026 | Cincinnati FIPS place code | First attempt used `place:14000` for Cincinnati in Census ACS B19080 query | All 12 years returned HTTP 204 (no data) | The correct FIPS place code for Cincinnati city, Ohio is **`15000`**, not `14000`. Verified by listing all Ohio places in a single ACS query. Documented in `scripts/build_income_percentiles.py` |
+| Apr 2026 | Pre-1989 Cincinnati income tax rate history | Attempted to source rate history earlier than 2.1% → 1.8% change (2020-10-02) | Cincinnati Finance Dept page only documents current + immediately prior rate. Pre-1989 rates widely cited anecdotally (2.1% since late 1980s) but no primary-source ordinance citation | **Do not fabricate dates.** `cincinnati_tax_rate_history.json` ships with only verified entries and an open invitation (GitHub issue) for primary-source contributions |
 
 ---
 
@@ -62,6 +64,9 @@
 | Apr 2026 | Explicit `PROGRAM_LABELS` map for HUD codes | HUD's internal codes (e.g. "PD/8 SR", "RAD PH Conv") are not human-readable. Residents need plain English |
 | Apr 2026 | `NeighborhoodExplorer` scoring runs schools dimension as disabled | No open, reliable school quality data source exists. Placeholder exists in code but does not score |
 | Apr 2026 | Park Access and Flood Risk scores use pre-computed static files, not live CAGIS | 52 async CAGIS/FEMA queries took 30–60s on map load; replaced with `cagis_neighborhood_parks.json` (parks) and centroid-based FEMA lookup |
+| Apr 2026 | "Measured vs Modeled" badge convention | Introduced on the Tax & Revenue tab to separate primary-source facts (rate history, ACS income percentiles, city revenue ledgers) from modeled estimates (ITEP Ohio incidence applied to Cincinnati percentiles). Any future tab presenting modeled or imputed data should reuse the same badge + disclosure pattern so "this is a measurement" vs "this is a model" is load-bearing in the UI, not buried in footnotes |
+| Apr 2026 | ITEP Who Pays? sourced statewide, disclosed as Ohio-wide proxy | ITEP does not publish a Cincinnati-specific incidence model. Using Ohio statewide incidence is the best available public source. The tab and the Limitations page both disclose that Cincinnati's tax mix (flat 1.8% municipal income tax) differs from the Ohio average — the model is a reasonable *pattern*, not a household measurement |
+| Apr 2026 | New dedicated "Limitations & Methodology" tab rather than per-tab disclosures | Boundary ambiguity (SNA vs Community Council), nearest-centroid mapping, AI-generated-content disclosures, data vintages, and Legistar blockage each recur across many tabs. Consolidating them in one public page lets advocates and journalists cite one URL instead of digging through per-feature tooltips. Per-tab tooltips remain where they aid immediate interpretation; the Limitations tab is the authoritative long-form record |
 
 ---
 
@@ -128,6 +133,8 @@ The API infrastructure exists but the city has not enabled it. **Do not attempt 
 | 24 | Apr 2026 | Legistar Phase 2a: LegistarBridge with 3 deep links + pre-filled unlock mailto CTA |
 | 25 | Apr 2026 | Civic org directory: 19 orgs, 7 categories, CivicOrgsPanel (contextual + full), integrated into NeighborhoodProfiles and CouncilPanel |
 | 26 | Apr 2026 | Contextual orgs in Tab 1 (lead, blight, crime), lead service line card with neighborhood lookup, CivicCalendar public comment component |
+| 27 | Apr 2026 | Owner Activity tab rewrite (advocate/organizer use case, address-first flow, permit companyname as ownership proxy) |
+| 28 | Apr 2026 | Tax & Revenue transparency tab (rate history + ACS B19080 percentiles + ITEP Ohio modeled incidence + city revenue `a9hy-bv25`); dedicated Limitations & Methodology tab (SNA vs Community Council, Oakley example, centroid mapping, AI disclosures, data vintages) |
 
 ---
 

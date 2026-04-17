@@ -25,7 +25,9 @@
     "owner": "Vigilancia de Propietarios",
     "lead": "Seguridad del Plomo",
     "accessibility": "Accesibilidad",
-    "roadmap": "Trabajo Futuro"
+    "tax": "Impuestos e Ingresos",
+    "roadmap": "Trabajo Futuro",
+    "limitations": "Acerca de y Limitaciones"
   },
   "address": {
     "title": "Búsqueda de Dirección",

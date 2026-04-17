@@ -1,0 +1,83 @@
+{
+  "source": {
+    "name": "Institute on Taxation & Economic Policy (ITEP), Who Pays? 7th Edition",
+    "url": "https://itep.org/ohio-who-pays-7th-edition/",
+    "edition": "7th (October 2024)",
+    "data_year_note": "Reflects 2024 tax law in Ohio, presented at 2023 income levels.",
+    "fetched_at": "2026-04-17"
+  },
+  "scope": "Effective Ohio STATE and LOCAL taxes as a share of family income. Includes state income tax, state and local sales taxes, and property taxes (direct and passed-through to renters). Does NOT include federal taxes.",
+  "modeling_note": "This is an ITEP incidence model for Ohio statewide. Cincinnati's mix of taxes (e.g. a higher flat local income tax than many Ohio cities) differs from the Ohio average. When applied to Cincinnati-specific income percentile thresholds, this should be treated as a reasonable estimate of the state+local tax burden pattern, not a measurement for any specific Cincinnati household.",
+  "groups": [
+    {
+      "id": "lowest_20",
+      "label": "Lowest 20%",
+      "income_range": "Less than $22,500",
+      "income_low": 0,
+      "income_high": 22500,
+      "avg_income": 12500,
+      "effective_tax_rate_pct": 12.7
+    },
+    {
+      "id": "second_20",
+      "label": "Second 20%",
+      "income_range": "$22,500 to $43,600",
+      "income_low": 22500,
+      "income_high": 43600,
+      "avg_income": 32300,
+      "effective_tax_rate_pct": 10.5
+    },
+    {
+      "id": "middle_20",
+      "label": "Middle 20%",
+      "income_range": "$43,600 to $76,200",
+      "income_low": 43600,
+      "income_high": 76200,
+      "avg_income": 59200,
+      "effective_tax_rate_pct": 10.4
+    },
+    {
+      "id": "fourth_20",
+      "label": "Fourth 20%",
+      "income_range": "$76,200 to $130,800",
+      "income_low": 76200,
+      "income_high": 130800,
+      "avg_income": 100800,
+      "effective_tax_rate_pct": 10.0
+    },
+    {
+      "id": "next_15",
+      "label": "Next 15%",
+      "income_range": "$130,800 to $235,800",
+      "income_low": 130800,
+      "income_high": 235800,
+      "avg_income": 163400,
+      "effective_tax_rate_pct": 9.3
+    },
+    {
+      "id": "next_4",
+      "label": "Next 4%",
+      "income_range": "$235,800 to $622,800",
+      "income_low": 235800,
+      "income_high": 622800,
+      "avg_income": 341400,
+      "effective_tax_rate_pct": 8.0
+    },
+    {
+      "id": "top_1",
+      "label": "Top 1%",
+      "income_range": "Over $622,800",
+      "income_low": 622800,
+      "income_high": null,
+      "avg_income": 1051300,
+      "effective_tax_rate_pct": 6.3
+    }
+  ],
+  "key_finding": "Ohio's state and local tax system is regressive: the lowest-income 20% of households pay more than twice the share of their income in state and local taxes (12.7%) that the top 1% pays (6.3%).",
+  "caveats": [
+    "ITEP data reflects Ohio statewide averages. Cincinnati residents face a different mix than an Ohio county without a municipal income tax.",
+    "Federal taxes are NOT included. Adding federal incidence (which is progressive) produces a different overall picture. See CBO historical effective federal rates for national figures.",
+    "Property taxes are partially modeled as passed through to renters. The magnitude of pass-through is debated in the public finance literature.",
+    "The 'Lowest 20%' figure does not include government transfers (SNAP, EITC refunds, housing subsidies). A post-transfer, post-tax lens looks different and is not represented here."
+  ]
+}

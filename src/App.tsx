@@ -15,6 +15,8 @@ const DisplacementTab = React.lazy(() => import('./tabs/Displacement'))
 const OwnerActivity = React.lazy(() => import('./tabs/OwnerActivity'))
 const Accessibility = React.lazy(() => import('./tabs/Accessibility'))
 const LeadSafety = React.lazy(() => import('./tabs/LeadSafety'))
+const TaxRevenue = React.lazy(() => import('./tabs/TaxRevenue'))
+const Limitations = React.lazy(() => import('./tabs/Limitations'))
 
 const TabLoadingFallback: React.FC = () => (
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -79,6 +81,18 @@ const AppContent: React.FC = () => {
         return (
           <Suspense fallback={<TabLoadingFallback />}>
             <OwnerActivity />
+          </Suspense>
+        )
+      case 'tax':
+        return (
+          <Suspense fallback={<TabLoadingFallback />}>
+            <TaxRevenue />
+          </Suspense>
+        )
+      case 'limitations':
+        return (
+          <Suspense fallback={<TabLoadingFallback />}>
+            <Limitations />
           </Suspense>
         )
       default:

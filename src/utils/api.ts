@@ -949,3 +949,83 @@ export async function fetchNeighborhoodHUDStats(): Promise<Map<string, Neighborh
 
   return _hudCachePromise;
 }
+
+// ─── City Revenue (Socrata a9hy-bv25) ─────────────────────────────────────────
+
+/**
+ * One row of aggregated Cincinnati revenue data — per fiscal year, per resource category.
+ * Raw dataset a9hy-bv25 is accounting-line-level; we aggregate server-side via SODA.
+ */
+export interface CityRevenueRow {
+  fiscal_year: string;      // e.g. "2024"
+  resource_name: string;    // e.g. "CITY INCOME TAX"
+  total: number;            // sum of positive amounts in that fiscal_year + resource_name
+}
+
+/**
+ * Broad-category buckets we roll the ~hundreds of raw resource_name values into
+ * for display. Pure string matching; no AI involved. The classifier is a
+ * deterministic function so two viewers see the same numbers.
+ */
+export type RevenueCategory =
+  | 'Income Tax'
+  | 'Property Tax'
+  | 'Utility Charges'
+  | 'Charges for Services'
+  | 'Licenses, Fines & Permits'
+  | 'Intergovernmental'
+  | 'Investment Income'
+  | 'Internal Transfers'
+  | 'Other';
+
+/**
+ * Classify a raw Cincinnati revenue resource_name into one of our display buckets.
+ *
+ * This is an editable classifier, not an authoritative CAFR mapping. If a line
+ * is miscategorized, fix it here — deterministic behavior beats cleverness.
+ */
+export function classifyRevenue(resourceName: string): RevenueCategory {
+  const n = resourceName.toUpperCase();
+  if (n.includes('INCOME TAX') || n.includes('EARNINGS TAX')) return 'Income Tax';
+  if (n.includes('REAL ESTATE TAX') || n.includes('PROPERTY TAX')) return 'Property Tax';
+  if (n.includes('WATER') || n.includes('SEWER') || n.includes('STORMWATER')) return 'Utility Charges';
+  if (n.includes('TRANSFER OF FUNDS') || n.includes('INTERDEPARTMENTAL')) return 'Internal Transfers';
+  if (n.includes('INTEREST') || n.includes('INVESTMENT')) return 'Investment Income';
+  if (n.includes('STATE SHARE') || n.includes('FEDERAL') || n.includes('HAMILTON COUNTY') ||
+      n.includes('GRANT') || n.includes('INTERGOVERNMENTAL')) return 'Intergovernmental';
+  if (n.includes('LICENSE') || n.includes('PERMIT') || n.includes('FINE') ||
+      n.includes('FORFEIT') || n.includes('TICKET')) return 'Licenses, Fines & Permits';
+  if (n.includes('PARKING') || n.includes('ADMISSION') || n.includes('CHARGE') ||
+      n.includes('FEE') || n.includes('SALE') || n.includes('RENTAL')) return 'Charges for Services';
+  return 'Other';
+}
+
+/**
+ * Fetch Cincinnati city revenue, server-aggregated by fiscal_year × resource_name.
+ *
+ * Returns positive-amount sums only (filters refunds / corrections). Orders by
+ * fiscal_year desc, then total desc, so the largest recent categories are first.
+ *
+ * Dataset: https://data.cincinnati-oh.gov/Fiscal-Sustainability/City-of-Cincinnati-Revenue/a9hy-bv25
+ * Coverage: FY 2014 to present, updated daily.
+ */
+export async function fetchCityRevenue(): Promise<CityRevenueRow[]> {
+  type Row = { fiscal_year?: string; resource_name?: string; total?: string };
+  const { data } = await fetchSODA<Row>('a9hy-bv25', {
+    $select: 'fiscal_year, resource_name, sum(amount) as total',
+    $where: 'amount > 0',
+    $group: 'fiscal_year, resource_name',
+    $order: 'fiscal_year DESC, total DESC',
+    $limit: 50000,
+  });
+
+  const out: CityRevenueRow[] = [];
+  for (const r of data) {
+    const fy = (r.fiscal_year ?? '').trim();
+    const name = (r.resource_name ?? '').trim();
+    const total = Number(r.total ?? 0);
+    if (!fy || !name || !Number.isFinite(total) || total <= 0) continue;
+    out.push({ fiscal_year: fy, resource_name: name, total });
+  }
+  return out;
+}

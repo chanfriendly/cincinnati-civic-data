@@ -1,0 +1,114 @@
+{
+  "source": {
+    "dataset": "U.S. Census Bureau ACS 5-Year Estimates, Table B19080 (Household Income Quintile Upper Limits)",
+    "place": "Cincinnati city, Ohio (state:39 place:14000)",
+    "api": "https://api.census.gov/data/<year>/acs/acs5",
+    "built_at": "2026-04-17",
+    "note": "ACS 5-year estimates center on the middle year of the survey window. A 'year' value of 2022 represents 2018-2022 survey waves combined."
+  },
+  "fields": {
+    "p20": "20th percentile of household income (upper limit of lowest quintile)",
+    "p40": "40th percentile (upper limit of second quintile)",
+    "p60": "60th percentile (upper limit of third / middle quintile)",
+    "p80": "80th percentile (upper limit of fourth quintile)",
+    "p95": "95th percentile (lower limit of top 5%)"
+  },
+  "years": [
+    {
+      "year": 2012,
+      "p20": 11576,
+      "p40": 24959,
+      "p60": 44296,
+      "p80": 78790,
+      "p95": 157349
+    },
+    {
+      "year": 2013,
+      "p20": 11266,
+      "p40": 24815,
+      "p60": 44700,
+      "p80": 79113,
+      "p95": 158972
+    },
+    {
+      "year": 2014,
+      "p20": 11085,
+      "p40": 24802,
+      "p60": 44544,
+      "p80": 80427,
+      "p95": 162042
+    },
+    {
+      "year": 2015,
+      "p20": 11221,
+      "p40": 24816,
+      "p60": 44378,
+      "p80": 80413,
+      "p95": 162361
+    },
+    {
+      "year": 2016,
+      "p20": 11563,
+      "p40": 25567,
+      "p60": 45847,
+      "p80": 80947,
+      "p95": 165954
+    },
+    {
+      "year": 2017,
+      "p20": 12303,
+      "p40": 26902,
+      "p60": 48024,
+      "p80": 84858,
+      "p95": 176827
+    },
+    {
+      "year": 2018,
+      "p20": 13240,
+      "p40": 28520,
+      "p60": 50902,
+      "p80": 89304,
+      "p95": 187199
+    },
+    {
+      "year": 2019,
+      "p20": 14284,
+      "p40": 30202,
+      "p60": 53474,
+      "p80": 94159,
+      "p95": 196472
+    },
+    {
+      "year": 2020,
+      "p20": 15990,
+      "p40": 32516,
+      "p60": 55935,
+      "p80": 98740,
+      "p95": 205118
+    },
+    {
+      "year": 2021,
+      "p20": 16494,
+      "p40": 34485,
+      "p60": 59516,
+      "p80": 105128,
+      "p95": 216308
+    },
+    {
+      "year": 2022,
+      "p20": 17004,
+      "p40": 37605,
+      "p60": 65299,
+      "p80": 115436,
+      "p95": 237340
+    },
+    {
+      "year": 2023,
+      "p20": 17942,
+      "p40": 39801,
+      "p60": 68239,
+      "p80": 120062,
+      "p95": 248385
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "source": {
+    "name": "City of Cincinnati, Department of Finance",
+    "url": "https://www.cincinnati-oh.gov/finance/income-taxes/",
+    "fetched_at": "2026-04-17",
+    "note": "The city's Finance Department page documents the current and immediately prior rate. Earlier rate history is not currently published by the city. If you have a verifiable primary source (ordinance number + effective date) for earlier changes, please open a GitHub issue."
+  },
+  "rate_type": "flat",
+  "description": "Cincinnati charges a flat municipal income tax on wages, salaries, and net business income of residents and of non-residents working within the city. Because it is flat, the nominal rate is identical at every income level.",
+  "history": [
+    {
+      "effective_from": "2020-10-02",
+      "effective_to": null,
+      "rate_pct": 1.8,
+      "source_note": "Effective 10/02/2020. Reduction from 2.1% was enacted as part of Issue 7 (the 'Permanent Improvements' measure).",
+      "verified": true
+    },
+    {
+      "effective_from": null,
+      "effective_to": "2020-10-01",
+      "rate_pct": 2.1,
+      "source_note": "Rate in effect immediately prior to 10/02/2020. Widely reported to have been in place since the late 1980s, but this site does not assert an earlier 'effective_from' date without a primary-source ordinance citation.",
+      "verified": true
+    }
+  ]
+}

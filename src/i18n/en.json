@@ -25,7 +25,9 @@
     "owner": "Owner Watch",
     "lead": "Lead Safety",
     "accessibility": "Accessibility",
-    "roadmap": "Future Work"
+    "tax": "Tax & Revenue",
+    "roadmap": "Future Work",
+    "limitations": "About & Limitations"
   },
   "address": {
     "title": "Address Lookup",
