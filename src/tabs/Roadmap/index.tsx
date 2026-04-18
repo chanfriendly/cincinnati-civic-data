@@ -156,11 +156,12 @@ const SECTIONS: RoadmapSection[] = [
       },
       {
         title: 'HUD Affordable Housing Unit Inventory',
-        status: 'planned',
-        description: 'Map of Section 8, LIHTC, and public housing units across Cincinnati neighborhoods with unit counts and subsidy expiration dates.',
+        status: 'completed',
+        description: 'Section 8, LIHTC, and public housing units across Cincinnati neighborhoods — with unit counts, units by program type, and alerts for subsidies expiring within 5 years. Now live in Neighborhood Profiles (28 neighborhoods, 114 properties, 8,191 assisted units).',
         why: 'When affordable housing subsidies expire, units can convert to market rate. Knowing where and when subsidies expire lets advocates push for preservation before units are lost.',
         dataSource: 'HUD Picture of Subsidized Households (public API)',
         dataSourceUrl: 'https://www.huduser.gov/portal/datasets/assthsg.html',
+        tab: 'Neighborhood Profiles',
       },
     ],
   },
@@ -182,10 +183,10 @@ const SECTIONS: RoadmapSection[] = [
       },
       {
         title: 'School Proximity & Walk-Zone Analysis',
-        status: 'planned',
-        description: 'For any address, show the nearest CPS schools with walk distances and available bus service, integrated with the Address Lookup tab.',
+        status: 'completed',
+        description: 'For any address, the nearest CPS and Hamilton County schools within 1 mile — with type badge, grade range, public/private status, district, and distance. Integrated into Address Lookup from a static dataset of 309 schools sourced from CAGIS.',
         why: 'Walk zone eligibility affects whether families get busing, which restricts housing options for families without cars. This directly uses data already in our system.',
-        dataSource: 'CPS school locations (public GeoJSON) + SORTA bus network already in our system',
+        dataSource: 'CPS school locations from CAGIS layer 32 (309 Hamilton County schools)',
         tab: 'Address Lookup',
       },
       {
@@ -216,11 +217,11 @@ const SECTIONS: RoadmapSection[] = [
       },
       {
         title: 'Transit Equity Gap Analysis',
-        status: 'planned',
-        description: 'Compare SORTA bus stop density and route frequency by neighborhood against median household income — visualizing whether lower-income neighborhoods have proportionally less transit access.',
+        status: 'completed',
+        description: 'SORTA bus stop density by neighborhood plotted against median household income — a scatter chart showing which neighborhoods have low transit access relative to income and vice versa, with quadrant equity labels. Live in Neighborhood Profiles under the Transportation section.',
         why: 'If lower-income neighborhoods have fewer or lower-frequency routes, that concentrates car dependency costs on residents who can least afford them. This uses data already in our system.',
-        dataSource: 'SORTA GTFS feed (stop locations + route frequencies) + Census ACS income data already in our system',
-        tab: 'Neighborhood Explorer',
+        dataSource: 'SORTA GTFS feed (stop locations) + Census ACS income data',
+        tab: 'Neighborhood Profiles',
       },
       {
         title: 'BRT Construction Impact Tracker',
@@ -249,10 +250,10 @@ const SECTIONS: RoadmapSection[] = [
     items: [
       {
         title: '311 Service Request Heat Map',
-        status: 'planned',
-        description: 'Where are residents reporting problems, and how long does the city take to respond? 311 request volume and resolution time by neighborhood.',
+        status: 'completed',
+        description: 'Where are residents reporting problems, and how long does the city take to respond? 311 request volume, open count, average resolution time, and top request types by neighborhood — now live in Neighborhood Profiles.',
         why: 'Slow response to 311 complaints in lower-income neighborhoods is a well-documented pattern in cities nationwide. This data exists on Cincinnati\'s open data portal and would make service delivery disparities visible.',
-        dataSource: 'Cincinnati Open Data: 311 Service Requests',
+        dataSource: 'Cincinnati Open Data: 311 Service Requests (gcej-gmiw)',
         dataSourceUrl: 'https://data.cincinnati-oh.gov/',
         tab: 'Neighborhood Profiles',
       },
@@ -275,8 +276,8 @@ const SECTIONS: RoadmapSection[] = [
       },
       {
         title: 'Neighborhood Comparison Tool',
-        status: 'planned',
-        description: 'Side-by-side comparison of any two Cincinnati neighborhoods across all Explorer dimensions — useful for equity arguments, grant applications, and community presentations.',
+        status: 'completed',
+        description: 'Side-by-side comparison of any two Cincinnati neighborhoods across all Explorer dimensions — a horizontal grouped bar chart (navy vs. amber) with raw metrics table and per-dimension winner badges. Accessible via the "Compare Neighborhoods" pill tab in the Explorer.',
         why: 'Advocates making the case for investment in a neighborhood benefit from comparing it directly to better-resourced areas using the same metrics. The data is already available.',
         tab: 'Neighborhood Explorer',
       },
@@ -336,29 +337,30 @@ const SECTIONS: RoadmapSection[] = [
     items: [
       {
         title: 'Racial Equity Dashboard',
-        status: 'planned',
-        description: 'A neighborhood-level dashboard showing income, homeownership rates, mortgage approval rates, poverty, and incarceration by race — drawing on Census ACS data and local reporting. Updated annually as new ACS data is released.',
+        status: 'completed',
+        description: 'Neighborhood-level income, homeownership rates, poverty, and incarceration by race drawn from Census ACS, alongside mortgage approval rates by race from CFPB HMDA data (2022). Live in Neighborhood Profiles as the "Racial & Economic Equity" section.',
         why: 'The Urban League\'s "State of Black Cincinnati" report (June 2024) documents stark disparities: 35.6% of Black residents in poverty vs. 16.5% of white; median household income $31,520 vs. $70,909; mortgage approval 17.5% vs. 67%. These gaps are not abstract statistics — they shape which neighborhoods are reinvested in and which aren\'t. Making them visible at the neighborhood level enables accountability.',
-        dataSource: 'U.S. Census ACS (already in our system) + Urban League State of Black Cincinnati report',
+        dataSource: 'U.S. Census ACS (already in our system) + CFPB HMDA 2022 (neighborhood_hmda.json)',
         dataSourceUrl: 'https://www.ulgso.org/blackcincinnati',
         relatedOrgs: ['Urban League of Greater Southwestern Ohio', 'All-In Cincinnati', 'Cincinnati NAACP'],
+        tab: 'Neighborhood Profiles',
       },
       {
         title: 'Connected Communities Zoning Reform Impact Tracker',
-        status: 'planned',
-        description: 'Track the impact of Cincinnati\'s Connected Communities zoning reform (adopted June 5, 2024; effective July 1, 2024) — which removed minimum lot sizes and parking mandates for most of the city — by monitoring new permit applications, housing unit additions, and rent changes in formerly restricted zones.',
+        status: 'completed',
+        description: 'Tracks the impact of Cincinnati\'s Connected Communities zoning reform (adopted June 5, 2024; effective July 1, 2024) — which removed minimum lot sizes and parking mandates for most of the city. Shows Reform Year 1 (Jul 2024–Jun 2025) vs. baseline (Jul 2023–Jun 2024): city-wide summary, by-neighborhood YoY bar chart, and residential permit type breakdown. Live in the Housing Justice tab.',
         why: 'Connected Communities is the biggest zoning change in Cincinnati in decades, explicitly designed to increase housing supply. Whether it produces affordable units or just market-rate infill is an open empirical question that will determine its equity impact. The permit and zoning data to answer it is already in our system.',
         dataSource: 'Cincinnati Open Data: Building Permits (uhjb-xac9) + Tax Abatements (tkp7-yf64) + CAGIS Zoning Layer',
-        tab: 'Neighborhood Explorer',
+        tab: 'Housing Justice',
       },
       {
         title: 'Mortgage Lending & Homeownership Gap Map',
-        status: 'needs-partner',
-        description: 'A map of mortgage application approval rates by race and neighborhood — showing where lending disparities concentrate and how they have changed over time.',
-        why: 'Mortgage approval rates for Black borrowers in Cincinnati were 17.5% in 2020 vs. 67% for white borrowers. This lending gap directly shapes homeownership rates, wealth accumulation, and neighborhood stability. HMDA (Home Mortgage Disclosure Act) data is public at the federal level, but requires cleaning and geographic matching.',
-        dataSource: 'HMDA data (Consumer Financial Protection Bureau, public)',
+        status: 'completed',
+        description: 'Mortgage application approval rates by race and neighborhood — showing where lending disparities concentrate and how they have changed over time. Live in Neighborhood Profiles as part of the Racial Equity section, using CFPB HMDA 2022 data matched to Cincinnati neighborhoods.',
+        why: 'Mortgage approval rates for Black borrowers in Cincinnati were 17.5% in 2020 vs. 67% for white borrowers. This lending gap directly shapes homeownership rates, wealth accumulation, and neighborhood stability.',
+        dataSource: 'HMDA data (Consumer Financial Protection Bureau, public) — neighborhood_hmda.json',
         dataSourceUrl: 'https://www.consumerfinance.gov/data-research/hmda/',
-        relatedOrgs: ['Housing Opportunities Made Equal (HOME Cincy)', 'Federal Home Loan Bank of Cincinnati', 'Urban League'],
+        tab: 'Neighborhood Profiles',
       },
       {
         title: 'School Funding Equity Tracker',
@@ -417,7 +419,7 @@ const SECTIONS: RoadmapSection[] = [
         status: 'completed',
         description: 'A dedicated public methodology page documenting what this site\'s data can and can\'t do — neighborhood boundary ambiguity (Statistical Neighborhood Approximations vs. Community Council Boundaries), census-tract-to-neighborhood mapping via nearest centroid, data vintages, the Legistar API blockage, AI-generated content disclosures, tax modeling caveats, and language translation limits. One citable URL for advocates, journalists, and residents who want to know the fine print before acting on a chart.',
         why: 'Caveats buried in per-tab tooltips don\'t get cited. A single page that advocates can link to — and that encourages corrections via GitHub issues — is more load-bearing than a footer disclaimer. It also makes the boundary-definition problem (SNA vs. Community Council, with Oakley as the worked example) visible to residents who encounter it in lived experience but have never seen it named.',
-        tab: 'Limitations',
+        tab: 'About & Methods',
       },
       {
         title: 'Civic Organizations Directory',
@@ -531,6 +533,15 @@ const Legend: React.FC = () => (
 
 // ─── Progress summary ────────────────────────────────────────────────────────
 
+const SEGMENT_ORDER: Array<[Status, string]> = [
+  ['completed',    'bg-green-500'],
+  ['in-progress',  'bg-amber-400'],
+  ['planned',      'bg-blue-400'],
+  ['seeking-data', 'bg-red-400'],
+  ['needs-partner','bg-purple-400'],
+  ['open-question','bg-gray-400'],
+]
+
 const RoadmapProgress: React.FC = () => {
   const allItems = SECTIONS.flatMap(s => s.items)
   const total = allItems.length
@@ -538,9 +549,9 @@ const RoadmapProgress: React.FC = () => {
     acc[item.status] = (acc[item.status] ?? 0) + 1
     return acc
   }, {})
-  const completed   = byStatus['completed']   ?? 0
-  const inProgress  = byStatus['in-progress'] ?? 0
-  const blocked     = (byStatus['seeking-data'] ?? 0) + (byStatus['needs-partner'] ?? 0)
+  const completed  = byStatus['completed']   ?? 0
+  const inProgress = byStatus['in-progress'] ?? 0
+  const blocked    = (byStatus['seeking-data'] ?? 0) + (byStatus['needs-partner'] ?? 0)
   const pct = Math.round((completed / total) * 100)
 
   return (
@@ -558,29 +569,30 @@ const RoadmapProgress: React.FC = () => {
         <span className="text-2xl font-bold text-[#1A4A6B] shrink-0">{pct}%</span>
       </div>
 
-      {/* Progress bar */}
-      <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-        <div
-          className="h-full bg-[#1A4A6B] rounded-full transition-all duration-700"
-          style={{ width: `${pct}%` }}
-        />
+      {/* Segmented progress bar */}
+      <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden flex">
+        {SEGMENT_ORDER.filter(([status]) => (byStatus[status] ?? 0) > 0).map(([status, color]) => (
+          <div
+            key={status}
+            className={`h-full ${color} transition-all duration-700`}
+            style={{ width: `${((byStatus[status] ?? 0) / total) * 100}%` }}
+          />
+        ))}
       </div>
 
       {/* Status key */}
       <div className="flex flex-wrap gap-3 mt-3">
-        {([
-          ['completed',   'bg-green-500',  `${completed} complete`],
-          ['in-progress', 'bg-amber-400',  `${inProgress} in progress`],
-          ['planned',     'bg-blue-400',   `${byStatus['planned'] ?? 0} planned`],
-          ['seeking-data','bg-red-400',    `${byStatus['seeking-data'] ?? 0} seeking data`],
-          ['needs-partner','bg-purple-400',`${byStatus['needs-partner'] ?? 0} needs partner`],
-          ['open-question','bg-gray-400',  `${byStatus['open-question'] ?? 0} open questions`],
-        ] as const).map(([, dotColor, label]) => (
-          <span key={label} className="inline-flex items-center gap-1.5 text-xs text-gray-600">
-            <span className={`w-2 h-2 rounded-full ${dotColor}`} />
-            {label}
-          </span>
-        ))}
+        {SEGMENT_ORDER.map(([status, dotColor]) => {
+          const count = byStatus[status] ?? 0
+          if (count === 0) return null
+          const label = STATUS_CONFIG[status].label
+          return (
+            <span key={status} className="inline-flex items-center gap-1.5 text-xs text-gray-600">
+              <span className={`w-2 h-2 rounded-full ${dotColor}`} />
+              {count} {label.toLowerCase()}
+            </span>
+          )
+        })}
       </div>
     </div>
   )
@@ -624,95 +636,8 @@ const Roadmap: React.FC = () => {
     {/* Progress summary */}
     <RoadmapProgress />
 
-    {/* Why this exists */}
-    <div className="mb-8 bg-[#1A4A6B] text-white rounded-xl p-6">
-      <h2 className="text-base font-bold mb-3 text-white">Why we built this</h2>
-      <p className="text-blue-100 text-sm leading-relaxed mb-4">
-        Cincinnati&apos;s public data is largely open — but it&apos;s scattered across dozens of portals,
-        in formats that require technical expertise to use. That means the people with the most at
-        stake in civic decisions — tenants, parents, community organizers — are the least likely to
-        access it. We exist to close that gap.
-      </p>
-      <p className="text-blue-100 text-sm leading-relaxed mb-5">
-        Every number on this platform represents a real tradeoff: zoning reform vs. displacement risk.
-        Transit investment vs. who actually benefits. Police accountability vs. community trust. Flood
-        protection vs. riverfront development. We try to make those tradeoffs legible, not obscure them.
-      </p>
-      {/* Stat row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {[
-          { stat: '13,601', label: 'eviction filings in Hamilton County, 2024 — 9% of all renter households' },
-          { stat: '33,449', label: 'lead or unknown water service lines still active in Cincinnati as of 2025' },
-          { stat: '$31,520', label: 'median household income for Black families vs. $70,909 for white families' },
-          { stat: '7%', label: 'of tenants have legal representation in housing court — vs. 93% of landlords' },
-        ].map(({ stat, label }) => (
-          <div key={stat} className="bg-white/10 rounded-lg p-3">
-            <div className="text-xl font-bold text-white">{stat}</div>
-            <div className="text-xs text-blue-200 leading-tight mt-1">{label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    {/* Guiding principles */}
-    <div className="mb-8 bg-gray-50 border border-gray-200 rounded-xl p-5">
-      <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">How we decide what to build</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {[
-          {
-            title: 'Fill civic gaps, not dashboard gaps',
-            body: 'We build what residents actually need — even when it\'s harder. If no civic-facing lead service line map exists in Cincinnati, we build one.',
-          },
-          {
-            title: 'Show the tradeoffs',
-            body: 'Gentrification, transit, policing, flood risk — each involves real winners and losers. Our job is to make that visible, not to paper it over.',
-          },
-          {
-            title: 'Race and place together',
-            body: 'Every metric should be examinable by race and by neighborhood. Data that\'s only citywide can hide inequity.',
-          },
-          {
-            title: 'Accuracy over completeness',
-            body: 'A broken tab is worse than a missing one. We label gaps as gaps, and we don\'t ship data we haven\'t verified.',
-          },
-        ].map(({ title, body }) => (
-          <div key={title} className="flex gap-3">
-            <div className="w-1.5 rounded-full bg-[#1A4A6B] flex-shrink-0 mt-1" style={{ height: 'auto', minHeight: '1.5rem' }} />
-            <div>
-              <p className="text-sm font-semibold text-gray-800">{title}</p>
-              <p className="text-xs text-gray-500 leading-relaxed mt-0.5">{body}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    {/* Legend */}
-    <div className="mb-8">
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Status key</p>
-      <Legend />
-    </div>
-
-    {/* Sections */}
-    {SECTIONS.map(section => (
-      <section key={section.id} className="mb-12">
-        <div className="flex items-center gap-3 mb-2">
-          <span className={`p-2 rounded-lg ${section.iconBg}`}>
-            <section.Icon />
-          </span>
-          <h2 className="text-lg font-bold text-gray-900">{section.heading}</h2>
-        </div>
-        <p className="text-sm text-gray-500 mb-5 ml-11">{section.subheading}</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {section.items.map(item => (
-            <ItemCard key={item.title} item={item} />
-          ))}
-        </div>
-      </section>
-    ))}
-
     {/* What we won't build */}
-    <div className="mb-10 border border-gray-200 rounded-xl p-5 bg-white">
+    <div className="mb-8 border border-gray-200 rounded-xl p-5 bg-white">
       <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-1">What we won&apos;t build</h2>
       <p className="text-xs text-gray-500 mb-4">
         Clarity about our limits is part of being trustworthy. These are explicit commitments, not omissions.
@@ -751,33 +676,82 @@ const Roadmap: React.FC = () => {
       </div>
     </div>
 
+    {/* Why this exists */}
+    <div className="mb-8 bg-[#1A4A6B] text-white rounded-xl p-6">
+      <h2 className="text-base font-bold mb-3 text-white">Why we built this</h2>
+      <p className="text-blue-100 text-sm leading-relaxed mb-4">
+        Cincinnati&apos;s public data is largely open — but it&apos;s scattered across dozens of portals,
+        in formats that require technical expertise to use. That means the people with the most at
+        stake in civic decisions — tenants, parents, community organizers — are the least likely to
+        access it. We exist to close that gap.
+      </p>
+      <p className="text-blue-100 text-sm leading-relaxed mb-5">
+        Every number on this platform represents a real tradeoff: zoning reform vs. displacement risk.
+        Transit investment vs. who actually benefits. Police accountability vs. community trust. Flood
+        protection vs. riverfront development. We try to make those tradeoffs legible, not obscure them.
+      </p>
+      {/* Stat row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { stat: '13,601', label: 'eviction filings in Hamilton County, 2024 — 9% of all renter households' },
+          { stat: '33,449', label: 'lead or unknown water service lines still active in Cincinnati as of 2025' },
+          { stat: '$31,520', label: 'median household income for Black families vs. $70,909 for white families' },
+          { stat: '7%', label: 'of tenants have legal representation in housing court — vs. 93% of landlords' },
+        ].map(({ stat, label }) => (
+          <div key={stat} className="bg-white/10 rounded-lg p-3">
+            <div className="text-xl font-bold text-white">{stat}</div>
+            <div className="text-xs text-blue-200 leading-tight mt-1">{label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Legend */}
+    <div className="mb-8">
+      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Status key</p>
+      <Legend />
+    </div>
+
+    {/* Sections */}
+    {SECTIONS.map(section => (
+      <section key={section.id} className="mb-12">
+        <div className="flex items-center gap-3 mb-2">
+          <span className={`p-2 rounded-lg ${section.iconBg}`}>
+            <section.Icon />
+          </span>
+          <h2 className="text-lg font-bold text-gray-900">{section.heading}</h2>
+        </div>
+        <p className="text-sm text-gray-500 mb-5 ml-11">{section.subheading}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {section.items.map(item => (
+            <ItemCard key={item.title} item={item} />
+          ))}
+        </div>
+      </section>
+    ))}
+
     {/* Footer CTA */}
     <div className="border-t border-gray-200 pt-8 mb-8">
       <div className="bg-gray-900 text-white rounded-xl p-6">
-        <h2 className="text-lg font-bold mb-2">Have data, skills, or community knowledge to contribute?</h2>
-        <p className="text-gray-300 text-sm leading-relaxed mb-4">
-          This is an open-source project. If your organization has data that would unlock any
-          of the &ldquo;Seeking Data&rdquo; or &ldquo;Needs Partner&rdquo; items above, or if you want to advocate for
-          a specific feature, we want to hear from you. Community input directly shapes the roadmap.
+        <h2 className="text-lg font-bold mb-2">Have data, knowledge, or feedback to share?</h2>
+        <p className="text-gray-300 text-sm leading-relaxed mb-5">
+          If your organization has data that would unlock any of the &ldquo;Seeking Data&rdquo; or
+          &ldquo;Needs Partner&rdquo; items above — or if you spot something wrong, missing, or
+          misleading — we want to hear from you. Community input directly shapes what gets built next.
         </p>
-        <div className="flex flex-wrap gap-3 text-sm">
-          <a href="https://data.cincinnati-oh.gov" target="_blank" rel="noopener noreferrer"
-            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-            Cincinnati Open Data Portal
-          </a>
-          <a href="https://evictionlab.org/eviction-tracking/cincinnati-oh/" target="_blank" rel="noopener noreferrer"
-            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-            Eviction Lab &mdash; Cincinnati
-          </a>
-          <a href="https://www.homecincy.org" target="_blank" rel="noopener noreferrer"
-            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-            HOME Cincy
-          </a>
-          <a href="https://www.ulgso.org/blackcincinnati" target="_blank" rel="noopener noreferrer"
-            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-            State of Black Cincinnati
-          </a>
-        </div>
+        <a
+          href="mailto:chanfriendly@gmail.com?subject=Cincinnati%20Civic%20Data%20—%20Feedback"
+          className="inline-flex items-center gap-2 bg-white text-gray-900 px-5 py-2.5 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          Send a message
+        </a>
+        <p className="text-gray-500 text-xs mt-3">
+          Opens your email client — no forms, no accounts.
+        </p>
       </div>
     </div>
   </div>
