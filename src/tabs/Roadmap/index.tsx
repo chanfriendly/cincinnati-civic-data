@@ -730,29 +730,13 @@ const Roadmap: React.FC = () => {
       </section>
     ))}
 
-    {/* Footer CTA */}
-    <div className="border-t border-gray-200 pt-8 mb-8">
-      <div className="bg-gray-900 text-white rounded-xl p-6">
-        <h2 className="text-lg font-bold mb-2">Have data, knowledge, or feedback to share?</h2>
-        <p className="text-gray-300 text-sm leading-relaxed mb-5">
-          If your organization has data that would unlock any of the &ldquo;Seeking Data&rdquo; or
-          &ldquo;Needs Partner&rdquo; items above — or if you spot something wrong, missing, or
-          misleading — we want to hear from you. Community input directly shapes what gets built next.
-        </p>
-        <a
-          href="mailto:chanfriendly@gmail.com?subject=Cincinnati%20Civic%20Data%20—%20Feedback"
-          className="inline-flex items-center gap-2 bg-white text-gray-900 px-5 py-2.5 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-          Send a message
-        </a>
-        <p className="text-gray-500 text-xs mt-3">
-          Opens your email client — no forms, no accounts.
-        </p>
-      </div>
+    {/* Footer pointer */}
+    <div className="border-t border-gray-200 pt-6 mb-8">
+      <p className="text-sm text-gray-500">
+        Have data to share, a correction, or a feature suggestion?{' '}
+        Contact options — email and GitHub — are in the{' '}
+        <span className="font-medium text-[#1A4A6B]">About &amp; Methods</span> tab under &ldquo;Report an issue or contribute.&rdquo;
+      </p>
     </div>
   </div>
   )
