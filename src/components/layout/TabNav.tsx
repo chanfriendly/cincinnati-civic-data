@@ -64,23 +64,6 @@ const PoliceIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' })
   </svg>
 )
 
-const ExplorerIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
-  <svg
-    className={className}
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-    />
-  </svg>
-)
-
 const DisplacementIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
   <svg
     className={className}
@@ -124,13 +107,6 @@ const TaxIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) =>
   </svg>
 )
 
-const InfoIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-)
-
 const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
   const { t } = useTranslation()
   const scrollRef = React.useRef<HTMLDivElement>(null)
@@ -158,19 +134,20 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
     scrollRef.current?.scrollBy({ left: dir === 'right' ? 200 : -200, behavior: 'smooth' })
   }
 
-  // Tab order tells a story: personal → neighborhood → housing justice
-  // → environmental health → police → compare → tax → about
-  // Note: Owner / Developer Search lives inside the Housing Justice tab as a sub-section.
+  // Tab order tells a story: personal → neighborhoods → housing justice
+  // → environmental health → police → tax
+  // Notes:
+  //   - "Neighborhoods" combines Profiles + Map & Compare (sub-nav inside)
+  //   - Owner / Developer Search lives inside Housing Justice as a sub-section
+  //   - About & Methods lives in the Header, not here
   const tabs: TabConfig[] = [
     { id: 'address',        icon: <AddressIcon />,       labelKey: 'nav.address' },
-    { id: 'neighborhood',   icon: <NeighborhoodIcon />,  labelKey: 'nav.neighborhood' },
+    { id: 'neighborhoods',  icon: <NeighborhoodIcon />,  labelKey: 'nav.neighborhoods' },
     { id: 'displacement',   icon: <DisplacementIcon />,  labelKey: 'nav.displacement' },
     { id: 'lead',           icon: <LeadIcon />,          labelKey: 'nav.lead' },
     { id: 'police',         icon: <PoliceIcon />,        labelKey: 'nav.police' },
-    { id: 'explorer',       icon: <ExplorerIcon />,      labelKey: 'nav.explorer' },
     { id: 'accessibility',  icon: <AccessibilityIcon />, labelKey: 'nav.accessibility' },
     { id: 'tax',            icon: <TaxIcon />,           labelKey: 'nav.tax' },
-    { id: 'about',          icon: <InfoIcon />,          labelKey: 'nav.about' },
   ]
 
   return (

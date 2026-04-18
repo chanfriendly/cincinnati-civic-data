@@ -1,6 +1,6 @@
 // ─── App-level ───────────────────────────────────────────────────────────────
 
-export type TabId = 'address' | 'neighborhood' | 'police' | 'explorer' | 'displacement' | 'accessibility' | 'lead' | 'tax' | 'about';
+export type TabId = 'address' | 'neighborhoods' | 'displacement' | 'lead' | 'police' | 'accessibility' | 'tax' | 'about';
 export type Language = 'en' | 'es';
 
 // ─── SODA API ────────────────────────────────────────────────────────────────

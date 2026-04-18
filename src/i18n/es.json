@@ -18,11 +18,10 @@
   },
   "nav": {
     "address": "Búsqueda de Dirección",
-    "neighborhood": "Perfiles de Barrio",
-    "police": "Rendición de Cuentas Policial",
-    "explorer": "Mapa de Barrios",
+    "neighborhoods": "Barrios",
     "displacement": "Justicia de Vivienda",
     "lead": "Seguridad del Plomo",
+    "police": "Rendición de Cuentas Policial",
     "accessibility": "Acceso para Discapacidades",
     "tax": "Impuestos e Ingresos",
     "about": "Acerca y Métodos"

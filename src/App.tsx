@@ -7,9 +7,8 @@ import type { TabId } from './types'
 
 // Lazy load tabs
 const AddressLookup = React.lazy(() => import('./tabs/AddressLookup'))
-const NeighborhoodProfiles = React.lazy(() => import('./tabs/NeighborhoodProfiles'))
+const Neighborhoods = React.lazy(() => import('./tabs/Neighborhoods'))
 const PoliceAccountability = React.lazy(() => import('./tabs/PoliceAccountability'))
-const NeighborhoodExplorer = React.lazy(() => import('./tabs/NeighborhoodExplorer'))
 const DisplacementTab = React.lazy(() => import('./tabs/Displacement'))
 const Accessibility = React.lazy(() => import('./tabs/Accessibility'))
 const LeadSafety = React.lazy(() => import('./tabs/LeadSafety'))
@@ -33,22 +32,16 @@ const AppContent: React.FC = () => {
             <AddressLookup />
           </Suspense>
         )
-      case 'neighborhood':
+      case 'neighborhoods':
         return (
           <Suspense fallback={<TabLoadingFallback />}>
-            <NeighborhoodProfiles />
+            <Neighborhoods />
           </Suspense>
         )
       case 'police':
         return (
           <Suspense fallback={<TabLoadingFallback />}>
             <PoliceAccountability />
-          </Suspense>
-        )
-      case 'explorer':
-        return (
-          <Suspense fallback={<TabLoadingFallback />}>
-            <NeighborhoodExplorer />
           </Suspense>
         )
       case 'accessibility':
@@ -88,7 +81,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header />
+      <Header onTabChange={setActiveTab} />
       <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
       <main className="flex-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

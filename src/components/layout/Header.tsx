@@ -1,14 +1,15 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLanguage } from '../../context/LanguageContext'
+import type { TabId } from '../../types'
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onTabChange: (tab: TabId) => void
+}
+
+const Header: React.FC<HeaderProps> = ({ onTabChange }) => {
   const { t } = useTranslation()
   const { language, setLanguage } = useLanguage()
-
-  const handleLanguageToggle = (lang: 'en' | 'es') => {
-    setLanguage(lang)
-  }
 
   return (
     <header
@@ -32,11 +33,20 @@ const Header: React.FC = () => {
             </p>
           </div>
 
-          {/* Right: Language Toggle */}
-          <nav className="flex items-center gap-4" aria-label="Language selection">
+          {/* Right: About link + Language Toggle */}
+          <nav className="flex items-center gap-4" aria-label="Site navigation">
+            {/* About & Methods — meta link, lives outside the data tab row */}
+            <button
+              onClick={() => onTabChange('about')}
+              className="text-sm text-gray-500 hover:text-[#1A4A6B] transition-colors hidden sm:block"
+              aria-label="About & Methods"
+            >
+              About &amp; Methods
+            </button>
+
             <div className="flex gap-3 border-l border-gray-200 pl-4">
               <button
-                onClick={() => handleLanguageToggle('en')}
+                onClick={() => setLanguage('en')}
                 className={`px-3 py-1 font-medium transition-colors ${
                   language === 'en'
                     ? 'text-[#1A4A6B] border-b-2 border-[#1A4A6B]'
@@ -48,7 +58,7 @@ const Header: React.FC = () => {
                 EN
               </button>
               <button
-                onClick={() => handleLanguageToggle('es')}
+                onClick={() => setLanguage('es')}
                 className={`px-3 py-1 font-medium transition-colors ${
                   language === 'es'
                     ? 'text-[#1A4A6B] border-b-2 border-[#1A4A6B]'
