@@ -20,14 +20,12 @@
     "address": "Address Lookup",
     "neighborhood": "Neighborhood Profiles",
     "police": "Police Accountability",
-    "explorer": "Neighborhood Explorer",
+    "explorer": "Neighborhood Map",
     "displacement": "Housing Justice",
-    "owner": "Owner Watch",
     "lead": "Lead Safety",
-    "accessibility": "Accessibility",
+    "accessibility": "Disability Access",
     "tax": "Tax & Revenue",
-    "roadmap": "Future Work",
-    "limitations": "About & Limitations"
+    "about": "About & Methods"
   },
   "address": {
     "title": "Address Lookup",

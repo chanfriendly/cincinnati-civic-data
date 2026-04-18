@@ -529,6 +529,63 @@ const Legend: React.FC = () => (
   </div>
 )
 
+// ─── Progress summary ────────────────────────────────────────────────────────
+
+const RoadmapProgress: React.FC = () => {
+  const allItems = SECTIONS.flatMap(s => s.items)
+  const total = allItems.length
+  const byStatus = allItems.reduce<Record<string, number>>((acc, item) => {
+    acc[item.status] = (acc[item.status] ?? 0) + 1
+    return acc
+  }, {})
+  const completed   = byStatus['completed']   ?? 0
+  const inProgress  = byStatus['in-progress'] ?? 0
+  const blocked     = (byStatus['seeking-data'] ?? 0) + (byStatus['needs-partner'] ?? 0)
+  const pct = Math.round((completed / total) * 100)
+
+  return (
+    <div className="mb-8 bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <div>
+          <p className="text-base font-bold text-gray-900">
+            {completed} of {total} features complete
+          </p>
+          <p className="text-sm text-gray-500 mt-0.5">
+            {inProgress > 0 && <span className="text-amber-700 font-medium">{inProgress} in progress · </span>}
+            {byStatus['planned'] ?? 0} planned · {blocked} blocked on data or partners
+          </p>
+        </div>
+        <span className="text-2xl font-bold text-[#1A4A6B] shrink-0">{pct}%</span>
+      </div>
+
+      {/* Progress bar */}
+      <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-[#1A4A6B] rounded-full transition-all duration-700"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+
+      {/* Status key */}
+      <div className="flex flex-wrap gap-3 mt-3">
+        {([
+          ['completed',   'bg-green-500',  `${completed} complete`],
+          ['in-progress', 'bg-amber-400',  `${inProgress} in progress`],
+          ['planned',     'bg-blue-400',   `${byStatus['planned'] ?? 0} planned`],
+          ['seeking-data','bg-red-400',    `${byStatus['seeking-data'] ?? 0} seeking data`],
+          ['needs-partner','bg-purple-400',`${byStatus['needs-partner'] ?? 0} needs partner`],
+          ['open-question','bg-gray-400',  `${byStatus['open-question'] ?? 0} open questions`],
+        ] as const).map(([, dotColor, label]) => (
+          <span key={label} className="inline-flex items-center gap-1.5 text-xs text-gray-600">
+            <span className={`w-2 h-2 rounded-full ${dotColor}`} />
+            {label}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 const Roadmap: React.FC = () => {
@@ -554,7 +611,7 @@ const Roadmap: React.FC = () => {
     )}
 
     {/* Page header */}
-    <div className="mb-8">
+    <div className="mb-6">
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Future Work &amp; Data Roadmap</h1>
       <p className="text-gray-600 max-w-3xl leading-relaxed">
         This platform is built for community activists, tenants, journalists, and anyone who
@@ -563,6 +620,9 @@ const Roadmap: React.FC = () => {
         the next layer of insight.
       </p>
     </div>
+
+    {/* Progress summary */}
+    <RoadmapProgress />
 
     {/* Why this exists */}
     <div className="mb-8 bg-[#1A4A6B] text-white rounded-xl p-6">

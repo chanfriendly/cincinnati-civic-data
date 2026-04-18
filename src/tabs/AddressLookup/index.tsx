@@ -626,6 +626,94 @@ export default function AddressLookup() {
         <p className="text-xs text-gray-400 mt-1.5">Type at least 3 characters to search — results are limited to Cincinnati addresses.</p>
       </div>
 
+      {/* ── Empty state: mission statement + preview ─────────────────────────── */}
+      {!selectedAddress && (
+        <div className="space-y-4">
+          {/* Mission statement */}
+          <div className="bg-[#1A4A6B] text-white rounded-xl p-6">
+            <p className="text-base font-semibold mb-2">What you'll find for any Cincinnati address</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-1.5 text-sm text-blue-100">
+              {[
+                '🏘️ Zoning & property record',
+                '🚨 Crime incidents (last 12 mo.)',
+                '💧 Lead pipe risk level',
+                '🌊 FEMA flood zone status',
+                '🚌 Nearby bus stops',
+                '🏫 Nearby schools',
+                '🌳 Parks within ¾ mile',
+                '🔧 311 & inspection history',
+                '🚦 Live traffic incidents',
+              ].map(item => (
+                <span key={item} className="flex items-center gap-1.5">{item}</span>
+              ))}
+            </div>
+            <p className="text-xs text-blue-200 mt-4">
+              Data sourced from Cincinnati Open Data, CAGIS, FEMA, Census ACS, and SORTA — updated daily.
+            </p>
+          </div>
+
+          {/* Preview cards — example data with clear labeling */}
+          <div className="relative">
+            {/* "Example data" watermark banner */}
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex-1 h-px bg-gray-200" />
+              <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 px-2">
+                Example · search your address to see real results
+              </span>
+              <div className="flex-1 h-px bg-gray-200" />
+            </div>
+
+            <div className="opacity-60 pointer-events-none select-none space-y-3">
+              {/* At a Glance bar preview */}
+              <div className="bg-white rounded-lg shadow-sm px-5 py-4">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">At a Glance · 4247 Edwards Rd, Hyde Park</p>
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                  {[
+                    { emoji: '🏘️', label: 'Zoning',   value: 'R-1A' },
+                    { emoji: '🌊', label: 'Flood',    value: 'Zone X' },
+                    { emoji: '🚨', label: 'Crime',    value: '4 incidents' },
+                    { emoji: '💧', label: 'Lead',     value: 'Low risk' },
+                    { emoji: '🚌', label: 'Transit',  value: '11 stops' },
+                    { emoji: '🏫', label: 'Schools',  value: '3 nearby' },
+                  ].map(({ emoji, label, value }) => (
+                    <div key={label} className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+                      <span className="text-base mb-0.5">{emoji}</span>
+                      <span className="text-[10px] text-gray-400 uppercase tracking-wide">{label}</span>
+                      <span className="text-xs font-bold text-[#1A4A6B] mt-0.5">{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sample data cards row */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="bg-white rounded-lg shadow-sm p-4">
+                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Property Record</p>
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-sm"><span className="text-gray-500">Zoning</span><span className="font-medium">R-1A Single Family</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-gray-500">Neighborhood</span><span className="font-medium">Hyde Park</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-gray-500">Historic</span><span className="font-medium text-amber-700">Hyde Park Historic Dist.</span></div>
+                  </div>
+                </div>
+                <div className="bg-white rounded-lg shadow-sm p-4">
+                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Lead Safety</p>
+                  <div className="bg-green-50 rounded p-2 text-center">
+                    <p className="text-green-700 font-semibold text-sm">Low Risk</p>
+                    <p className="text-xs text-gray-500 mt-1">84% copper lines in this neighborhood</p>
+                  </div>
+                </div>
+                <div className="bg-white rounded-lg shadow-sm p-4">
+                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">AI Summary</p>
+                  <p className="text-xs text-gray-500 italic leading-relaxed">
+                    "This address is in the Hyde Park Historic District with low flood risk, 4 reported incidents nearby in the past year, and 11 bus stops within walking distance…"
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Map container — always in DOM so mapContainer ref is always set.
           Hidden when no address selected. Same pattern as ChoroplethMap fix. */}
       <div className={selectedAddress ? 'bg-white rounded-lg shadow-sm p-6' : 'hidden'}>

@@ -20,14 +20,12 @@
     "address": "Búsqueda de Dirección",
     "neighborhood": "Perfiles de Barrio",
     "police": "Rendición de Cuentas Policial",
-    "explorer": "Explorador de Barrios",
+    "explorer": "Mapa de Barrios",
     "displacement": "Justicia de Vivienda",
-    "owner": "Vigilancia de Propietarios",
     "lead": "Seguridad del Plomo",
-    "accessibility": "Accesibilidad",
+    "accessibility": "Acceso para Discapacidades",
     "tax": "Impuestos e Ingresos",
-    "roadmap": "Trabajo Futuro",
-    "limitations": "Acerca de y Limitaciones"
+    "about": "Acerca y Métodos"
   },
   "address": {
     "title": "Búsqueda de Dirección",

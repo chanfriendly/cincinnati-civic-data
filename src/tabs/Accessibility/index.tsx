@@ -930,11 +930,26 @@ export default function Accessibility() {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-[#1A4A6B]">♿ Accessibility Resource Center</h1>
+        <h1 className="text-2xl font-bold text-[#1A4A6B]">Disability Access Resource Center</h1>
         <p className="text-gray-600 mt-1 text-sm">
           Disability demographics, transit coverage, and infrastructure data for Cincinnati neighborhoods.
           Use the impairment type selector to focus on what matters to you.
         </p>
+      </div>
+
+      {/* Data scarcity banner */}
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
+        <span className="text-amber-500 text-lg shrink-0 mt-0.5">⚠️</span>
+        <div>
+          <p className="text-sm font-semibold text-amber-800 mb-1">This section has limited data — and that's part of the story</p>
+          <p className="text-sm text-amber-700 leading-relaxed">
+            Cincinnati does not publish most disability-related infrastructure data as open data — no curb-cut
+            inventory, no audible pedestrian signal map, no accessible parking enforcement records. What you see
+            here is drawn from U.S. Census ACS demographics and SORTA's bus stop network. The gaps are documented
+            below in each view's <strong>"This data should be public"</strong> section, with specific agencies
+            you can contact to request it.
+          </p>
+        </div>
       </div>
 
       {/* Controls: neighborhood + view selector */}

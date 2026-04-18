@@ -18,12 +18,17 @@ const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4 sm:gap-0">
           {/* Left: Logo/Title */}
-          <div className="flex items-baseline gap-2">
-            <h1 className="text-2xl font-bold text-[#1A4A6B]" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
-              Cincinnati
-            </h1>
-            <p className="text-lg text-gray-700 font-normal" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
-              Civic Data Platform
+          <div className="flex flex-col">
+            <div className="flex items-baseline gap-2">
+              <h1 className="text-2xl font-bold text-[#1A4A6B]" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                Cincinnati
+              </h1>
+              <p className="text-lg text-gray-700 font-normal" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                Civic Data Platform
+              </p>
+            </div>
+            <p className="text-xs text-gray-500 hidden sm:block" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
+              Public records for residents, organizers, and journalists
             </p>
           </div>
 

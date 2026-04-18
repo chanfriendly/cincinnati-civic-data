@@ -10,13 +10,11 @@ const AddressLookup = React.lazy(() => import('./tabs/AddressLookup'))
 const NeighborhoodProfiles = React.lazy(() => import('./tabs/NeighborhoodProfiles'))
 const PoliceAccountability = React.lazy(() => import('./tabs/PoliceAccountability'))
 const NeighborhoodExplorer = React.lazy(() => import('./tabs/NeighborhoodExplorer'))
-const Roadmap = React.lazy(() => import('./tabs/Roadmap'))
 const DisplacementTab = React.lazy(() => import('./tabs/Displacement'))
-const OwnerActivity = React.lazy(() => import('./tabs/OwnerActivity'))
 const Accessibility = React.lazy(() => import('./tabs/Accessibility'))
 const LeadSafety = React.lazy(() => import('./tabs/LeadSafety'))
 const TaxRevenue = React.lazy(() => import('./tabs/TaxRevenue'))
-const Limitations = React.lazy(() => import('./tabs/Limitations'))
+const About = React.lazy(() => import('./tabs/About'))
 
 const TabLoadingFallback: React.FC = () => (
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -65,22 +63,10 @@ const AppContent: React.FC = () => {
             <LeadSafety />
           </Suspense>
         )
-      case 'roadmap':
-        return (
-          <Suspense fallback={<TabLoadingFallback />}>
-            <Roadmap />
-          </Suspense>
-        )
       case 'displacement':
         return (
           <Suspense fallback={<TabLoadingFallback />}>
             <DisplacementTab />
-          </Suspense>
-        )
-      case 'owner':
-        return (
-          <Suspense fallback={<TabLoadingFallback />}>
-            <OwnerActivity />
           </Suspense>
         )
       case 'tax':
@@ -89,10 +75,10 @@ const AppContent: React.FC = () => {
             <TaxRevenue />
           </Suspense>
         )
-      case 'limitations':
+      case 'about':
         return (
           <Suspense fallback={<TabLoadingFallback />}>
-            <Limitations />
+            <About />
           </Suspense>
         )
       default:

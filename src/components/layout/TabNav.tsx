@@ -81,24 +81,6 @@ const ExplorerIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' 
   </svg>
 )
 
-const RoadmapIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
-  <svg
-    className={className}
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-    />
-  </svg>
-)
-
-
 const DisplacementIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
   <svg
     className={className}
@@ -122,13 +104,6 @@ const LeadIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) =
       d="M12 2C12 2 5 10 5 14a7 7 0 0014 0c0-4-7-12-7-12z" />
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
       d="M12 17v.01" />
-  </svg>
-)
-
-const OwnerIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
   </svg>
 )
 
@@ -183,20 +158,19 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
     scrollRef.current?.scrollBy({ left: dir === 'right' ? 200 : -200, behavior: 'smooth' })
   }
 
-  // Tab order tells a story: personal → neighborhood → housing justice → owner patterns
-  // → environmental health → police → compare → transport → what's coming
+  // Tab order tells a story: personal → neighborhood → housing justice
+  // → environmental health → police → compare → tax → about
+  // Note: Owner / Developer Search lives inside the Housing Justice tab as a sub-section.
   const tabs: TabConfig[] = [
     { id: 'address',        icon: <AddressIcon />,       labelKey: 'nav.address' },
     { id: 'neighborhood',   icon: <NeighborhoodIcon />,  labelKey: 'nav.neighborhood' },
     { id: 'displacement',   icon: <DisplacementIcon />,  labelKey: 'nav.displacement' },
-    { id: 'owner',          icon: <OwnerIcon />,         labelKey: 'nav.owner' },
     { id: 'lead',           icon: <LeadIcon />,          labelKey: 'nav.lead' },
     { id: 'police',         icon: <PoliceIcon />,        labelKey: 'nav.police' },
     { id: 'explorer',       icon: <ExplorerIcon />,      labelKey: 'nav.explorer' },
     { id: 'accessibility',  icon: <AccessibilityIcon />, labelKey: 'nav.accessibility' },
     { id: 'tax',            icon: <TaxIcon />,           labelKey: 'nav.tax' },
-    { id: 'roadmap',        icon: <RoadmapIcon />,       labelKey: 'nav.roadmap' },
-    { id: 'limitations',    icon: <InfoIcon />,          labelKey: 'nav.limitations' },
+    { id: 'about',          icon: <InfoIcon />,          labelKey: 'nav.about' },
   ]
 
   return (
