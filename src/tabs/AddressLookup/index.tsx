@@ -171,7 +171,7 @@ export default function AddressLookup() {
     selectedAddress
       ? {
           $where: `${bboxWhereText('latitude_x', 'longitude_x', 400)} AND date_reported >= '${oneYearAgo}'`,
-          $limit: 100,
+          $limit: 500,
           $order: 'date_reported DESC',
         }
       : {},
@@ -184,7 +184,7 @@ export default function AddressLookup() {
     selectedAddress
       ? {
           $where: `${bboxWhere('latitude_x', 'longitude_x', 400)} AND datereported >= '${oneYearAgo}'`,
-          $limit: 100,
+          $limit: 500,
           $order: 'datereported DESC',
         }
       : {},
