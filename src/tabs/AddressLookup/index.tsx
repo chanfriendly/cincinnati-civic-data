@@ -65,6 +65,24 @@ interface NearbySchool extends SchoolRecord {
   distance: number; // miles
 }
 
+// Healthcare facility record (from public/data/healthcare_facilities.json)
+interface HealthcareFacilityRecord {
+  name: string;
+  type: string;   // 'hospital' | 'urgent_care' | 'clinic' | 'mental_health' | 'substance_use' | 'dentist' | 'pharmacy'
+  category: string;
+  address: string;
+  phone?: string;
+  website?: string;
+  lat: number;
+  lon: number;
+  source: string;
+  fqhc: boolean;
+}
+
+interface NearbyFacility extends HealthcareFacilityRecord {
+  distance: number; // miles
+}
+
 // Mapbox geocoding feature — includes context array for neighborhood extraction
 interface MapboxContext {
   id: string;   // e.g. "neighborhood.1234", "place.5678"
@@ -269,6 +287,29 @@ export default function AddressLookup() {
       })
       .catch(() => setNearbySchools([]))
       .finally(() => setLoadingSchools(false));
+  }, [selectedAddress]);
+
+  // ── Nearby healthcare facilities (static JSON) ───────────────────────────────
+  const [nearbyHealthcare, setNearbyHealthcare] = useState<NearbyFacility[]>([]);
+  const [loadingHealthcare, setLoadingHealthcare] = useState(false);
+
+  useEffect(() => {
+    if (!selectedAddress) return;
+    setLoadingHealthcare(true);
+    fetch('/data/healthcare_facilities.json')
+      .then((res) => res.json())
+      .then((facilities: HealthcareFacilityRecord[]) => {
+        const nearby = facilities
+          .map((f) => ({
+            ...f,
+            distance: distanceMiles(selectedAddress.lat, selectedAddress.lng, f.lat, f.lon),
+          }))
+          .filter((f) => f.distance <= 1.0)
+          .sort((a, b) => a.distance - b.distance);
+        setNearbyHealthcare(nearby);
+      })
+      .catch(() => setNearbyHealthcare([]))
+      .finally(() => setLoadingHealthcare(false));
   }, [selectedAddress]);
 
   // ── Lead service line lookup by neighborhood ─────────────────────────────────
@@ -554,7 +595,7 @@ export default function AddressLookup() {
 
   // ── UI tab state ──────────────────────────────────────────────────────────────
   const [propertyTab, setPropertyTab] = useState<'overview' | 'violations' | 'abatements'>('overview');
-  const [amenitiesTab, setAmenitiesTab] = useState<'parks' | 'schools' | 'transit'>('parks');
+  const [amenitiesTab, setAmenitiesTab] = useState<'parks' | 'schools' | 'transit' | 'healthcare'>('parks');
 
   // Group crime by category for a quick breakdown chart
   const crimeByCategory = useMemo(() => {
@@ -1332,10 +1373,22 @@ export default function AddressLookup() {
 
           <div className="bg-white rounded-lg shadow-sm p-6">
             {/* Tab switcher */}
-            <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-5 self-start w-fit">
-              {(['parks', 'schools', 'transit'] as const).map((tab) => {
-                const counts = { parks: nearbyParks.length, schools: nearbySchools.length, transit: transitStops.length };
-                const loading = { parks: parksStatus === 'loading', schools: loadingSchools, transit: loadingTransit };
+            <div className="flex flex-wrap gap-1 bg-gray-100 rounded-lg p-1 mb-5 self-start w-fit">
+              {(['parks', 'schools', 'transit', 'healthcare'] as const).map((tab) => {
+                const counts = {
+                  parks:      nearbyParks.length,
+                  schools:    nearbySchools.length,
+                  transit:    transitStops.length,
+                  healthcare: nearbyHealthcare.length,
+                };
+                const loading = {
+                  parks:      parksStatus === 'loading',
+                  schools:    loadingSchools,
+                  transit:    loadingTransit,
+                  healthcare: loadingHealthcare,
+                };
+                const icons = { parks: '🌳', schools: '🏫', transit: '🚌', healthcare: '🏥' };
+                const labels = { parks: 'Parks', schools: 'Schools', transit: 'Transit', healthcare: 'Healthcare' };
                 return (
                   <button
                     key={tab}
@@ -1344,8 +1397,8 @@ export default function AddressLookup() {
                       amenitiesTab === tab ? 'bg-white text-[#1A4A6B] shadow-sm' : 'text-gray-500 hover:text-gray-800'
                     }`}
                   >
-                    {tab === 'parks' ? '🌳' : tab === 'schools' ? '🏫' : '🚌'}
-                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    {icons[tab]}
+                    {labels[tab]}
                     {!loading[tab] && (
                       <span className={`text-[10px] rounded-full px-1.5 py-0.5 font-bold ${
                         amenitiesTab === tab ? 'bg-[#1A4A6B] text-white' : 'bg-gray-200 text-gray-600'
@@ -1451,6 +1504,107 @@ export default function AddressLookup() {
                 <DataAttribution source="SORTA GTFS Bus Stops" uid="sorta-stops" />
               </>
             )}
+
+            {/* Healthcare tab */}
+            {amenitiesTab === 'healthcare' && (() => {
+              // Type labels and ordering
+              const TYPE_ORDER = ['hospital', 'urgent_care', 'mental_health', 'substance_use', 'clinic', 'dentist', 'pharmacy'];
+              const TYPE_LABELS: Record<string, string> = {
+                hospital:      'Hospital',
+                urgent_care:   'Urgent Care',
+                clinic:        'Clinic / Health Center',
+                mental_health: 'Mental Health',
+                substance_use: 'Substance Use Treatment',
+                dentist:       'Dental',
+                pharmacy:      'Pharmacy',
+              };
+              const TYPE_ICONS: Record<string, string> = {
+                hospital:      '🏥',
+                urgent_care:   '🚑',
+                clinic:        '🏨',
+                mental_health: '🧠',
+                substance_use: '💊',
+                dentist:       '🦷',
+                pharmacy:      '💊',
+              };
+              // Group by type, sorted by TYPE_ORDER
+              const grouped = TYPE_ORDER
+                .map((type) => ({
+                  type,
+                  facilities: nearbyHealthcare.filter((f) => f.type === type),
+                }))
+                .filter((g) => g.facilities.length > 0);
+
+              const fqhcs = nearbyHealthcare.filter((f) => f.fqhc);
+
+              return (
+                <>
+                  {loadingHealthcare ? (
+                    <p className="text-sm text-gray-400">Loading healthcare facilities…</p>
+                  ) : nearbyHealthcare.length > 0 ? (
+                    <div className="space-y-4">
+                      {/* FQHC highlight banner */}
+                      {fqhcs.length > 0 && (
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                          <p className="text-xs font-semibold text-green-800 mb-1">
+                            🏅 Federally Qualified Health Centers nearby ({fqhcs.length})
+                          </p>
+                          <p className="text-[10px] text-green-700">
+                            FQHCs provide sliding-scale care regardless of ability to pay or insurance status.
+                          </p>
+                          {fqhcs.slice(0, 3).map((f, i) => (
+                            <div key={i} className="mt-1.5 text-xs text-green-900 font-medium">
+                              {f.name} · {f.distance.toFixed(2)} mi
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {grouped.map(({ type, facilities }) => (
+                        <div key={type}>
+                          <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1.5">
+                            {TYPE_ICONS[type]} {TYPE_LABELS[type] ?? type} ({facilities.length})
+                          </div>
+                          <div className="space-y-2">
+                            {facilities.slice(0, 6).map((f, idx) => (
+                              <div key={idx} className="border-b border-gray-100 pb-2 last:border-b-0">
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="flex-1 min-w-0">
+                                    <div className="text-sm font-medium text-gray-900 flex items-center gap-1">
+                                      {f.name}
+                                      {f.fqhc && (
+                                        <span className="text-[9px] bg-green-100 text-green-700 font-bold px-1 py-0.5 rounded">FQHC</span>
+                                      )}
+                                    </div>
+                                    {f.address && (
+                                      <div className="text-[11px] text-gray-500 truncate">{f.address}</div>
+                                    )}
+                                    {f.phone && (
+                                      <a href={`tel:${f.phone}`} className="text-[11px] text-[#1A4A6B] hover:underline">
+                                        {f.phone}
+                                      </a>
+                                    )}
+                                  </div>
+                                  <div className="text-xs text-gray-500 shrink-0">{f.distance.toFixed(2)} mi</div>
+                                </div>
+                              </div>
+                            ))}
+                            {facilities.length > 6 && (
+                              <p className="text-[10px] text-gray-400 italic">
+                                + {facilities.length - 6} more within 1 mile
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <EmptyState message="No healthcare facilities found within 1 mile" />
+                  )}
+                  <DataAttribution source="OpenStreetMap / Overpass API · HRSA Health Center Finder" uid="healthcare-facilities" />
+                </>
+              );
+            })()}
           </div>
 
           {/* ── Section: Your Representatives ─────────────────────────────────── */}

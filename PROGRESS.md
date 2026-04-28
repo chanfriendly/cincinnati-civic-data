@@ -6,6 +6,46 @@
 
 ## Session Log
 
+### Session 29 — Phase 7 Phase 1: Healthcare Facilities + CDC PLACES Health Outcomes (April 2026)
+
+**Context:** UC College of Nursing faculty met with Christian and confirmed they want to use the platform as-is (no formal partnership). They asked specifically about healthcare facilities, aggregate health data, community councils, and voting precincts. This session implements the first two.
+
+**What was built:**
+
+1. **`scripts/build_healthcare_facilities.py`** — Fetches Hamilton County healthcare facilities from:
+   - OpenStreetMap via Overpass API (bounding box: `38.98,-84.85,39.35,-84.25`)
+   - HRSA ArcGIS (attempted — URL returned 400; OSM is sole live source)
+   - SAMHSA treatment locator (attempted — unreachable from build environment)
+   - Result: **458 facilities** written to `public/data/healthcare_facilities.json`
+   - Types: clinic(249), pharmacy(83), dentist(79), hospital(29), mental_health(9), substance_use(8), urgent_care(1)
+   - FQHC detection via keyword matching on facility name
+
+2. **`scripts/build_health_outcomes.py`** — Fetches CDC PLACES census-tract health data for Hamilton County (FIPS 39061), maps tracts to SNA neighborhoods via nearest-centroid using `neighborhood_acs.json` lat/lon. Result: **41 neighborhoods** in `public/data/neighborhood_health_outcomes.json`. 10 measures: diabetes, obesity, hypertension, depression, mental health distress, smoking, physical inactivity, dental visits, health insurance, annual checkup.
+
+3. **`src/tabs/NeighborhoodProfiles/HealthOutcomesSection.tsx`** (NEW) — Displays all 10 CDC PLACES metrics grouped into four categories (Chronic Conditions, Mental Health, Health Behaviors, Access & Prevention). Each metric shows value, mini bar chart, and a "better/worse/near average" badge vs. city-wide average. Includes methodology disclosure banner.
+
+4. **`src/tabs/AddressLookup/index.tsx`** — Added Healthcare tab to the Parks/Schools/Transit amenities card. Loads `healthcare_facilities.json`, filters to 1-mile radius, groups by facility type, highlights FQHCs with a special green banner (sliding-scale care regardless of insurance).
+
+5. **`src/tabs/NeighborhoodProfiles/index.tsx`** — Imported and wired `HealthOutcomesSection` under the Public Health section divider, below Food Safety.
+
+6. **`src/tabs/Roadmap/index.tsx`** — Marked "Neighborhood Health Outcomes (CDC PLACES)" and "Healthcare Facility Map" as `completed`.
+
+7. **`scripts/build_health_outcomes.py`** — Fixed broken `$where` clause (was causing HTTP 400). Correct approach: filter by `countyfips=39061` directly as a query param, no SoQL `$where` needed.
+
+**Key decisions:**
+
+- `neighborhood_acs.json` is a flat list (not a dict), so tract-to-neighborhood mapping reads each record's lat/lon directly for nearest-centroid assignment. 226 tracts mapped, 41 of 52 neighborhoods covered (tracts with fewer than 3 measures skipped).
+- HRSA FQHCs and SAMHSA treatment centers are underrepresented in current data due to API unavailability from build environment. OSM data is the baseline; FQHC flag is set via name keyword matching.
+- Healthcare tab added as 4th tab in AddressLookup amenities card (Parks / Schools / Transit / Healthcare).
+- TypeScript compilation: clean (no errors after all changes).
+
+**What's next (Phase 7 remaining):**
+- Item 24: Life expectancy by neighborhood (CDC USALEEP CSV)
+- Item 26: Community councils directory (static JSON, manually curated)
+- Item 27: Voting precinct lookup (Hamilton County BOE GIS layer)
+- Item 28: Recreation centers (CAGIS or CRC website scrape)
+- Items 29–30: Expanded demographics + broadband (all ACS, already wired in)
+
 ### Session 28 — Tax & Revenue Transparency + Limitations Page (April 2026)
 
 **Goal:** Two adjacent but distinct additions to the platform:

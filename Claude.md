@@ -229,6 +229,20 @@ OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...
 21. **Tax & Revenue — next extensions** — (a) Cincinnati EITC / CTC state-level changes (Ohio Dept of Taxation); (b) per-neighborhood effective tax burden once a Cincinnati-specific incidence model becomes available; (c) expenditure-side companion: City general fund *spending* by category and neighborhood (complements the revenue view).
 22. **Limitations tab — community contributions** — wire a "submit a correction / share a source" path (GitHub issue template or form) so advocates can add primary-source citations for pre-1989 rate history, SNA vs. CCB mappings they've authenticated, and domain-specific caveats.
 
+### Phase 7 — Public Health & Community Assets (UC Nursing use case)
+> Motivated by UC College of Nursing community health assessment curriculum. Faculty confirmed no formal partnership — they will use the tool as-is. These items serve nursing students AND broader civic/advocacy audiences.
+
+23. ✅ **CDC PLACES health outcomes by neighborhood** — `public/data/neighborhood_health_outcomes.json` built (41 neighborhoods, 10 measures). `HealthOutcomesSection.tsx` added to Neighborhood Profiles under "Public Health" divider. Shows diabetes, obesity, hypertension, depression, mental health distress, smoking, inactivity, dental visits, insurance coverage, checkups — each with mini bar and city-avg comparison badge.
+24. **Life expectancy by neighborhood** — CDC USALEEP census-tract-level estimates for Cincinnati. One additional pre-built JSON, shown alongside PLACES data. No live API needed — downloadable CSV. Source: https://www.cdc.gov/nchs/nvss/usaleep/
+25. ✅ **Healthcare facility map** — `public/data/healthcare_facilities.json` built (458 facilities from OpenStreetMap Overpass API). Added as "Healthcare" tab in Address Lookup amenities card (1-mile filter, grouped by type, FQHC banner). **Known gap:** HRSA FQHC API and SAMHSA treatment locator were unreachable from build environment — OSM is sole source; FQHCs detected by name keyword matching. Re-run script with network access to enrich.
+26. **Community/neighborhood councils directory** — Static `public/data/community_councils.json`, manually curated from city's community councils page. Fields: name, neighborhood(s), contact email, phone, website, meeting schedule. Show in Neighborhood Profiles. Note SNA vs. CCB boundary ambiguity where applicable. Low maintenance; PR-editable.
+27. **Voting precinct lookup** — CAGIS/Hamilton County BOE GIS layer. Given address → precinct ID + polling location + BOE link. By neighborhood: voter registration rate + turnout in most recent election. Show in Address Lookup and Neighborhood Profiles under Politics & Government section.
+28. **Recreation centers (CRC)** — Pre-build from CAGIS or static from CRC website. Add to Neighborhood Profiles alongside parks acreage. Show in Address Lookup as nearby facilities.
+29. **Expanded demographics** — Add to Neighborhood Profiles: age structure (ACS B01001: median age, share <18, share 65+), languages at home (B16001: top non-English), foreign-born (B05002), educational attainment (B15003: HS completion, bachelor's rate), household type (B11001). All same ACS API already in use.
+30. **Broadband access rates** — ACS B28002 (internet subscriptions). One additional variable from existing Census API. Show in Neighborhood Profiles as digital access indicator.
+
+> **What the nursing template covers that we cannot build:** "History" (no public API; qualitative), "Values and beliefs" (no neighborhood-level data; Community Perceptions Survey is city-wide only), "Perception of residents" at neighborhood level (same limitation). Flag these clearly in Limitations tab — nurses need to collect this via fieldwork. Do not fabricate proxies.
+
 ## Known Issues & Workarounds
 
 - **SORTA routes are empty** — `sorta_stops.json` has `routes: []` for all stops. Transit scoring uses stop count, not route count.

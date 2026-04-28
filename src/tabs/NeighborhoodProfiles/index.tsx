@@ -9,6 +9,7 @@ import CityServicesSection from './CityServicesSection';
 import DevelopmentSection from './DevelopmentSection';
 import HousingInventorySection from './HousingInventorySection';
 import TransitEquitySection from './TransitEquitySection';
+import HealthOutcomesSection from './HealthOutcomesSection';
 import {
   DataCard,
   CivicOrgsPanel,
@@ -412,6 +413,8 @@ export default function NeighborhoodProfiles() {
           uid="rg6p-b3h3"
         />
       </DataCard>
+
+      <HealthOutcomesSection neighborhood={selectedNeighborhood} />
 
       {/* ── Resources & Organizations ──────────────────────────────────────── */}
       <div className="flex items-center gap-3 pt-2">

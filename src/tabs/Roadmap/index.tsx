@@ -100,6 +100,13 @@ const ScaleIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) 
   </svg>
 )
 
+const HeartIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+  </svg>
+)
+
 // ─── Section data ─────────────────────────────────────────────────────────────
 
 const SECTIONS: RoadmapSection[] = [
@@ -325,6 +332,88 @@ const SECTIONS: RoadmapSection[] = [
         dataSource: 'FEMA NFHL (already in system) + First Street Foundation flood risk API + City stormwater management data',
         dataSourceUrl: 'https://www.cincinnati-oh.gov/stormwater/flood-management/',
         tab: 'Address Lookup',
+      },
+    ],
+  },
+  {
+    id: 'health',
+    heading: 'Public Health & Community Assets',
+    subheading: 'Health outcomes, healthcare access, civic infrastructure, and community resources — the building blocks of a neighborhood health assessment.',
+    Icon: HeartIcon,
+    iconBg: 'bg-pink-100 text-pink-700',
+    items: [
+      {
+        title: 'Neighborhood Health Outcomes (CDC PLACES)',
+        status: 'completed',
+        description: 'Census tract-level estimates of key health outcomes by Cincinnati neighborhood: diabetes prevalence, obesity, high blood pressure, depression, mental health distress (14+ days/month), smoking rate, physical inactivity, and dental visit rates. Pre-built to a static JSON using our existing census-tract-to-neighborhood mapping, then surfaced in Neighborhood Profiles.',
+        why: 'Health outcomes in Cincinnati are not distributed evenly — neighborhoods along the Mill Creek corridor and in high-poverty areas show substantially worse chronic disease burden. CDC PLACES publishes these estimates annually for every US census tract. Making them visible at the neighborhood level gives community health workers, nursing students, and advocates a data foundation that currently requires downloading and cross-referencing federal files.',
+        dataSource: 'CDC PLACES (formerly 500 Cities) — annual, census tract level, free',
+        dataSourceUrl: 'https://www.cdc.gov/places/index.html',
+        tab: 'Neighborhood Profiles',
+        relatedOrgs: ['Cincinnati Health Department', 'Hamilton County Public Health', 'Cincinnati Children\'s Hospital'],
+      },
+      {
+        title: 'Life Expectancy by Neighborhood (CDC USALEEP)',
+        status: 'planned',
+        description: 'Estimated life expectancy at birth for each Cincinnati census tract, mapped to neighborhoods. A single, powerful anchor for community health profiles — showing where life expectancy gaps are widest and how they correlate with other dimensions we already measure (income, environmental burden, housing conditions).',
+        why: 'CDC\'s US Small-Area Life Expectancy Estimates Project (USALEEP) found life expectancy gaps of 10–20 years across census tracts within the same city. In Cincinnati, the gap between the highest- and lowest-expectancy neighborhoods likely mirrors the racial and economic divides already visible in our platform. USALEEP data is free and publicly downloadable; no live API is needed.',
+        dataSource: 'CDC USALEEP (US Small-Area Life Expectancy Estimates Project)',
+        dataSourceUrl: 'https://www.cdc.gov/nchs/nvss/usaleep/usaleep.html',
+        tab: 'Neighborhood Profiles',
+      },
+      {
+        title: 'Healthcare Facility Map',
+        status: 'completed',
+        description: 'Locations of hospitals, urgent care clinics, Federally Qualified Health Centers (FQHCs), dental clinics, mental health centers, and pharmacies — shown near any address (Address Lookup) and counted by neighborhood (Neighborhood Profiles). FQHCs are highlighted separately because they serve patients regardless of insurance or ability to pay, making their proximity especially relevant for low-income residents.',
+        why: 'Healthcare access is not just about insurance coverage — it\'s about whether a facility exists within reach. FQHCs are the primary care safety net for Cincinnati\'s uninsured and Medicaid populations, but many residents don\'t know where they are or that they accept sliding-scale payment. Showing proximity at the address level closes that gap without requiring a full health system.',
+        dataSource: 'OpenStreetMap via Overpass API (hospitals, urgent care, dental, pharmacies) + HRSA Health Center Finder API (FQHCs) + SAMHSA Treatment Locator (behavioral health)',
+        dataSourceUrl: 'https://findahealthcenter.hrsa.gov/',
+        tab: 'Address Lookup',
+        relatedOrgs: ['Cincinnati Health Department', 'HealthSource of Ohio', 'Caracole', 'Greater Cincinnati Behavioral Health Services'],
+      },
+      {
+        title: 'Community & Neighborhood Councils Directory',
+        status: 'planned',
+        description: 'A curated, GitHub-maintainable directory of Cincinnati\'s ~52 community councils — with contact information, meeting schedule, website, and which SNA neighborhood(s) they cover. Surfaced in Neighborhood Profiles and alongside Address Lookup results so residents can immediately connect with the organization that advocates for their block. Explicitly notes the SNA vs. Community Council boundary ambiguity where it applies.',
+        why: 'Community councils are the closest thing most Cincinnati neighborhoods have to a hyperlocal civic body. They hold meetings, take positions on zoning changes, and can mobilize residents — but most residents have no idea they exist or how to find them. There is no single public directory. This closes a basic civic infrastructure gap. Maintenance is low: a static JSON that council members or community partners can correct via GitHub pull request.',
+        dataSource: 'City of Cincinnati Community Councils page (manually curated; no public API exists)',
+        dataSourceUrl: 'https://www.cincinnati-oh.gov/cityofcincinnati/neighborhood-resources/community-councils/',
+        tab: 'Neighborhood Profiles',
+      },
+      {
+        title: 'Voting Precinct & Civic Participation Data',
+        status: 'planned',
+        description: 'Given any address, return the Hamilton County voting precinct, polling location, and a direct link to the BOE voter registration lookup. By neighborhood, show voter registration rates and turnout in recent elections — making civic participation visible alongside other neighborhood conditions.',
+        why: 'Turnout varies dramatically by neighborhood in Cincinnati, and low-turnout neighborhoods are often the same ones with the worst housing, environmental, and health conditions. Making the connection between civic engagement and neighborhood outcomes visible — without moralizing — supports the case that voting is connected to the quality of decisions that shape your block. Precinct GIS data is published by the Hamilton County Board of Elections.',
+        dataSource: 'Hamilton County Board of Elections — precinct shapefiles + election results (public after each election)',
+        dataSourceUrl: 'https://www.votehamiltoncountyohio.gov/',
+        tab: 'Address Lookup',
+      },
+      {
+        title: 'Recreation Centers & Community Facilities',
+        status: 'planned',
+        description: 'Locations of Cincinnati Recreation Commission (CRC) community centers and recreation facilities by neighborhood — combined with existing parks data to give a fuller picture of public recreational infrastructure. Shown in Neighborhood Profiles and as a layer in Address Lookup.',
+        why: 'Recreation centers are not just amenities — they are public health infrastructure, particularly for youth. The Cincinnati Recreation Commission operates 30+ centers across the city with dramatically unequal distribution. Showing access to CRC facilities alongside parks acreage reveals the difference between having green space and having programming. CAGIS likely has a facilities layer; the CRC website lists locations as a fallback.',
+        dataSource: 'Cincinnati Recreation Commission facility locations (CAGIS layer or static from CRC website)',
+        dataSourceUrl: 'https://www.cincinnatioh.gov/recreation/',
+        tab: 'Neighborhood Profiles',
+        relatedOrgs: ['Cincinnati Recreation Commission', 'Boys & Girls Club of Greater Cincinnati'],
+      },
+      {
+        title: 'Expanded Demographics for Community Profiles',
+        status: 'planned',
+        description: 'Add to the existing ACS demographic layer: age structure (median age, share under 18, share 65+), languages spoken at home (top non-English languages by neighborhood), foreign-born population share, educational attainment (high school completion, bachelor\'s degree rate), and household composition (single-parent households, single-person households). All from ACS tables already available via our Census API connection.',
+        why: 'Nursing students and community health workers need demographics beyond income and rent. Age structure determines the primary health concerns of a neighborhood (pediatric vs. geriatric). Language access determines who can navigate the healthcare system. Educational attainment is a strong predictor of health outcomes. These are all ACS variables — the API is already wired in, the data is already pre-built for income and rent. This is additive, not new infrastructure.',
+        dataSource: 'U.S. Census ACS 5-Year (tables B01001, B16001, B05002, B15003, B11001 — same API and mapping already in system)',
+        tab: 'Neighborhood Profiles',
+      },
+      {
+        title: 'Internet & Broadband Access by Neighborhood',
+        status: 'planned',
+        description: 'Percentage of households with internet access (broadband and any type) by neighborhood, from ACS table B28002. A proxy for digital divide — relevant to which residents can access telehealth, online benefits enrollment, remote work, and this platform itself.',
+        why: 'If the neighborhoods that most need civic data tools also have the lowest rates of home internet access, that is a finding that should be visible on the platform. ACS B28002 is a single additional table from an API we already query — the implementation cost is minimal and the equity implication is direct.',
+        dataSource: 'U.S. Census ACS 5-Year Table B28002 (internet subscriptions by type)',
+        tab: 'Neighborhood Profiles',
       },
     ],
   },

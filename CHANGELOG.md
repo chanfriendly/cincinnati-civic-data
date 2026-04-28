@@ -6,11 +6,31 @@
 
 ## Current Status
 
-**Phase:** Post-foundation — feature complete on core tabs, transparency + accountability layer in progress  
-**Last updated:** 2026-04-17  
-**Active focus:** Tax & Revenue transparency tab + public Limitations & Methodology tab  
+**Phase:** Phase 7 — Public Health & Community Assets (UC Nursing use case)  
+**Last updated:** 2026-04-28  
+**Active focus:** Healthcare facilities, CDC PLACES health outcomes, community councils, voting precincts  
 **Live site:** https://cincinnati-civic-data.vercel.app  
-**TypeScript:** ✅ `tsc --noEmit` passing clean (0 errors) as of Session 28
+**TypeScript:** ✅ `tsc --noEmit` passing clean (0 errors) as of Session 29
+
+---
+
+## Session 29 — API Gotchas
+
+### CDC PLACES API — `$where` approach causes HTTP 400
+**Symptom:** `build_health_outcomes.py` original query using `geographiclevel='Census Tract' AND stateabbr='OH'` in a `$where` param returns HTTP 400 Bad Request.  
+**Fix:** Use `countyfips=39061` as a direct column filter (no `$where` needed). The API returns all measures for all Hamilton County census tracts without any further filtering needed. Then filter `measureid` in Python post-fetch.  
+**Pattern:** `https://data.cdc.gov/resource/cwsq-ngmh.json?countyfips=39061&$limit=50000`
+
+### HRSA ArcGIS FeatureServer URL — 400 from sandbox
+**Symptom:** HRSA Health Center Finder ArcGIS URL returns HTTP 400 from the build environment.  
+**Fix:** Not resolved. OSM Overpass data used as sole source. HRSA FQHCs are partially captured via OSM name keyword matching (e.g. "health center", "community health"). To fully populate FQHCs, run the script in an environment with access to `services1.arcgis.com`.
+
+### SAMHSA Treatment Locator — unreachable from sandbox
+**Symptom:** `https://findtreatment.gov/locator/v1/facilities` returns no data.  
+**Fix:** Not resolved. Substance use treatment centers in the data come from OSM tags only (8 facilities). To enrich, run the script with network access to the SAMHSA API.
+
+### `neighborhood_acs.json` structure — list, not dict
+**Pattern note:** `public/data/neighborhood_acs.json` is a flat **list** of 226 census tract objects (each with `geoid`, `lat`, `lon`, etc.), NOT a dict keyed by geoid. Any script that reads this file must load it as a list and build its own index. `build_health_outcomes.py` was updated to handle this correctly.
 
 ---
 
