@@ -10,6 +10,9 @@ import DevelopmentSection from './DevelopmentSection';
 import HousingInventorySection from './HousingInventorySection';
 import TransitEquitySection from './TransitEquitySection';
 import HealthOutcomesSection from './HealthOutcomesSection';
+import ExpandedDemographicsSection from './ExpandedDemographicsSection';
+import CommunityCouncilSection from './CommunityCouncilSection';
+import RecreationCentersSection from './RecreationCentersSection';
 import {
   DataCard,
   CivicOrgsPanel,
@@ -310,6 +313,8 @@ export default function NeighborhoodProfiles() {
       {/* Self-contained: transplant to own tab by wrapping in a tab shell */}
       <UnifiedEquitySection neighborhood={selectedNeighborhood} />
 
+      <ExpandedDemographicsSection neighborhood={selectedNeighborhood} />
+
       <div className="flex items-center gap-3 pt-2">
         <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Public Safety</span>
         <div className="flex-1 h-px bg-gray-200" />
@@ -415,6 +420,15 @@ export default function NeighborhoodProfiles() {
       </DataCard>
 
       <HealthOutcomesSection neighborhood={selectedNeighborhood} />
+
+      {/* ── Community & Civic ─────────────────────────────────────────────── */}
+      <div className="flex items-center gap-3 pt-2">
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Community &amp; Civic</span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
+
+      <CommunityCouncilSection neighborhood={selectedNeighborhood} />
+      <RecreationCentersSection neighborhood={selectedNeighborhood} />
 
       {/* ── Resources & Organizations ──────────────────────────────────────── */}
       <div className="flex items-center gap-3 pt-2">

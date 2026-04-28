@@ -373,7 +373,7 @@ const SECTIONS: RoadmapSection[] = [
       },
       {
         title: 'Community & Neighborhood Councils Directory',
-        status: 'planned',
+        status: 'completed',
         description: 'A curated, GitHub-maintainable directory of Cincinnati\'s ~52 community councils — with contact information, meeting schedule, website, and which SNA neighborhood(s) they cover. Surfaced in Neighborhood Profiles and alongside Address Lookup results so residents can immediately connect with the organization that advocates for their block. Explicitly notes the SNA vs. Community Council boundary ambiguity where it applies.',
         why: 'Community councils are the closest thing most Cincinnati neighborhoods have to a hyperlocal civic body. They hold meetings, take positions on zoning changes, and can mobilize residents — but most residents have no idea they exist or how to find them. There is no single public directory. This closes a basic civic infrastructure gap. Maintenance is low: a static JSON that council members or community partners can correct via GitHub pull request.',
         dataSource: 'City of Cincinnati Community Councils page (manually curated; no public API exists)',
@@ -382,7 +382,7 @@ const SECTIONS: RoadmapSection[] = [
       },
       {
         title: 'Voting Precinct & Civic Participation Data',
-        status: 'planned',
+        status: 'completed',
         description: 'Given any address, return the Hamilton County voting precinct, polling location, and a direct link to the BOE voter registration lookup. By neighborhood, show voter registration rates and turnout in recent elections — making civic participation visible alongside other neighborhood conditions.',
         why: 'Turnout varies dramatically by neighborhood in Cincinnati, and low-turnout neighborhoods are often the same ones with the worst housing, environmental, and health conditions. Making the connection between civic engagement and neighborhood outcomes visible — without moralizing — supports the case that voting is connected to the quality of decisions that shape your block. Precinct GIS data is published by the Hamilton County Board of Elections.',
         dataSource: 'Hamilton County Board of Elections — precinct shapefiles + election results (public after each election)',
@@ -391,7 +391,7 @@ const SECTIONS: RoadmapSection[] = [
       },
       {
         title: 'Recreation Centers & Community Facilities',
-        status: 'planned',
+        status: 'completed',
         description: 'Locations of Cincinnati Recreation Commission (CRC) community centers and recreation facilities by neighborhood — combined with existing parks data to give a fuller picture of public recreational infrastructure. Shown in Neighborhood Profiles and as a layer in Address Lookup.',
         why: 'Recreation centers are not just amenities — they are public health infrastructure, particularly for youth. The Cincinnati Recreation Commission operates 30+ centers across the city with dramatically unequal distribution. Showing access to CRC facilities alongside parks acreage reveals the difference between having green space and having programming. CAGIS likely has a facilities layer; the CRC website lists locations as a fallback.',
         dataSource: 'Cincinnati Recreation Commission facility locations (CAGIS layer or static from CRC website)',
@@ -401,7 +401,7 @@ const SECTIONS: RoadmapSection[] = [
       },
       {
         title: 'Expanded Demographics for Community Profiles',
-        status: 'planned',
+        status: 'completed',
         description: 'Add to the existing ACS demographic layer: age structure (median age, share under 18, share 65+), languages spoken at home (top non-English languages by neighborhood), foreign-born population share, educational attainment (high school completion, bachelor\'s degree rate), and household composition (single-parent households, single-person households). All from ACS tables already available via our Census API connection.',
         why: 'Nursing students and community health workers need demographics beyond income and rent. Age structure determines the primary health concerns of a neighborhood (pediatric vs. geriatric). Language access determines who can navigate the healthcare system. Educational attainment is a strong predictor of health outcomes. These are all ACS variables — the API is already wired in, the data is already pre-built for income and rent. This is additive, not new infrastructure.',
         dataSource: 'U.S. Census ACS 5-Year (tables B01001, B16001, B05002, B15003, B11001 — same API and mapping already in system)',
@@ -409,7 +409,7 @@ const SECTIONS: RoadmapSection[] = [
       },
       {
         title: 'Internet & Broadband Access by Neighborhood',
-        status: 'planned',
+        status: 'completed',
         description: 'Percentage of households with internet access (broadband and any type) by neighborhood, from ACS table B28002. A proxy for digital divide — relevant to which residents can access telehealth, online benefits enrollment, remote work, and this platform itself.',
         why: 'If the neighborhoods that most need civic data tools also have the lowest rates of home internet access, that is a finding that should be visible on the platform. ACS B28002 is a single additional table from an API we already query — the implementation cost is minimal and the equity implication is direct.',
         dataSource: 'U.S. Census ACS 5-Year Table B28002 (internet subscriptions by type)',

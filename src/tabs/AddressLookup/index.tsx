@@ -95,6 +95,17 @@ interface MapboxFeature {
   context?: MapboxContext[];
 }
 
+// Voting precinct data from CAGIS FeatureServer layer 44
+interface VotingPrecinct {
+  precinct: string;   // e.g. "WARD 1-A"
+  pct: string;        // precinct number
+  prcName: string;    // full precinct name
+  location: string;   // polling place name
+  address: string;    // polling place address
+  city: string;
+  zip: string;
+}
+
 // Lead service line data shape (from public/data/lead_service_lines.json)
 interface LeadNeighborhoodRecord {
   name: string;
@@ -310,6 +321,43 @@ export default function AddressLookup() {
       })
       .catch(() => setNearbyHealthcare([]))
       .finally(() => setLoadingHealthcare(false));
+  }, [selectedAddress]);
+
+  // ── Voting precinct lookup (CAGIS FeatureServer layer 44) ───────────────────
+  const [votingPrecinct, setVotingPrecinct] = useState<VotingPrecinct | null>(null);
+  const [precinctStatus, setPrecinctStatus] = useState<CAGISStatus>('idle');
+
+  useEffect(() => {
+    if (!selectedAddress) {
+      setVotingPrecinct(null);
+      setPrecinctStatus('idle');
+      return;
+    }
+    const { lat, lng } = selectedAddress;
+    setPrecinctStatus('loading');
+
+    const url =
+      `https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/Open_Data/FeatureServer/44/query` +
+      `?geometry=${lng},${lat}&geometryType=esriGeometryPoint&inSR=4326` +
+      `&spatialRel=esriSpatialRelWithin&outFields=PRECINCT,PCT,PRC_NAME,LOCATION,ADDRESS,CITY,ZIP&f=json`;
+
+    fetch(url, { signal: AbortSignal.timeout(8000) })
+      .then(r => r.json())
+      .then((res: { features?: { attributes: Record<string, string> }[] }) => {
+        const feat = res.features?.[0]?.attributes;
+        if (!feat) { setVotingPrecinct(null); setPrecinctStatus('done'); return; }
+        setVotingPrecinct({
+          precinct: feat.PRECINCT ?? '',
+          pct:      feat.PCT ?? '',
+          prcName:  feat.PRC_NAME ?? '',
+          location: feat.LOCATION ?? '',
+          address:  feat.ADDRESS ?? '',
+          city:     feat.CITY ?? '',
+          zip:      feat.ZIP ?? '',
+        });
+        setPrecinctStatus('done');
+      })
+      .catch(() => setPrecinctStatus('error'));
   }, [selectedAddress]);
 
   // ── Lead service line lookup by neighborhood ─────────────────────────────────
@@ -1609,9 +1657,68 @@ export default function AddressLookup() {
 
           {/* ── Section: Your Representatives ─────────────────────────────────── */}
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Your Representatives</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Politics &amp; Government</span>
             <div className="flex-1 h-px bg-gray-200" />
           </div>
+
+          {/* Voting Precinct */}
+          <DataCard
+            title="Your Voting Precinct"
+            loading={precinctStatus === 'loading'}
+            error={precinctStatus === 'error' ? 'Could not load precinct data' : null}
+          >
+            {precinctStatus === 'done' && !votingPrecinct && (
+              <p className="text-sm text-gray-500 italic">No precinct found for this address. Verify the address is within Cincinnati city limits.</p>
+            )}
+            {votingPrecinct && (
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl shrink-0">🗳️</span>
+                  <div>
+                    <div className="text-sm font-semibold text-gray-900">{votingPrecinct.precinct}</div>
+                    {votingPrecinct.prcName && votingPrecinct.prcName !== votingPrecinct.precinct && (
+                      <div className="text-xs text-gray-500 mt-0.5">{votingPrecinct.prcName}</div>
+                    )}
+                  </div>
+                </div>
+                {votingPrecinct.location && (
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg shrink-0">📍</span>
+                    <div>
+                      <div className="text-xs font-semibold text-gray-700 uppercase tracking-widest mb-0.5">Polling Place</div>
+                      <div className="text-sm text-gray-900">{votingPrecinct.location}</div>
+                      {votingPrecinct.address && (
+                        <div className="text-xs text-gray-500">
+                          {votingPrecinct.address}{votingPrecinct.city ? `, ${votingPrecinct.city}` : ''}{votingPrecinct.zip ? ` ${votingPrecinct.zip}` : ''}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+                <div className="pt-2 border-t border-gray-100 flex flex-wrap gap-3 text-xs">
+                  <a
+                    href="https://www.votehamiltoncountyohio.gov/VoterSearch"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#1A4A6B] hover:underline"
+                  >
+                    Verify registration →
+                  </a>
+                  <a
+                    href="https://boe.hamiltonco.org"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#1A4A6B] hover:underline"
+                  >
+                    Hamilton County Board of Elections →
+                  </a>
+                </div>
+              </div>
+            )}
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <DataAttribution source="Hamilton County CAGIS · Voting Precincts" uid="cagis-precincts-layer44" />
+            </div>
+          </DataCard>
 
           <DataCard title="Cincinnati City Council">
             <CouncilPanel compact />

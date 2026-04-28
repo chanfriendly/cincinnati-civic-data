@@ -1,0 +1,731 @@
+[
+  {
+    "name": "Avondale Community Council",
+    "sna_neighborhoods": [
+      "Avondale"
+    ],
+    "address": "3520 Burnet Ave., Cincinnati OH 45229",
+    "email": "avondalecouncil5@aol.com",
+    "website": null,
+    "phone": "513-281-5999",
+    "meeting_place": "Avondale Community Pride Ctr., 3520 Burnet Ave.",
+    "meeting_time": "3rd Tue. except July, Aug. @ 6:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Bond Hill Community Council",
+    "sna_neighborhoods": [
+      "Bond Hill"
+    ],
+    "address": "1237 California Ave., Cincinnati OH 45237",
+    "email": "president@bondhillcc.org",
+    "website": "https://www.bondhillcc.org",
+    "phone": "513-242-2120",
+    "meeting_place": "Bond Hill Recreation Ctr., 1501 Elizabeth Place",
+    "meeting_time": "1st Thu. except Feb. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "California Community Council",
+    "sna_neighborhoods": [
+      "California"
+    ],
+    "address": "5814 Kellogg Ave., Cincinnati OH 45228",
+    "email": "info@californiaohio.org",
+    "website": "https://www.CaliforniaOhio.org",
+    "phone": null,
+    "meeting_place": "Ebersole Recreation Ctr., 5701 Kellogg Ave.",
+    "meeting_time": "2nd Tue. except July & Aug. @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Camp Washington Community Council",
+    "sna_neighborhoods": [
+      "Camp Washington"
+    ],
+    "address": "2951 Sidney Ave., Cincinnati OH 45225",
+    "email": "robbeusmc@yahoo.com",
+    "website": "https://www.camp-washington.org",
+    "phone": "513-542-1637",
+    "meeting_place": "Ebersole Recreation Ctr., 1201 Stock St.",
+    "meeting_time": "2nd Mon. @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Carthage Civic League",
+    "sna_neighborhoods": [
+      "Carthage"
+    ],
+    "address": "7011 Vine St., Cincinnati OH 45216",
+    "email": "civicleague@carthageohio.com",
+    "website": "https://www.carthageohio.com",
+    "phone": "513-821-8768",
+    "meeting_place": "Carthage Christian Church, 19 W 73rd St.",
+    "meeting_time": "3rd Mon. @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Clifton Town Meeting",
+    "sna_neighborhoods": [
+      "Clifton"
+    ],
+    "address": "P.O. Box 20042, Cincinnati OH 45220",
+    "email": null,
+    "website": "https://www.cliftoncommunity.org",
+    "phone": "513-288-9744",
+    "meeting_place": "Clifton Community Ctr., 320 McAlpin Ave.",
+    "meeting_time": "1st Mon. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "CUF Neighborhood Association",
+    "sna_neighborhoods": [
+      "Clifton Heights",
+      "Fairview"
+    ],
+    "address": "2361 Chickasaw St., Cincinnati OH 45219",
+    "email": "jstork@yahoo.com",
+    "website": "https://www.cufna.org",
+    "phone": "513-421-2496",
+    "meeting_place": "Deaconess Hospital, 311 Straight St.",
+    "meeting_time": "3rd Tue. except Aug. & Dec. @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "College Hill Forum",
+    "sna_neighborhoods": [
+      "College Hill"
+    ],
+    "address": "P.O. Box 24160, Cincinnati OH 45224",
+    "email": "information@collegehill.org",
+    "website": "https://www.collegehillohio.org",
+    "phone": "513-542-7263",
+    "meeting_place": "College Hill Rec. Ctr., 5545 Belmont Ave.",
+    "meeting_time": "4th Tue. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Columbia Tusculum Community Council",
+    "sna_neighborhoods": [
+      "Columbia-Tusculum"
+    ],
+    "address": "P.O. Box 26085, Cincinnati OH 45226",
+    "email": "ctcc@columbiatusculum.org",
+    "website": null,
+    "phone": "513-503-4004",
+    "meeting_place": "The Carnegie Ctr., 3738 Eastern Ave.",
+    "meeting_time": "3rd Mon. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Corryville Community Council",
+    "sna_neighborhoods": [
+      "Corryville"
+    ],
+    "address": "2922 Eden Ave., Cincinnati OH 45219",
+    "email": "corryvillecc@hotmail.com",
+    "website": "https://www.Corryville.org",
+    "phone": "513-349-7494",
+    "meeting_place": "Corryville Recreation Ctr., 2823 Eden Ave.",
+    "meeting_time": "2nd Tue. except Jul & Dec @ 6:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Downtown Residents Council",
+    "sna_neighborhoods": [
+      "CBD / Riverfront"
+    ],
+    "address": "P.O. Box 868, Cincinnati OH 45201",
+    "email": "info@ilivedowntown.com",
+    "website": "https://www.ilivedowntown.com",
+    "phone": null,
+    "meeting_place": "Public Library Tower Room, 800 Vine St.",
+    "meeting_time": "2nd Tue. @ 6:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "East End Area Council",
+    "sna_neighborhoods": [
+      "East End"
+    ],
+    "address": "P.O. Box 68104, Cincinnati OH 45206",
+    "email": null,
+    "website": "http:",
+    "phone": "513-961-3699",
+    "meeting_place": "LeBlond Recreation Ctr., 2335 Riverside Dr.",
+    "meeting_time": "1st Mon. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "East Price Hill Improvement Association",
+    "sna_neighborhoods": [
+      "East Price Hill"
+    ],
+    "address": "P.O. Box 5420, Cincinnati OH 45205",
+    "email": "info@ephia.org",
+    "website": "https://www.ephia.org",
+    "phone": "513-549-3744",
+    "meeting_place": "Holy Family Church Cafeteria, 3006 W. 8th St.",
+    "meeting_time": "3rd Mon. @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "East Walnut Hills Assembly",
+    "sna_neighborhoods": [
+      "East Walnut Hills"
+    ],
+    "address": "1433 East McMillan, Cincinnati OH 45206",
+    "email": "info@eastwalnuthills.com",
+    "website": "https://www.eastwalnuthills.com",
+    "phone": null,
+    "meeting_place": "St. Francis DeSales School, DeSales Crossings",
+    "meeting_time": "1st Wed. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "East Westwood Improvement Association",
+    "sna_neighborhoods": [
+      "East Westwood"
+    ],
+    "address": "P.O. Box 112046, Cincinnati OH 45211",
+    "email": "joeandsarah@zoomtown.com",
+    "website": null,
+    "phone": "513-542-2197",
+    "meeting_place": "McHenry House, 3600 McHenry Ave.",
+    "meeting_time": "2nd Thu. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "English Woods Civic Association",
+    "sna_neighborhoods": [
+      "English Woods"
+    ],
+    "address": null,
+    "email": null,
+    "website": null,
+    "phone": null,
+    "meeting_place": null,
+    "meeting_time": null,
+    "inactive": true,
+    "notes": null
+  },
+  {
+    "name": "Evanston Community Council",
+    "sna_neighborhoods": [
+      "Evanston"
+    ],
+    "address": "P.O. Box 12128, Cincinnati OH 45207",
+    "email": "adkinsecc@gmail.com",
+    "website": null,
+    "phone": "513-281-2775",
+    "meeting_place": "Evanston Community Ctr., 3204 Woodburn",
+    "meeting_time": "3rd Thu. @ 6:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Fay Community Council",
+    "sna_neighborhoods": [
+      "Fay Apartments"
+    ],
+    "address": "4018 President Dr., Cincinnati OH 45225",
+    "email": "shirley.mc@live.com",
+    "website": null,
+    "phone": "513-681-5821",
+    "meeting_place": "3861 President Dr.",
+    "meeting_time": "3rd Mon. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Hartwell Improvement Association",
+    "sna_neighborhoods": [
+      "Hartwell"
+    ],
+    "address": "P.O. Box 15608, Cincinnati OH 45215",
+    "email": "Hartwellcouncil@fuse.net",
+    "website": null,
+    "phone": null,
+    "meeting_place": "Community Ctr., 8275 Vine St.",
+    "meeting_time": "3rd Tue. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Hyde Park Neighborhood Council",
+    "sna_neighborhoods": [
+      "Hyde Park"
+    ],
+    "address": "P.O. Box 8064, Cincinnati OH 45208",
+    "email": null,
+    "website": "https://www.hydepark-cincinnati.org",
+    "phone": "513-871-9294",
+    "meeting_place": "Knox Church, 3400 Michigan Ave.",
+    "meeting_time": "2nd Tue. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Kennedy Heights Community Council",
+    "sna_neighborhoods": [
+      "Kennedy Heights"
+    ],
+    "address": "6463 Kennedy Ave., Cincinnati OH 45213",
+    "email": "khcc@kennedyheights.org",
+    "website": "https://www.kennedyheights.org",
+    "phone": "513-531-4041",
+    "meeting_place": "KH Presbyterian Church, 6312 Kennedy Ave.",
+    "meeting_time": "3rd Tue. @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Linwood Community Council",
+    "sna_neighborhoods": [
+      "Linwood"
+    ],
+    "address": "P.O. Box 26193, Cincinnati OH 45226",
+    "email": "contactus@linwoodlantern.org",
+    "website": null,
+    "phone": "513-659-0924",
+    "meeting_place": "Lunken Play Field, 4750 Play Field Ln.",
+    "meeting_time": "4th Tue. except July @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Lower Price Hill Community Council",
+    "sna_neighborhoods": [
+      "Lower Price Hill"
+    ],
+    "address": "656 Neave St., Cincinnati OH 45204",
+    "email": "lowerpricehill@fuse.net",
+    "website": null,
+    "phone": "513-471-9849",
+    "meeting_place": "2104 St. Michael's Bingo Hall",
+    "meeting_time": "1st Mon. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Madisonville Community Council",
+    "sna_neighborhoods": [
+      "Madisonville"
+    ],
+    "address": "P.O. Box 9514, Cincinnati OH 45227",
+    "email": null,
+    "website": null,
+    "phone": "513-561-9343",
+    "meeting_place": "Madisonville Rec Ctr., 5320 Stewart Rd.",
+    "meeting_time": "3rd Thu. except August @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Millvale Community Council",
+    "sna_neighborhoods": [
+      "Millvale"
+    ],
+    "address": "3262 Beekman St., Cincinnati OH 45223",
+    "email": null,
+    "website": null,
+    "phone": null,
+    "meeting_place": "Recreation Ctr., 3303 Beekman Ave.",
+    "meeting_time": "2nd Tue. @ 5:00pm",
+    "inactive": true,
+    "notes": null
+  },
+  {
+    "name": "Mt. Adams Civic Association",
+    "sna_neighborhoods": [
+      "Mount Adams"
+    ],
+    "address": "1071 Celestial St. Unit 2102, Cincinnati OH 45202",
+    "email": "jimmccarty@fuse.net",
+    "website": null,
+    "phone": "513-872-0861",
+    "meeting_place": "Holy Cross/Immaculata Ctr., 30 Guido St.",
+    "meeting_time": "1st Tue. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Mt. Airy Town Council",
+    "sna_neighborhoods": [
+      "Mount Airy"
+    ],
+    "address": "5317 Fox Rd., Cincinnati OH 45239",
+    "email": null,
+    "website": null,
+    "phone": null,
+    "meeting_place": "Little Flower School, 5555 Little Flower Ave.",
+    "meeting_time": "4th Wed. @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Mt. Auburn Community Council",
+    "sna_neighborhoods": [
+      "Mount Auburn"
+    ],
+    "address": "P.O. Box 19138, Cincinnati OH 45219",
+    "email": null,
+    "website": "https://www.historicmtauburn.org",
+    "phone": null,
+    "meeting_place": "William Howard Taft National Historic Site, 2038 Auburn Ave.",
+    "meeting_time": "3rd Mon. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Mt. Lookout Community Council",
+    "sna_neighborhoods": [
+      "Mt. Lookout"
+    ],
+    "address": "P.O. Box 8444, Cincinnati OH 45208",
+    "email": "info@mtlookout.org",
+    "website": "https://www.mtlookout.org",
+    "phone": "513-723-5599",
+    "meeting_place": "Christ the King Parish Ctr., 3223 Linwood Rd.",
+    "meeting_time": "3rd Mon. in Feb/Apr/Jun/Aug/Oct/Dec @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Mt. Washington Community Council",
+    "sna_neighborhoods": [
+      "Mt. Washington"
+    ],
+    "address": "P.O. Box 30387, Cincinnati OH 45230",
+    "email": "info@mwcc.org",
+    "website": "https://www.mwcc.org",
+    "phone": "513-233-9111",
+    "meeting_place": "Mt. Washington Rec. Center, 1715 Beacon St.",
+    "meeting_time": "1st Wed (Board); 3rd Wed (members) @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "North Avondale Neighborhood Association",
+    "sna_neighborhoods": [
+      "North Avondale"
+    ],
+    "address": "617 Clinton Springs Ave., Cincinnati OH 45229",
+    "email": null,
+    "website": "https://www.northavondalecincinnati.com",
+    "phone": "513-221-6166",
+    "meeting_place": "N. Avondale Community Ctr., 617 Clinton Springs Ave.",
+    "meeting_time": "2nd Tue. except Aug. @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "North Fairmount Community Council",
+    "sna_neighborhoods": [
+      "North Fairmount"
+    ],
+    "address": "1764 Carll St., Cincinnati OH 45225",
+    "email": "adams1764@zoomtown.com",
+    "website": null,
+    "phone": "513-251-5502",
+    "meeting_place": "St. Leo Church, 1845 Beekman",
+    "meeting_time": "2nd Tue. @ 6:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Northside Community Council",
+    "sna_neighborhoods": [
+      "Northside"
+    ],
+    "address": "4303 Kirby Ave., Cincinnati OH 45223",
+    "email": "mcdourson@gmail.com",
+    "website": "https://www.northside.net",
+    "phone": "513-542-8940",
+    "meeting_place": "McKie Recreation Center, 1655 Chase Ave.",
+    "meeting_time": "3rd Mon. except Jan. & Feb. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Oakley Community Council",
+    "sna_neighborhoods": [
+      "Oakley"
+    ],
+    "address": "P.O. Box 9244, Cincinnati OH 45209",
+    "email": "oakleycouncil@oakleynow.com",
+    "website": "https://www.oakleynow.com",
+    "phone": "513-533-2039",
+    "meeting_place": "Oakley Community & Sr. Ctr., 3882 Paxton Ave.",
+    "meeting_time": "1st Tue. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Over-the-Rhine Community Council",
+    "sna_neighborhoods": [
+      "Over-the-Rhine"
+    ],
+    "address": "19 West Elder St., Cincinnati OH 45202",
+    "email": "phames@cinci.rr.com",
+    "website": null,
+    "phone": "513-684-9988",
+    "meeting_place": "OTR Community Center, 1715 Republic St.",
+    "meeting_time": "Last Mon. @ 5:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Paddock Hills Assembly",
+    "sna_neighborhoods": [
+      "Paddock Hills"
+    ],
+    "address": "P.O. Box 16028, Cincinnati OH 45216",
+    "email": "president@paddockhills.org",
+    "website": "https://www.paddockhills.org",
+    "phone": "513-242-2221",
+    "meeting_place": "Avon Woods Nature Ctr., 4235 Paddock Rd.",
+    "meeting_time": "Monthly @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Pendleton Neighborhood Council",
+    "sna_neighborhoods": [
+      "Pendleton"
+    ],
+    "address": "548 E 13th St., Cincinnati OH 45202",
+    "email": "PendletonNeighborhoodCouncil@gmail.com",
+    "website": "https://www.PendletonNeighborhoodCouncil.org",
+    "phone": "513-207-4197",
+    "meeting_place": "BrewDog or Zoom",
+    "meeting_time": "1st Mon. @ 6:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Pleasant Ridge Community Council",
+    "sna_neighborhoods": [
+      "Pleasant Ridge"
+    ],
+    "address": "P.O. Box 128705, Cincinnati OH 45212",
+    "email": "info@pleasantridge.org",
+    "website": "https://www.pleasantridge.org",
+    "phone": "513-297-2820",
+    "meeting_place": "Pleasant Ridge Recreation Ctr., 5915 Ridge Ave.",
+    "meeting_time": "1st Tue. except July & Dec. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Riverside Civic & Welfare Club",
+    "sna_neighborhoods": [
+      "Riverside"
+    ],
+    "address": "P.O. Box 389205, Cincinnati OH 45238",
+    "email": "riversidecivicclub@yahoo.com",
+    "website": null,
+    "phone": null,
+    "meeting_place": "Chamber-Haurman Legion, 4618 River Rd.",
+    "meeting_time": "2nd Tue. except July & Aug. @ 8:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Roselawn Community Council",
+    "sna_neighborhoods": [
+      "Roselawn"
+    ],
+    "address": "P.O. Box 37087, Cincinnati OH 45222",
+    "email": "roselawnlutheran@fuse.net",
+    "website": "https://www.roselawn.org",
+    "phone": "513-821-8918",
+    "meeting_place": "Roselawn Lutheran Church, 1608 Summit Rd.",
+    "meeting_time": "2nd Thu. except August @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Sayler Park Village Council",
+    "sna_neighborhoods": [
+      "Sayler Park"
+    ],
+    "address": "6610 Parkland Ave., Cincinnati OH 45233",
+    "email": "lawgalpd@gmail.com",
+    "website": "https://www.SaylerPark.org",
+    "phone": "513-598-1549",
+    "meeting_place": "Sayler Park Recreation Ctr., 6720 Home City Ave.",
+    "meeting_time": "1st Mon. @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Sedamsville Civic Association",
+    "sna_neighborhoods": [
+      "Sedamsville"
+    ],
+    "address": "661 Halsey Ave., Cincinnati OH 45204",
+    "email": "callahanqsc@yahoo.com",
+    "website": null,
+    "phone": "513-471-1382",
+    "meeting_place": "Santa Maria Services, 617 Steiner Ave.",
+    "meeting_time": "2nd Wed. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "South Cumminsville Community Council",
+    "sna_neighborhoods": [
+      "South Cumminsville"
+    ],
+    "address": "1814 Dreman Ave., Cincinnati OH 45223",
+    "email": "mevans@wincincy.org",
+    "website": null,
+    "phone": null,
+    "meeting_place": "1814 Dreman Ave.",
+    "meeting_time": "2nd Mon. @ 6:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "South Fairmount Community Council",
+    "sna_neighborhoods": [
+      "South Fairmount"
+    ],
+    "address": "1724 Fairmount Ave., Cincinnati OH 45214",
+    "email": "whccerlene@aol.com",
+    "website": null,
+    "phone": "513-471-5099",
+    "meeting_place": "Orion Academy, 1798 Queen City Ave.",
+    "meeting_time": "2nd Tue. @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Spring Grove Village Community Council",
+    "sna_neighborhoods": [
+      "Spring Grove Village"
+    ],
+    "address": "638 E. Epworth Ave., Cincinnati OH 45232",
+    "email": "info@springgrovevillage.org",
+    "website": "https://www.springgrovevillage.org",
+    "phone": "513-403-8832",
+    "meeting_place": "St. Bernard Annex, 730 Derby Ave.",
+    "meeting_time": "2nd Tue. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Walnut Hills Area Council",
+    "sna_neighborhoods": [
+      "Walnut Hills"
+    ],
+    "address": "P.O. Box 6397, Cincinnati OH 45206",
+    "email": "Ctaylor2833@zoomtown.com",
+    "website": "https://www.walnuthills.us",
+    "phone": "513-861-0088",
+    "meeting_place": "Douglas School/Community Learning Ctr., 2627 Park Ave.",
+    "meeting_time": "2nd Thu. @ 6:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "West End Community Council",
+    "sna_neighborhoods": [
+      "West End"
+    ],
+    "address": "P.O. Box 14424, Cincinnati OH 45250",
+    "email": "corr-secretary_wecc@hotmail.com",
+    "website": "https://www.westendcommunitycouncil.org",
+    "phone": "513-651-1890",
+    "meeting_place": "Carl H. Linder YMCA, 1425B Linn St.",
+    "meeting_time": "3rd Tue. @ 6:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "West Price Hill Community Council",
+    "sna_neighborhoods": [
+      "West Price Hill"
+    ],
+    "address": "P.O. Box 5096, Cincinnati OH 45205",
+    "email": null,
+    "website": "https://www.pricehillcivic.com",
+    "phone": null,
+    "meeting_place": "Knights of Columbus Hall, 4109 West Eighth St.",
+    "meeting_time": "2nd Tue. except July & Aug. @ 7:30pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Westwood Civic Association",
+    "sna_neighborhoods": [
+      "Westwood"
+    ],
+    "address": "P.O. Box 11466, Cincinnati OH 45211",
+    "email": "info@westwoodcivic.org",
+    "website": "https://www.westwoodcivic.org",
+    "phone": "513-662-8560",
+    "meeting_place": "Westwood Town Hall, 3017 Harrison Ave.",
+    "meeting_time": "3rd Tue. @ 7:00pm",
+    "inactive": false,
+    "notes": null
+  },
+  {
+    "name": "Winton Hills Community Council",
+    "sna_neighborhoods": [
+      "Winton Hills"
+    ],
+    "address": null,
+    "email": null,
+    "website": null,
+    "phone": null,
+    "meeting_place": null,
+    "meeting_time": null,
+    "inactive": true,
+    "notes": null
+  },
+  {
+    "name": "Queensgate (no separate community council)",
+    "sna_neighborhoods": [
+      "Queensgate"
+    ],
+    "address": null,
+    "email": null,
+    "website": null,
+    "phone": null,
+    "meeting_place": null,
+    "meeting_time": null,
+    "inactive": null,
+    "notes": "Queensgate is served by the West End Community Council boundary area; no separate CCB exists."
+  },
+  {
+    "name": "O'Bryonville (no separate community council)",
+    "sna_neighborhoods": [
+      "O'Bryonville"
+    ],
+    "address": null,
+    "email": null,
+    "website": null,
+    "phone": null,
+    "meeting_place": null,
+    "meeting_time": null,
+    "inactive": null,
+    "notes": "O'Bryonville is part of the Hyde Park SNA area; no separate CCB exists."
+  }
+]

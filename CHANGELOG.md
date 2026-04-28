@@ -14,6 +14,19 @@
 
 ---
 
+## Session 30 — API Gotchas
+
+### ACS B16001 — suppressed at census tract level
+**Symptom:** `build_demographics.py` queried `B16001_001E` and `B16001_002E` (Language Spoken at Home). All 226 Hamilton County tracts returned `null` for both fields.  
+**Fix:** Use `C16001_001E` (total population 5+) and `C16001_002E` (English only) — the collapsed table, which IS available at tract level. `B16001` is a highly detailed 120-column table that the Census Bureau suppresses at small geographies.  
+**Pattern:** Always use `C16001` for tract-level language-at-home data. `B16001` is county/place only.
+
+### ACS B01002_001E — median age returns decimal string, not integer
+**Symptom:** `safe_int('31.6')` returns `None`, causing `medianAge: null` in output.  
+**Fix:** Added `safe_float()` function alongside `safe_int()`. All median-type fields (and any ACS value that can be a decimal) must use `safe_float()` rather than `safe_int()`.
+
+---
+
 ## Session 29 — API Gotchas
 
 ### CDC PLACES API — `$where` approach causes HTTP 400
@@ -155,6 +168,8 @@ The API infrastructure exists but the city has not enabled it. **Do not attempt 
 | 26 | Apr 2026 | Contextual orgs in Tab 1 (lead, blight, crime), lead service line card with neighborhood lookup, CivicCalendar public comment component |
 | 27 | Apr 2026 | Owner Activity tab rewrite (advocate/organizer use case, address-first flow, permit companyname as ownership proxy) |
 | 28 | Apr 2026 | Tax & Revenue transparency tab (rate history + ACS B19080 percentiles + ITEP Ohio modeled incidence + city revenue `a9hy-bv25`); dedicated Limitations & Methodology tab (SNA vs Community Council, Oakley example, centroid mapping, AI disclosures, data vintages) |
+| 29 | Apr 2026 | Phase 7a: Healthcare facilities (OSM, 458 facilities) + CDC PLACES health outcomes (41 neighborhoods, 10 measures) + HealthOutcomesSection + Healthcare amenities tab in Address Lookup |
+| 30 | Apr 2026 | Phase 7b: Community councils directory (52 entries, static JSON) + Voting precinct lookup (live CAGIS layer 44) + Recreation centers (24 CRC centers) + Expanded demographics + broadband (ACS C16001/B01001/B05002/B15003/B28002, 41 neighborhoods) |
 
 ---
 

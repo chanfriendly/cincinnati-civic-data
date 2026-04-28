@@ -6,6 +6,45 @@
 
 ## Session Log
 
+### Session 30 — Phase 7 Phase 2: Community Councils, Voting Precinct, Rec Centers, Expanded Demographics (April 2026)
+
+**Context:** Continuing Phase 7 (UC Nursing use case). This session completes the remaining Phase 7 items: community councils directory (item 26), voting precinct lookup (item 27), recreation centers (item 28), expanded demographics (item 29), and broadband access (item 30).
+
+**What was built:**
+
+1. **`public/data/community_councils.json`** — 52 entries manually curated from Google Sheets community council directory (city records, 2012 vintage). Fields: name, sna_neighborhoods[], address, email, website, phone, meeting_place, meeting_time, inactive, notes. Includes 3 inactive councils, 2 "no separate CCB" entries, and CUF mapping to Clifton Heights + Fairview.
+
+2. **`src/tabs/NeighborhoodProfiles/CommunityCouncilSection.tsx`** — Loads `community_councils.json`, matches by `sna_neighborhoods` (via `stripNeighborhoodName`). Shows meeting time/place, phone, email, website, address. Inactive badge. Multi-neighborhood coverage note. Footer: GitHub correction link.
+
+3. **`public/data/recreation_centers.json`** — 24 CRC centers from Socrata `vset-45gc` geocoded via OSM Nominatim. Fields: name, address, zip, phone, neighborhood, lat, lon.
+
+4. **`src/tabs/NeighborhoodProfiles/RecreationCentersSection.tsx`** — Loads `recreation_centers.json`, filters by neighborhood. Falls back to full scrollable list if none assigned to selected neighborhood.
+
+5. **Live voting precinct lookup added to Address Lookup** — CAGIS FeatureServer layer 44 point-in-polygon query (`geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelWithin`). Shows precinct name, polling place name + address, links to Hamilton County BOE voter lookup and BOE homepage. Placed under new "Politics & Government" section divider (replacing the old "Your Representatives" label).
+
+6. **`scripts/build_demographics.py`** — ACS 5-year 2022 for all 226 Hamilton County census tracts. Variables: age structure (B01001/B01002), language (C16001 — B16001 suppressed at tract level), foreign-born (B05002), education (B15003), household type (B11011), broadband (B28002). Maps tracts to 41 neighborhoods via nearest-centroid. Output: `public/data/neighborhood_demographics.json`.
+
+7. **`public/data/neighborhood_demographics.json`** — 41 neighborhoods, 14 demographic fields each.
+
+8. **`src/tabs/NeighborhoodProfiles/ExpandedDemographicsSection.tsx`** — Shows population + median age headline, then five groups: Age Structure, Origin & Language, Education, Household Type, Internet Access. Each stat: value, mini bar, city-avg comparison badge (>3pp = above/below avg).
+
+9. **`src/tabs/NeighborhoodProfiles/index.tsx`** — Wired in all three new components: `ExpandedDemographicsSection` (after UnifiedEquitySection, in Economic Profile area), `CommunityCouncilSection` and `RecreationCentersSection` (under new "Community & Civic" divider before Resources & Organizations).
+
+10. **Roadmap** — Items 26–30 marked `completed`.
+
+**Key bugs fixed:**
+- `build_demographics.py`: `B16001` returns all-null at tract level. Fixed by using `C16001` (collapsed version, tract-available). `safe_float()` added for `B01002_001E` (median age is a decimal like "31.6", rejected by `safe_int()`).
+- `RecreationCentersSection.tsx`: Removed unused `showAll` variable (TypeScript error TS6133).
+
+**TypeScript:** ✅ clean after all changes.
+
+**Next:**
+- Item 24: Life expectancy by neighborhood (CDC USALEEP — still `planned`)
+- Manual QA of new sections in dev server
+- CHANGELOG.md updated with B16001 → C16001 gotcha
+
+---
+
 ### Session 29 — Phase 7 Phase 1: Healthcare Facilities + CDC PLACES Health Outcomes (April 2026)
 
 **Context:** UC College of Nursing faculty met with Christian and confirmed they want to use the platform as-is (no formal partnership). They asked specifically about healthcare facilities, aggregate health data, community councils, and voting precincts. This session implements the first two.
