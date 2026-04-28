@@ -255,7 +255,7 @@ export default function HealthOutcomesSection({ neighborhood }: Props) {
       <div className="mt-4 pt-3 border-t border-gray-100">
         <DataAttribution
           source={`CDC PLACES: Local Data for Better Health · Hamilton County, OH · ${selected?.dataYear ?? 'N/A'}`}
-          uid="cdc-places-cwsq-ngmh"
+          url="https://www.cdc.gov/places/"
         />
       </div>
     </DataCard>

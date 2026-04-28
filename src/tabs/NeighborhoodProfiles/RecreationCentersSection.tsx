@@ -97,7 +97,7 @@ export default function RecreationCentersSection({ neighborhood }: Props) {
         >
           All CRC facilities & programs →
         </a>
-        <DataAttribution source="Cincinnati Recreation Commission · data.cincinnati-oh.gov" uid="crc-vset-45gc" />
+        <DataAttribution source="Cincinnati Recreation Commission · data.cincinnati-oh.gov" uid="vset-45gc" />
       </div>
     </DataCard>
   );

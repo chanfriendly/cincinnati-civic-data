@@ -1697,7 +1697,7 @@ export default function AddressLookup() {
                 )}
                 <div className="pt-2 border-t border-gray-100 flex flex-wrap gap-3 text-xs">
                   <a
-                    href="https://www.votehamiltoncountyohio.gov/VoterSearch"
+                    href="https://voterlookup.ohiosos.gov/voterlookup.aspx"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#1A4A6B] hover:underline"
@@ -1716,7 +1716,7 @@ export default function AddressLookup() {
               </div>
             )}
             <div className="mt-3 pt-3 border-t border-gray-100">
-              <DataAttribution source="Hamilton County CAGIS · Voting Precincts" uid="cagis-precincts-layer44" />
+              <DataAttribution source="Hamilton County CAGIS · Voting Precincts" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
             </div>
           </DataCard>
 

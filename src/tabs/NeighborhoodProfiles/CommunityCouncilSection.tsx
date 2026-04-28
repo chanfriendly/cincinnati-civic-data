@@ -147,7 +147,7 @@ export default function CommunityCouncilSection({ neighborhood }: Props) {
         </p>
         <DataAttribution
           source="Cincinnati Community Council Directory · City of Cincinnati"
-          uid="community-councils-directory"
+          url="https://github.com/chanfriendly/cincinnati-civic-data"
         />
       </div>
     </DataCard>
