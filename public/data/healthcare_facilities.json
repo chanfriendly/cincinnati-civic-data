@@ -1020,30 +1020,6 @@
     "fqhc": false
   },
   {
-    "name": "Encompass Health Rehabilitation Hospital of Cincinnati at Norwood",
-    "type": "clinic",
-    "category": "Health Clinic",
-    "address": "4953 Section Avenue Cincinnati OH",
-    "phone": "+1 513 712 9200",
-    "website": "https://encompasshealth.com/locations/cincinnatirehab-norwood",
-    "lat": 39.167154,
-    "lon": -84.460617,
-    "source": "openstreetmap",
-    "fqhc": false
-  },
-  {
-    "name": "Encompass Health Rehabilitation Hospital of Northern Kentucky",
-    "type": "clinic",
-    "category": "Health Clinic",
-    "address": "201 Medical Village Drive Edgewood KY",
-    "phone": null,
-    "website": "https://www.encompasshealth.com/kentuckyrehab",
-    "lat": 39.012474,
-    "lon": -84.56683,
-    "source": "openstreetmap",
-    "fqhc": false
-  },
-  {
     "name": "Family Allergy & Asthma",
     "type": "clinic",
     "category": "Health Clinic",
@@ -1448,18 +1424,6 @@
     "website": "https://www.trihealth.com/hospitals-and-practices/loveland-family-medicine",
     "lat": 39.26855,
     "lon": -84.262398,
-    "source": "openstreetmap",
-    "fqhc": false
-  },
-  {
-    "name": "Loveland Health Care Nursing & Rehab Center",
-    "type": "clinic",
-    "category": "Health Clinic",
-    "address": "501 North 2nd Street Loveland OH",
-    "phone": null,
-    "website": "https://www.hcmg.com/Facilities/Loveland-Health-Care-Nursing-And-Rehab-Center.aspx",
-    "lat": 39.273332,
-    "lon": -84.251741,
     "source": "openstreetmap",
     "fqhc": false
   },
@@ -4344,6 +4308,30 @@
     "fqhc": false
   },
   {
+    "name": "Jenny Craig",
+    "type": "mental_health",
+    "category": "Mental Health",
+    "address": null,
+    "phone": null,
+    "website": null,
+    "lat": 39.286074,
+    "lon": -84.462727,
+    "source": "openstreetmap",
+    "fqhc": false
+  },
+  {
+    "name": "Jenny Craig",
+    "type": "mental_health",
+    "category": "Mental Health",
+    "address": null,
+    "phone": null,
+    "website": null,
+    "lat": 39.147078,
+    "lon": -84.427165,
+    "source": "openstreetmap",
+    "fqhc": false
+  },
+  {
     "name": "Lighthouse Youth & Family Services",
     "type": "mental_health",
     "category": "Mental Health",
@@ -4368,6 +4356,18 @@
     "fqhc": false
   },
   {
+    "name": "Profile by Sanford",
+    "type": "mental_health",
+    "category": "Mental Health",
+    "address": "11314 Montgomery Road Montgomery OH",
+    "phone": null,
+    "website": "https://www.profileplan.com/cincinnati/",
+    "lat": 39.269692,
+    "lon": -84.327012,
+    "source": "openstreetmap",
+    "fqhc": false
+  },
+  {
     "name": "Sun Behavioral Health",
     "type": "mental_health",
     "category": "Mental Health",
@@ -4388,6 +4388,42 @@
     "website": null,
     "lat": 39.136961,
     "lon": -84.499601,
+    "source": "openstreetmap",
+    "fqhc": false
+  },
+  {
+    "name": "WW Studio",
+    "type": "mental_health",
+    "category": "Mental Health",
+    "address": null,
+    "phone": null,
+    "website": null,
+    "lat": 39.234283,
+    "lon": -84.377485,
+    "source": "openstreetmap",
+    "fqhc": false
+  },
+  {
+    "name": "WW Studio",
+    "type": "mental_health",
+    "category": "Mental Health",
+    "address": null,
+    "phone": null,
+    "website": null,
+    "lat": 39.020383,
+    "lon": -84.594625,
+    "source": "openstreetmap",
+    "fqhc": false
+  },
+  {
+    "name": "WW Studio",
+    "type": "mental_health",
+    "category": "Mental Health",
+    "address": null,
+    "phone": null,
+    "website": null,
+    "lat": 39.25261,
+    "lon": -84.601487,
     "source": "openstreetmap",
     "fqhc": false
   },
@@ -5400,6 +5436,30 @@
     "fqhc": false
   },
   {
+    "name": "Encompass Health Rehabilitation Hospital of Cincinnati at Norwood",
+    "type": "substance_use",
+    "category": "Substance Use Treatment",
+    "address": "4953 Section Avenue Cincinnati OH",
+    "phone": "+1 513 712 9200",
+    "website": "https://encompasshealth.com/locations/cincinnatirehab-norwood",
+    "lat": 39.167154,
+    "lon": -84.460617,
+    "source": "openstreetmap",
+    "fqhc": false
+  },
+  {
+    "name": "Encompass Health Rehabilitation Hospital of Northern Kentucky",
+    "type": "substance_use",
+    "category": "Substance Use Treatment",
+    "address": "201 Medical Village Drive Edgewood KY",
+    "phone": null,
+    "website": "https://www.encompasshealth.com/kentuckyrehab",
+    "lat": 39.012474,
+    "lon": -84.56683,
+    "source": "openstreetmap",
+    "fqhc": false
+  },
+  {
     "name": "Gateway Rehabilitation Hospital",
     "type": "substance_use",
     "category": "Substance Use Treatment",
@@ -5408,6 +5468,18 @@
     "website": "https://vrhgateway.com",
     "lat": 39.00804,
     "lon": -84.655139,
+    "source": "openstreetmap",
+    "fqhc": false
+  },
+  {
+    "name": "Loveland Health Care Nursing & Rehab Center",
+    "type": "substance_use",
+    "category": "Substance Use Treatment",
+    "address": "501 North 2nd Street Loveland OH",
+    "phone": null,
+    "website": "https://www.hcmg.com/Facilities/Loveland-Health-Care-Nursing-And-Rehab-Center.aspx",
+    "lat": 39.273332,
+    "lon": -84.251741,
     "source": "openstreetmap",
     "fqhc": false
   },

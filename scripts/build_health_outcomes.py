@@ -282,39 +282,29 @@ def process(rows: list[dict]) -> dict:
 
     # Step 3: for each tract, find nearest neighborhood
     # We need tract centroids. Use the neighborhood_acs.json which has tracts listed.
-    # Build a lookup: tract_fips → neighborhood name from neighborhood_acs.json
+    # Build a lookup: tract_fips → neighborhood name
+    # neighborhood_acs.json is a flat LIST of {geoid, lat, lon, ...} objects —
+    # one record per census tract. We use each tract's lat/lon with the
+    # nearest_neighborhood() function (same haversine-to-SNA-centroid logic
+    # used by build_parks.py and build_hud.py) to assign an SNA neighborhood.
 
     acs_path = ROOT_DIR / 'public' / 'data' / 'neighborhood_acs.json'
-    tract_to_nbh: dict[str, str] = {}
+    tract_coords: dict[str, tuple[float, float]] = {}
 
     if acs_path.exists():
         with open(acs_path) as f:
-            acs_data = json.load(f)
+            acs_list = json.load(f)  # list of {geoid, lat, lon, ...}
 
-        # neighborhood_acs.json: { stripped_key: { name, tracts: [fips,...], ... } }
-        for stripped_key, nbh_record in acs_data.items():
-            nbh_name = nbh_record.get('name', '')
-            if not nbh_name or nbh_name not in SNA_CENTROIDS:
-                # Try to find matching SNA name
-                for sna_name in SNA_CENTROIDS:
-                    if strip_name(sna_name) == stripped_key:
-                        nbh_name = sna_name
-                        break
+        for record in acs_list:
+            geoid = str(record.get('geoid', '')).zfill(11)
+            lat   = record.get('lat')
+            lon   = record.get('lon')
+            if geoid and lat is not None and lon is not None:
+                tract_coords[geoid] = (float(lat), float(lon))
 
-            tracts = nbh_record.get('tracts', [])
-            for tract_fips in tracts:
-                # Normalize: ACS uses 11-digit FIPS
-                fips_str = str(tract_fips).zfill(11)
-                if nbh_name:
-                    tract_to_nbh[fips_str] = nbh_name
+        print(f'Census tract coordinates loaded: {len(tract_coords)}')
 
-        print(f'Tract→neighborhood mappings from ACS file: {len(tract_to_nbh)}')
-
-    # For any tract not in the ACS file, fall back to nearest-centroid
-    # (This requires knowing the tract centroid — approximate from FIPS)
-    # We'll skip unmatched tracts rather than guess wrong centroids
-
-    # Step 4: aggregate per neighborhood
+    # Step 4: aggregate per neighborhood using nearest-centroid assignment
     nbh_buckets: dict[str, list[dict[str, float]]] = defaultdict(list)
     nbh_years:   dict[str, set[str]] = defaultdict(set)
 
@@ -323,10 +313,11 @@ def process(rows: list[dict]) -> dict:
         if len(measures) < 3:
             continue  # skip tracts with very few measures
 
-        nbh_name = tract_to_nbh.get(tract_fips)
-        if not nbh_name:
+        coords = tract_coords.get(tract_fips)
+        if not coords:
             unmatched += 1
             continue
+        nbh_name = nearest_neighborhood(coords[0], coords[1])
 
         nbh_buckets[nbh_name].append(measures)
         yr = tract_year.get(tract_fips, '')
