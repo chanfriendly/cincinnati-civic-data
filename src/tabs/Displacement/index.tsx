@@ -324,6 +324,68 @@ const QuadrantPlot: React.FC<{ record: DisplacementRecord }> = ({ record }) => {
   )
 }
 
+// ─── Methodology info panel ────────────────────────────────────────────────────
+
+const MethodologyNote: React.FC = () => {
+  const [open, setOpen] = React.useState(false)
+  return (
+    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 max-w-3xl">
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-sm text-amber-800 leading-relaxed">
+          <span className="font-semibold">Methodology: </span>
+          Inspired by the Anti-Eviction Mapping Project and NYC Displacement Alert Project
+          frameworks, adapted to Cincinnati open data. This is a simplified model — it uses
+          fewer dimensions than those full methodologies (which add race, tenure, education,
+          and language isolation). Combines housing vulnerability (who is at risk) with
+          market pressure (what forces are acting) using only publicly available local data.
+          Neighborhoods scoring above the city midpoint on BOTH axes need the most urgent attention.
+        </p>
+        <button
+          onClick={() => setOpen(v => !v)}
+          aria-label="Show calculation details"
+          title="How are these scores calculated?"
+          className="shrink-0 w-6 h-6 rounded-full border border-amber-400 text-amber-700 text-xs font-bold flex items-center justify-center hover:bg-amber-100 transition-colors"
+        >
+          i
+        </button>
+      </div>
+
+      {open && (
+        <div className="mt-4 pt-4 border-t border-amber-200 space-y-4 text-xs text-amber-900">
+          <div>
+            <p className="font-semibold mb-1">Vulnerability score (0–100) — who is at risk</p>
+            <p className="mb-1">Average of two components, each min-max normalized across all ~52 Cincinnati neighborhoods (0 = city minimum, 100 = city maximum):</p>
+            <ul className="list-disc list-inside space-y-0.5 ml-1">
+              <li><strong>Rent burden rate</strong> — % of renters paying &gt;30% of income on rent (ACS Census). Higher burden → higher score.</li>
+              <li><strong>Median household income</strong> — ACS Census. Lower income → higher score (inverted).</li>
+            </ul>
+            <p className="mt-1 text-amber-700 italic">Limitation: scores are relative to other Cincinnati neighborhoods, not absolute national thresholds. A "stable" neighborhood may still have objectively high rent burden.</p>
+          </div>
+          <div>
+            <p className="font-semibold mb-1">Pressure score (0–100) — what forces are acting</p>
+            <p className="mb-1">Average of three components, same normalization:</p>
+            <ul className="list-disc list-inside space-y-0.5 ml-1">
+              <li><strong>Permit year-over-year % change</strong> — building permits (last 3 years vs. prior 3 years). Higher growth → higher score.</li>
+              <li><strong>Tax abatement count</strong> — commercial CRA subsidies (tax abatements, TIF, LEED credits, below-market land sales). More city-backed investment → higher score.</li>
+              <li><strong>Housing unit removal count</strong> — units removed via building permits. More demolitions/removals → higher score.</li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-semibold mb-1">Phase classification</p>
+            <p>Each score above 50 means "above the city midpoint" — not an absolute threshold. Four phases result from the two binary splits:</p>
+            <ul className="list-disc list-inside space-y-0.5 ml-1 mt-1">
+              <li><strong>Active Displacement Zone</strong>: Vulnerability &gt; 50 and Pressure &gt; 50</li>
+              <li><strong>Vulnerable / At Risk</strong>: Vulnerability &gt; 50, Pressure ≤ 50</li>
+              <li><strong>Development Pressure</strong>: Vulnerability ≤ 50, Pressure &gt; 50</li>
+              <li><strong>Stable</strong>: Both ≤ 50</li>
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Main component ────────────────────────────────────────────────────────────
 
 const DisplacementTab: React.FC = () => {
@@ -847,16 +909,7 @@ const DisplacementTab: React.FC = () => {
           (who is at risk) and high market pressure (what forces are acting on them). Neighborhoods
           high on both axes need the most urgent attention.
         </p>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 max-w-3xl">
-          <p className="text-sm text-amber-800 leading-relaxed">
-            <span className="font-semibold">Methodology: </span>
-            Based on the Anti-Eviction Mapping Project and NYC Displacement Alert Project
-            methodology. Combines housing vulnerability (who is at risk) with market pressure
-            (what forces are acting on them) — now including housing unit removal permits as a
-            third pressure component. Neighborhoods scoring high on BOTH axes need the most
-            urgent attention.
-          </p>
-        </div>
+        <MethodologyNote />
       </div>
 
       {/* Error notices */}

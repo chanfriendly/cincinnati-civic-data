@@ -1205,10 +1205,10 @@ export default function AddressLookup() {
                       </div>
                       <p className={`text-xs leading-relaxed ${leadRiskLevel === 'high' ? 'text-red-800' : leadRiskLevel === 'moderate' ? 'text-orange-800' : 'text-green-800'}`}>
                         {leadRiskLevel === 'high'
-                          ? `${riskLines} of ${total} service lines in ${name} are lead or galvanized — materials that can leach lead into drinking water. Request a free inspection from GCWW.`
+                          ? `${riskLines} of ${total} service lines in ${name} are lead or galvanized — materials that can leach lead into drinking water. GCWW's free replacement program covers the service line to your home; contact them to find out when your neighborhood is scheduled.`
                           : leadRiskLevel === 'moderate'
-                          ? `${riskLines > 0 ? `${riskLines} lead/galvanized lines detected.` : ''} ${unknown > 0 ? `${unknown} lines have unknown material — may warrant testing.` : ''} Consider requesting a water test.`
-                          : `${replaced} lines replaced, ${lead + galvanized === 0 ? 'no known lead/galvanized lines' : `${riskLines} may still need attention`} in ${name}.`}
+                          ? `${riskLines > 0 ? `${riskLines} lead/galvanized lines detected.` : ''} ${unknown > 0 ? `${unknown} lines have unknown material — may warrant testing.` : ''} Getting your water tested is a free, low-effort first step.`
+                          : `${replaced} lines replaced, ${lead + galvanized === 0 ? 'no known lead/galvanized lines' : `${riskLines} may still need attention`} in ${name}. Even a lower-risk service line doesn't rule out lead from interior plumbing in older homes.`}
                       </p>
                     </div>
 
@@ -1228,12 +1228,13 @@ export default function AddressLookup() {
                     </div>
 
                     {leadRiskLevel !== 'low' && (
-                      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
-                        <p className="text-xs font-semibold text-blue-800 mb-1">What you can do</p>
-                        <ul className="text-xs text-blue-700 space-y-1 list-none">
-                          <li>→ <strong>Call GCWW</strong> at (513) 591-7700 to request a free lead service line inspection and replacement program enrollment.</li>
-                          <li>→ <strong>Get a free water test</strong> through the Cincinnati Health Department's Lead Poisoning Prevention Program.</li>
-                          <li>→ Use a certified NSF-53 filter on drinking water taps while awaiting replacement.</li>
+                      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 space-y-2">
+                        <p className="text-xs font-semibold text-blue-800">What you can do now</p>
+                        <ul className="text-xs text-blue-700 space-y-1.5 list-none">
+                          <li>→ <strong>Get your water tested first</strong> — it's free and immediate. GCWW offers <a href="https://la.mygcww.org/lead/" target="_blank" rel="noopener noreferrer" className="underline">free lead test kits</a>. This tells you what's actually in your tap water regardless of service line status.</li>
+                          <li>→ <strong>Contact GCWW at (513) 591-7700</strong> to find out when your neighborhood is scheduled for the replacement program and to make sure your address is on their list. You can't request immediate replacement — the program works neighborhood by neighborhood.</li>
+                          <li>→ <strong>Use an NSF-certified lead filter</strong> (pitcher or faucet-mount) on drinking taps in the meantime — especially if children or pregnant residents are in the home.</li>
+                          <li>→ <strong>If your home was built before 1986</strong>, interior pipes and solder joints may also contain lead. Service line replacement won't address this — a water test and certified filter are your best protection for interior plumbing.</li>
                         </ul>
                       </div>
                     )}

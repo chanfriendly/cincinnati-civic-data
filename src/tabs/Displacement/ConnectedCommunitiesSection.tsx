@@ -38,25 +38,26 @@ const BASELINE_END = '2024-06-30';
 // ── Permit type classification ─────────────────────────────────────────────────
 
 /**
- * Residential permit types the Connected Communities reform is expected to
- * increase. Matched via case-insensitive substring.
+ * Non-trade permit types to show in the "By Permit Type" breakdown.
+ *
+ * Cincinnati's `permittypemapped` field uses structural/trade categories
+ * ("Building", "HVAC", "Plumbing Permits", etc.) — not residential/commercial
+ * use-type labels. We show the structural types that are NOT pure trade work.
+ * "Building" is the main catch-all for all structural permits (residential
+ * and commercial alike) and is the category most affected by zoning reform.
  */
-const RESIDENTIAL_KEYWORDS = [
-  'residential',
-  'dwelling',
-  'adu',
-  'accessory',
-  'duplex',
-  'triplex',
-  'multi',
-  'apartment',
-  'conversion',
-  'addition',
+const TRADE_KEYWORDS = [
+  'hvac',
+  'plumbing',
+  'electrical',
+  'fire suppression',
+  'fire protection',
+  'elevator',
 ];
 
-function isResidential(permitType: string): boolean {
+function isStructural(permitType: string): boolean {
   const lower = permitType.toLowerCase();
-  return RESIDENTIAL_KEYWORDS.some(k => lower.includes(k));
+  return !TRADE_KEYWORDS.some(k => lower.includes(k));
 }
 
 // Exclude pure trade permits from all counts
@@ -189,10 +190,10 @@ export default function ConnectedCommunitiesSection() {
       (s, r) => s + parseInt(r.count, 10), 0
     );
     const reformRes = (reformByType.data || [])
-      .filter(r => isResidential(r.permittypemapped || ''))
+      .filter(r => isStructural(r.permittypemapped || ''))
       .reduce((s, r) => s + parseInt(r.count, 10), 0);
     const baselineRes = (baselineByType.data || [])
-      .filter(r => isResidential(r.permittypemapped || ''))
+      .filter(r => isStructural(r.permittypemapped || ''))
       .reduce((s, r) => s + parseInt(r.count, 10), 0);
     return { reformTotal, baselineTotal, reformRes, baselineRes };
   }, [reformByNeighborhood.data, baselineByNeighborhood.data, reformByType.data, baselineByType.data]);
@@ -225,14 +226,14 @@ export default function ConnectedCommunitiesSection() {
       .slice(0, 20);
   }, [reformByNeighborhood.data, baselineByNeighborhood.data]);
 
-  // ── Permit type comparison (residential types only) ───────────────────────────
+  // ── Permit type comparison (structural types, trades excluded) ────────────────
   const typeComparison = useMemo(() => {
     const baseMap = new Map<string, number>();
     (baselineByType.data || []).forEach(r => {
       if (r.permittypemapped) baseMap.set(r.permittypemapped, parseInt(r.count, 10) || 0);
     });
     return (reformByType.data || [])
-      .filter(r => r.permittypemapped && isResidential(r.permittypemapped))
+      .filter(r => r.permittypemapped && isStructural(r.permittypemapped))
       .map(r => {
         const reform = parseInt(r.count, 10) || 0;
         const baseline = baseMap.get(r.permittypemapped) ?? 0;
@@ -315,7 +316,7 @@ export default function ConnectedCommunitiesSection() {
             </div>
             <div className="bg-green-50 p-4 rounded-lg">
               <div className="text-xs font-bold uppercase tracking-wider text-green-400 mb-2">
-                Residential Permits
+                Structural Permits
               </div>
               <div className="flex items-end gap-2">
                 <div className="text-2xl font-bold text-green-700">
@@ -334,7 +335,7 @@ export default function ConnectedCommunitiesSection() {
                 </div>
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                New construction, additions, ADU, conversion
+                Building, Misc. Structures, Wrecking, Signs, etc.
               </div>
             </div>
           </div>
@@ -431,7 +432,7 @@ export default function ConnectedCommunitiesSection() {
           {typeComparison.length > 0 ? (
             <>
               <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
-                Residential permit types — Reform Year 1 vs. Baseline
+                Structural permit types — Reform Year 1 vs. Baseline
               </div>
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={typeComparison} margin={{ bottom: 70, left: 10 }}>
@@ -483,8 +484,9 @@ export default function ConnectedCommunitiesSection() {
                 <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block bg-[#dc2626]" /> Reform Year 1 (decrease)</span>
               </div>
               <p className="text-xs text-gray-400 mt-3">
-                Residential permit types only (new construction, additions, ADU, conversions, multifamily).
-                Trade permits (electrical, plumbing, HVAC) excluded.
+                Cincinnati's permit data classifies by trade/structural category, not by residential vs. commercial use.
+                "Building" is the main structural category covering all construction types.
+                Trade permits (HVAC, plumbing, electrical, fire protection, elevator) excluded.
               </p>
             </>
           ) : (

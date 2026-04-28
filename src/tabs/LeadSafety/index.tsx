@@ -132,7 +132,7 @@ function UrgencyBanner() {
           { value: '33,449', label: 'Lead or unknown lines remaining', sub: 'As of 2024' },
           { value: '~220', label: 'Children with elevated blood lead yearly', sub: 'City of Cincinnati' },
           { value: '36.8%', label: 'Children under 6 who are tested', sub: 'Far below national average' },
-          { value: '$0', label: 'Cost to residents for city-side replacement', sub: 'Private-side may have costs' },
+          { value: '$0', label: 'Cost to residents for full replacement through GCWW program', sub: 'Public- and private-side both covered when your area is selected' },
         ].map(({ value, label, sub }) => (
           <div key={label} className="bg-red-800 bg-opacity-60 rounded-lg p-3 text-center">
             <div className="text-2xl font-bold">{value}</div>
@@ -449,16 +449,29 @@ function ActionCard() {
           </div>
         </div>
 
-        {/* Apply for replacement */}
+        {/* Replacement program */}
         <div className="flex gap-3">
           <span className="text-xl shrink-0">🔧</span>
           <div>
-            <p className="font-semibold text-gray-900">Apply for free replacement</p>
+            <p className="font-semibold text-gray-900">How the replacement program works — and what it doesn't cover</p>
             <p className="mt-0.5">
-              Cincinnati's Lead Service Line Replacement Program (LSLRP) replaces both the
-              public-side and private-side at <strong>no cost to the homeowner</strong> when
-              your home is selected. GCWW prioritizes homes with children under 6, pregnant
-              residents, and older housing stock. Contact{' '}
+              GCWW's program replaces both the public-side (main to curb) and private-side
+              (curb to your building) service line at <strong>no cost to the homeowner</strong>.
+              However, <strong>you cannot request replacement on demand</strong> — the program
+              operates in concentrated project areas. GCWW notifies households when their
+              neighborhood is scheduled, then prioritizes homes with children under 6, pregnant
+              residents, and older housing stock within that area.
+            </p>
+            <p className="mt-2">
+              <strong>Important:</strong> The replacement program covers the service line only
+              — the pipe from the street to your home. Lead from{' '}
+              <strong>interior plumbing, solder joints, and fixtures inside your home</strong>{' '}
+              is a separate and common exposure source that the program does not address.
+              If your home was built before 1986, interior pipes and solder may contain lead
+              regardless of your service line status.
+            </p>
+            <p className="mt-2">
+              You can contact{' '}
               <a
                 href="https://la.mygcww.org/lead/"
                 target="_blank"
@@ -467,7 +480,8 @@ function ActionCard() {
               >
                 GCWW's lead program
               </a>{' '}
-              or call <strong>513-591-7700</strong> to ask about your eligibility.
+              or call <strong>513-591-7700</strong> to find out when your neighborhood is
+              scheduled and to make sure your address is on their list.
             </p>
           </div>
         </div>
