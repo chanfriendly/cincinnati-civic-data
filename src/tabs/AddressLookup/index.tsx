@@ -1377,7 +1377,7 @@ export default function AddressLookup() {
               ) : zoningStatus === 'done' ? (
                 <EmptyState message="Address outside Cincinnati zoning boundary" />
               ) : null}
-              <DataAttribution source="Zoning — CAGIS" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
+              <DataAttribution source="Zoning — CAGIS" url="https://cagis.hamilton-co.org/" />
             </DataCard>
 
             {/* Historic District */}
@@ -1409,7 +1409,7 @@ export default function AddressLookup() {
               ) : historicStatus === 'done' ? (
                 <EmptyState message="Not in a Cincinnati historic district" />
               ) : null}
-              <DataAttribution source="Cincinnati Historic Districts — CAGIS" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
+              <DataAttribution source="Cincinnati Historic Districts — CAGIS" url="https://cagis.hamilton-co.org/" />
             </DataCard>
           </div>
 
@@ -1484,7 +1484,7 @@ export default function AddressLookup() {
                 ) : (
                   <EmptyState message="No parks found within 0.5 miles" />
                 )}
-                <DataAttribution source="Cincinnati Parks & Greenspace — CAGIS" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
+                <DataAttribution source="Cincinnati Parks & Greenspace — CAGIS" url="https://cagis.hamilton-co.org/" />
               </>
             )}
 
@@ -1526,7 +1526,7 @@ export default function AddressLookup() {
                 ) : (
                   <EmptyState message="No schools found within 1 mile" />
                 )}
-                <DataAttribution source="Countywide School Locations — CAGIS" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
+                <DataAttribution source="Countywide School Locations — CAGIS" url="https://cagis.hamilton-co.org/" />
               </>
             )}
 
@@ -1705,7 +1705,7 @@ export default function AddressLookup() {
                     Verify registration →
                   </a>
                   <a
-                    href="https://boe.hamiltonco.org"
+                    href="https://www.votehamiltoncountyohio.gov/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#1A4A6B] hover:underline"
@@ -1716,7 +1716,7 @@ export default function AddressLookup() {
               </div>
             )}
             <div className="mt-3 pt-3 border-t border-gray-100">
-              <DataAttribution source="Hamilton County CAGIS · Voting Precincts" url="https://www.hamiltoncountyohio.gov/government/departments/county_gis_cagis" />
+              <DataAttribution source="Hamilton County CAGIS · Voting Precincts" url="https://cagis.hamilton-co.org/" />
             </div>
           </DataCard>
 
