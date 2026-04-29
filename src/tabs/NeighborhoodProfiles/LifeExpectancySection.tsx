@@ -173,7 +173,7 @@ export default function LifeExpectancySection({ neighborhood }: Props) {
       <div className="mt-4 pt-3 border-t border-gray-100">
         <DataAttribution
           source="CDC NCHS / NVSS · USALEEP 2010–2015"
-          url="https://www.cdc.gov/nchs/nvss/usaleep/"
+          url="https://www.cdc.gov/nchs/nvss/usaleep/usaleep.html"
         />
       </div>
     </DataCard>
