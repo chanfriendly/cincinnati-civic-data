@@ -1,0 +1,330 @@
+{
+  "avondale": {
+    "name": "Avondale",
+    "lifeExpectancy": 68.1,
+    "tractCount": 3,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "bondhill": {
+    "name": "Bond Hill",
+    "lifeExpectancy": 70.6,
+    "tractCount": 1,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "cbdriverfront": {
+    "name": "CBD / Riverfront",
+    "lifeExpectancy": 80.0,
+    "tractCount": 2,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "carthage": {
+    "name": "Carthage",
+    "lifeExpectancy": 72.9,
+    "tractCount": 5,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "clifton": {
+    "name": "Clifton",
+    "lifeExpectancy": 78.5,
+    "tractCount": 2,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "cliftonheights": {
+    "name": "Clifton Heights",
+    "lifeExpectancy": 77.6,
+    "tractCount": 1,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "collegehill": {
+    "name": "College Hill",
+    "lifeExpectancy": 73.7,
+    "tractCount": 4,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "corryville": {
+    "name": "Corryville",
+    "lifeExpectancy": 63.4,
+    "tractCount": 1,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "eastend": {
+    "name": "East End",
+    "lifeExpectancy": 79.1,
+    "tractCount": 9,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "eastwalnuthills": {
+    "name": "East Walnut Hills",
+    "lifeExpectancy": 76.4,
+    "tractCount": 3,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "eastwestwood": {
+    "name": "East Westwood",
+    "lifeExpectancy": 70.6,
+    "tractCount": 2,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "englishwoods": {
+    "name": "English Woods",
+    "lifeExpectancy": 78.7,
+    "tractCount": 8,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "evanston": {
+    "name": "Evanston",
+    "lifeExpectancy": 73.4,
+    "tractCount": 4,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "fayapartments": {
+    "name": "Fay Apartments",
+    "lifeExpectancy": 68.0,
+    "tractCount": 2,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "hartwell": {
+    "name": "Hartwell",
+    "lifeExpectancy": 77.0,
+    "tractCount": 24,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "hydepark": {
+    "name": "Hyde Park",
+    "lifeExpectancy": 84.7,
+    "tractCount": 2,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "kennedyheights": {
+    "name": "Kennedy Heights",
+    "lifeExpectancy": 74.5,
+    "tractCount": 4,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "linwood": {
+    "name": "Linwood",
+    "lifeExpectancy": 78.8,
+    "tractCount": 1,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "lowerpricehill": {
+    "name": "Lower Price Hill",
+    "lifeExpectancy": 70.5,
+    "tractCount": 4,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "madisonville": {
+    "name": "Madisonville",
+    "lifeExpectancy": 78.0,
+    "tractCount": 10,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "mountadams": {
+    "name": "Mount Adams",
+    "lifeExpectancy": 86.7,
+    "tractCount": 1,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "mountairy": {
+    "name": "Mount Airy",
+    "lifeExpectancy": 75.1,
+    "tractCount": 14,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "mountauburn": {
+    "name": "Mount Auburn",
+    "lifeExpectancy": 73.8,
+    "tractCount": 4,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "mtlookout": {
+    "name": "Mt. Lookout",
+    "lifeExpectancy": 70.4,
+    "tractCount": 1,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "northavondale": {
+    "name": "North Avondale",
+    "lifeExpectancy": 74.8,
+    "tractCount": 1,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "northfairmount": {
+    "name": "North Fairmount",
+    "lifeExpectancy": 73.6,
+    "tractCount": 1,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "northside": {
+    "name": "Northside",
+    "lifeExpectancy": 73.4,
+    "tractCount": 1,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "oakley": {
+    "name": "Oakley",
+    "lifeExpectancy": 77.1,
+    "tractCount": 3,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "overtherhine": {
+    "name": "Over-the-Rhine",
+    "lifeExpectancy": 73.4,
+    "tractCount": 2,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "paddockhills": {
+    "name": "Paddock Hills",
+    "lifeExpectancy": 65.5,
+    "tractCount": 1,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "pendleton": {
+    "name": "Pendleton",
+    "lifeExpectancy": 74.9,
+    "tractCount": 1,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "pleasantridge": {
+    "name": "Pleasant Ridge",
+    "lifeExpectancy": 77.5,
+    "tractCount": 14,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "riverside": {
+    "name": "Riverside",
+    "lifeExpectancy": 77.3,
+    "tractCount": 3,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "roselawn": {
+    "name": "Roselawn",
+    "lifeExpectancy": 79.2,
+    "tractCount": 10,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "saylerpark": {
+    "name": "Sayler Park",
+    "lifeExpectancy": 76.9,
+    "tractCount": 10,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "sedamsville": {
+    "name": "Sedamsville",
+    "lifeExpectancy": 77.0,
+    "tractCount": 6,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "southfairmount": {
+    "name": "South Fairmount",
+    "lifeExpectancy": 72.1,
+    "tractCount": 1,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "springgrovevillage": {
+    "name": "Spring Grove Village",
+    "lifeExpectancy": 73.5,
+    "tractCount": 1,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "walnuthills": {
+    "name": "Walnut Hills",
+    "lifeExpectancy": 71.8,
+    "tractCount": 2,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "westpricehill": {
+    "name": "West Price Hill",
+    "lifeExpectancy": 71.5,
+    "tractCount": 9,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  },
+  "westwood": {
+    "name": "Westwood",
+    "lifeExpectancy": 76.6,
+    "tractCount": 12,
+    "tractSuppressed": 0,
+    "dataYears": "2010-2015",
+    "asOf": "2026-04-29"
+  }
+}

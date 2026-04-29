@@ -170,6 +170,7 @@ The API infrastructure exists but the city has not enabled it. **Do not attempt 
 | 28 | Apr 2026 | Tax & Revenue transparency tab (rate history + ACS B19080 percentiles + ITEP Ohio modeled incidence + city revenue `a9hy-bv25`); dedicated Limitations & Methodology tab (SNA vs Community Council, Oakley example, centroid mapping, AI disclosures, data vintages) |
 | 29 | Apr 2026 | Phase 7a: Healthcare facilities (OSM, 458 facilities) + CDC PLACES health outcomes (41 neighborhoods, 10 measures) + HealthOutcomesSection + Healthcare amenities tab in Address Lookup |
 | 30 | Apr 2026 | Phase 7b: Community councils directory (52 entries, static JSON) + Voting precinct lookup (live CAGIS layer 44) + Recreation centers (24 CRC centers) + Expanded demographics + broadband (ACS C16001/B01001/B05002/B15003/B28002, 41 neighborhoods) |
+| 31 | Apr 2026 | Phase 7c: Life expectancy by neighborhood (CDC USALEEP 2010–2015, 41 neighborhoods, 63–87yr range) + LifeExpectancySection with city-range gradient bar + 23-year equity gap callout |
 
 ---
 

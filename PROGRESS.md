@@ -6,6 +6,30 @@
 
 ## Session Log
 
+### Session 31 — Phase 7c: Life Expectancy by Neighborhood (April 2026)
+
+**What was built:**
+
+1. **`scripts/build_life_expectancy.py`** — Fetches Ohio USALEEP CSV from CDC FTP (`ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NVSS/USALEEP/CSV/OH_A.CSV`), filters to Hamilton County (CNTY2KX == 061), maps 203 tracts to 41 SNA neighborhoods via nearest-centroid, averages life expectancy at birth per neighborhood.
+
+2. **`public/data/neighborhood_life_expectancy.json`** — 41 neighborhoods. Range: 63.4 (Corryville, 1 tract) to 86.7 (Mount Adams, 1 tract). City avg: 74.8 years. **The 23-year gap between highest and lowest neighborhoods is a major equity finding.**
+
+3. **`src/tabs/NeighborhoodProfiles/LifeExpectancySection.tsx`** — Shows life expectancy at birth as a large headline number, ±years vs city average badge (green/red/neutral), a gradient bar (red→yellow→green) spanning the city range with a marker for the selected neighborhood and a white line for city average. Equity callout box surfacing the 23-year gap. Single-tract estimates flagged with a caution note.
+
+4. **Wired** into `NeighborhoodProfiles/index.tsx` directly above `HealthOutcomesSection` under the "Public Health" divider.
+
+5. **Roadmap** — "Life Expectancy by Neighborhood (CDC USALEEP)" marked `completed`.
+
+**TypeScript:** ✅ clean.
+
+**Key data note:** USALEEP suppresses tracts with insufficient death records — 203 of 226 Hamilton County tracts have data. Single-tract neighborhood estimates (Corryville, Mt. Lookout, Mount Adams, Paddock Hills) should be interpreted cautiously. Data vintage is 2010–2015; there is no more recent USALEEP release.
+
+**Next:**
+- Phase 7 is now complete (items 23–30 all ✅)
+- Remaining open items: Manual QA (Tab 1 CAGIS cards), mobile testing, AI summary reassessment
+
+---
+
 ### Session 30 — Phase 7 Phase 2: Community Councils, Voting Precinct, Rec Centers, Expanded Demographics (April 2026)
 
 **Context:** Continuing Phase 7 (UC Nursing use case). This session completes the remaining Phase 7 items: community councils directory (item 26), voting precinct lookup (item 27), recreation centers (item 28), expanded demographics (item 29), and broadband access (item 30).

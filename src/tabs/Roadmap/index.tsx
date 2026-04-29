@@ -354,7 +354,7 @@ const SECTIONS: RoadmapSection[] = [
       },
       {
         title: 'Life Expectancy by Neighborhood (CDC USALEEP)',
-        status: 'planned',
+        status: 'completed',
         description: 'Estimated life expectancy at birth for each Cincinnati census tract, mapped to neighborhoods. A single, powerful anchor for community health profiles — showing where life expectancy gaps are widest and how they correlate with other dimensions we already measure (income, environmental burden, housing conditions).',
         why: 'CDC\'s US Small-Area Life Expectancy Estimates Project (USALEEP) found life expectancy gaps of 10–20 years across census tracts within the same city. In Cincinnati, the gap between the highest- and lowest-expectancy neighborhoods likely mirrors the racial and economic divides already visible in our platform. USALEEP data is free and publicly downloadable; no live API is needed.',
         dataSource: 'CDC USALEEP (US Small-Area Life Expectancy Estimates Project)',

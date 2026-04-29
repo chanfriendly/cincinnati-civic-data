@@ -10,6 +10,7 @@ import DevelopmentSection from './DevelopmentSection';
 import HousingInventorySection from './HousingInventorySection';
 import TransitEquitySection from './TransitEquitySection';
 import HealthOutcomesSection from './HealthOutcomesSection';
+import LifeExpectancySection from './LifeExpectancySection';
 import ExpandedDemographicsSection from './ExpandedDemographicsSection';
 import CommunityCouncilSection from './CommunityCouncilSection';
 import RecreationCentersSection from './RecreationCentersSection';
@@ -419,6 +420,7 @@ export default function NeighborhoodProfiles() {
         />
       </DataCard>
 
+      <LifeExpectancySection neighborhood={selectedNeighborhood} />
       <HealthOutcomesSection neighborhood={selectedNeighborhood} />
 
       {/* ── Community & Civic ─────────────────────────────────────────────── */}
