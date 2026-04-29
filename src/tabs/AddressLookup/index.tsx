@@ -1649,7 +1649,7 @@ export default function AddressLookup() {
                   ) : (
                     <EmptyState message="No healthcare facilities found within 1 mile" />
                   )}
-                  <DataAttribution source="OpenStreetMap / Overpass API · HRSA Health Center Finder" uid="healthcare-facilities" />
+                  <DataAttribution source="OpenStreetMap / Overpass API · HRSA Health Center Finder" url="https://www.openstreetmap.org/" />
                 </>
               );
             })()}
