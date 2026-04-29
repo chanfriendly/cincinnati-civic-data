@@ -208,7 +208,7 @@ export default function ExpandedDemographicsSection({ neighborhood }: Props) {
       )}
 
       <div className="mt-4 pt-3 border-t border-gray-100">
-        <DataAttribution source="U.S. Census Bureau · American Community Survey 5-Year 2022" uid="acs-demographics-2022" />
+        <DataAttribution source="U.S. Census Bureau · American Community Survey 5-Year 2022" url="https://www.census.gov/programs-surveys/acs" />
       </div>
     </DataCard>
   );

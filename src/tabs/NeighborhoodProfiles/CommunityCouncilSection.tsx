@@ -146,8 +146,8 @@ export default function CommunityCouncilSection({ neighborhood }: Props) {
             className="text-[#1A4A6B] hover:underline ml-1">Submit a correction on GitHub →</a>
         </p>
         <DataAttribution
-          source="Cincinnati Community Council Directory · City of Cincinnati"
-          url="https://www.cincinnati-oh.gov/cityofcincinnati/neighborhood-resources/community-councils/"
+          source="Community Council Information · Cincinnati Open Data"
+          url="https://data.cincinnati-oh.gov/dataset/Community-Council-Information/h68y-9f7w"
         />
       </div>
     </DataCard>
