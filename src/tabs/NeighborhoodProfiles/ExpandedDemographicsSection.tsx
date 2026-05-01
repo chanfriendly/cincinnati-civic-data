@@ -77,8 +77,8 @@ function CmpBadge({ value, cityAvg, higherIsBetter = true }: { value: number; ci
   const better = higherIsBetter ? diff > threshold : diff < -threshold;
   const worse  = higherIsBetter ? diff < -threshold : diff > threshold;
 
-  if (better) return <span className="ml-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">above avg</span>;
-  if (worse)  return <span className="ml-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-200">below avg</span>;
+  if (better) return <span className="ml-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">better than avg</span>;
+  if (worse)  return <span className="ml-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-200">worse than avg</span>;
   return <span className="ml-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-gray-50 text-gray-500 border border-gray-200">near avg</span>;
 }
 
