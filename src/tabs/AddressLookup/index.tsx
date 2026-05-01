@@ -598,13 +598,11 @@ export default function AddressLookup() {
     });
   }, [selectedAddress, mergedCrime]);
 
-  // TODO(reassess-ai-summary): The AI summary prompt and output quality need a deliberate review
-  // pass. Questions to address:
-  //   1. Is the model's framing (factual, not alarmist) producing outputs residents actually trust?
-  //   2. Should we show the raw data points being sent so users can verify the summary?
-  //   3. Is 2-3 paragraphs the right length, or is a bullet-point format more scannable?
-  //   4. Should we add a "this summary is AI-generated" disclosure in the UI?
-  // See CLAUDE.md "Known Issues" for context. — flagged April 2026
+  // TODO(reassess-ai-summary): Open follow-ups on this feature:
+  //   - Should we show the raw JSON payload being sent so users can verify the summary?
+  //   - Should we add an "AI-generated" disclosure badge in the UI itself (currently only
+  //     implicit in the section title)?
+  // See CLAUDE.md "Known Issues" for context.
   const handleAiSummary = useCallback(async () => {
     if (!selectedAddress) return;
 
@@ -612,20 +610,114 @@ export default function AddressLookup() {
     setAiError(null);
     setAiSummary(null);
     try {
-      const summary = {
+      const HIGH_FLOOD_ZONES = ['AE', 'A', 'AO', 'AH', 'VE', 'V'];
+      const failedInspectionsCount = (inspections.data || []).filter(
+        (i: any) => /fail|viol|notice/i.test(String(i.data_status ?? ''))
+      ).length;
+      const floodCode = floodZone[0] ? String(floodZone[0].FLD_ZONE ?? 'X') : 'X';
+      const isHighFlood = HIGH_FLOOD_ZONES.includes(floodCode);
+      const topCrimeTypes = Object.entries(
+        mergedCrime.reduce<Record<string, number>>((acc, c) => {
+          const k = String(c.stars_category || c.offense_type || c.offense || 'Unknown');
+          acc[k] = (acc[k] || 0) + 1;
+          return acc;
+        }, {})
+      )
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 3)
+        .map(([category, count]) => ({ category, count }));
+
+      let leadSummary:
+        | { riskLevel: 'high' | 'moderate' | 'low'; totalLines: number; knownLeadLines: number; galvanizedLines: number; unknownLines: number; replaced: number }
+        | null = null;
+      if (leadRecord && leadRecord.total > 0) {
+        const riskLines = leadRecord.lead + leadRecord.galvanized;
+        const riskPct = riskLines / leadRecord.total;
+        const unknownPct = leadRecord.unknown / leadRecord.total;
+        const riskLevel: 'high' | 'moderate' | 'low' =
+          riskPct > 0.15 || (riskPct > 0 && unknownPct > 0.4)
+            ? 'high'
+            : riskPct > 0 || unknownPct > 0.3
+              ? 'moderate'
+              : 'low';
+        leadSummary = {
+          riskLevel,
+          totalLines: leadRecord.total,
+          knownLeadLines: leadRecord.lead,
+          galvanizedLines: leadRecord.galvanized,
+          unknownLines: leadRecord.unknown,
+          replaced: leadRecord.replaced,
+        };
+      }
+
+      const payload = {
         address: selectedAddress.formatted,
-        inspections: inspections.data?.length || 0,
-        violations: inspections.data?.filter((i: any) => i.result?.toLowerCase() === 'failed')
-          .length,
-        taxAbatements: taxAbatements.data?.length || 0,
-        nearbyCrime: mergedCrime.length,
-        blight: blight.data?.length || 0,
-        transitStops: transitStops.length,
+        neighborhood: selectedAddress.neighborhood ?? null,
+        place: {
+          zoning: zoning[0]
+            ? {
+                code: String(zoning[0].ZONING ?? ''),
+                description: String(zoning[0].ZONE_DESCRIPTION ?? zoning[0].ZONEDESC ?? ''),
+              }
+            : null,
+          floodZone: { code: floodCode, isHighRisk: isHighFlood },
+          historicDistrict: historicDistrict[0]
+            ? String(historicDistrict[0].DISTNAME ?? historicDistrict[0].NAME ?? '')
+            : null,
+        },
+        property: {
+          inspectionsLast12mo: inspections.data?.length || 0,
+          failedOrViolationInspections: failedInspectionsCount,
+          activeTaxAbatement: (taxAbatements.data?.length || 0) > 0,
+          taxAbatementCount: taxAbatements.data?.length || 0,
+          problemLandlordOrBlightCases: blight.data?.length || 0,
+        },
+        publicSafety: {
+          crimeIncidentsWithin400mLast12mo: mergedCrime.length,
+          topCrimeTypes,
+          activeFreewayIncidents: ohgoIncidents.length,
+          activeFreewayConstruction: ohgoConstruction.length,
+        },
+        neighborhoodHealth: {
+          leadServiceLines: leadSummary,
+        },
+        amenities: {
+          parksWithinHalfMile: nearbyParks.length,
+          transitStopsWithinHalfMile: transitStops.length,
+          schoolsWithinOneMile: nearbySchools.length,
+          healthcare: {
+            withinOneMile: nearbyHealthcare.length,
+            hasFederallyQualifiedHealthCenter: nearbyHealthcare.some((f) => f.fqhc),
+          },
+        },
+        civic: {
+          pollingPlace: votingPrecinct
+            ? { name: votingPrecinct.location, address: votingPrecinct.address }
+            : null,
+        },
       };
 
-      const systemPrompt =
-        'You are a civic data assistant for Cincinnati. Summarize this property\'s public record in 2-3 paragraphs for a resident or tenant. Highlight notable issues: open violations, active tax abatement, high nearby crime. Be factual, not alarmist.';
-      const userMessage = JSON.stringify(summary);
+      const systemPrompt = `You are a civic-data assistant for a Cincinnati public-records platform. The user has just looked up a property address. The JSON in the user message summarizes what the city's public datasets know about that property and the area within roughly a half-mile.
+
+Your job is NOT to recap the data, narrate the charts they will see on the page, or list every field. Anyone can read counts. Your job is to tell this person — a resident, tenant, or prospective homebuyer — what these records actually MEAN for someone considering this address, and what they should do with that knowledge. The summary should stand on its own; a reader who never looks at a single chart should still walk away knowing what they need to know.
+
+FORMAT
+- Three short paragraphs. No headings, no bullet lists, no bold, no markdown.
+- 8th-grade reading level. Under 250 words total.
+- Translate codes into meaning. "RM-1.2" → "a residential block where small multi-family buildings are allowed." "Zone AE" → "a high-risk flood area where federal flood insurance will be required for a mortgage." Never make the reader look up a code.
+
+WHAT EACH PARAGRAPH DOES
+1. Set the scene. Use neighborhood, zoning, flood zone, historic district, and the broad shape of the amenities (transit, parks, schools, healthcare access including FQHC) to give an intuitive sense of WHERE this is and what kind of place it is. 2–3 sentences.
+2. Surface what actually matters at this specific address and block. Lead with the load-bearing facts: failed-inspection or code-violation history on the building; an active tax abatement (which reduces the OWNER's property tax — useful context for a buyer comparing true cost, or a tenant in a building that may be subsidized); a high-risk flood zone; a neighborhood with meaningful lead-service-line risk (cite the risk level, not raw counts); or nearby crime that is concentrated in a specific category worth naming. If nothing is notable, say so plainly — most addresses are unremarkable, and "no red flags in the public record" is a legitimate, useful takeaway. Skip items that are zero or uneventful. Do not pad.
+3. Tell them what to actually DO. Concrete next steps tied to what you found in paragraph 2. Open violations → 311 or Cincinnati Buildings & Inspections. High lead-line risk → ask the landlord about replacement; contact the Cincinnati Health Department; flush taps before drinking. High-risk flood zone → standard homeowners insurance does not cover flood damage, ask about NFIP coverage. Tax abatement → look up the program (CRA, LEED) to understand when it expires. ALWAYS close with what this report cannot tell them: indoor-only hazards (mold, asbestos, radon), eviction history (no public registry), private disputes, future flood projections, school quality, and that any number here is only as fresh as the last city update.
+
+TONE
+- Calm, direct, factual. Like a thoughtful neighbor who knows the data, not a salesperson and not an alarmist.
+- Never invent details that aren't in the JSON. If a field is null, 0, or empty, do not speculate.
+- Never give legal, financial, or medical advice. Point to the right office or organization instead.
+- Avoid the words "data," "dataset," "record," and "summary" where you can — speak about the place, not the spreadsheet.`;
+
+      const userMessage = JSON.stringify(payload);
 
       const response = await callClaude(systemPrompt, userMessage, language);
       setAiSummary(response);
@@ -636,7 +728,25 @@ export default function AddressLookup() {
     } finally {
       setLoadingAi(false);
     }
-  }, [selectedAddress, inspections.data, taxAbatements.data, mergedCrime, blight.data, transitStops, language]);
+  }, [
+    selectedAddress,
+    inspections.data,
+    taxAbatements.data,
+    mergedCrime,
+    blight.data,
+    transitStops,
+    nearbyParks,
+    nearbySchools,
+    nearbyHealthcare,
+    zoning,
+    floodZone,
+    historicDistrict,
+    leadRecord,
+    votingPrecinct,
+    ohgoIncidents,
+    ohgoConstruction,
+    language,
+  ]);
 
   const crimeLoading = crimeOld.loading || crimeNew.loading;
   const crimeError = crimeOld.error || crimeNew.error;
