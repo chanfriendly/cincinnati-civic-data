@@ -82,7 +82,7 @@ export async function fetchSODA<T>(
 export async function callAI(
   userMessage: string,
   systemPrompt: string = 'You are a helpful civic data assistant.',
-  maxTokens: number = 512
+  maxTokens: number = 2048
 ): Promise<string> {
   const response = await fetch(AI_ENDPOINT, {
     method: 'POST',
