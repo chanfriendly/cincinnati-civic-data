@@ -149,6 +149,11 @@ export default function ExpandedDemographicsSection({ neighborhood }: Props) {
               </div>
             )}
           </div>
+          {record.tractCount >= 6 && (
+            <div className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+              ⚠ Population count may be over-estimated. This neighborhood's centroid aligns with {record.tractCount} Census tracts, some of which may extend into adjacent areas. Use the figure as an approximate order of magnitude.
+            </div>
+          )}
 
           {/* Age structure */}
           <div>
@@ -202,7 +207,7 @@ export default function ExpandedDemographicsSection({ neighborhood }: Props) {
 
           <p className="text-[10px] text-gray-400 italic pt-1">
             Data: ACS 5-Year 2022. Census tracts mapped to neighborhoods via nearest-centroid approximation.
-            {record.tractCount > 1 ? ` Averages across ${record.tractCount} tracts.` : ''}
+            {record.tractCount > 1 ? ` Aggregated across ${record.tractCount} tracts; tracts near neighborhood boundaries may span adjacent areas.` : ''}
           </p>
         </div>
       )}

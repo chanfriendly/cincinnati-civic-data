@@ -225,7 +225,7 @@ export default function PoliceAccountability() {
     setLoadingAi(true);
     try {
       const systemPrompt =
-        'You are a civic data assistant for Cincinnati. You help users query CPD transparency data. When given a question, construct a valid Socrata SODA API query for the most relevant dataset, then explain what the data would show. Available datasets: Traffic Stops (ktgf-4sjh: interview_date, race, sex, disposition_text, district), Pedestrian Stops (jx3x-rh6i: same fields), Use of Force (748b-sht4: frozen), OIS (r6q4-muts: frozen). Return your response as: 1) which dataset, 2) the SODA $where query string, 3) a plain-language explanation. Be factual and non-editorializing.';
+        'You are a civic data assistant for Cincinnati. You help users query CPD transparency data. When given a question, construct a valid Socrata SODA API query for the most relevant dataset, then explain what the data would show. Available datasets: Traffic Stops (ktgf-4sjh: interview_date, race, sex, disposition_text, district — actively updated), Use of Force (748b-sht4: eventdate, sna_neighborhood, formtype — actively updated through 2024), OIS Legacy (r6q4-muts: incident_date — frozen at 2019). Note: the Pedestrian Stops dataset (jx3x-rh6i) is currently near-empty and should not be queried. Return your response as: 1) which dataset, 2) the SODA $where query string, 3) a plain-language explanation. Be factual and non-editorializing.';
 
       const response = await callClaude(systemPrompt, aiQuestion, language);
       setAiResponse(response);
@@ -364,7 +364,7 @@ export default function PoliceAccountability() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4A6B] focus:border-transparent"
                 >
                   <option value="all">{t('police.allDistricts', 'All Districts')}</option>
-                  {[1, 2, 3, 4, 5, 6].map((d) => (
+                  {[1, 2, 3, 4, 5].map((d) => (
                     <option key={d} value={d}>
                       {t('police.district_n', `District ${d}`)}
                     </option>
@@ -405,6 +405,10 @@ export default function PoliceAccountability() {
             ) : (
               <EmptyState message={t('police.noData', 'No data available')} />
             )}
+            <p className="text-[11px] text-gray-500 italic mt-2">
+              Chart shows raw stop counts. Cincinnati is approximately 40% Black and 48% white (ACS 2022).
+              Comparing counts to population share provides a stops-per-capita context the chart alone does not convey.
+            </p>
             <DataAttribution
               source={t('police.attributionTraffic', 'Traffic Stops')}
               uid="ktgf-4sjh"
@@ -625,7 +629,7 @@ export default function PoliceAccountability() {
 
           {/* New: Police Firearm Discharge */}
           <DataCard
-            title="Police Firearm Discharge — Incidents by Year (2021–present)"
+            title="Police Firearm Discharge — Incidents by Year (2021–2024)"
             loading={firearmsIncidents.loading}
             error={firearmsIncidents.error}
             empty={firearmsIncidentsByYear.length === 0}
@@ -647,7 +651,7 @@ export default function PoliceAccountability() {
           </DataCard>
 
           <DataCard
-            title="Police Firearm Discharge — Subjects by Race (2021–present)"
+            title="Police Firearm Discharge — Subjects by Race (2021–2024)"
             loading={firearmsSubjects.loading}
             error={firearmsSubjects.error}
             empty={firearmsSubjectsByRace.length === 0}
@@ -753,14 +757,14 @@ export default function PoliceAccountability() {
                     interview_date, race, sex, disposition_text, district
                   </li>
                   <li>
-                    <strong>Pedestrian Stops</strong> (jx3x-rh6i):
-                    interview_date, race, sex, disposition_text, district
+                    <strong>Use of Force</strong> (748b-sht4):
+                    eventdate, sna_neighborhood, formtype — updated through 2024
                   </li>
                   <li>
-                    <strong>Use of Force</strong> (748b-sht4): [FROZEN]
+                    <strong>OIS Legacy</strong> (r6q4-muts): incident_date — frozen at 2019
                   </li>
-                  <li>
-                    <strong>OIS</strong> (r6q4-muts): [FROZEN]
+                  <li className="text-gray-400 italic">
+                    Pedestrian Stops (jx3x-rh6i): currently near-empty on the city portal — not queryable
                   </li>
                 </ul>
               </div>

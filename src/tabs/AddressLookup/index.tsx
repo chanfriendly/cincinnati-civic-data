@@ -1389,9 +1389,9 @@ export default function AddressLookup() {
               {historicStatus === 'done' && historicDistrict.length > 0 ? (
                 <div className="space-y-2">
                   {historicDistrict.map((h, i) => {
-                    const name = String(h.NAME ?? h.DIST_NAME ?? h.DISTRICT_NAME ?? 'Historic District');
+                    const name = String(h.HD_NAME ?? h.NAME ?? h.DIST_NAME ?? h.DISTRICT_NAME ?? 'Historic District');
                     const year = h.YEAR_DESG ?? h.DESIG_YEAR ?? '';
-                    const cls = String(h.DIST_CLASS ?? h.CLASS ?? '');
+                    const cls = String(h.DIST_CLASS ?? h.CLASS ?? h.TYPE ?? '');
                     return (
                       <div key={i} className="flex items-start gap-2">
                         <span className="text-[#C8861A] text-lg shrink-0">🏛</span>

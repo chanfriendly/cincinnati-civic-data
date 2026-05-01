@@ -110,7 +110,7 @@ const VINTAGE_ROWS: VintageRow[] = [
   { source: 'Cincinnati 311 Service Requests',    usedIn: 'Neighborhood Profiles',                             vintage: '2010–present',      refresh: 'Daily',                     notes: '' },
   { source: 'Cincinnati Police Traffic/Ped Stops',usedIn: 'Police Accountability',                             vintage: '2009–present',      refresh: 'Periodic (monthly-ish)',    notes: '' },
   { source: 'Cincinnati Use of Force / OIS',      usedIn: 'Police Accountability',                             vintage: '2010–present',      refresh: 'Periodic',                  notes: '' },
-  { source: 'U.S. Census ACS (neighborhood)',     usedIn: 'Profiles, Explorer, Displacement, Tax & Revenue',   vintage: '2022 5-year (built Mar 2026)', refresh: 'Rebuilt annually',   notes: 'Tract → neighborhood via nearest-centroid' },
+  { source: 'U.S. Census ACS (neighborhood)',     usedIn: 'Profiles, Explorer, Displacement, Tax & Revenue',   vintage: '2023 5-year (built Apr 2026)', refresh: 'Rebuilt annually',   notes: 'Tract → neighborhood via nearest-centroid' },
   { source: 'HMDA Mortgage Data',                 usedIn: 'Neighborhood Profiles (Racial Equity)',             vintage: '2022',              refresh: 'Annual',                    notes: 'CFPB pre-built snapshot' },
   { source: 'HUD Affordable Housing Inventory',   usedIn: 'Neighborhood Profiles (Affordable Housing)',        vintage: '2023',              refresh: 'Annual',                    notes: 'Subsidy expiration flags computed from contract end dates' },
   { source: 'EPA AirToxScreen (EJ)',              usedIn: 'Neighborhood Explorer (EJ dimension)',              vintage: '2019',              refresh: 'Offline since Feb 2025',    notes: 'EJScreen API decommissioned; snapshot only' },
@@ -442,11 +442,9 @@ const Limitations: React.FC = () => {
           severity="warn"
           body={
             <p>
-              Cincinnati&rsquo;s Legistar instance is not configured for the public API. Attempting
-              <code> webapi.legistar.com/v1/cincinnati/bodies </code> returns a connection-string error. The web
-              interface at <code>cincinnatioh.legistar.com</code> is public; we link deep into it rather than
-              caching stale scrapes. Unlocking the API would let us show live voting records &mdash; there is an
-              unlock CTA in the council panel.
+              Cincinnati&rsquo;s Legistar voting record API is not publicly accessible. The public web interface
+              at <a href="https://cincinnatioh.legistar.com" target="_blank" rel="noopener noreferrer" className="underline text-[#1A4A6B]">cincinnatioh.legistar.com</a> is available and we link directly into it. Enabling API
+              access would allow live voting records to be shown here; there is a request link in the council panel.
             </p>
           }
         />

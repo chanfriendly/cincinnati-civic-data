@@ -65,10 +65,9 @@ export function getRawValue(
     // Food Access: % of population in a food desert tract (USDA FARA LILA definition).
     // Higher % = worse food access → higherIsBetter: false.
     case 'food': return metrics.foodDesertPct;
-    // Environmental Justice: EPA EJScreen 2023 composite pollution burden index.
-    // Population-weighted average of national percentile ranks for:
-    //   air toxics cancer risk (30%), diesel PM (20%), traffic proximity (20%),
-    //   Superfund proximity (15%), hazardous waste proximity (15%).
+    // Environmental Justice: EPA AirToxScreen 2019 composite pollution index (ejIndex field).
+    // Only the ejIndex is populated in neighborhood_ejscreen.json; disaggregated percentile
+    // fields (cancer, Superfund, waste, etc.) are null in the source data.
     // Higher index = greater pollution burden → higherIsBetter: false.
     case 'ej': return metrics.ejPollutionIndex;
     case 'schools': return undefined;

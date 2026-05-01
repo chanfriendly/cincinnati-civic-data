@@ -102,7 +102,7 @@ public/data/neighborhood_acs.json  226 Hamilton County Census tracts (ACS 2022, 
 | Fire & EMS | `vnsz-a3wp` | `neighborhood` (UPPER CASE) ✅ | `create_time_incident` | |
 | Community Perceptions | `gdf4-fqik` | **none** — city-wide survey only | — | |
 | Use of Force | `748b-sht4` | — | `date_of_incident` | |
-| OIS | `r6qu-muts` | — | `date` | |
+| OIS | `r6q4-muts` | — | `date` | |
 | City General Fund Revenue | `a9hy-bv25` | — | `fiscal_year` | Tax & Revenue tab. `resource_name` is classified into 9 revenue categories by `classifyRevenue()` in `api.ts` (deterministic string match — do not add AI/LLM classification) |
 
 **Critical:** `uhjb-xac9` is the canonical Building Permits dataset. `tsjj-dcaf` is a derived view with no queryable columns — do not use it.

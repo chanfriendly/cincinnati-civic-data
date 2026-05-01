@@ -65,7 +65,7 @@ const METRICS: MetricConfig[] = [
   { key: 'smoking',            label: 'Current Smoking',          description: 'Adults who currently smoke cigarettes',             lowerIsBetter: true,  unit: '%' },
   { key: 'physicalInactivity', label: 'Physical Inactivity',      description: 'Adults with no leisure-time physical activity',     lowerIsBetter: true,  unit: '%' },
   // Access / prevention
-  { key: 'noDentalVisit',      label: 'No Dental Visit',          description: 'Adults without a dental visit in the past year',    lowerIsBetter: true,  unit: '%' },
+  { key: 'noDentalVisit',      label: 'No Dental Visit',          description: 'Adults without a dental visit in the past year. Note: higher-income neighborhoods sometimes show elevated rates — residents there tend to space visits further apart and self-report good dental health. This metric does not straightforwardly rank neighborhoods from "worst" to "best."',    lowerIsBetter: true,  unit: '%' },
   { key: 'noHealthInsurance',  label: 'No Health Insurance',      description: 'Adults without any health insurance coverage',      lowerIsBetter: true,  unit: '%' },
   { key: 'annualCheckup',      label: 'Annual Checkup',           description: 'Adults who had a routine checkup in the past year', lowerIsBetter: false, unit: '%' },
 ];

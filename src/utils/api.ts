@@ -336,13 +336,16 @@ export async function fetchFloodZone(lat: number, lng: number) {
 
 /**
  * Cincinnati historic district membership for a given point.
- * Source: CAGIS "Cincinnati Historic Districts - Open Data" FeatureServer layer 50.
- *   https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/OpenData/FeatureServer/50
- * Key attributes: NAME, DIST_CLASS, YEAR_DESG (inspect at runtime — field names may vary)
+ * Source: Hamilton County CAGIS "Cincinnati Historic Districts" MapServer layer 3.
+ *   https://cagisonline.hamilton-co.org/arcgis/rest/services/Cincinnati/Cincinnati_Other_Districts/MapServer/3
+ * Key attributes: HD_NAME, TYPE, HD_ORD, ACRES
+ *
+ * NOTE: The previous CAGIS FeatureServer source (OpenData/FeatureServer/50) was removed
+ * and now returns 400. This MapServer endpoint is the current authoritative source.
  */
 export async function fetchHistoricDistrict(lat: number, lng: number) {
   return queryCAGISPoint(
-    'https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/OpenData/FeatureServer/50',
+    'https://cagisonline.hamilton-co.org/arcgis/rest/services/Cincinnati/Cincinnati_Other_Districts/MapServer/3',
     lat, lng
   );
 }

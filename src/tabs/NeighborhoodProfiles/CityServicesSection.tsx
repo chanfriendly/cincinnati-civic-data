@@ -174,9 +174,12 @@ export default function CityServicesSection({ nbhSoQL, startDate, endDate }: Pro
 
         {/* ── Right: Community Perceptions ── */}
         <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
+          <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">
             Resident Satisfaction Survey (1–5)
           </div>
+          <p className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded px-2 py-1 mb-3">
+            City-wide averages — not specific to {/* neighborhood name injected below if possible */}this neighborhood
+          </p>
 
           {perceptionAverages.length > 0 ? (
             <div className="space-y-3">
@@ -194,9 +197,6 @@ export default function CityServicesSection({ nbhSoQL, startDate, endDate }: Pro
                   </div>
                 </div>
               ))}
-              <p className="text-xs text-gray-400 italic mt-2 pt-2 border-t border-gray-100">
-                Survey ratings are city-wide averages — not specific to this neighborhood.
-              </p>
             </div>
           ) : (
             <EmptyState message="No perception data found" />

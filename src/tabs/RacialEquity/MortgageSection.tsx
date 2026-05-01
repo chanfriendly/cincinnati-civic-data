@@ -349,6 +349,16 @@ export default function MortgageLendingSection({ neighborhood }: MortgageLending
           {/* Application volume table */}
           <ApplicationVolumeTable stats={stats} />
 
+          {/* Small-sample caveat */}
+          {RACE_GROUPS.some(g => {
+            const t = stats[g.key].total;
+            return t != null && t > 0 && t < 30;
+          }) && (
+            <p className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1.5 mt-1">
+              ⚠ One or more groups have fewer than 30 applications. Approval rates based on small samples are statistically volatile — a single decision can shift the rate by several percentage points.
+            </p>
+          )}
+
           {/* CFPB citation */}
           <div className="mt-4 pt-3 border-t border-gray-100 text-xs text-gray-500">
             Data via the{' '}

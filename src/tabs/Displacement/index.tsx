@@ -40,9 +40,9 @@ interface PhaseSynthesis {
 
 const PHASE_SYNTHESIS: Record<'active' | 'vulnerable' | 'gentrifying' | 'stable' | 'insufficient', PhaseSynthesis> = {
   active: {
-    headline: 'Active displacement is occurring here',
+    headline: 'High displacement risk — vulnerability and pressure both above city median',
     interpretation:
-      'High renter vulnerability combined with strong development pressure means residents are at immediate risk of being pushed out. Incomes are low relative to rents, and significant construction activity is transforming the market.',
+      'Renter vulnerability is above the city median and development pressure is above the city median. This combination places residents at elevated risk of being priced out. Incomes are low relative to rents, and significant construction activity is transforming the market. This is a relative score — it identifies neighborhoods at higher risk than most of Cincinnati, not an official determination that displacement has occurred.',
     action:
       'If you live here, act now: document everything, get legal help early (before receiving an eviction notice), and connect with organizing groups that are fighting displacement in this neighborhood.',
     orgCategories: ['housing-eviction'],
@@ -365,7 +365,7 @@ const MethodologyNote: React.FC = () => {
             <p className="font-semibold mb-1">Pressure score (0–100) — what forces are acting</p>
             <p className="mb-1">Average of three components, same normalization:</p>
             <ul className="list-disc list-inside space-y-0.5 ml-1">
-              <li><strong>Permit year-over-year % change</strong> — building permits (last 3 years vs. prior 3 years). Higher growth → higher score.</li>
+              <li><strong>Permit year-over-year % change</strong> — building permits (last 3 years vs. prior 3 years, measured as a rolling window from today — scores shift gradually over time). Higher growth → higher score.</li>
               <li><strong>Tax abatement count</strong> — commercial CRA subsidies (tax abatements, TIF, LEED credits, below-market land sales). More city-backed investment → higher score.</li>
               <li><strong>Housing unit removal count</strong> — units removed via building permits. More demolitions/removals → higher score.</li>
             </ul>

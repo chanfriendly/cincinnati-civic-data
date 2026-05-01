@@ -693,10 +693,10 @@ const OwnerActivity: React.FC = () => {
                   </div>
                 )}
 
-                {totalRemoved > 0 && totalSubsidy > 0 && (
+                {totalRemoved > 0 && totalSubsidy > 0 && (totalAdded - totalRemoved) < 0 && (
                   <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
                     <p className="text-xs text-amber-800 leading-relaxed">
-                      ⚠ This owner received city subsidies while removing housing units — a pattern
+                      ⚠ This owner received city subsidies while achieving a net reduction in housing units — a pattern
                       advocates document when making cases to council for subsidy reform.
                     </p>
                   </div>

@@ -147,8 +147,8 @@ export default function LifeExpectancySection({ neighborhood }: Props) {
               📊 Cincinnati's Life Expectancy Gap
             </div>
             <div className="text-xs text-amber-800">
-              The {Math.round(stats.max - stats.min)}-year gap between Cincinnati's highest and
-              lowest-expectancy neighborhoods ({stats.min}–{stats.max} yrs) ranks among the
+              As of 2010–2015, the {Math.round(stats.max - stats.min)}-year gap between Cincinnati's highest and
+              lowest-expectancy neighborhoods ({stats.min}–{stats.max} yrs) ranked among the
               largest within-city disparities in the U.S. — comparable in magnitude to the
               difference between the U.S. and a low-income country.
             </div>

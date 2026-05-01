@@ -87,7 +87,8 @@
     "name": "CUF Neighborhood Association",
     "sna_neighborhoods": [
       "Clifton Heights",
-      "Fairview"
+      "Fairview",
+      "University Heights"
     ],
     "address": "2361 Chickasaw St., Cincinnati OH 45219",
     "email": "jstork@yahoo.com",
@@ -161,7 +162,7 @@
     ],
     "address": "P.O. Box 68104, Cincinnati OH 45206",
     "email": null,
-    "website": "http:",
+    "website": null,
     "phone": "513-961-3699",
     "meeting_place": "LeBlond Recreation Ctr., 2335 Riverside Dr.",
     "meeting_time": "1st Mon. @ 7:00pm",

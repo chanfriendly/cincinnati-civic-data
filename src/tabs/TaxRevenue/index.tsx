@@ -385,8 +385,8 @@ const ITEPSection: React.FC<{ itep: ITEPData | null; latestPercentiles: Percenti
             Cincinnati&rsquo;s lowest 20% tops out at about <strong>{fmtUSD(latestPercentiles.p20 ?? 0)}</strong>,
             close to Ohio&rsquo;s lowest-20% bracket ({fmtUSD(itep.groups[0].income_high ?? 22500)} statewide).
             Cincinnati&rsquo;s top 5% threshold is around <strong>{fmtUSD(latestPercentiles.p95 ?? 0)}</strong>,
-            putting those households in ITEP&rsquo;s &ldquo;Next 15%&rdquo; or &ldquo;Next 4%&rdquo; bucket depending on exact
-            income. <em>These are Ohio-wide incidence rates applied to Cincinnati incomes &mdash; a reasonable
+            placing those households in ITEP&rsquo;s &ldquo;Next 4%&rdquo; income bracket (above the $235,800 bracket cutoff).
+            <em> These are Ohio-wide incidence rates applied to Cincinnati incomes &mdash; a reasonable
             estimate, not a Cincinnati-specific measurement.</em>
           </p>
         </div>
@@ -514,7 +514,15 @@ const RevenueSection: React.FC = () => {
 
       {!loading && !error && chartData.length > 0 && (
         <>
-          <div className="w-full" style={{ height: 360 }}>
+          <Callout tone="info" title="About Internal Transfers">
+            <p>
+              &ldquo;Internal Transfers&rdquo; is often the largest category but it represents money moving <em>within</em> city
+              government, not new revenue from taxpayers. Excluding it gives a cleaner picture of external revenue sources.
+              Not all city revenue is tax revenue — fees for services and utility charges are shown too.
+            </p>
+          </Callout>
+
+          <div className="w-full mt-4" style={{ height: 360 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 10, right: 16, left: 0, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
