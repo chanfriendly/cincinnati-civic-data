@@ -10,11 +10,11 @@
     "foreignBornPct": 3.3,
     "hsCompletionPct": 78.8,
     "bachelorsPlusPct": 19.8,
-    "livingAlonePct": 9.2,
+    "livingAlonePct": 52.4,
     "broadbandPct": 77.8,
     "noInternetPct": 22.0,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "bondhill": {
     "name": "Bond Hill",
@@ -27,11 +27,11 @@
     "foreignBornPct": 1.6,
     "hsCompletionPct": 86.8,
     "bachelorsPlusPct": 24.6,
-    "livingAlonePct": 12.4,
+    "livingAlonePct": 58.9,
     "broadbandPct": 83.6,
     "noInternetPct": 16.4,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "cbdriverfront": {
     "name": "CBD / Riverfront",
@@ -44,11 +44,11 @@
     "foreignBornPct": 8.9,
     "hsCompletionPct": 95.4,
     "bachelorsPlusPct": 70.5,
-    "livingAlonePct": 19.0,
+    "livingAlonePct": 59.2,
     "broadbandPct": 94.0,
     "noInternetPct": 5.4,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "carthage": {
     "name": "Carthage",
@@ -61,11 +61,11 @@
     "foreignBornPct": 4.5,
     "hsCompletionPct": 87.3,
     "bachelorsPlusPct": 17.3,
-    "livingAlonePct": 32.2,
+    "livingAlonePct": 37.8,
     "broadbandPct": 82.9,
     "noInternetPct": 16.2,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "clifton": {
     "name": "Clifton",
@@ -78,11 +78,11 @@
     "foreignBornPct": 17.9,
     "hsCompletionPct": 98.1,
     "bachelorsPlusPct": 69.8,
-    "livingAlonePct": 29.4,
+    "livingAlonePct": 48.1,
     "broadbandPct": 92.7,
     "noInternetPct": 5.2,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "cliftonheights": {
     "name": "Clifton Heights",
@@ -95,11 +95,11 @@
     "foreignBornPct": 13.3,
     "hsCompletionPct": 91.0,
     "bachelorsPlusPct": 51.0,
-    "livingAlonePct": 15.2,
+    "livingAlonePct": 44.1,
     "broadbandPct": 90.2,
     "noInternetPct": 2.5,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "collegehill": {
     "name": "College Hill",
@@ -112,11 +112,11 @@
     "foreignBornPct": 0.6,
     "hsCompletionPct": 86.8,
     "bachelorsPlusPct": 18.2,
-    "livingAlonePct": 19.4,
+    "livingAlonePct": 39.8,
     "broadbandPct": 86.8,
     "noInternetPct": 9.8,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "corryville": {
     "name": "Corryville",
@@ -129,11 +129,11 @@
     "foreignBornPct": 11.5,
     "hsCompletionPct": 89.3,
     "bachelorsPlusPct": 51.5,
-    "livingAlonePct": 5.5,
+    "livingAlonePct": 38.3,
     "broadbandPct": 87.2,
     "noInternetPct": 5.3,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "eastend": {
     "name": "East End",
@@ -146,11 +146,11 @@
     "foreignBornPct": 3.1,
     "hsCompletionPct": 97.3,
     "bachelorsPlusPct": 54.7,
-    "livingAlonePct": 53.2,
+    "livingAlonePct": 28.2,
     "broadbandPct": 92.9,
     "noInternetPct": 5.0,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "eastwalnuthills": {
     "name": "East Walnut Hills",
@@ -163,11 +163,11 @@
     "foreignBornPct": 9.0,
     "hsCompletionPct": 90.9,
     "bachelorsPlusPct": 48.3,
-    "livingAlonePct": 26.3,
+    "livingAlonePct": 51.9,
     "broadbandPct": 88.6,
     "noInternetPct": 9.3,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "eastwestwood": {
     "name": "East Westwood",
@@ -180,11 +180,11 @@
     "foreignBornPct": 3.6,
     "hsCompletionPct": 81.8,
     "bachelorsPlusPct": 8.7,
-    "livingAlonePct": 12.6,
+    "livingAlonePct": 43.8,
     "broadbandPct": 87.6,
     "noInternetPct": 7.3,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "englishwoods": {
     "name": "English Woods",
@@ -197,11 +197,11 @@
     "foreignBornPct": 3.6,
     "hsCompletionPct": 94.9,
     "bachelorsPlusPct": 36.1,
-    "livingAlonePct": 53.5,
+    "livingAlonePct": 28.0,
     "broadbandPct": 92.6,
     "noInternetPct": 4.9,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "evanston": {
     "name": "Evanston",
@@ -214,11 +214,11 @@
     "foreignBornPct": 6.0,
     "hsCompletionPct": 88.0,
     "bachelorsPlusPct": 37.2,
-    "livingAlonePct": 19.6,
+    "livingAlonePct": 41.7,
     "broadbandPct": 79.4,
     "noInternetPct": 16.5,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "fayapartments": {
     "name": "Fay Apartments",
@@ -231,11 +231,11 @@
     "foreignBornPct": 1.0,
     "hsCompletionPct": 83.7,
     "bachelorsPlusPct": 21.4,
-    "livingAlonePct": 3.6,
+    "livingAlonePct": 52.5,
     "broadbandPct": 81.5,
     "noInternetPct": 16.9,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "hartwell": {
     "name": "Hartwell",
@@ -248,11 +248,11 @@
     "foreignBornPct": 8.3,
     "hsCompletionPct": 92.3,
     "bachelorsPlusPct": 32.7,
-    "livingAlonePct": 39.5,
+    "livingAlonePct": 31.5,
     "broadbandPct": 90.7,
     "noInternetPct": 7.2,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "hydepark": {
     "name": "Hyde Park",
@@ -265,11 +265,11 @@
     "foreignBornPct": 4.7,
     "hsCompletionPct": 99.3,
     "bachelorsPlusPct": 86.5,
-    "livingAlonePct": 46.8,
+    "livingAlonePct": 39.8,
     "broadbandPct": 97.5,
     "noInternetPct": 1.2,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "kennedyheights": {
     "name": "Kennedy Heights",
@@ -282,11 +282,11 @@
     "foreignBornPct": 4.7,
     "hsCompletionPct": 93.1,
     "bachelorsPlusPct": 30.2,
-    "livingAlonePct": 34.6,
+    "livingAlonePct": 44.0,
     "broadbandPct": 87.4,
     "noInternetPct": 10.6,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "linwood": {
     "name": "Linwood",
@@ -299,11 +299,11 @@
     "foreignBornPct": 7.7,
     "hsCompletionPct": 90.7,
     "bachelorsPlusPct": 57.5,
-    "livingAlonePct": 44.4,
+    "livingAlonePct": 34.8,
     "broadbandPct": 93.5,
     "noInternetPct": 4.4,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "lowerpricehill": {
     "name": "Lower Price Hill",
@@ -316,11 +316,11 @@
     "foreignBornPct": 7.6,
     "hsCompletionPct": 79.6,
     "bachelorsPlusPct": 17.5,
-    "livingAlonePct": 27.6,
+    "livingAlonePct": 39.2,
     "broadbandPct": 82.4,
     "noInternetPct": 16.7,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "madisonville": {
     "name": "Madisonville",
@@ -333,11 +333,11 @@
     "foreignBornPct": 4.7,
     "hsCompletionPct": 96.1,
     "bachelorsPlusPct": 65.3,
-    "livingAlonePct": 45.6,
+    "livingAlonePct": 35.5,
     "broadbandPct": 90.0,
     "noInternetPct": 7.9,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "mountadams": {
     "name": "Mount Adams",
@@ -350,11 +350,11 @@
     "foreignBornPct": 6.7,
     "hsCompletionPct": 99.1,
     "bachelorsPlusPct": 83.7,
-    "livingAlonePct": 36.0,
+    "livingAlonePct": 49.2,
     "broadbandPct": 94.7,
     "noInternetPct": 2.8,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "mountairy": {
     "name": "Mount Airy",
@@ -367,11 +367,11 @@
     "foreignBornPct": 4.7,
     "hsCompletionPct": 90.8,
     "bachelorsPlusPct": 23.8,
-    "livingAlonePct": 36.2,
+    "livingAlonePct": 32.9,
     "broadbandPct": 87.6,
     "noInternetPct": 9.8,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "mountauburn": {
     "name": "Mount Auburn",
@@ -384,11 +384,11 @@
     "foreignBornPct": 6.4,
     "hsCompletionPct": 87.2,
     "bachelorsPlusPct": 41.5,
-    "livingAlonePct": 16.0,
+    "livingAlonePct": 56.2,
     "broadbandPct": 85.5,
     "noInternetPct": 11.5,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "mtlookout": {
     "name": "Mt. Lookout",
@@ -401,11 +401,11 @@
     "foreignBornPct": 2.4,
     "hsCompletionPct": 96.3,
     "bachelorsPlusPct": 68.8,
-    "livingAlonePct": 56.7,
+    "livingAlonePct": 27.5,
     "broadbandPct": 95.0,
     "noInternetPct": 4.0,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "northavondale": {
     "name": "North Avondale",
@@ -418,11 +418,11 @@
     "foreignBornPct": 5.0,
     "hsCompletionPct": 93.1,
     "bachelorsPlusPct": 33.0,
-    "livingAlonePct": 35.9,
+    "livingAlonePct": 41.3,
     "broadbandPct": 87.8,
     "noInternetPct": 10.1,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "northfairmount": {
     "name": "North Fairmount",
@@ -435,11 +435,11 @@
     "foreignBornPct": 3.4,
     "hsCompletionPct": 84.8,
     "bachelorsPlusPct": 8.7,
-    "livingAlonePct": 6.8,
+    "livingAlonePct": 22.2,
     "broadbandPct": 88.5,
     "noInternetPct": 5.8,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "northside": {
     "name": "Northside",
@@ -452,11 +452,11 @@
     "foreignBornPct": 4.0,
     "hsCompletionPct": 93.4,
     "bachelorsPlusPct": 54.9,
-    "livingAlonePct": 29.9,
+    "livingAlonePct": 40.4,
     "broadbandPct": 89.3,
     "noInternetPct": 7.3,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "oakley": {
     "name": "Oakley",
@@ -469,11 +469,11 @@
     "foreignBornPct": 4.1,
     "hsCompletionPct": 96.8,
     "bachelorsPlusPct": 68.5,
-    "livingAlonePct": 32.0,
+    "livingAlonePct": 43.9,
     "broadbandPct": 93.9,
     "noInternetPct": 5.0,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "overtherhine": {
     "name": "Over-the-Rhine",
@@ -486,11 +486,11 @@
     "foreignBornPct": 4.2,
     "hsCompletionPct": 89.6,
     "bachelorsPlusPct": 49.1,
-    "livingAlonePct": 13.7,
+    "livingAlonePct": 48.1,
     "broadbandPct": 81.3,
     "noInternetPct": 12.9,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "paddockhills": {
     "name": "Paddock Hills",
@@ -503,11 +503,11 @@
     "foreignBornPct": 0.0,
     "hsCompletionPct": 78.3,
     "bachelorsPlusPct": 9.4,
-    "livingAlonePct": 21.4,
+    "livingAlonePct": 35.5,
     "broadbandPct": 60.6,
     "noInternetPct": 39.4,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "pendleton": {
     "name": "Pendleton",
@@ -520,11 +520,11 @@
     "foreignBornPct": 5.3,
     "hsCompletionPct": 95.3,
     "bachelorsPlusPct": 59.3,
-    "livingAlonePct": 27.9,
+    "livingAlonePct": 44.5,
     "broadbandPct": 93.1,
     "noInternetPct": 5.4,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "pleasantridge": {
     "name": "Pleasant Ridge",
@@ -537,11 +537,11 @@
     "foreignBornPct": 6.7,
     "hsCompletionPct": 94.1,
     "bachelorsPlusPct": 50.4,
-    "livingAlonePct": 43.9,
+    "livingAlonePct": 34.5,
     "broadbandPct": 89.5,
     "noInternetPct": 7.8,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "riverside": {
     "name": "Riverside",
@@ -554,11 +554,11 @@
     "foreignBornPct": 7.4,
     "hsCompletionPct": 90.6,
     "bachelorsPlusPct": 25.0,
-    "livingAlonePct": 58.0,
+    "livingAlonePct": 16.1,
     "broadbandPct": 91.0,
     "noInternetPct": 8.5,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "roselawn": {
     "name": "Roselawn",
@@ -571,11 +571,11 @@
     "foreignBornPct": 10.4,
     "hsCompletionPct": 93.9,
     "bachelorsPlusPct": 57.3,
-    "livingAlonePct": 50.8,
+    "livingAlonePct": 31.3,
     "broadbandPct": 94.5,
     "noInternetPct": 4.0,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "saylerpark": {
     "name": "Sayler Park",
@@ -588,11 +588,11 @@
     "foreignBornPct": 0.9,
     "hsCompletionPct": 91.5,
     "bachelorsPlusPct": 33.4,
-    "livingAlonePct": 61.3,
+    "livingAlonePct": 21.0,
     "broadbandPct": 90.3,
     "noInternetPct": 7.6,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "sedamsville": {
     "name": "Sedamsville",
@@ -605,11 +605,11 @@
     "foreignBornPct": 4.3,
     "hsCompletionPct": 92.7,
     "bachelorsPlusPct": 33.2,
-    "livingAlonePct": 48.2,
+    "livingAlonePct": 31.3,
     "broadbandPct": 91.4,
     "noInternetPct": 7.3,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "southfairmount": {
     "name": "South Fairmount",
@@ -622,11 +622,11 @@
     "foreignBornPct": 2.7,
     "hsCompletionPct": 86.8,
     "bachelorsPlusPct": 18.7,
-    "livingAlonePct": 15.4,
+    "livingAlonePct": 53.7,
     "broadbandPct": 83.4,
     "noInternetPct": 8.3,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "springgrovevillage": {
     "name": "Spring Grove Village",
@@ -639,11 +639,11 @@
     "foreignBornPct": 5.8,
     "hsCompletionPct": 83.8,
     "bachelorsPlusPct": 27.1,
-    "livingAlonePct": 27.3,
+    "livingAlonePct": 39.4,
     "broadbandPct": 82.6,
     "noInternetPct": 13.0,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "walnuthills": {
     "name": "Walnut Hills",
@@ -656,11 +656,11 @@
     "foreignBornPct": 2.3,
     "hsCompletionPct": 86.8,
     "bachelorsPlusPct": 53.7,
-    "livingAlonePct": 15.8,
+    "livingAlonePct": 65.8,
     "broadbandPct": 71.0,
     "noInternetPct": 26.4,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "westpricehill": {
     "name": "West Price Hill",
@@ -673,11 +673,11 @@
     "foreignBornPct": 11.8,
     "hsCompletionPct": 82.9,
     "bachelorsPlusPct": 18.5,
-    "livingAlonePct": 27.4,
+    "livingAlonePct": 38.9,
     "broadbandPct": 86.5,
     "noInternetPct": 10.4,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   },
   "westwood": {
     "name": "Westwood",
@@ -690,10 +690,10 @@
     "foreignBornPct": 5.0,
     "hsCompletionPct": 90.8,
     "bachelorsPlusPct": 29.0,
-    "livingAlonePct": 34.0,
+    "livingAlonePct": 36.0,
     "broadbandPct": 89.2,
     "noInternetPct": 8.3,
     "dataYear": "2022",
-    "asOf": "2026-04-28"
+    "asOf": "2026-05-01"
   }
 }

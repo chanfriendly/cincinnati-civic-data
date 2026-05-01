@@ -415,12 +415,12 @@ function ActionCard() {
             <p className="mt-0.5">
               GCWW's Lead Line Lookup shows the status of the public-side line for your address.{' '}
               <a
-                href="https://utility.cincinnati-oh.gov/WaterCheck/"
+                href="https://la.mygcww.org/lead/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#1A4A6B] underline"
               >
-                Search your address at utility.cincinnati-oh.gov
+                Search your address at la.mygcww.org/lead
               </a>
               . For the private-side (inside your property), you or your plumber would need to
               identify the pipe material.

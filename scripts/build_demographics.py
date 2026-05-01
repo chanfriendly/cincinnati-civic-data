@@ -231,7 +231,7 @@ def main():
     lang_vars  = ['C16001_001E', 'C16001_002E']
     born_vars  = ['B05002_001E', 'B05002_013E']
     edu_vars   = ['B15003_001E'] + HS_PLUS_COLS
-    hh_vars    = ['B11001_001E', 'B11011_001E', 'B11011_002E', 'B11011_003E']
+    hh_vars    = ['B11001_001E', 'B11001_008E']
     broad_vars = ['B28002_001E', 'B28002_004E', 'B28002_007E', 'B28002_013E']
 
     all_vars = list(dict.fromkeys(age_vars + lang_vars + born_vars + edu_vars + hh_vars + broad_vars))
@@ -317,7 +317,7 @@ def main():
 
         # Household types (B11011 = household by type)
         hh_total      = col_sum(bucket, ['B11001_001E'])
-        living_alone  = col_sum(bucket, ['B11011_003E'])  # Non-family: householder living alone
+        living_alone  = col_sum(bucket, ['B11001_008E'])  # Non-family: householder living alone
         alone_pct     = round(100.0 * living_alone / hh_total, 1) if hh_total > 0 else None
 
         # Broadband
