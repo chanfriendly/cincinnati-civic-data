@@ -128,6 +128,30 @@ const OrgCard: React.FC<{ org: CivicOrg; showCategories?: boolean }> = ({
   )
 }
 
+// Compact single-row org entry — name, service type badge, and website link only.
+// Use when inline space is at a premium or as a directory footer.
+const OrgRow: React.FC<{ org: CivicOrg }> = ({ org }) => {
+  const svc = SERVICE_LABELS[org.service_type]
+  return (
+    <div className="flex items-center gap-2 py-1.5 border-b border-gray-100 last:border-0">
+      <span className={`shrink-0 text-[9px] font-semibold uppercase tracking-wide border rounded px-1.5 py-0.5 ${svc.color}`}>
+        {svc.label}
+      </span>
+      <span className="text-xs font-medium text-gray-800 flex-1 min-w-0 truncate">{org.name}</span>
+      <a href={org.website} target="_blank" rel="noopener noreferrer"
+        className="shrink-0 flex items-center gap-0.5 text-[11px] font-medium text-[#1A4A6B] hover:underline">
+        <ExternalLinkIcon />
+      </a>
+      {org.phone && (
+        <a href={`tel:${org.phone.replace(/[^0-9+]/g, '')}`}
+          className="shrink-0 flex items-center gap-0.5 text-[11px] text-gray-500 hover:text-gray-700">
+          <PhoneIcon />
+        </a>
+      )}
+    </div>
+  )
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 interface CivicOrgsPanelProps {
@@ -139,9 +163,15 @@ interface CivicOrgsPanelProps {
   categories?: CivicOrgCategory[]
   /** Override the section intro text */
   intro?: string
+  /**
+   * Compact mode: renders a tight single-row list (name + type badge + icon links)
+   * instead of full cards with mission text. Use for inline contextual panels or
+   * directory footers where full card height is excessive.
+   */
+  compact?: boolean
 }
 
-const CivicOrgsPanel: React.FC<CivicOrgsPanelProps> = ({ categories, intro }) => {
+const CivicOrgsPanel: React.FC<CivicOrgsPanelProps> = ({ categories, intro, compact = false }) => {
   const allOrgs = data.organizations
   const isContextual = categories && categories.length > 0
 
@@ -174,6 +204,17 @@ const CivicOrgsPanel: React.FC<CivicOrgsPanelProps> = ({ categories, intro }) =>
   if (isContextual) {
     if (visibleOrgs.length === 0) return null
 
+    if (compact) {
+      return (
+        <div>
+          {intro && <p className="text-xs text-gray-500 italic mb-2">{intro}</p>}
+          <div className="divide-y divide-gray-100 border border-gray-100 rounded-lg px-3 py-1 bg-gray-50">
+            {visibleOrgs.map(org => <OrgRow key={org.id} org={org} />)}
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div className="space-y-3">
         {intro && (
@@ -192,7 +233,45 @@ const CivicOrgsPanel: React.FC<CivicOrgsPanelProps> = ({ categories, intro }) =>
     )
   }
 
-  // Full directory view with category filter tabs
+  // Full directory view — compact shows a filterable tight list; default shows full cards
+  if (compact) {
+    return (
+      <div className="space-y-3">
+        {intro && <p className="text-sm text-gray-600 leading-relaxed">{intro}</p>}
+        {/* Filter tabs */}
+        <div className="flex flex-wrap gap-1.5">
+          <button
+            onClick={() => setActiveFilter('all')}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              activeFilter === 'all' ? 'bg-[#1A4A6B] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            All ({allOrgs.length})
+          </button>
+          {availableCategories.map(cat => {
+            const count = allOrgs.filter(o => o.categories.includes(cat)).length
+            return (
+              <button key={cat} onClick={() => setActiveFilter(cat)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                  activeFilter === cat ? 'bg-[#1A4A6B] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {CATEGORY_LABELS[cat]} ({count})
+              </button>
+            )
+          })}
+        </div>
+        <div className="border border-gray-100 rounded-lg px-3 py-1 bg-gray-50">
+          {visibleOrgs.map(org => <OrgRow key={org.id} org={org} />)}
+        </div>
+        <DataAttribution
+          source={`Cincinnati Civic Organizations Directory · Last verified ${data._meta.last_updated}`}
+          url="https://cincinnati-civic-data.vercel.app"
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4">
       {intro && (

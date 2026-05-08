@@ -9,7 +9,7 @@ import {
   fetchOHGOIncidents, fetchOHGOCameras, fetchOHGOConstruction, ohgoEnabled,
 } from '../../utils/api';
 import type { OHGOIncident, OHGOCamera, OHGOConstruction } from '../../types';
-import { DataCard, EmptyState, DataAttribution, CouncilPanel, CivicOrgsPanel, CivicCalendar } from '../../components/ui';
+import { DataCard, EmptyState, DataAttribution, CivicOrgsPanel, CivicCalendar } from '../../components/ui';
 import { stripNeighborhoodName } from '../../utils/api';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -1451,8 +1451,9 @@ TONE
 
                     {/* Contextual orgs */}
                     <div className="pt-2 border-t border-gray-100">
-                      <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Contact these programs directly</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Contact these programs directly</p>
                       <CivicOrgsPanel
+                        compact
                         categories={['environmental-health']}
                         intro={`GCWW and the Cincinnati Health Department both have free lead programs. Data shown is for ${name} (as of ${asOf}).`}
                       />
@@ -1839,10 +1840,6 @@ TONE
             <div className="mt-3 pt-3 border-t border-gray-100">
               <DataAttribution source="Hamilton County CAGIS · Voting Precincts" url="https://cagis.hamilton-co.org/" />
             </div>
-          </DataCard>
-
-          <DataCard title="Cincinnati City Council">
-            <CouncilPanel compact />
           </DataCard>
 
           {/* ── Section: Civic Action Windows ─────────────────────────────────── */}

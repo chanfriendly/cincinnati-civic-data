@@ -17,7 +17,6 @@ import RecreationCentersSection from './RecreationCentersSection';
 import {
   DataCard,
   CivicOrgsPanel,
-  CouncilPanel,
   EmptyState,
   DataAttribution,
 } from '../../components/ui';
@@ -413,19 +412,6 @@ export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfiles
 
       <HousingInventorySection neighborhood={selectedNeighborhood} />
 
-      {/* ── Accountability: Your Representatives ────────────────────────────── */}
-      <div className="flex items-center gap-3 pt-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Your Representatives</span>
-        <div className="flex-1 h-px bg-gray-200" />
-      </div>
-
-      <DataCard title="Cincinnati City Council">
-        <p className="text-xs text-gray-500 italic mb-4">
-          You've seen the data for {selectedNeighborhood}. These are the 9 people who represent you at Cincinnati City Hall and make decisions that shape it.
-        </p>
-        <CouncilPanel />
-      </DataCard>
-
       <div className="flex items-center gap-3 pt-2">
         <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Public Health</span>
         <div className="flex-1 h-px bg-gray-200" />
@@ -443,35 +429,36 @@ export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfiles
           {t('neighborhood.foodSafetyDef', 'Health inspection results for restaurants, food trucks, and other licensed food facilities. Each entry reflects the most recent inspection status within the selected date range.')}
         </p>
         {uniqueFacilities.length > 0 ? (
-          <div className="space-y-3">
+          <div>
             {activeViolations.size > 0 && (
-              <div className="bg-yellow-50 border border-yellow-200 p-3 rounded mb-4">
+              <div className="bg-yellow-50 border border-yellow-200 p-3 rounded mb-3">
                 <div className="text-sm font-semibold text-yellow-900">
                   {activeViolations.size} {t('neighborhood.facilitiesWithViolations', 'Facilities with Active Violations')}
                 </div>
               </div>
             )}
-
-            {uniqueFacilities.slice(0, 15).map((facility: any, idx: number) => {
-              const status = facility.action_status || '';
-              const hasViolation = !status.toLowerCase().includes('no violation') &&
-                (status.toLowerCase().includes('violation') || status.toLowerCase().includes('fail') || status.toLowerCase().includes('critical'));
-              return (
-                <div key={idx} className="border-b border-gray-200 pb-2 last:border-b-0">
-                  <div className="text-sm font-medium text-gray-900">
-                    {facility.business_name || facility.facility_name || facility.name}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+              {uniqueFacilities.slice(0, 20).map((facility: any, idx: number) => {
+                const status = facility.action_status || '';
+                const hasViolation = !status.toLowerCase().includes('no violation') &&
+                  (status.toLowerCase().includes('violation') || status.toLowerCase().includes('fail') || status.toLowerCase().includes('critical'));
+                return (
+                  <div key={idx} className="border-b border-gray-100 pb-1.5">
+                    <div className="text-xs font-medium text-gray-900 truncate">
+                      {facility.business_name || facility.facility_name || facility.name}
+                    </div>
+                    <div className={`text-[10px] mt-0.5 ${hasViolation ? 'text-red-600 font-medium' : 'text-gray-400'}`}>
+                      {hasViolation ? '⚠ ' : ''}{status.slice(0, 40)}{status.length > 40 ? '…' : ''}
+                      {facility.action_date && (
+                        <span className="ml-1 text-gray-300">
+                          {new Date(facility.action_date).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className={`text-xs mt-0.5 ${hasViolation ? 'text-red-600 font-medium' : 'text-gray-500'}`}>
-                    {status}
-                    {facility.action_date && (
-                      <span className="ml-2 text-gray-400">
-                        {new Date(facility.action_date).toLocaleDateString()}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         ) : (
           <EmptyState message={t('neighborhood.noFoodSafety', 'No facilities found')} />
@@ -502,6 +489,7 @@ export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfiles
 
       <DataCard title="Cincinnati Civic Organizations">
         <CivicOrgsPanel
+          compact
           intro={`These organizations work on the issues surfaced in ${selectedNeighborhood}'s data. Direct service orgs can help residents immediately — organizing groups build the power to change the conditions that create these problems.`}
         />
       </DataCard>
