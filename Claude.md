@@ -104,6 +104,7 @@ public/data/neighborhood_acs.json  226 Hamilton County Census tracts (ACS 2022, 
 | Use of Force | `748b-sht4` | — | `date_of_incident` | |
 | OIS | `r6q4-muts` | — | `date` | |
 | City General Fund Revenue | `a9hy-bv25` | — | `fiscal_year` | Tax & Revenue tab. `resource_name` is classified into 9 revenue categories by `classifyRevenue()` in `api.ts` (deterministic string match — do not add AI/LLM classification) |
+| City Vendor Payments | `qmwc-pyt8` | — | `fiscal_year` | Tax & Revenue tab Section 5. `fund_desc` classified into 10 spending categories by `classifySpending()`. Vendor/procurement only — payroll NOT in this dataset. ~$700M/year across all funds, FY 2014–present. |
 
 **Critical:** `uhjb-xac9` is the canonical Building Permits dataset. `tsjj-dcaf` is a derived view with no queryable columns — do not use it.
 
@@ -226,7 +227,7 @@ OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...
 16. **Spanish translation review** — Current ES strings are machine-translated; needs native speaker review.
 17. 🔄 **Mobile testing** — Tabs 1 and 3 are primary mobile use cases. In progress — pending user confirmation.
 18. ✅ **Neighborhood comparison tool** — `NeighborhoodComparison.tsx` added to Explorer. Two-neighborhood selector + horizontal grouped BarChart (navy vs amber) + detail table with raw metrics + per-dimension winner badges. Accessible via "Compare Neighborhoods" pill tab in the Explorer right panel.
-21. **Tax & Revenue — next extensions** — (a) Cincinnati EITC / CTC state-level changes (Ohio Dept of Taxation); (b) per-neighborhood effective tax burden once a Cincinnati-specific incidence model becomes available; (c) expenditure-side companion: City general fund *spending* by category and neighborhood (complements the revenue view).
+21. ✅ **Tax & Revenue — spending section** — Section 5 added: City vendor payments by fund category (Water & Sewer, Capital Projects, Risk & Insurance, General Government, Community Development, Public Health, Transit & Streets, Recreation & Culture, Internal Services) from dataset `qmwc-pyt8`, FY 2014–present. Stacked bar chart + table. Clearly disclosed as vendor/procurement only — payroll not included. Remaining extensions: (a) Cincinnati EITC / CTC state-level changes; (b) per-neighborhood effective tax burden; (c) spending-by-neighborhood using CIP Public Viewer.
 22. **Limitations tab — community contributions** — wire a "submit a correction / share a source" path (GitHub issue template or form) so advocates can add primary-source citations for pre-1989 rate history, SNA vs. CCB mappings they've authenticated, and domain-specific caveats.
 
 ### Phase 7 — Public Health & Community Assets (UC Nursing use case)

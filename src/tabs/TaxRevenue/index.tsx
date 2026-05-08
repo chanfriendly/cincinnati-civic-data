@@ -24,7 +24,10 @@ import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis,
   CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell,
 } from 'recharts'
-import { fetchCityRevenue, classifyRevenue, type CityRevenueRow, type RevenueCategory } from '../../utils/api'
+import {
+  fetchCityRevenue, classifyRevenue, type CityRevenueRow, type RevenueCategory,
+  fetchCitySpending, classifySpending, type CitySpendingRow, type SpendingCategory,
+} from '../../utils/api'
 import { useLanguage } from '../../context/LanguageContext'
 
 // ─── Types for static data ────────────────────────────────────────────────────
@@ -601,6 +604,179 @@ const RevenueSection: React.FC = () => {
   )
 }
 
+// ─── Section 5: What the city spends ─────────────────────────────────────────
+
+const SPENDING_CATEGORY_ORDER: SpendingCategory[] = [
+  'Water & Sewer',
+  'Capital Projects',
+  'General Government',
+  'Community Development',
+  'Risk & Insurance',
+  'Public Health',
+  'Transit & Streets',
+  'Recreation & Culture',
+  'Internal Services',
+  'Other',
+]
+
+const SPENDING_CATEGORY_COLORS: Record<SpendingCategory, string> = {
+  'Water & Sewer':        '#0891b2',
+  'Capital Projects':     '#1A4A6B',
+  'General Government':   '#059669',
+  'Community Development':'#ea580c',
+  'Risk & Insurance':     '#9ca3af',
+  'Public Health':        '#7c3aed',
+  'Transit & Streets':    '#db2777',
+  'Recreation & Culture': '#65a30d',
+  'Internal Services':    '#f59e0b',
+  'Other':                '#6b7280',
+}
+
+const SpendingSection: React.FC = () => {
+  const [rows, setRows] = useState<CitySpendingRow[] | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    fetchCitySpending()
+      .then(r => { if (!cancelled) { setRows(r); setLoading(false) } })
+      .catch(e => { if (!cancelled) { setError(e.message ?? 'Unknown error'); setLoading(false) } })
+    return () => { cancelled = true }
+  }, [])
+
+  const chartData = useMemo(() => {
+    if (!rows) return []
+    const byYear = new Map<string, Partial<Record<SpendingCategory, number>> & { year: string }>()
+    for (const r of rows) {
+      const cat = classifySpending(r.fund_desc)
+      const entry = byYear.get(r.fiscal_year) || { year: r.fiscal_year }
+      entry[cat] = (entry[cat] || 0) + r.total
+      byYear.set(r.fiscal_year, entry)
+    }
+    return Array.from(byYear.values())
+      .sort((a, b) => a.year.localeCompare(b.year))
+      // Drop the current partial FY if it's notably smaller than prior year
+      .filter((_, i, arr) => {
+        if (i !== arr.length - 1) return true
+        const cur = SPENDING_CATEGORY_ORDER.reduce((s, c) => s + ((arr[i] as Record<string, number | string | undefined>)[c] as number ?? 0), 0)
+        const prev = arr[i - 1] ? SPENDING_CATEGORY_ORDER.reduce((s, c) => s + ((arr[i - 1] as Record<string, number | string | undefined>)[c] as number ?? 0), 0) : cur
+        return cur >= prev * 0.6
+      })
+  }, [rows])
+
+  const latestFY = useMemo(() => {
+    if (chartData.length === 0) return null
+    return chartData[chartData.length - 1]
+  }, [chartData])
+
+  return (
+    <section className="mb-12 bg-white border border-gray-200 rounded-xl p-6">
+      <div className="flex items-start justify-between gap-3 flex-wrap mb-3">
+        <div>
+          <p className="text-xs font-semibold text-[#1A4A6B] uppercase tracking-wider mb-1">
+            Section 5 &mdash; Measured <Badge variant="measured">Live Socrata</Badge>
+          </p>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Where the city spends its money</h2>
+          <p className="text-sm text-gray-600 leading-relaxed max-w-3xl">
+            Cincinnati&rsquo;s vendor payments, FY 2014&ndash;present, grouped by the fund they were paid from.
+            These are procurement and contracting dollars from the Cincinnati Financial System &mdash;
+            the &ldquo;what did the city buy?&rdquo; side of the ledger.
+          </p>
+        </div>
+      </div>
+
+      <Callout tone="warn" title="Payroll not included">
+        <p>
+          This dataset contains vendor and contractor payments only. Personnel costs
+          (salaries, wages, benefits) &mdash; typically 60&ndash;70% of a city&rsquo;s operating budget &mdash;
+          are not in this dataset. These numbers show how Cincinnati spends on goods, services,
+          and capital projects, not on its workforce.
+        </p>
+      </Callout>
+
+      {loading && <div className="py-10 text-center text-sm text-gray-500 mt-4">Loading spending data from Cincinnati Open Data…</div>}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-900 mt-4">
+          <p className="font-semibold mb-1">Couldn&rsquo;t load spending data.</p>
+          <p className="opacity-80">{error}</p>
+          <p className="mt-2 text-xs">This section queries dataset <code>qmwc-pyt8</code> live.</p>
+        </div>
+      )}
+
+      {!loading && !error && chartData.length > 0 && (
+        <>
+          <div className="w-full mt-5" style={{ height: 380 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} margin={{ top: 10, right: 16, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
+                <YAxis stroke="#6b7280" fontSize={12} tickFormatter={fmtUSDShort} />
+                <Tooltip formatter={(v: number) => fmtUSD(v)} />
+                <Legend wrapperStyle={{ fontSize: 11 }} />
+                {SPENDING_CATEGORY_ORDER.map(cat => (
+                  <Bar key={cat} dataKey={cat} stackId="spending" fill={SPENDING_CATEGORY_COLORS[cat]} name={cat} />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {latestFY && (
+            <div className="mt-5">
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
+                Spending mix, FY {latestFY.year} (vendor payments)
+              </p>
+              <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 text-gray-700">
+                    <tr>
+                      <th className="text-left px-3 py-2 font-semibold">Category</th>
+                      <th className="text-right px-3 py-2 font-semibold">Amount</th>
+                      <th className="text-right px-3 py-2 font-semibold">Share</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {(() => {
+                      const total = SPENDING_CATEGORY_ORDER.reduce((s, c) => s + ((latestFY as Record<string, number | string | undefined>)[c] as number ?? 0), 0)
+                      return SPENDING_CATEGORY_ORDER
+                        .map(cat => ({ cat, amount: ((latestFY as Record<string, number | string | undefined>)[cat] as number) ?? 0 }))
+                        .filter(r => r.amount > 0)
+                        .sort((a, b) => b.amount - a.amount)
+                        .map(r => (
+                          <tr key={r.cat}>
+                            <td className="px-3 py-2">
+                              <span className="inline-block w-3 h-3 rounded-sm mr-2 align-middle" style={{ background: SPENDING_CATEGORY_COLORS[r.cat] }} />
+                              {r.cat}
+                            </td>
+                            <td className="px-3 py-2 text-right font-mono">{fmtUSD(r.amount)}</td>
+                            <td className="px-3 py-2 text-right text-gray-600">
+                              {total > 0 ? ((r.amount / total) * 100).toFixed(1) : '—'}%
+                            </td>
+                          </tr>
+                        ))
+                    })()}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 leading-relaxed">
+        Source: City of Cincinnati vendor payments dataset{' '}
+        <a href="https://data.cincinnati-oh.gov/Growing-Economic-Opportunities/Non-negative-amount-data/qmwc-pyt8"
+          target="_blank" rel="noopener noreferrer" className="text-[#1A4A6B] hover:underline">
+          qmwc-pyt8
+        </a>
+        {' '}on the Open Data Portal, updated weekly. Fund groupings are deterministic
+        string-match categories, not official City of Cincinnati budget classifications.
+      </div>
+    </section>
+  )
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 const TaxRevenue: React.FC = () => {
@@ -688,6 +864,7 @@ const TaxRevenue: React.FC = () => {
       <PercentilesSection data={percentiles} />
       <ITEPSection itep={itep} latestPercentiles={latestPercentileRow} />
       <RevenueSection />
+      <SpendingSection />
 
       {/* What's missing */}
       <section className="mb-8 bg-gray-900 text-white rounded-xl p-6">
@@ -697,7 +874,8 @@ const TaxRevenue: React.FC = () => {
           <li>Property-tax burden for individual Cincinnati neighborhoods &mdash; property tax rates vary by school district and jurisdiction inside city limits.</li>
           <li>The effect of tax abatements on what residential and commercial property owners actually pay. Cincinnati&rsquo;s abatement data is in the Displacement tab but not yet joined to this view.</li>
           <li>The 99th and 99.9th percentiles of Cincinnati income &mdash; not resolvable from public data without microdata access.</li>
-          <li>Where the city spends the money. That&rsquo;s a separate question (the &ldquo;who benefits&rdquo; side); adding a capital-spending-by-neighborhood view using the CIP Public Viewer is on the roadmap.</li>
+          <li>Personnel costs &mdash; payroll, salaries, and benefits make up the majority of the city&rsquo;s operating budget but are not in the vendor-payments dataset (Section 5).</li>
+          <li>Spending by neighborhood &mdash; the City&rsquo;s Capital Improvement Plan Public Viewer shows where capital dollars land geographically; connecting that to resident need is a future goal.</li>
         </ul>
       </section>
 

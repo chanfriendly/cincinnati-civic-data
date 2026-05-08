@@ -1032,3 +1032,88 @@ export async function fetchCityRevenue(): Promise<CityRevenueRow[]> {
   }
   return out;
 }
+
+// ─── City Spending / Expenditures (Socrata qmwc-pyt8) ─────────────────────────
+
+/**
+ * One row of aggregated Cincinnati vendor-payment data — per fiscal year, per fund.
+ * Dataset qmwc-pyt8 is transaction-level vendor payments from the Cincinnati
+ * Financial System (CFS). Personnel/payroll costs are NOT in this dataset.
+ */
+export interface CitySpendingRow {
+  fiscal_year: string;   // e.g. "2024"
+  fund_desc: string;     // e.g. "General"
+  total: number;         // sum of positive payment amounts
+}
+
+export type SpendingCategory =
+  | 'Water & Sewer'
+  | 'Capital Projects'
+  | 'Risk & Insurance'
+  | 'General Government'
+  | 'Community Development'
+  | 'Transit & Streets'
+  | 'Public Health'
+  | 'Recreation & Culture'
+  | 'Internal Services'
+  | 'Other';
+
+/**
+ * Classify a fund_desc string into a display spending category.
+ * Deterministic string match — no AI involved.
+ */
+export function classifySpending(fundDesc: string): SpendingCategory {
+  const f = fundDesc.toUpperCase();
+  if (f.includes('SEWER') || f.includes('MSD') || f.includes('WATER WORKS') ||
+      f.includes('STORMWATER')) return 'Water & Sewer';
+  if (f.includes('CAPITAL') || f.includes('INCOME TAX INFRA') ||
+      f.includes('INCOME TAX PIF') || f.includes('MUNICIPAL PUBLIC IMPROVT')) return 'Capital Projects';
+  if (f.includes('RISK MANAGEMENT') || f.includes('WORKERS') ||
+      f.includes('EMPLOYEE WORKERS') || f.includes('EMPLOYEE SAFETY')) return 'Risk & Insurance';
+  if (f === 'GENERAL') return 'General Government';
+  if (f.includes('COMMUNITY DEV') || f.includes('URBAN REDEV') ||
+      f.includes('HOME INVESTMENT') || f.includes('FISCAL RECOVERY') ||
+      f.includes('ARP') || f.includes('EQUIVALENT') || f.includes('EQUIV') ||
+      f.includes('HOUSING OPP') || f.includes('EMERGENCY SHELTER')) return 'Community Development';
+  if (f.includes('STREETCAR') || f.includes('STREET CONST') ||
+      f.includes('PARKING')) return 'Transit & Streets';
+  if (f.includes('HEALTH') || f.includes('CLEAR') ||
+      f.includes('COMMUNITY HEALTH')) return 'Public Health';
+  if (f.includes('GOLF') || f.includes('RECREATION') ||
+      f.includes('CENTENNIAL') || f.includes('PARKS') ||
+      f.includes('FORESTRY')) return 'Recreation & Culture';
+  if (f.includes('FLEET') || f.includes('ENTERPRISE TECHNOLOGY') ||
+      f.includes('FUEL SYSTEM') || f.includes('GEOGRAPHIC INFO') ||
+      f.includes('CAGIS')) return 'Internal Services';
+  return 'Other';
+}
+
+/**
+ * Fetch Cincinnati city vendor payments, server-aggregated by fiscal_year × fund_desc.
+ *
+ * Important: this dataset (qmwc-pyt8) contains vendor/procurement payments from
+ * the Cincinnati Financial System. Personnel and payroll costs are NOT included.
+ *
+ * Dataset: https://data.cincinnati-oh.gov/Growing-Economic-Opportunities/Non-negative-amount-data/qmwc-pyt8
+ * Coverage: FY 2014 to present, updated weekly.
+ */
+export async function fetchCitySpending(): Promise<CitySpendingRow[]> {
+  type Row = { fiscal_year?: string; fund_desc?: string; total?: string };
+  const { data } = await fetchSODA<Row>('qmwc-pyt8', {
+    $select: 'fiscal_year, fund_desc, sum(amount) as total',
+    $where: 'amount > 0',
+    $group: 'fiscal_year, fund_desc',
+    $order: 'fiscal_year DESC, total DESC',
+    $limit: 10000,
+  });
+
+  const out: CitySpendingRow[] = [];
+  for (const r of data) {
+    const fy = (r.fiscal_year ?? '').trim();
+    const fund = (r.fund_desc ?? '').trim();
+    const total = Number(r.total ?? 0);
+    if (!fy || !fund || !Number.isFinite(total) || total <= 0) continue;
+    out.push({ fiscal_year: fy, fund_desc: fund, total });
+  }
+  return out;
+}
