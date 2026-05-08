@@ -388,7 +388,11 @@ const MethodologyNote: React.FC = () => {
 
 // ─── Main component ────────────────────────────────────────────────────────────
 
-const DisplacementTab: React.FC = () => {
+interface DisplacementTabProps {
+  onTabChange?: (tab: import('../../types').TabId) => void;
+}
+
+const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
   const [activeSection, setActiveSection] = useState<'displacement' | 'owner' | 'zoning'>('displacement')
 
   // ── Data state ──────────────────────────────────────────────────────────────
@@ -1132,6 +1136,14 @@ const DisplacementTab: React.FC = () => {
                         </span>
                       </div>
                     </div>
+                    {onTabChange && (
+                      <button
+                        onClick={() => onTabChange('neighborhoods')}
+                        className="mt-3 text-xs text-[#1A4A6B] font-medium hover:underline"
+                      >
+                        Full economic profile &amp; demographics for {selectedRecord.name} →
+                      </button>
+                    )}
                   </div>
 
                   <hr className="border-gray-100" />

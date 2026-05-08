@@ -69,7 +69,11 @@ const CENSUS_KEY_OVERRIDE: Record<string, string> = {
   'Millvale':          'millvale',
 };
 
-export default function NeighborhoodProfiles() {
+interface NeighborhoodProfilesProps {
+  onViewMap?: () => void;
+}
+
+export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfilesProps = {}) {
   const { t } = useTranslation();
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>(NEIGHBORHOODS[0]);
   const [startDate, setStartDate] = useState(() => {
@@ -169,6 +173,32 @@ export default function NeighborhoodProfiles() {
     return censusStats.get(key) ?? null;
   }, [censusStats, selectedNeighborhood]);
 
+  // Compute rankings across all neighborhoods using already-loaded census data.
+  // Sorted descending for income (higher = better rank), ascending for rent burden (lower = better).
+  const rankings = useMemo(() => {
+    if (!censusStats || !censusData) return null;
+    const allEntries = [...censusStats.values()];
+    const totalNeighborhoods = allEntries.length;
+
+    const incomes = allEntries
+      .map(s => s.medianHouseholdIncome)
+      .filter((v): v is number => v != null)
+      .sort((a, b) => b - a);
+    const incomeRank = censusData.medianHouseholdIncome != null
+      ? incomes.indexOf(censusData.medianHouseholdIncome) + 1
+      : null;
+
+    const burdens = allEntries
+      .map(s => s.rentBurdenRate)
+      .filter((v): v is number => v != null)
+      .sort((a, b) => a - b); // lower burden = better rank
+    const burdenRank = censusData.rentBurdenRate != null
+      ? burdens.indexOf(censusData.rentBurdenRate) + 1
+      : null;
+
+    return { incomeRank, burdenRank, totalNeighborhoods };
+  }, [censusStats, censusData]);
+
   return (
     <div className="space-y-6">
       {/* Print Header - hidden by default, shown on print */}
@@ -239,6 +269,38 @@ export default function NeighborhoodProfiles() {
           Generated {new Date().toLocaleDateString()}
         </div>
       </div>
+
+      {/* Neighborhood Rankings Snapshot */}
+      {rankings && (
+        <div className="bg-white rounded-lg shadow-sm p-4 flex flex-col sm:flex-row sm:items-center gap-4 print:hidden">
+          <div className="flex-1">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">How {selectedNeighborhood} ranks</p>
+            <div className="flex flex-wrap gap-x-6 gap-y-2">
+              {rankings.incomeRank != null && (
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-lg font-bold text-[#1A4A6B]">#{rankings.incomeRank}</span>
+                  <span className="text-xs text-gray-500">median income of {rankings.totalNeighborhoods}</span>
+                </div>
+              )}
+              {rankings.burdenRank != null && (
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-lg font-bold text-[#1A4A6B]">#{rankings.burdenRank}</span>
+                  <span className="text-xs text-gray-500">least rent-burdened of {rankings.totalNeighborhoods}</span>
+                </div>
+              )}
+            </div>
+            <p className="text-[10px] text-gray-400 mt-1.5">Based on ACS 2022 · Lower rank = more affordable · Compared to {rankings.totalNeighborhoods} Cincinnati neighborhoods</p>
+          </div>
+          {onViewMap && (
+            <button
+              onClick={onViewMap}
+              className="shrink-0 px-4 py-2 text-sm font-medium text-[#1A4A6B] border border-[#1A4A6B] rounded-lg hover:bg-blue-50 transition-colors whitespace-nowrap"
+            >
+              Compare all neighborhoods →
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="flex items-center gap-3 pt-2">
         <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Economic Profile</span>

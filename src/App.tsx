@@ -29,7 +29,7 @@ const AppContent: React.FC = () => {
       case 'address':
         return (
           <Suspense fallback={<TabLoadingFallback />}>
-            <AddressLookup />
+            <AddressLookup onTabChange={setActiveTab} />
           </Suspense>
         )
       case 'neighborhoods':
@@ -59,7 +59,7 @@ const AppContent: React.FC = () => {
       case 'displacement':
         return (
           <Suspense fallback={<TabLoadingFallback />}>
-            <DisplacementTab />
+            <DisplacementTab onTabChange={setActiveTab} />
           </Suspense>
         )
       case 'tax':

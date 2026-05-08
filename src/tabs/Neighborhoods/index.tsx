@@ -56,7 +56,7 @@ const Neighborhoods: React.FC = () => {
 
       {activeView === 'profiles' && (
         <Suspense fallback={<SubTabFallback />}>
-          <NeighborhoodProfiles />
+          <NeighborhoodProfiles onViewMap={() => setActiveView('map')} />
         </Suspense>
       )}
       {activeView === 'map' && (

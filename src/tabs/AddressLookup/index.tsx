@@ -121,7 +121,11 @@ type LeadServiceData = Record<string, LeadNeighborhoodRecord>;
 
 type CAGISStatus = 'idle' | 'loading' | 'done' | 'error';
 
-export default function AddressLookup() {
+interface AddressLookupProps {
+  onTabChange?: (tab: import('../../types').TabId) => void;
+}
+
+export default function AddressLookup({ onTabChange }: AddressLookupProps = {}) {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const [selectedAddress, setSelectedAddress] = useState<GeocodedAddress | null>(null);
@@ -1246,6 +1250,14 @@ TONE
                 <EmptyState message={t('addressLookup.noCrime', 'No crime records found nearby')} />
               )}
               <DataAttribution source="CPD STARS + PDI Crime" uid="7aqy-xrv9" />
+              {onTabChange && selectedAddress?.neighborhood && (
+                <button
+                  onClick={() => onTabChange('neighborhoods')}
+                  className="mt-3 text-xs text-[#1A4A6B] font-medium hover:underline flex items-center gap-1"
+                >
+                  See full crime trends for {selectedAddress.neighborhood} →
+                </button>
+              )}
               {/* Contextual orgs for high crime areas */}
               {!crimeLoading && mergedCrime.length > 10 && (
                 <div className="mt-4 pt-4 border-t border-gray-100">
