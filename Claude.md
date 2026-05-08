@@ -204,7 +204,7 @@ OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...
 ### Phase 2 — Lead & Environmental Health
 6. ✅ **Lead service line tracker** — Full `LeadSafety` tab built: neighborhood inventory, risk ratings, city-wide chart, address lookup, resident guidance. `public/data/lead_service_lines.json` populated.
 7. ✅ **EPA environmental justice layer** — AirToxScreen 2019 via ArcGIS; added as EJ dimension in Neighborhood Explorer (45 neighborhoods). EJScreen offline since Feb 2025 — disclosed in tooltip.
-8. **Flood infrastructure status** — Add Mill Creek barrier/floodwall context to Tab 1 flood zone card. First Street Foundation (paid API) deferred; static Mill Creek context is free.
+8. ✅ **Flood infrastructure status** — Mill Creek watershed/barrier context added to Tab 1 flood zone card. High-risk addresses show a blue Mill Creek info callout + 3-step action guide (NFIP insurance, elevation certificate, LOMA). Low-risk addresses show a Zone X drainage caveat.
 
 ### Phase 3 — Racial Equity & Zoning
 9. ✅ **Racial equity metrics by neighborhood** — `UnifiedEquitySection` built: income/poverty/homeownership by race (ACS) + mortgage approval rates by race (HMDA). Shown in Neighborhood Profiles.
