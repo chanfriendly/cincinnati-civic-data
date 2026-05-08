@@ -1114,6 +1114,7 @@ TONE
                   <div className="mt-4 pt-4 border-t border-gray-100">
                     <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Organizations that can help</p>
                     <CivicOrgsPanel
+                      compact
                       categories={['housing-eviction']}
                       intro="These organizations provide free legal aid, tenant advocacy, and housing services to Cincinnati residents dealing with violations or blight."
                     />
@@ -1263,6 +1264,7 @@ TONE
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Community resources</p>
                   <CivicOrgsPanel
+                    compact
                     categories={['police-accountability']}
                     intro="Organizations working on public safety, police accountability, and community advocacy in Cincinnati."
                   />

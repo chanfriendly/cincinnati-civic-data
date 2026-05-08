@@ -1,5 +1,6 @@
 import React from 'react'
 import { useLanguage } from '../../context/LanguageContext'
+import CouncilPanel from '../../components/ui/CouncilPanel'
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -188,7 +189,7 @@ const Limitations: React.FC = () => {
             ['boundaries', 'Neighborhood boundaries'],
             ['vintages',   'Data vintages'],
             ['gaps',       'Known data gaps'],
-            ['politics',   'Political structure'],
+            ['politics',   'City Council & political structure'],
             ['ai',         'AI-generated content'],
             ['tax-model',  'Tax modeling'],
             ['i18n',       'Language'],
@@ -422,7 +423,7 @@ const Limitations: React.FC = () => {
         id="politics"
         Icon={GovIcon}
         iconBg="bg-purple-100 text-purple-700"
-        heading="Cincinnati&rsquo;s political structure"
+        heading="Cincinnati&rsquo;s political structure &amp; City Council"
         subheading="Accountability features have to account for how Cincinnati is actually governed."
       >
         <Caveat
@@ -430,24 +431,16 @@ const Limitations: React.FC = () => {
           severity="info"
           body={
             <p>
-              All 9 council members are elected citywide (&ldquo;at-large&rdquo;). There is no &ldquo;my council member.&rdquo;
-              Every address has the same 9 representatives. We surface all 9 with contact info rather than mapping
-              your address to a district &mdash; because no such mapping exists.
+              All 9 council members are elected citywide (&ldquo;at-large&rdquo;). There is no &ldquo;my council member&rdquo; based
+              on address. Every resident has the same 9 representatives. Contact info and direct links to their city
+              pages are below.
             </p>
           }
         />
 
-        <Caveat
-          title="Legistar (live voting records) is not currently accessible via API."
-          severity="warn"
-          body={
-            <p>
-              Cincinnati&rsquo;s Legistar voting record API is not publicly accessible. The public web interface
-              at <a href="https://cincinnatioh.legistar.com" target="_blank" rel="noopener noreferrer" className="underline text-[#1A4A6B]">cincinnatioh.legistar.com</a> is available and we link directly into it. Enabling API
-              access would allow live voting records to be shown here; there is a request link in the council panel.
-            </p>
-          }
-        />
+        <div className="mb-6">
+          <CouncilPanel />
+        </div>
       </Section>
 
       {/* ─── Section 5: AI-generated content ────────────────────────────────── */}
