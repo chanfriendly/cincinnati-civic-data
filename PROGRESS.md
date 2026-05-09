@@ -6,6 +6,29 @@
 
 ## Session Log
 
+### Session 32 — Spending Tab + Flood Card Audit + Community Contributions Form (May 2026)
+
+**What was built:**
+
+1. **Tax & Revenue — Section 5 (City Spending)** — Added `SpendingCategory`, `CitySpendingRow`, `classifySpending()`, and `fetchCitySpending()` to `src/utils/api.ts`. New `SpendingSection` component in `src/tabs/TaxRevenue/index.tsx` shows city vendor payments from dataset `qmwc-pyt8` (FY 2014–present, ~$700M/year across all funds). Stacked bar chart + breakdown table, grouped into 10 fund categories (Water & Sewer, Capital Projects, Risk & Insurance, General Government, Community Development, Public Health, Transit & Streets, Recreation & Culture, Internal Services, Other). Prominent "Payroll not included" amber callout since this dataset is vendor/procurement only. "What this page doesn't show" updated accordingly.
+
+2. **Flood infrastructure card (Tab 1) — already done.** Audited the Address Lookup tab and confirmed Mill Creek barrier/floodwall context was already built in a prior session. Marked ✅ in CLAUDE.md.
+
+3. **Community contributions form** — Google Form wired into About & Methods tab Section 8. Three contribution-type cards (Data Error, Primary Source Citation, Dataset Suggestion) link to the form. "Open submission form" is the primary CTA. GitHub issue and email retained as secondary developer options. Form URL: `https://forms.gle/sMHyvc4Hu8FMwARE8`. URL is stored as `const GOOGLE_FORM_URL` in `src/tabs/Limitations/index.tsx`.
+
+**Key decisions:**
+- Spending section uses `fund_desc` (not `dept_desc` or `exp_acct_cat`) as the grouping key — funds are the most stable and meaningful high-level classification.
+- Google Form chosen over GitHub issue template because the target audience (community advocates, nursing students, residents) are unlikely to have GitHub accounts.
+- Flood card task was already complete — no code change needed; only a CLAUDE.md status update.
+
+**Next unblocked tasks:**
+- Tax & Revenue extensions: (a) Ohio EITC/CTC; (b) CIP spending-by-neighborhood
+- Mobile testing (Tabs 1 & 3)
+- Eviction data (blocked: needs Legal Aid partner)
+- Spanish translation review (blocked: needs native speaker)
+
+---
+
 ### Session 31 — Phase 7c: Life Expectancy by Neighborhood (April 2026)
 
 **What was built:**

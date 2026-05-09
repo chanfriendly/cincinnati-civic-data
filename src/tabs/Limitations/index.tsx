@@ -46,6 +46,16 @@ const GlobeIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) 
   </svg>
 )
 
+// ─── Community contribution form URL ──────────────────────────────────────────
+// Replace this placeholder with your real Google Form URL once created.
+// Recommended fields — see CLAUDE.md "Limitations tab — community contributions"
+//   1. Submission type (multiple choice): Data Error | Primary Source Citation | Dataset Suggestion | Other
+//   2. Neighborhood or section affected (short text, optional)
+//   3. What's wrong / what you're sharing (paragraph)
+//   4. Source URL or document link (short text, optional)
+//   5. Your email (short text, optional — for follow-up)
+const GOOGLE_FORM_URL = 'https://forms.gle/sMHyvc4Hu8FMwARE8'
+
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 
 interface SectionProps {
@@ -593,26 +603,73 @@ const Limitations: React.FC = () => {
         iconBg="bg-gray-100 text-gray-700"
         heading="Report an issue or contribute"
       >
-        <div className="bg-gray-900 text-white rounded-xl p-5">
-          <p className="text-sm leading-relaxed mb-1">
-            Found a number that looks wrong? A caveat we missed? A dataset we should add?
+        {/* Primary CTA — Google Form */}
+        <div className="mb-5 bg-white border-2 border-[#1A4A6B] rounded-xl p-5">
+          <p className="text-sm font-semibold text-gray-900 mb-1">
+            Found something wrong? Have a source we&rsquo;re missing?
           </p>
-          <p className="text-gray-400 text-xs leading-relaxed mb-5">
-            For data disputes, include the address or neighborhood, the exact number on the site, and the source
-            you&rsquo;re comparing against &mdash; it makes diagnosis much faster. For data partnerships or feature
-            suggestions, email works best.
+          <p className="text-sm text-gray-600 leading-relaxed mb-5">
+            Use the form below — it takes about 2 minutes and goes straight to a spreadsheet we review regularly.
+            No account required.
           </p>
-          <div className="flex flex-wrap gap-3 text-sm">
+
+          {/* Three contribution types */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
             <a
-              href="mailto:chanfriendly@gmail.com?subject=Cincinnati%20Civic%20Data%20—%20Feedback"
-              className="inline-flex items-center gap-2 bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+              href={GOOGLE_FORM_URL}
+              target="_blank" rel="noopener noreferrer"
+              className="group flex flex-col gap-2 rounded-lg border border-gray-200 bg-gray-50 p-4 hover:border-[#1A4A6B] hover:bg-blue-50 transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              Send an email
+              <span className="text-xl">🐛</span>
+              <p className="text-sm font-semibold text-gray-900 group-hover:text-[#1A4A6B]">Data error</p>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                A number looks wrong, a link is broken, or a label is misleading. Include the neighborhood or address and what you compared against.
+              </p>
             </a>
+            <a
+              href={GOOGLE_FORM_URL}
+              target="_blank" rel="noopener noreferrer"
+              className="group flex flex-col gap-2 rounded-lg border border-gray-200 bg-gray-50 p-4 hover:border-[#1A4A6B] hover:bg-blue-50 transition-colors"
+            >
+              <span className="text-xl">📋</span>
+              <p className="text-sm font-semibold text-gray-900 group-hover:text-[#1A4A6B]">Primary source citation</p>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                You have a document, ordinance, or dataset that backs up (or corrects) something on this site. Pre-1989 tax rate history, SNA boundary disputes, and community council corrections are especially useful.
+              </p>
+            </a>
+            <a
+              href={GOOGLE_FORM_URL}
+              target="_blank" rel="noopener noreferrer"
+              className="group flex flex-col gap-2 rounded-lg border border-gray-200 bg-gray-50 p-4 hover:border-[#1A4A6B] hover:bg-blue-50 transition-colors"
+            >
+              <span className="text-xl">💡</span>
+              <p className="text-sm font-semibold text-gray-900 group-hover:text-[#1A4A6B]">Dataset suggestion</p>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                You know of a public or partner dataset that isn&rsquo;t on the site yet. Include a URL and a sentence on what question it would answer.
+              </p>
+            </a>
+          </div>
+
+          <a
+            href={GOOGLE_FORM_URL}
+            target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-[#1A4A6B] text-white px-5 py-2.5 rounded-lg font-medium text-sm hover:bg-[#163d5a] transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            Open submission form
+            <svg className="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </div>
+
+        {/* Secondary options — for developers */}
+        <div className="bg-gray-900 text-white rounded-xl p-5">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">For developers &amp; researchers</p>
+          <div className="flex flex-wrap gap-3 text-sm">
             <a
               href="https://github.com/chanfriendly/cincinnati-civic-data/issues"
               target="_blank" rel="noopener noreferrer"
@@ -622,7 +679,17 @@ const Limitations: React.FC = () => {
                 <path fillRule="evenodd" clipRule="evenodd"
                   d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.92.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
               </svg>
-              Open a GitHub issue
+              GitHub issue
+            </a>
+            <a
+              href="mailto:chanfriendly@gmail.com?subject=Cincinnati%20Civic%20Data%20—%20Feedback"
+              className="inline-flex items-center gap-2 bg-white/10 text-white border border-white/20 px-4 py-2 rounded-lg font-medium hover:bg-white/20 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              Email
             </a>
             <a
               href="https://github.com/chanfriendly/cincinnati-civic-data"
