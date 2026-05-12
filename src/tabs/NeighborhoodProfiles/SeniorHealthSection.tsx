@@ -750,6 +750,42 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
             )}
           </div>
 
+          {/* ── What would unlock this ────────────────────────────────── */}
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-[11px] text-gray-700">
+            <p className="font-semibold text-gray-800 mb-1.5">What this data can't show — and what would</p>
+            <ul className="space-y-1.5 list-none">
+              <li>
+                <span className="font-medium text-gray-800">Repeat hospitalization rates by neighborhood</span>
+                {' '}— the most direct measure of the problem described above. TriHealth, UC Health, and Hamilton
+                County Public Health hold discharge data at ZIP-code level. A data-sharing agreement with any of
+                these partners would unlock it.
+              </li>
+              <li>
+                <span className="font-medium text-gray-800">Sleep apnea diagnosis and CPAP prescription rates</span>
+                {' '}— available in Medicare/Medicaid claims (ICD-10 G47.33, HCPCS E0601) but not publicly
+                downloadable below the county level. Requires a CMS Data Use Agreement or Ohio ODJFS research
+                partnership.
+              </li>
+              <li>
+                <span className="font-medium text-gray-800">Elderly living alone, specifically</span>
+                {' '}— ACS table B11010 provides this at the census-tract level, but variable-level documentation
+                is ambiguous enough that the derived rates were unreliable. A direct Census API query validated
+                against county totals could resolve this.
+              </li>
+            </ul>
+            <p className="mt-2 text-gray-500">
+              If you work at a health system, county agency, or research institution and can share any of these,{' '}
+              <a
+                href="https://forms.gle/sMHyvc4Hu8FMwARE8"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-[#1A4A6B]"
+              >
+                get in touch via the contribution form
+              </a>.
+            </p>
+          </div>
+
           {/* ── Methodology note ───────────────────────────────────────── */}
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-[11px] text-amber-800">
             <p className="font-semibold mb-0.5">Methodology note</p>

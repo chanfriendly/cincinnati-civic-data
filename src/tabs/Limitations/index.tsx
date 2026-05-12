@@ -132,6 +132,8 @@ const VINTAGE_ROWS: VintageRow[] = [
   { source: 'SORTA GTFS (bus stops)',             usedIn: 'Address Lookup, Transit Equity',                    vintage: '2024 static',       refresh: 'Rebuilt on GTFS update',    notes: 'Route-per-stop data not available in export' },
   { source: 'ITEP Ohio Who Pays (modeled)',       usedIn: 'Tax & Revenue',                                     vintage: '2024 7th edition',  refresh: 'Re-published every ~3 years', notes: 'Statewide model; applied to Cincinnati percentiles as an estimate' },
   { source: 'Cincinnati Revenue (Socrata)',       usedIn: 'Tax & Revenue',                                     vintage: 'FY 2014–present',   refresh: 'Daily',                     notes: 'Totals only; no per-payer breakdown' },
+  { source: 'CDC PLACES Health Outcomes',         usedIn: 'Neighborhood Profiles (Health, Aging & Senior Health)', vintage: '2023 (built May 2026)', refresh: 'Rebuilt annually',       notes: 'Model-based estimates from BRFSS survey data; not direct clinical measurement. Tract → neighborhood via nearest-centroid.' },
+  { source: 'CDC USALEEP Life Expectancy',        usedIn: 'Neighborhood Profiles (Life Expectancy)',           vintage: '2015–2019',         refresh: 'Rebuilt on new release',    notes: 'Single-tract estimates flagged as lower confidence' },
 ]
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -412,6 +414,48 @@ const Limitations: React.FC = () => {
             <p>
               First Street Foundation&rsquo;s property-level 30-year flood probability is behind a paid API. We show FEMA
               flood zones (regulatory, current) but not individual-property climate-adjusted probability.
+            </p>
+          }
+        />
+
+        <Caveat
+          title="Short sleep duration is not the same as a sleep apnea diagnosis."
+          severity="info"
+          body={
+            <p>
+              The CDC PLACES <em>Short Sleep</em> measure counts adults who self-report sleeping fewer than 7 hours per
+              night — a behavioral indicator from the BRFSS survey. It is a meaningful proxy for sleep health burden,
+              but it is not a clinical diagnosis of obstructive sleep apnea (OSA). A neighborhood with high short-sleep
+              rates has a population that is sleep-deprived; it does not tell us how many have undiagnosed OSA. The
+              two overlap heavily but are not identical.
+            </p>
+          }
+        />
+
+        <Caveat
+          title="No neighborhood-level hospital readmission data exists publicly."
+          severity="gap"
+          body={
+            <p>
+              The most direct measure of the problem the Aging &amp; Senior Health section describes — repeat
+              hospitalizations driven by untreated sleep-disordered breathing — would be hospital discharge and
+              readmission data broken down by ZIP code or census tract. That data exists at TriHealth, UC Health,
+              and Hamilton County Public Health, but none of it is released publicly at sub-county resolution.
+              A formal data-sharing agreement with any of these partners would unlock this entirely.
+            </p>
+          }
+        />
+
+        <Caveat
+          title="Sleep apnea diagnosis rates and CPAP prescription data are not public."
+          severity="gap"
+          body={
+            <p>
+              Medicare and Medicaid claims data contain sleep apnea diagnosis codes (ICD-10 G47.33) and CPAP
+              equipment claims (HCPCS E0601) that could be aggregated by county or ZIP. These files are available
+              to researchers under a CMS Data Use Agreement but are not publicly downloadable. Ohio ODJFS holds
+              Medicaid equivalents. Without a research partnership or DUA, this remains out of reach at any
+              sub-county geography.
             </p>
           }
         />
