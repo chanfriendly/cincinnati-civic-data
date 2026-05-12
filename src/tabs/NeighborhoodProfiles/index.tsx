@@ -11,6 +11,7 @@ import HousingInventorySection from './HousingInventorySection';
 import TransitEquitySection from './TransitEquitySection';
 import HealthOutcomesSection from './HealthOutcomesSection';
 import LifeExpectancySection from './LifeExpectancySection';
+import SeniorHealthSection from './SeniorHealthSection';
 import ExpandedDemographicsSection from './ExpandedDemographicsSection';
 import CommunityCouncilSection from './CommunityCouncilSection';
 import RecreationCentersSection from './RecreationCentersSection';
@@ -471,6 +472,7 @@ export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfiles
 
       <LifeExpectancySection neighborhood={selectedNeighborhood} />
       <HealthOutcomesSection neighborhood={selectedNeighborhood} />
+      <SeniorHealthSection neighborhood={selectedNeighborhood} />
 
       {/* ── Community & Civic ─────────────────────────────────────────────── */}
       <div className="flex items-center gap-3 pt-2">

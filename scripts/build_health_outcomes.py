@@ -19,6 +19,20 @@ Measures captured:
   DENTAL     — No dental visit in past year (%)
   ACCESS2    — No health insurance (%)
   CHECKUP    — Annual checkup (%)
+  SLEEP      — Short sleep duration (<7 hrs) among adults (%)
+  CHD        — Coronary heart disease among adults (%)
+  STROKE     — Stroke among adults (%)
+  COPD       — COPD among adults (%)
+  COGNITION  — Cognitive disability among adults (%)
+  DISABILITY — Any disability among adults (%)
+  MOBILITY   — Mobility disability among adults (%)
+  SELFCARE   — Self-care disability among adults (%)
+  INDEPLIVE  — Independent living disability among adults (%)
+  LONELINESS — Loneliness among adults (%)
+  EMOTIONSPT — Lack of social/emotional support among adults (%)
+  GHLTH      — Fair or poor self-rated health among adults (%)
+  ARTHRITIS  — Arthritis among adults (%)
+  TEETHLOST  — All teeth lost among adults aged ≥65 years (%)
 
 Process:
   1. Fetch all Hamilton County census tract records from CDC PLACES API
@@ -78,6 +92,7 @@ CDC_PLACES_URL = 'https://data.cdc.gov/resource/cwsq-ngmh.json'
 
 # Measure IDs → our output field names
 MEASURE_MAP = {
+    # Original 10 measures
     'DIABETES':   'diabetes',
     'OBESITY':    'obesity',
     'BPHIGH':     'highBloodPressure',
@@ -88,6 +103,24 @@ MEASURE_MAP = {
     'DENTAL':     'noDentalVisit',
     'ACCESS2':    'noHealthInsurance',
     'CHECKUP':    'annualCheckup',
+    # Sleep & cardiovascular (upstream/downstream of sleep-disordered breathing)
+    'SLEEP':      'shortSleep',
+    'CHD':        'heartDisease',
+    'STROKE':     'stroke',
+    'COPD':       'copd',
+    # Disability & independence cluster (elderly vulnerability)
+    'COGNITION':  'cognitiveDisability',
+    'DISABILITY': 'anyDisability',
+    'MOBILITY':   'mobilityDisability',
+    'SELFCARE':   'selfCareDisability',
+    'INDEPLIVE':  'independentLivingDisability',
+    # Social isolation & wellbeing
+    'LONELINESS': 'loneliness',
+    'EMOTIONSPT': 'lackSocialSupport',
+    'GHLTH':      'poorSelfRatedHealth',
+    # Additional chronic conditions
+    'ARTHRITIS':  'arthritis',
+    'TEETHLOST':  'allTeethLost',
 }
 
 # ── SNA neighborhood centroids ────────────────────────────────────────────────

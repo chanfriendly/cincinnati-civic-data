@@ -315,7 +315,7 @@ def main():
         hs_pct     = round(100.0 * hs_plus   / edu_total, 1) if edu_total > 0 else None
         bach_pct   = round(100.0 * bach_plus  / edu_total, 1) if edu_total > 0 else None
 
-        # Household types (B11011 = household by type)
+        # Household types
         hh_total      = col_sum(bucket, ['B11001_001E'])
         living_alone  = col_sum(bucket, ['B11001_008E'])  # Non-family: householder living alone
         alone_pct     = round(100.0 * living_alone / hh_total, 1) if hh_total > 0 else None
@@ -334,6 +334,7 @@ def main():
             'medianAge':         median_age,
             'under18Pct':        round(100.0 * under18 / total_pop, 1) if total_pop > 0 else None,
             'over65Pct':         round(100.0 * over65  / total_pop, 1) if total_pop > 0 else None,
+            'over65Count':       over65,
             'nonEnglishHomePct': non_english_pct,
             'foreignBornPct':    foreign_pct,
             'hsCompletionPct':   hs_pct,
