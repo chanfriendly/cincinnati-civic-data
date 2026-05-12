@@ -769,6 +769,9 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
               source={`CDC PLACES: Local Data for Better Health · Hamilton County, OH · ${health.dataYear}`}
               url="https://www.cdc.gov/places/"
             />
+            <p className="text-[10px] text-gray-400 italic mt-2">
+              For Emily, who made this possible. Thanks, neighbor.
+            </p>
           </div>
         </div>
       )}
