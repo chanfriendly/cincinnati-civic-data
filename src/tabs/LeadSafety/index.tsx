@@ -30,6 +30,7 @@ import {
 import type { LeadReplacementRecord } from '../../utils/api';
 import type { NeighborhoodLeadStats } from '../../types';
 import { DataCard } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 
 // ── Neighborhood list ─────────────────────────────────────────────────────────
 
@@ -55,13 +56,13 @@ function pct(numerator: number, denominator: number): string {
   return `${Math.round((numerator / denominator) * 100)}%`;
 }
 
-function riskColor(leadOrUnknown: number, total: number): string {
-  if (!total) return 'text-gray-500 bg-gray-50';
+function riskStyle(leadOrUnknown: number, total: number): React.CSSProperties {
+  if (!total) return { color: C.muted, background: C.limestone, border: `1px solid ${C.rule}` };
   const rate = leadOrUnknown / total;
-  if (rate > 0.5) return 'text-red-700 bg-red-50';
-  if (rate > 0.25) return 'text-orange-700 bg-orange-50';
-  if (rate > 0.1) return 'text-yellow-700 bg-yellow-50';
-  return 'text-green-700 bg-green-50';
+  if (rate > 0.5) return { color: C.brick, background: C.brickLight, border: `1px solid ${C.brick}` };
+  if (rate > 0.25) return { color: C.ochre, background: 'rgba(200,134,26,0.1)', border: `1px solid ${C.ochre}` };
+  if (rate > 0.1) return { color: '#8a6e3e', background: 'rgba(200,134,26,0.07)', border: `1px solid ${C.ochre}` };
+  return { color: C.hill, background: C.hillLight, border: `1px solid ${C.hill}` };
 }
 
 function riskLabel(leadOrUnknown: number, total: number): string {
@@ -90,21 +91,21 @@ function StatRow({
   note?: string;
 }) {
   return (
-    <div className="py-2 border-b border-gray-100 last:border-0">
+    <div className="py-2 last:border-0" style={{ borderBottom: `1px solid ${C.rule}` }}>
       <div className="flex justify-between items-center">
         <div>
-          <span className="text-sm text-gray-700">{label}</span>
-          {note && <p className="text-xs text-gray-500 mt-0.5">{note}</p>}
+          <span className="text-[13px]" style={{ color: C.ink }}>{label}</span>
+          {note && <p className="text-[11px] mt-0.5" style={{ color: C.muted }}>{note}</p>}
         </div>
-        <span className="text-sm font-semibold text-[#1A4A6B] ml-4 shrink-0">
+        <span className="text-[13px] font-semibold ml-4 shrink-0" style={{ color: C.river }}>
           {typeof value === 'number' ? value.toLocaleString() : value}
         </span>
       </div>
       {barWidth !== undefined && (
-        <div className="mt-1.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="mt-1.5 h-1.5 rounded-full overflow-hidden" style={{ background: C.limestone }}>
           <div
-            className={`h-full rounded-full transition-all duration-500 ${barColor ?? 'bg-blue-400'}`}
-            style={{ width: `${Math.min(barWidth, 100)}%` }}
+            className="h-full rounded-full transition-all duration-500"
+            style={{ width: `${Math.min(barWidth, 100)}%`, background: barColor ?? C.river }}
           />
         </div>
       )}
@@ -115,29 +116,26 @@ function StatRow({
 /** Urgency header with city-wide lead crisis stats */
 function UrgencyBanner() {
   return (
-    <div className="bg-red-900 text-white rounded-xl p-6 mb-6">
-      <div className="flex items-start gap-3 mb-4">
-        <span className="text-3xl" role="img" aria-label="warning">⚠️</span>
-        <div>
-          <h2 className="text-xl font-bold">Lead in Cincinnati's Water Lines</h2>
-          <p className="text-red-200 text-sm mt-1">
-            Lead-free water isn't guaranteed for every household in Cincinnati.
-            Thousands of service lines — the pipes connecting the main to your home — are still
-            lead or unidentified material.
-          </p>
-        </div>
+    <div className="page-paper rounded-md p-6 mb-2" style={{ borderLeft: `4px solid ${C.brick}` }}>
+      <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: C.brick }}>Lead Safety Alert</div>
+      <div className="serif mb-3" style={{ fontSize: 22, fontWeight: 500, color: C.ink, lineHeight: 1.2 }}>
+        Lead-free water isn't guaranteed for every household in Cincinnati.
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <p className="text-[13px] leading-relaxed mb-5" style={{ color: C.muted, maxWidth: 680 }}>
+        Thousands of service lines — the pipes connecting the city main to your home — are still
+        lead or unidentified material. Only 36.8% of children under 6 are tested for lead exposure.
+      </p>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { value: '33,449', label: 'Lead or unknown lines remaining', sub: 'As of 2024' },
-          { value: '~220', label: 'Children with elevated blood lead yearly', sub: 'City of Cincinnati' },
-          { value: '36.8%', label: 'Children under 6 who are tested', sub: 'Far below national average' },
-          { value: '$0', label: 'Cost to residents for full replacement through GCWW program', sub: 'Public- and private-side both covered when your area is selected' },
+          { value: '33,449', label: 'Lead or unknown lines', sub: 'As of 2024' },
+          { value: '~220', label: 'Children elevated blood lead yearly', sub: 'City of Cincinnati' },
+          { value: '36.8%', label: 'Children under 6 who are tested', sub: 'Far below national avg' },
+          { value: '$0', label: 'Cost for full replacement', sub: 'When your area is selected' },
         ].map(({ value, label, sub }) => (
-          <div key={label} className="bg-red-800 bg-opacity-60 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold">{value}</div>
-            <div className="text-xs text-red-200 mt-1">{label}</div>
-            <div className="text-xs text-red-300 mt-0.5">{sub}</div>
+          <div key={label} className="rounded-md p-3" style={{ background: C.limestone, border: `1px solid ${C.rule}` }}>
+            <div className="serif font-medium leading-none" style={{ fontSize: 28, color: C.brick }}>{value}</div>
+            <div className="text-[11px] mt-1.5" style={{ color: C.ink }}>{label}</div>
+            <div className="text-[10px] mt-0.5" style={{ color: C.muted }}>{sub}</div>
           </div>
         ))}
       </div>
@@ -191,13 +189,13 @@ function InventoryCard({ neighborhood }: { neighborhood: string }) {
         error={null}
         attribution={{ datasetName: 'GCWW Lead Service Line Inventory', lastUpdated: null }}
       >
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-900 space-y-2">
-          <p className="font-semibold">⚙️ Pre-computed data not yet generated</p>
+        <div className="rounded-md p-4 text-[13px] space-y-2" style={{ background: 'rgba(200,134,26,0.08)', border: `1px solid ${C.ochre}`, color: C.ink }}>
+          <p className="font-semibold" style={{ color: C.ochre }}>⚙️ Pre-computed data not yet generated</p>
           <p>
             The full service line inventory requires a one-time build step. Run this command
             in the project directory to generate the data:
           </p>
-          <pre className="bg-amber-100 rounded p-2 text-xs font-mono overflow-x-auto">
+          <pre className="rounded p-2 text-[11px] font-mono overflow-x-auto" style={{ background: C.limestone }}>
             python3 scripts/build_lead.py
           </pre>
           <p>
@@ -223,14 +221,14 @@ function InventoryCard({ neighborhood }: { neighborhood: string }) {
       attribution={{ datasetName: 'GCWW Lead Service Line Replacement Program', lastUpdated: stats?.asOf ?? null, uid: 'b4xq-u3su' }}
     >
       {stats === null && !loading ? (
-        <p className="text-sm text-gray-500">
+        <p className="text-[13px]" style={{ color: C.muted }}>
           No program data found for {neighborhood} — this neighborhood may not yet have
           lines enrolled in GCWW's formal replacement program.
         </p>
       ) : stats ? (
         <div className="space-y-2">
           {/* Scope caveat — always visible */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-xs text-blue-900 mb-3">
+          <div className="rounded-md px-3 py-2 text-[12px] mb-3" style={{ background: C.riverLight, borderLeft: `3px solid ${C.river}`, color: C.ink }}>
             <strong>Scope:</strong> This shows {neighborhood}'s {stats.total.toLocaleString()} service lines
             enrolled in GCWW's replacement program — not all lines in the neighborhood.
             Cincinnati's full inventory of ~33,449 lead/unknown lines is not available
@@ -239,7 +237,8 @@ function InventoryCard({ neighborhood }: { neighborhood: string }) {
 
           {/* Risk badge — only meaningful if there are active lead lines */}
           {stats.lead + stats.unknown > 0 && (
-            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold mb-2 ${riskColor(leadOrUnknown, stats.total)}`}>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[13px] font-semibold mb-2"
+              style={riskStyle(leadOrUnknown, stats.total)}>
               <span>{riskLabel(leadOrUnknown, stats.total)}</span>
               <span className="font-normal opacity-75">·</span>
               <span>{pct(leadOrUnknown, stats.total)} of program lines still active lead</span>
@@ -251,40 +250,40 @@ function InventoryCard({ neighborhood }: { neighborhood: string }) {
             label="Active lead lines (pending replacement)"
             value={stats.lead}
             barWidth={stats.total ? (stats.lead / stats.total) * 100 : 0}
-            barColor="bg-red-500"
+            barColor={C.brick}
             note="PB material + not yet replaced — enrolled in program, awaiting action"
           />
           <StatRow
             label="Unknown material"
             value={stats.unknown}
             barWidth={stats.total ? (stats.unknown / stats.total) * 100 : 0}
-            barColor="bg-orange-400"
+            barColor={C.ochre}
             note="No material code recorded — treated as potentially lead"
           />
           <StatRow
             label="Galvanized steel"
             value={stats.galvanized}
             barWidth={stats.total ? (stats.galvanized / stats.total) * 100 : 0}
-            barColor="bg-yellow-400"
+            barColor="#8a6e3e"
             note="Corrosion concern; often co-located with lead connections"
           />
           <StatRow
             label="Copper / confirmed safe"
             value={stats.copper}
             barWidth={stats.total ? (stats.copper / stats.total) * 100 : 0}
-            barColor="bg-green-500"
+            barColor={C.hill}
             note="CU, brass, or other non-lead material — confirmed by GCWW inspection"
           />
           <StatRow
             label="Lead lines successfully replaced"
             value={stats.replaced}
             barWidth={stats.total ? (stats.replaced / stats.total) * 100 : 0}
-            barColor="bg-blue-500"
+            barColor={C.river}
             note="PB lines with status='Complete' — lead is gone from these addresses"
           />
-          <div className="pt-2 border-t border-gray-100 flex justify-between items-center">
-            <span className="text-sm text-gray-500">Lines in program (this neighborhood)</span>
-            <span className="text-sm font-bold text-[#1A4A6B]">{stats.total.toLocaleString()}</span>
+          <div className="pt-2 flex justify-between items-center" style={{ borderTop: `1px solid ${C.rule}` }}>
+            <span className="text-[12px]" style={{ color: C.muted }}>Lines in program (this neighborhood)</span>
+            <span className="text-[13px] font-bold" style={{ color: C.river }}>{stats.total.toLocaleString()}</span>
           </div>
         </div>
       ) : null}
@@ -336,14 +335,14 @@ function ReplacementActivityCard({ neighborhood }: { neighborhood: string }) {
       }}
     >
       {total === 0 && !loading ? (
-        <div className="text-sm text-gray-500 space-y-1">
+        <div className="space-y-1 text-[13px]" style={{ color: C.muted }}>
           <p>No replacement records with a completion date found for {neighborhood}.</p>
-          <p className="text-xs text-gray-400">
+          <p className="text-[11px]">
             This may mean no public-side replacements have been recorded for this neighborhood yet,
             or the neighborhood name in the <code>adminarea</code> field doesn't match exactly.
             Try viewing the full dataset at{' '}
             <a href="https://data.cincinnati-oh.gov/dataset/GCWW-Private-Side-One-off-Lead-Service-Line-Replac/b4xq-u3su"
-              target="_blank" rel="noopener noreferrer" className="underline text-[#1A4A6B]">
+              target="_blank" rel="noopener noreferrer" className="underline" style={{ color: C.river }}>
               data.cincinnati-oh.gov
             </a>{' '}
             to verify the adminarea name format.
@@ -351,44 +350,44 @@ function ReplacementActivityCard({ neighborhood }: { neighborhood: string }) {
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="bg-blue-50 rounded-lg px-4 py-3 flex items-center justify-between">
+          <div className="rounded-md px-4 py-3 flex items-center justify-between" style={{ background: C.riverLight, border: `1px solid ${C.river}` }}>
             <div>
-              <div className="text-2xl font-bold text-[#1A4A6B]">{total.toLocaleString()}</div>
-              <div className="text-sm text-gray-600">Private-side replacements recorded</div>
+              <div className="serif font-medium leading-none" style={{ fontSize: 36, color: C.river }}>{total.toLocaleString()}</div>
+              <div className="text-[13px] mt-1" style={{ color: C.muted }}>Private-side replacements recorded</div>
             </div>
-            <div className="text-right text-xs text-gray-500">
-              <p>This dataset records private-side</p>
-              <p>replacements completed through</p>
-              <p>GCWW's program</p>
+            <div className="text-right text-[11px]" style={{ color: C.muted }}>
+              <p>Private-side replacements</p>
+              <p>completed through GCWW's</p>
+              <p>replacement program</p>
             </div>
           </div>
 
           {yearData.length > 0 && (
             <div>
-              <p className="text-xs text-gray-500 mb-2">Replacements by year</p>
+              <p className="text-[11px] mb-2" style={{ color: C.muted }}>Replacements by year</p>
               <ResponsiveContainer width="100%" height={140}>
                 <BarChart data={yearData} margin={{ top: 4, right: 4, bottom: 4, left: 0 }}>
-                  <XAxis dataKey="year" tick={{ fontSize: 11 }} />
-                  <YAxis tick={{ fontSize: 11 }} width={30} />
+                  <XAxis dataKey="year" tick={{ fontSize: 11, fill: C.muted }} />
+                  <YAxis tick={{ fontSize: 11, fill: C.muted }} width={30} />
                   <Tooltip
                     formatter={(v: number) => [v, 'Replacements']}
-                    contentStyle={{ fontSize: '12px' }}
+                    contentStyle={{ fontSize: '12px', borderColor: C.rule, borderRadius: 6 }}
                   />
-                  <Bar dataKey="count" fill="#1A4A6B" radius={[2, 2, 0, 0]}>
+                  <Bar dataKey="count" radius={[2, 2, 0, 0]}>
                     {yearData.map((_, i) => (
                       <Cell
                         key={i}
-                        fill={i === yearData.length - 1 ? '#E95B2E' : '#1A4A6B'}
+                        fill={i === yearData.length - 1 ? C.ochre : C.river}
                       />
                     ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
-              <p className="text-xs text-gray-400 mt-1">Most recent year highlighted in orange.</p>
+              <p className="text-[11px] mt-1" style={{ color: C.muted }}>Most recent year highlighted.</p>
             </div>
           )}
 
-          <p className="text-xs text-gray-500">
+          <p className="text-[11px]" style={{ color: C.muted }}>
             Note: "Private-side" means the pipe from the curb to your home. The city-side
             (main to curb) replacement is handled separately and is not in this dataset.
           </p>
@@ -406,20 +405,15 @@ function ActionCard() {
       loading={false}
       error={null}
     >
-      <div className="space-y-4 text-sm text-gray-700">
+      <div className="space-y-4 text-[13px]" style={{ color: C.ink }}>
         {/* Check your address */}
         <div className="flex gap-3">
           <span className="text-xl shrink-0">🔍</span>
           <div>
-            <p className="font-semibold text-gray-900">Look up your specific address</p>
-            <p className="mt-0.5">
+            <p className="font-semibold">Look up your specific address</p>
+            <p className="mt-0.5" style={{ color: C.muted }}>
               GCWW's Lead Line Lookup shows the status of the public-side line for your address.{' '}
-              <a
-                href="https://la.mygcww.org/lead/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#1A4A6B] underline"
-              >
+              <a href="https://la.mygcww.org/lead/" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: C.river }}>
                 Search your address at la.mygcww.org/lead
               </a>
               . For the private-side (inside your property), you or your plumber would need to
@@ -432,16 +426,11 @@ function ActionCard() {
         <div className="flex gap-3">
           <span className="text-xl shrink-0">🧪</span>
           <div>
-            <p className="font-semibold text-gray-900">Get your water tested</p>
-            <p className="mt-0.5">
+            <p className="font-semibold">Get your water tested</p>
+            <p className="mt-0.5" style={{ color: C.muted }}>
               Even if your service line is listed as copper, older interior plumbing and
               solder joints can leach lead. GCWW offers{' '}
-              <a
-                href="https://la.mygcww.org/lead/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#1A4A6B] underline"
-              >
+              <a href="https://la.mygcww.org/lead/" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: C.river }}>
                 free lead water testing kits
               </a>{' '}
               for Cincinnati customers.
@@ -453,35 +442,27 @@ function ActionCard() {
         <div className="flex gap-3">
           <span className="text-xl shrink-0">🔧</span>
           <div>
-            <p className="font-semibold text-gray-900">How the replacement program works — and what it doesn't cover</p>
-            <p className="mt-0.5">
+            <p className="font-semibold">How the replacement program works — and what it doesn't cover</p>
+            <p className="mt-0.5" style={{ color: C.muted }}>
               GCWW's program replaces both the public-side (main to curb) and private-side
-              (curb to your building) service line at <strong>no cost to the homeowner</strong>.
-              However, <strong>you cannot request replacement on demand</strong> — the program
+              (curb to your building) service line at <strong style={{ color: C.ink }}>no cost to the homeowner</strong>.
+              However, <strong style={{ color: C.ink }}>you cannot request replacement on demand</strong> — the program
               operates in concentrated project areas. GCWW notifies households when their
               neighborhood is scheduled, then prioritizes homes with children under 6, pregnant
               residents, and older housing stock within that area.
             </p>
-            <p className="mt-2">
-              <strong>Important:</strong> The replacement program covers the service line only
-              — the pipe from the street to your home. Lead from{' '}
-              <strong>interior plumbing, solder joints, and fixtures inside your home</strong>{' '}
-              is a separate and common exposure source that the program does not address.
-              If your home was built before 1986, interior pipes and solder may contain lead
-              regardless of your service line status.
+            <p className="mt-2" style={{ color: C.muted }}>
+              <strong style={{ color: C.ink }}>Important:</strong> The replacement program covers the service line only.
+              Lead from <strong style={{ color: C.ink }}>interior plumbing, solder joints, and fixtures inside your home</strong>{' '}
+              is a separate and common exposure source. If your home was built before 1986, interior
+              pipes and solder may contain lead regardless of your service line status.
             </p>
-            <p className="mt-2">
-              You can contact{' '}
-              <a
-                href="https://la.mygcww.org/lead/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#1A4A6B] underline"
-              >
+            <p className="mt-2" style={{ color: C.muted }}>
+              Contact{' '}
+              <a href="https://la.mygcww.org/lead/" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: C.river }}>
                 GCWW's lead program
               </a>{' '}
-              or call <strong>513-591-7700</strong> to find out when your neighborhood is
-              scheduled and to make sure your address is on their list.
+              or call <strong>513-591-7700</strong> to find out when your neighborhood is scheduled.
             </p>
           </div>
         </div>
@@ -490,8 +471,8 @@ function ActionCard() {
         <div className="flex gap-3">
           <span className="text-xl shrink-0">🚰</span>
           <div>
-            <p className="font-semibold text-gray-900">Reduce exposure while you wait</p>
-            <ul className="mt-0.5 list-disc list-inside space-y-0.5 text-gray-600">
+            <p className="font-semibold">Reduce exposure while you wait</p>
+            <ul className="mt-0.5 list-disc list-inside space-y-0.5" style={{ color: C.muted }}>
               <li>Run cold water for 1–2 minutes before drinking or cooking if pipes have sat unused</li>
               <li>Use cold (never hot) water for drinking and cooking — hot water leaches more lead</li>
               <li>Use an NSF-certified lead filter (pitcher or faucet-mount)</li>
@@ -501,29 +482,19 @@ function ActionCard() {
         </div>
 
         {/* Renters */}
-        <div className="flex gap-3 bg-amber-50 rounded-lg p-3 -mx-1">
+        <div className="flex gap-3 rounded-md p-3 -mx-1" style={{ background: 'rgba(200,134,26,0.08)', borderLeft: `3px solid ${C.ochre}` }}>
           <span className="text-xl shrink-0">🏠</span>
           <div>
-            <p className="font-semibold text-amber-900">If you rent</p>
-            <p className="mt-0.5 text-amber-800">
+            <p className="font-semibold" style={{ color: C.ochre }}>If you rent</p>
+            <p className="mt-0.5" style={{ color: C.ink }}>
               Your landlord is responsible for maintaining plumbing that is safe. Ohio law requires
               landlords to disclose known lead hazards. If you believe your rental has lead pipes
               or lead paint, contact{' '}
-              <a
-                href="https://www.cincinnati-oh.gov/buildings/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#1A4A6B] underline"
-              >
-                Cincinnati Buildings & Inspections
+              <a href="https://www.cincinnati-oh.gov/buildings/" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: C.river }}>
+                Cincinnati Buildings &amp; Inspections
               </a>{' '}
               at 513-591-6000, or{' '}
-              <a
-                href="https://www.cincylegalaid.org/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#1A4A6B] underline"
-              >
+              <a href="https://www.cincylegalaid.org/" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: C.river }}>
                 Legal Aid Society of Greater Cincinnati
               </a>{' '}
               for tenant rights assistance.
@@ -577,14 +548,14 @@ function CityWideComparisonCard() {
       attribution={{ datasetName: 'GCWW Lead Service Line Inventory', lastUpdated: null }}
     >
       {chartData.length === 0 && !loading ? (
-        <p className="text-sm text-gray-500">No city-wide comparison data available.</p>
+        <p className="text-[13px]" style={{ color: C.muted }}>No city-wide comparison data available.</p>
       ) : (
         <div>
-          <p className="text-xs text-gray-500 mb-3">
+          <p className="text-[11px] mb-3" style={{ color: C.muted }}>
             Neighborhoods sorted by percentage of service lines that are confirmed lead or
             unknown material. Higher = more residents potentially at risk.
           </p>
-          <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1 mb-3">
+          <p className="text-[11px] rounded px-2 py-1 mb-3" style={{ color: C.ochre, background: 'rgba(200,134,26,0.08)', border: `1px solid ${C.ochre}` }}>
             Note: GCWW serves a regional area. This chart includes some suburban municipalities
             (e.g., Anderson Township, Blue Ash, Cheviot) in addition to Cincinnati neighborhoods.
           </p>
@@ -599,12 +570,12 @@ function CityWideComparisonCard() {
                   type="number"
                   domain={[0, 100]}
                   tickFormatter={(v) => `${v}%`}
-                  tick={{ fontSize: 11 }}
+                  tick={{ fontSize: 11, fill: C.muted }}
                 />
                 <YAxis
                   type="category"
                   dataKey="name"
-                  tick={{ fontSize: 10 }}
+                  tick={{ fontSize: 10, fill: C.muted }}
                   width={115}
                 />
                 <Tooltip
@@ -612,17 +583,17 @@ function CityWideComparisonCard() {
                     `${v}%`,
                     `Lead or unknown — ${props.payload?.fullName ?? ''}`,
                   ]}
-                  contentStyle={{ fontSize: '12px' }}
+                  contentStyle={{ fontSize: '12px', borderColor: C.rule, borderRadius: 6 }}
                 />
                 <Bar dataKey="pct" radius={[0, 2, 2, 0]}>
                   {chartData.map((entry, i) => (
                     <Cell
                       key={i}
                       fill={
-                        entry.pct > 50 ? '#B91C1C'
-                        : entry.pct > 25 ? '#EA580C'
-                        : entry.pct > 10 ? '#CA8A04'
-                        : '#16A34A'
+                        entry.pct > 50 ? C.brick
+                        : entry.pct > 25 ? C.ochre
+                        : entry.pct > 10 ? '#8a6e3e'
+                        : C.hill
                       }
                     />
                   ))}
@@ -649,14 +620,15 @@ function materialLabel(code: string | undefined): string {
   return code; // pass through any other codes as-is
 }
 
-function materialRisk(code: string | undefined): { label: string; color: string; bg: string } {
-  if (!code) return { label: 'Unknown', color: 'text-gray-700', bg: 'bg-gray-50' };
+function materialRisk(code: string | undefined): { label: string; style: React.CSSProperties; badgeStyle: React.CSSProperties } {
+  const base: React.CSSProperties = { padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 500 }
+  if (!code) return { label: 'Unknown', style: { background: C.limestone }, badgeStyle: { ...base, color: C.muted, background: C.limestone, border: `1px solid ${C.rule}` } };
   const c = code.toUpperCase();
-  if (c === 'PB' || c === 'LDNR') return { label: 'Lead — action recommended', color: 'text-red-700', bg: 'bg-red-50' };
-  if (c === 'GS' || c === 'GI') return { label: 'Galvanized — may carry lead deposits', color: 'text-orange-700', bg: 'bg-orange-50' };
-  if (c === 'UN' || c === 'UNK') return { label: 'Unknown material', color: 'text-yellow-700', bg: 'bg-yellow-50' };
-  if (c === 'CU') return { label: 'Copper — lower risk', color: 'text-green-700', bg: 'bg-green-50' };
-  return { label: code, color: 'text-gray-700', bg: 'bg-gray-50' };
+  if (c === 'PB' || c === 'LDNR') return { label: 'Lead — action recommended', style: { background: C.brickLight }, badgeStyle: { ...base, color: C.brick, background: C.brickLight, border: `1px solid ${C.brick}` } };
+  if (c === 'GS' || c === 'GI') return { label: 'Galvanized — may carry lead deposits', style: { background: 'rgba(200,134,26,0.1)' }, badgeStyle: { ...base, color: C.ochre, background: 'rgba(200,134,26,0.1)', border: `1px solid ${C.ochre}` } };
+  if (c === 'UN' || c === 'UNK') return { label: 'Unknown material', style: { background: C.limestone }, badgeStyle: { ...base, color: C.ochre, background: C.limestone, border: `1px solid ${C.ochre}` } };
+  if (c === 'CU') return { label: 'Copper — lower risk', style: { background: C.hillLight }, badgeStyle: { ...base, color: C.hill, background: C.hillLight, border: `1px solid ${C.hill}` } };
+  return { label: code, style: { background: C.limestone }, badgeStyle: { ...base, color: C.muted, background: C.limestone, border: `1px solid ${C.rule}` } };
 }
 
 function statusLabel(status: string | undefined): string {
@@ -706,7 +678,7 @@ function AddressSearchCard() {
       loading={false}
       error={null}
     >
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-[13px] mb-4" style={{ color: C.muted }}>
         Check if your address is enrolled in GCWW's lead service line replacement program
         and see its current status.
       </p>
@@ -717,14 +689,16 @@ function AddressSearchCard() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Enter street address, e.g. 1600 Vine St"
-          className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A4A6B]"
+          className="flex-1 px-3 py-2 text-[13px] rounded-md focus:outline-none"
+          style={{ border: `1px solid ${C.rule}`, background: C.paper, color: C.ink, fontFamily: '"Public Sans", sans-serif' }}
           minLength={3}
           aria-label="Street address"
         />
         <button
           type="submit"
           disabled={loading || query.trim().length < 3}
-          className="px-4 py-2 bg-[#1A4A6B] text-white text-sm font-medium rounded-lg hover:bg-[#15395a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 text-[13px] font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ background: C.river, color: '#fff' }}
         >
           {loading ? 'Searching…' : 'Search'}
         </button>
@@ -733,20 +707,21 @@ function AddressSearchCard() {
       {/* Results */}
       {searched && results !== null && (
         results.length === 0 ? (
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-700">
+          <div className="rounded-md p-4 text-[13px]" style={{ background: C.limestone, border: `1px solid ${C.rule}`, color: C.ink }}>
             <p className="font-semibold mb-1">No results found for "{query}"</p>
-            <p className="text-gray-600">
+            <p style={{ color: C.muted }}>
               This address may not be enrolled in GCWW's formal replacement program yet —
               the dataset covers ~6,400 evaluated lines, not all 33,449 citywide. It does{' '}
               <strong>not</strong> confirm a copper or lead-free line.
             </p>
-            <p className="text-gray-600 mt-2">
+            <p className="mt-2" style={{ color: C.muted }}>
               For address-level detail, use the{' '}
               <a
                 href="https://gcww.maps.arcgis.com/apps/webappviewer/index.html?id=0a170c268c694e46a8a4e394630df0bd"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline text-[#1A4A6B]"
+                className="underline"
+                style={{ color: C.river }}
               >
                 GCWW interactive service line map
               </a>.
@@ -760,42 +735,40 @@ function AddressSearchCard() {
             {results.map((r, i) => {
               const risk = materialRisk(r.privatematerialtype);
               return (
-                <div key={i} className={`rounded-lg border p-4 ${risk.bg}`}>
+                <div key={i} className="rounded-md p-4" style={{ ...risk.style, border: `1px solid ${C.rule}` }}>
                   <div className="flex items-start justify-between gap-2 flex-wrap">
                     <div>
-                      <p className="font-semibold text-sm text-gray-900">{r.address ?? 'Unknown address'}</p>
+                      <p className="font-semibold text-[13px]" style={{ color: C.ink }}>{r.address ?? 'Unknown address'}</p>
                       {r.adminarea && (
-                        <p className="text-xs text-gray-500 mt-0.5">{r.adminarea}</p>
+                        <p className="text-[11px] mt-0.5" style={{ color: C.muted }}>{r.adminarea}</p>
                       )}
                     </div>
-                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${risk.color} ${risk.bg} border`}>
-                      {risk.label}
-                    </span>
+                    <span style={risk.badgeStyle}>{risk.label}</span>
                   </div>
-                  <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700">
+                  <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-[12px]">
                     <div>
-                      <span className="text-gray-500">Private-side material: </span>
-                      <span className="font-medium">{materialLabel(r.privatematerialtype)}</span>
+                      <span style={{ color: C.muted }}>Private-side material: </span>
+                      <span className="font-medium" style={{ color: C.ink }}>{materialLabel(r.privatematerialtype)}</span>
                     </div>
                     <div>
-                      <span className="text-gray-500">Public-side material: </span>
-                      <span className="font-medium">{materialLabel(r.publicmaterialtype)}</span>
+                      <span style={{ color: C.muted }}>Public-side material: </span>
+                      <span className="font-medium" style={{ color: C.ink }}>{materialLabel(r.publicmaterialtype)}</span>
                     </div>
                     <div>
-                      <span className="text-gray-500">Program status: </span>
-                      <span className="font-medium">{statusLabel(r.status)}</span>
+                      <span style={{ color: C.muted }}>Program status: </span>
+                      <span className="font-medium" style={{ color: C.ink }}>{statusLabel(r.status)}</span>
                     </div>
                     {r.publicreplacedate && (
                       <div>
-                        <span className="text-gray-500">Public-side replaced: </span>
-                        <span className="font-medium">{r.publicreplacedate.slice(0, 10)}</span>
+                        <span style={{ color: C.muted }}>Public-side replaced: </span>
+                        <span className="font-medium" style={{ color: C.ink }}>{r.publicreplacedate.slice(0, 10)}</span>
                       </div>
                     )}
                   </div>
                 </div>
               );
             })}
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-[11px] mt-2" style={{ color: C.muted }}>
               Note: "Private-side" is the pipe from the curb to your home (your responsibility).
               "Public-side" is the pipe from the main to the curb (GCWW's responsibility).
               Both must be lead-free for safe water.
@@ -805,11 +778,11 @@ function AddressSearchCard() {
       )}
 
       {/* Always-on context note */}
-      <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-xs text-blue-900">
+      <div className="mt-4 rounded-md px-3 py-2 text-[12px]" style={{ background: C.riverLight, borderLeft: `3px solid ${C.river}`, color: C.ink }}>
         <strong>Coverage note:</strong> This dataset tracks ~6,400 service lines formally
         enrolled in GCWW's replacement program — not the full city-wide inventory of 33,449
         lead or unknown lines. If your address doesn't appear, contact GCWW at{' '}
-        <a href="tel:5135914600" className="underline">(513) 591-4600</a> to request an
+        <a href="tel:5135914600" className="underline" style={{ color: C.river }}>(513) 591-4600</a> to request an
         assessment.
       </div>
     </DataCard>
@@ -824,18 +797,19 @@ function DataGapsCard() {
       loading={false}
       error={null}
     >
-      <div className="space-y-3 text-sm text-gray-700">
+      <div className="space-y-3 text-[13px]" style={{ color: C.ink }}>
         <div className="flex gap-3 items-start">
           <span className="text-lg shrink-0">🩸</span>
           <div>
             <p className="font-semibold">Blood lead case rates by neighborhood are not yet machine-readable</p>
-            <p className="text-gray-600 mt-0.5">
+            <p className="mt-0.5" style={{ color: C.muted }}>
               The Cincinnati Health Department's{' '}
               <a
                 href="https://www.cincinnati-oh.gov/sites/health/assets/2024-LEAD-ANNUAL-REPORT.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline text-[#1A4A6B]"
+                className="underline"
+                style={{ color: C.river }}
               >
                 2024 Lead Annual Report
               </a>{' '}
@@ -852,7 +826,7 @@ function DataGapsCard() {
           <span className="text-lg shrink-0">🏗️</span>
           <div>
             <p className="font-semibold">Private-side inventory is based on GCWW records</p>
-            <p className="text-gray-600 mt-0.5">
+            <p className="mt-0.5" style={{ color: C.muted }}>
               GCWW's inventory comes from water main and service line records, maintenance history,
               and repair/replacement work — not physical inspections of every property. Unknown
               lines are those without confirmed documentation. The true number of lead lines may
@@ -864,30 +838,30 @@ function DataGapsCard() {
           <span className="text-lg shrink-0">🏚️</span>
           <div>
             <p className="font-semibold">Interior plumbing and lead paint are outside this data</p>
-            <p className="text-gray-600 mt-0.5">
+            <p className="mt-0.5" style={{ color: C.muted }}>
               Service line status tells you about the pipe from the street to your home. Older
               interior plumbing, faucets, and lead paint in pre-1978 housing are separate and
               significant sources of lead exposure — especially for children.
             </p>
           </div>
         </div>
-        <div className="mt-4 bg-blue-50 rounded-lg p-3">
-          <p className="font-semibold text-[#1A4A6B]">Sources</p>
-          <ul className="mt-1 space-y-1 text-xs text-gray-600">
+        <div className="mt-4 rounded-md p-3" style={{ background: C.limestone, border: `1px solid ${C.rule}` }}>
+          <p className="font-semibold" style={{ color: C.river }}>Sources</p>
+          <ul className="mt-1 space-y-1 text-[11px]" style={{ color: C.muted }}>
             <li>
-              <a href="https://la.mygcww.org/neighborhood-stats/" target="_blank" rel="noopener noreferrer" className="underline text-[#1A4A6B]">
+              <a href="https://la.mygcww.org/neighborhood-stats/" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: C.river }}>
                 GCWW Neighborhood Stats
               </a>{' '}
               — neighborhood-level inventory breakdown
             </li>
             <li>
-              <a href="https://data.cincinnati-oh.gov/dataset/GCWW-Private-Side-One-off-Lead-Service-Line-Replac/b4xq-u3su" target="_blank" rel="noopener noreferrer" className="underline text-[#1A4A6B]">
+              <a href="https://data.cincinnati-oh.gov/dataset/GCWW-Private-Side-One-off-Lead-Service-Line-Replac/b4xq-u3su" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: C.river }}>
                 Cincinnati Open Data: GCWW Lead Replacements
               </a>{' '}
               — completed private-side replacements
             </li>
             <li>
-              <a href="https://gcww.maps.arcgis.com/apps/webappviewer/index.html?id=0a170c268c694e46a8a4e394630df0bd" target="_blank" rel="noopener noreferrer" className="underline text-[#1A4A6B]">
+              <a href="https://gcww.maps.arcgis.com/apps/webappviewer/index.html?id=0a170c268c694e46a8a4e394630df0bd" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: C.river }}>
                 GCWW Service Line Map
               </a>{' '}
               — interactive address-level map
@@ -905,29 +879,24 @@ export default function LeadSafety() {
   const [neighborhood, setNeighborhood] = useState('Over-the-Rhine');
 
   return (
-    <div className="space-y-6">
-      {/* Page header */}
-      <div>
-        <h1 className="text-2xl font-bold text-[#1A4A6B]">Lead Safety</h1>
-        <p className="text-gray-600 mt-1">
-          Lead service line status, replacement program activity, and risk by neighborhood —
-          sourced from Greater Cincinnati Water Works (GCWW) open data.
-        </p>
-      </div>
-
+    <div className="px-8 py-2 space-y-5">
       {/* City-wide urgency banner */}
       <UrgencyBanner />
 
       {/* Neighborhood selector */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
-        <label htmlFor="lead-neighborhood" className="block text-sm font-medium text-gray-700 mb-2">
-          Select a neighborhood
-        </label>
+      <div className="page-paper rounded-md p-4 flex flex-wrap items-center gap-4">
+        <span className="smallcaps" style={{ color: C.muted }}>Neighborhood</span>
         <select
           id="lead-neighborhood"
           value={neighborhood}
           onChange={(e) => setNeighborhood(e.target.value)}
-          className="w-full sm:w-80 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A4A6B]"
+          className="appearance-none pl-3 pr-8 py-1.5 rounded-md font-medium text-[14px] cursor-pointer"
+          style={{
+            background: C.paper,
+            color: C.ink,
+            border: `1px solid ${C.rule}`,
+            fontFamily: 'Newsreader, serif',
+          }}
         >
           {NEIGHBORHOODS.map((n) => (
             <option key={n} value={n}>{n}</option>

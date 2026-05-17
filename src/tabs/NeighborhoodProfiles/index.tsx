@@ -193,6 +193,34 @@ export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfiles
 
   const blurb = getNeighborhoodBlurb(selectedNeighborhood);
 
+  const downloadCSV = () => {
+    const rows: [string, string][] = [
+      ['Neighborhood', selectedNeighborhood],
+      ['Date range', `${startDate} to ${endDate}`],
+      ['Life expectancy (years)', lifeYrs != null ? String(lifeYrs) : ''],
+      ['City avg life expectancy', String(CITY_LIFE_EXP)],
+      ['Median household income', censusData?.medianHouseholdIncome != null ? String(censusData.medianHouseholdIncome) : ''],
+      ['Rent burden rate (%)', censusData?.rentBurdenRate != null ? String(censusData.rentBurdenRate) : ''],
+      ['Total population', demoRecord?.totalPopulation != null ? String(demoRecord.totalPopulation) : ''],
+      ['Median age', demoRecord?.medianAge != null ? String(demoRecord.medianAge) : ''],
+      ['Under 18 (%)', demoRecord?.under18Pct != null ? String(demoRecord.under18Pct) : ''],
+      ['Over 65 (%)', demoRecord?.over65Pct != null ? String(demoRecord.over65Pct) : ''],
+      ['Foreign born (%)', demoRecord?.foreignBornPct != null ? String(demoRecord.foreignBornPct) : ''],
+      ['English only (%)', demoRecord?.englishOnlyPct != null ? String(demoRecord.englishOnlyPct) : ''],
+      ['Bachelor degree or higher (%)', demoRecord?.bachelorsOrHigherPct != null ? String(demoRecord.bachelorsOrHigherPct) : ''],
+      ['Broadband access (%)', demoRecord?.broadbandPct != null ? String(demoRecord.broadbandPct) : ''],
+      ...topRequests.map((r, i) => [`Top 311 call #${i + 1}`, `${r.label} (${r.count})`] as [string, string]),
+    ]
+    const csv = rows.map(([k, v]) => `"${k}","${v}"`).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${selectedNeighborhood.replace(/[^a-z0-9]/gi, '_')}_profile.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   // Data sentence for hero — derived from static demographics JSON
   const demoRecord = (demographicsData as Record<string, any>)[stripNeighborhoodName(selectedNeighborhood)];
   const demoSentence = useMemo(() => {
@@ -263,6 +291,14 @@ export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfiles
           style={{ color: C.river }}
         >
           Print brief
+        </button>
+
+        <button
+          onClick={downloadCSV}
+          className="flex items-center gap-1.5 hover:underline transition-colors"
+          style={{ color: C.river }}
+        >
+          Download data
         </button>
 
         {onViewMap && (

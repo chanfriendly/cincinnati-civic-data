@@ -171,17 +171,20 @@ The API infrastructure exists but the city has not enabled it. **Do not attempt 
 | 29 | Apr 2026 | Phase 7a: Healthcare facilities (OSM, 458 facilities) + CDC PLACES health outcomes (41 neighborhoods, 10 measures) + HealthOutcomesSection + Healthcare amenities tab in Address Lookup |
 | 30 | Apr 2026 | Phase 7b: Community councils directory (52 entries, static JSON) + Voting precinct lookup (live CAGIS layer 44) + Recreation centers (24 CRC centers) + Expanded demographics + broadband (ACS C16001/B01001/B05002/B15003/B28002, 41 neighborhoods) |
 | 31 | Apr 2026 | Phase 7c: Life expectancy by neighborhood (CDC USALEEP 2010–2015, 41 neighborhoods, 63–87yr range) + LifeExpectancySection with city-range gradient bar + 23-year equity gap callout |
+| 32 | May 2026 | Editorial design system migration — Police Accountability tab: OIS section redesign (digit chips for small counts, CCIA context, Collaborative Agreement / 2014-2016 editorial callouts, legacy chart with officer race breakdown); Use of Force Leaflet map fix (direct fetch bypasses useSODA timing issue, AbortController cleanup); x-axis overlap fix (horizontal bar chart for Subjects by Race) |
+| 33 | May 2026 | Design system documentation — `DESIGN_SYSTEM.md` created (color tokens, typography scale, component patterns, Leaflet init pattern, Recharts chart templates, tab migration checklist). `CLAUDE.md` updated to reference it. Inspired by https://github.com/google-labs-code/design.md |
+| 34 | May 2026 | Housing Justice tab (formerly "Displacement") — renamed in nav, full C-token migration of `Displacement/index.tsx` (1,480 lines) and `ConnectedCommunitiesSection.tsx`: all old Tailwind color utilities replaced, phase colors remapped to C tokens, sub-nav migrated, serif/smallcaps headings applied, "Housing Justice" eyebrow added |
 
 ---
 
 ## Next Steps
 
-*Current sprint priorities. See `Claude.md` "Recommended Next Steps" for the full prioritized list.*
+*Current sprint priorities. See `CLAUDE.md` "Recommended Next Steps" for the full prioritized list.*
 
-1. ✅ **Contextual org surfacing in Tab 1** — lead, blight/violations, and high-crime sections surface relevant orgs contextually
-2. ✅ **Public comment calendar** — `CivicCalendar` in Tab 1; recurring Council / Planning / BZA / CDBG schedule
-3. 🔄 Manual QA of CAGIS cards (Tab 1) with a Downtown and Hyde Park address
-4. 🔄 Mobile testing — Tabs 1 and 3 are primary mobile use cases
-5. AI summary reassessment — see `TODO(reassess-ai-summary)` in `AddressLookup/index.tsx`
-6. Spanish translation review — needs native speaker
-7. **Verify lead card** with real Cincinnati address in high-risk neighborhood (Avondale, Westwood)
+1. **About/Limitations deduplication** (Phase 8, #32) — two nav entries for same page; consolidate
+2. **OIS legacy chart — color-coded bars** (Phase 8, #33) — 2001 bar = river, 2014–2016 bars = ochre, rest = muted
+3. **Neighborhoods Map & Compare + Print/Download** (Phase 8, #34) — layout rework + print brief + CSV export
+4. **Housing Justice tab rework** (Phase 8, #35) — editorial layout overhaul per Claude Design prototype
+5. **Lead Safety tab rework** (Phase 8, #36) — design system migration + editorial layout
+6. 🔄 Manual QA of CAGIS cards (Tab 1) with a Downtown and Hyde Park address
+7. 🔄 Mobile testing — Tabs 1 and 3 are primary mobile use cases

@@ -817,7 +817,16 @@ export default function PoliceAccountability() {
                     <XAxis dataKey="year" {...axisProps} />
                     <YAxis {...axisProps} allowDecimals={false} width={28} />
                     <Tooltip contentStyle={tooltipStyle} />
-                    <Bar dataKey="count" fill={C.muted} radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="count" radius={[3, 3, 0, 0]}>
+                      {oisByYear.map((entry: any, i: number) => {
+                        const yr = parseInt(entry.year)
+                        const fill =
+                          yr === 2001 ? C.river
+                          : yr >= 2014 && yr <= 2016 ? C.ochre
+                          : C.muted
+                        return <Cell key={i} fill={fill} />
+                      })}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </>

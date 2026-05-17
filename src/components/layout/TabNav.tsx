@@ -8,13 +8,14 @@ interface TabNavProps {
 }
 
 const TABS: Array<{ id: TabId; num: string; label: string }> = [
-  { id: 'address',       num: '01', label: 'Address Lookup' },
-  { id: 'neighborhoods', num: '02', label: 'Neighborhoods'  },
-  { id: 'displacement',  num: '03', label: 'Housing Justice' },
-  { id: 'lead',          num: '04', label: 'Lead Safety'    },
-  { id: 'police',        num: '05', label: 'Police'         },
-  { id: 'accessibility', num: '06', label: 'Explorer'       },
-  { id: 'tax',           num: '07', label: 'Tax & Revenue'  },
+  { id: 'address',       num: '01', label: 'Address Lookup'       },
+  { id: 'neighborhoods', num: '02', label: 'Neighborhoods'        },
+  { id: 'displacement',  num: '03', label: 'Housing Justice'      },
+  { id: 'lead',          num: '04', label: 'Lead Safety'          },
+  { id: 'police',        num: '05', label: 'Police'               },
+  { id: 'accessibility', num: '06', label: 'Explorer'             },
+  { id: 'tax',           num: '07', label: 'Tax & Revenue'        },
+  { id: 'about',         num: '08', label: 'Methodology & Limits' },
 ]
 
 const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {

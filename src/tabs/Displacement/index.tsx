@@ -224,20 +224,6 @@ const PhaseBadge: React.FC<{ phase: DisplacementPhase }> = ({ phase }) => {
   )
 }
 
-const MiniBar: React.FC<{ value: number | null; colorClass: string; label: string }> = ({ value, colorClass, label }) => (
-  <div className="mb-1">
-    <div className="flex justify-between items-center mb-0.5">
-      <span className="text-xs" style={{ color: C.muted }}>{label}</span>
-      <span className="text-xs font-medium" style={{ color: C.ink }}>{value !== null ? `${value}` : 'N/A'}</span>
-    </div>
-    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: C.limestone }}>
-      <div
-        className={`h-full rounded-full ${colorClass}`}
-        style={{ width: value !== null ? `${value}%` : '0%' }}
-      />
-    </div>
-  </div>
-)
 
 // ─── Quadrant Plot ─────────────────────────────────────────────────────────────
 
@@ -328,62 +314,271 @@ const QuadrantPlot: React.FC<{ record: DisplacementRecord }> = ({ record }) => {
   )
 }
 
+// ─── City-wide Scatter Chart ──────────────────────────────────────────────────
+
+const LABEL_NEIGHBORHOODS = new Set([
+  'Over-the-Rhine', 'West End', 'Walnut Hills', 'Avondale',
+  'Hyde Park', 'Mt. Lookout', 'Northside', 'Madisonville',
+  'East Price Hill', 'Lower Price Hill',
+])
+
+const CityScatterChart: React.FC<{
+  records: DisplacementRecord[]
+  selected: string | null
+  onSelect: (name: string | null) => void
+  filter: FilterPhase
+  onTabChange?: (tab: import('../../types').TabId) => void
+}> = ({ records, selected, onSelect, filter, onTabChange }) => {
+  const [hovered, setHovered] = useState<string | null>(null)
+
+  const plottable = records.filter(r => r.vulnerability !== null && r.pressure !== null)
+
+  const atRiskList = useMemo(() =>
+    [...records]
+      .filter(r => (r.phase === 'active' || r.phase === 'vulnerable') && r.vulnerability !== null)
+      .sort((a, b) => {
+        if (a.phase !== b.phase) return a.phase === 'active' ? -1 : 1
+        return (b.vulnerability ?? 0) - (a.vulnerability ?? 0)
+      })
+      .slice(0, 8),
+    [records]
+  )
+
+  const W = 720, H = 420
+  const PAD = { top: 40, right: 28, bottom: 50, left: 50 }
+  const plotW = W - PAD.left - PAD.right
+  const plotH = H - PAD.top - PAD.bottom
+  const midX = PAD.left + plotW / 2
+  const midY = PAD.top + plotH / 2
+
+  // X = development pressure (0=left, 100=right)
+  // Y = vulnerability (0=bottom, 100=top)
+  const toX = (pressure: number) => PAD.left + (pressure / 100) * plotW
+  const toY = (vulnerability: number) => PAD.top + ((100 - vulnerability) / 100) * plotH
+
+  const hoveredRecord = plottable.find(r => r.name === hovered) ?? null
+  const FONT = '"Public Sans", sans-serif'
+  const SERIF = '"Newsreader", "Georgia", serif'
+
+  // Centers of each quadrant for labels
+  const qLabelX = { left: PAD.left + plotW * 0.25, right: PAD.left + plotW * 0.75 }
+  const qLabelY = { top: PAD.top + plotH * 0.18, bottom: PAD.top + plotH * 0.82 }
+
+  return (
+    <div>
+      {/* Section header */}
+      <div className="mb-6">
+        <div className="smallcaps mb-2" style={{ color: C.muted }}>01 / Vulnerability &amp; Pressure</div>
+        <h2 className="serif font-medium leading-tight mb-3" style={{ fontSize: 30, letterSpacing: '-0.015em', color: C.ink }}>
+          The city splits into quadrants.{' '}
+          <span style={{ color: C.brick }}>Top-right</span> is where displacement happens fastest.
+        </h2>
+        <p className="serif" style={{ fontSize: 16, lineHeight: 1.65, color: C.muted, maxWidth: 680 }}>
+          Each dot is a neighborhood. The horizontal axis measures development pressure — permit
+          volume, tax abatements, and unit removals over a 3-year rolling window. The vertical
+          axis measures renter vulnerability — income and rent burden from Census ACS data. Both
+          are normalized to the city median. Hover anywhere along the diagonal and you find the
+          neighborhoods most likely to change next.
+        </p>
+      </div>
+
+      <div className="page-paper rounded-md overflow-hidden" style={{ border: `1px solid ${C.rule}` }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px' }}>
+
+          {/* ── Scatter plot ── */}
+          <div className="p-5 min-w-0" style={{ borderRight: `1px solid ${C.rule}` }}>
+            <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', display: 'block' }}>
+
+              {/* Quadrant fills */}
+              <rect x={PAD.left}  y={PAD.top}  width={plotW/2} height={plotH/2} fill={C.ochre} opacity={0.06} />
+              <rect x={midX}      y={PAD.top}  width={plotW/2} height={plotH/2} fill={C.brick} opacity={0.07} />
+              <rect x={PAD.left}  y={midY}     width={plotW/2} height={plotH/2} fill={C.river} opacity={0.05} />
+              <rect x={midX}      y={midY}     width={plotW/2} height={plotH/2} fill={C.hill}  opacity={0.05} />
+
+              {/* Dashed median dividers */}
+              <line x1={midX}      y1={PAD.top}         x2={midX}           y2={PAD.top+plotH} stroke={C.rule} strokeWidth={1} strokeDasharray="5 4" />
+              <line x1={PAD.left}  y1={midY}            x2={PAD.left+plotW} y2={midY}          stroke={C.rule} strokeWidth={1} strokeDasharray="5 4" />
+              <rect x={PAD.left}   y={PAD.top}          width={plotW}       height={plotH}     fill="none" stroke={C.rule} strokeWidth={1} />
+
+              {/* Quadrant labels — centered in each quadrant */}
+              <text x={qLabelX.left}  y={qLabelY.top}      fontSize={10} fontWeight="700" fill={C.ochre} textAnchor="middle" style={{ fontFamily: FONT, letterSpacing: '0.08em' }}>VULNERABLE</text>
+              <text x={qLabelX.left}  y={qLabelY.top + 15} fontSize={9}  fill={C.ochre} textAnchor="middle" style={{ fontFamily: SERIF, fontStyle: 'italic' }}>waiting for pressure</text>
+
+              <text x={qLabelX.right} y={qLabelY.top}      fontSize={10} fontWeight="700" fill={C.brick} textAnchor="middle" style={{ fontFamily: FONT, letterSpacing: '0.08em' }}>ACTIVE RISK</text>
+              <text x={qLabelX.right} y={qLabelY.top + 15} fontSize={9}  fill={C.brick} textAnchor="middle" style={{ fontFamily: SERIF, fontStyle: 'italic' }}>vulnerable + pressure</text>
+
+              <text x={qLabelX.left}  y={qLabelY.bottom}      fontSize={10} fontWeight="700" fill={C.river} textAnchor="middle" style={{ fontFamily: FONT, letterSpacing: '0.08em' }}>STABLE</text>
+              <text x={qLabelX.left}  y={qLabelY.bottom + 15} fontSize={9}  fill={C.river} textAnchor="middle" style={{ fontFamily: SERIF, fontStyle: 'italic' }}>for now</text>
+
+              <text x={qLabelX.right} y={qLabelY.bottom}      fontSize={10} fontWeight="700" fill={C.hill} textAnchor="middle" style={{ fontFamily: FONT, letterSpacing: '0.08em' }}>GENTRIFYING</text>
+              <text x={qLabelX.right} y={qLabelY.bottom + 15} fontSize={9}  fill={C.hill} textAnchor="middle" style={{ fontFamily: SERIF, fontStyle: 'italic' }}>pressure, low vuln.</text>
+
+              {/* Axis labels */}
+              <text x={16} y={PAD.top + plotH/2} fontSize={10} textAnchor="middle" fill={C.muted}
+                transform={`rotate(-90, 16, ${PAD.top + plotH/2})`} style={{ fontFamily: FONT }}>
+                Vulnerability →
+              </text>
+              <text x={PAD.left + plotW/2} y={H - 6} fontSize={10} textAnchor="middle" fill={C.muted} style={{ fontFamily: FONT }}>
+                Development pressure →
+              </text>
+
+              {/* Neighborhood dots */}
+              {plottable.map(rec => {
+                const x = toX(rec.pressure!)
+                const y = toY(rec.vulnerability!)
+                const isSelected = rec.name === selected
+                const isHovered  = rec.name === hovered
+                const isDimmed   = filter !== 'all' && rec.phase !== filter
+                const color = PHASE_CONFIG[rec.phase].dotColor
+                const r = isSelected ? 8 : isHovered ? 7 : 5.5
+                const shouldLabel = LABEL_NEIGHBORHOODS.has(rec.name) && !isDimmed
+
+                const onRight = rec.pressure! > 50
+                const onTop   = rec.vulnerability! > 50
+                const lx = x + (onRight ? -9 : 9)
+                const ly = y + (onTop ? -9 : 15)
+                const anchor: React.SVGProps<SVGTextElement>['textAnchor'] = onRight ? 'end' : 'start'
+
+                return (
+                  <g key={rec.name} style={{ cursor: 'pointer' }}
+                    onClick={() => onSelect(rec.name === selected ? null : rec.name)}
+                    onMouseEnter={() => setHovered(rec.name)}
+                    onMouseLeave={() => setHovered(null)}>
+                    {isSelected && <circle cx={x} cy={y} r={r+5} fill={color} opacity={0.18} />}
+                    <circle cx={x} cy={y} r={r} fill={color}
+                      opacity={isDimmed ? 0.15 : 0.85}
+                      stroke={isSelected ? '#fff' : 'none'}
+                      strokeWidth={isSelected ? 2 : 0} />
+                    {shouldLabel && (
+                      <text x={lx} y={ly} fontSize={9} textAnchor={anchor}
+                        fill={color} fontWeight="500"
+                        style={{ fontFamily: FONT, pointerEvents: 'none' }}>
+                        {rec.name}
+                      </text>
+                    )}
+                  </g>
+                )
+              })}
+
+              {/* Hover name for un-labeled neighborhoods */}
+              {hoveredRecord && !LABEL_NEIGHBORHOODS.has(hoveredRecord.name) &&
+                hoveredRecord.pressure !== null && hoveredRecord.vulnerability !== null && (
+                <text
+                  x={toX(hoveredRecord.pressure) + (hoveredRecord.pressure > 50 ? -9 : 9)}
+                  y={toY(hoveredRecord.vulnerability) - 9}
+                  fontSize={9}
+                  textAnchor={hoveredRecord.pressure > 50 ? 'end' : 'start'}
+                  fill={PHASE_CONFIG[hoveredRecord.phase].dotColor}
+                  fontWeight="500"
+                  style={{ fontFamily: FONT, pointerEvents: 'none' }}>
+                  {hoveredRecord.name}
+                </text>
+              )}
+            </svg>
+          </div>
+
+          {/* ── At-risk sidebar ── */}
+          <div className="p-5 flex flex-col">
+            <div className="smallcaps mb-4" style={{ color: C.muted }}>Top of the At-Risk List</div>
+            <div className="flex flex-col gap-4 flex-1">
+              {atRiskList.map((rec, i) => (
+                <div key={rec.name} className="flex items-start gap-3 cursor-pointer group"
+                  onClick={() => onSelect(rec.name === selected ? null : rec.name)}>
+                  <span className="serif font-medium flex-shrink-0"
+                    style={{ color: rec.phase === 'active' ? C.brick : C.ochre, fontSize: 14, minWidth: 22, lineHeight: 1.3 }}>
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-sm leading-tight group-hover:underline" style={{ color: C.ink }}>
+                      {rec.name}
+                    </div>
+                    <div className="text-xs mt-0.5" style={{ color: C.muted }}>
+                      {rec.phase === 'active' ? 'Active risk' : 'Vulnerable'}
+                      {rec.rentBurdenRate !== null ? ` · ${rec.rentBurdenRate.toFixed(0)}% rent-burdened` : ''}
+                    </div>
+                  </div>
+                  {onTabChange && (
+                    <button
+                      className="text-xs flex-shrink-0 hover:underline"
+                      style={{ color: C.river, lineHeight: 1.3 }}
+                      onClick={e => { e.stopPropagation(); onSelect(rec.name); onTabChange('neighborhoods') }}>
+                      profile →
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── Methodology info panel ────────────────────────────────────────────────────
 
 const MethodologyNote: React.FC = () => {
   const [open, setOpen] = React.useState(false)
   return (
-    <div className="rounded-lg p-4 max-w-3xl" style={{ background: 'rgba(200, 134, 26, 0.08)', border: `1px solid ${C.ochre}` }}>
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-sm leading-relaxed" style={{ color: C.ink }}>
-          <span className="font-semibold">Methodology: </span>
-          Inspired by the Anti-Eviction Mapping Project and NYC Displacement Alert Project
-          frameworks, adapted to Cincinnati open data. This is a simplified model — it uses
-          fewer dimensions than those full methodologies (which add race, tenure, education,
-          and language isolation). Combines housing vulnerability (who is at risk) with
-          market pressure (what forces are acting) using only publicly available local data.
-          Neighborhoods scoring above the city midpoint on BOTH axes need the most urgent attention.
-        </p>
-        <button
-          onClick={() => setOpen(v => !v)}
-          aria-label="Show calculation details"
-          title="How are these scores calculated?"
-          className="shrink-0 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center transition-colors"
-          style={{ border: `1px solid ${C.ochre}`, color: C.ochre, background: 'transparent' }}
-        >
-          i
-        </button>
-      </div>
+    <div>
+      <button
+        onClick={() => setOpen(v => !v)}
+        aria-label="Show methodology details"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors"
+        style={{
+          border: `1px solid ${C.ochre}`,
+          color: open ? C.paper : C.ochre,
+          background: open ? C.ochre : 'transparent',
+        }}
+      >
+        <span className="font-bold">i</span>
+        Methodology
+      </button>
 
       {open && (
-        <div className="mt-4 pt-4 space-y-4 text-xs" style={{ borderTop: `1px solid ${C.ochre}`, color: C.ink }}>
-          <div>
-            <p className="font-semibold mb-1">Vulnerability score (0–100) — who is at risk</p>
-            <p className="mb-1">Average of two components, each min-max normalized across all ~52 Cincinnati neighborhoods (0 = city minimum, 100 = city maximum):</p>
-            <ul className="list-disc list-inside space-y-0.5 ml-1">
-              <li><strong>Rent burden rate</strong> — % of renters paying &gt;30% of income on rent (ACS Census). Higher burden → higher score.</li>
-              <li><strong>Median household income</strong> — ACS Census. Lower income → higher score (inverted).</li>
-            </ul>
-            <p className="mt-1 italic" style={{ color: C.muted }}>Limitation: scores are relative to other Cincinnati neighborhoods, not absolute national thresholds. A "stable" neighborhood may still have objectively high rent burden.</p>
-          </div>
-          <div>
-            <p className="font-semibold mb-1">Pressure score (0–100) — what forces are acting</p>
-            <p className="mb-1">Average of three components, same normalization:</p>
-            <ul className="list-disc list-inside space-y-0.5 ml-1">
-              <li><strong>Permit year-over-year % change</strong> — building permits (last 3 years vs. prior 3 years, measured as a rolling window from today — scores shift gradually over time). Higher growth → higher score.</li>
-              <li><strong>Tax abatement count</strong> — commercial CRA subsidies (tax abatements, TIF, LEED credits, below-market land sales). More city-backed investment → higher score.</li>
-              <li><strong>Housing unit removal count</strong> — units removed via building permits. More demolitions/removals → higher score.</li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-semibold mb-1">Phase classification</p>
-            <p>Each score above 50 means "above the city midpoint" — not an absolute threshold. Four phases result from the two binary splits:</p>
-            <ul className="list-disc list-inside space-y-0.5 ml-1 mt-1">
-              <li><strong>Active Displacement Zone</strong>: Vulnerability &gt; 50 and Pressure &gt; 50</li>
-              <li><strong>Vulnerable / At Risk</strong>: Vulnerability &gt; 50, Pressure ≤ 50</li>
-              <li><strong>Development Pressure</strong>: Vulnerability ≤ 50, Pressure &gt; 50</li>
-              <li><strong>Stable</strong>: Both ≤ 50</li>
-            </ul>
+        <div className="mt-3 rounded-lg p-4 max-w-3xl" style={{ background: 'rgba(200, 134, 26, 0.08)', border: `1px solid ${C.ochre}` }}>
+          <div className="space-y-4 text-xs" style={{ color: C.ink }}>
+            <p className="text-sm leading-relaxed">
+              Inspired by the{' '}
+              <a href="https://antievictionmap.com/" target="_blank" rel="noopener noreferrer"
+                className="underline" style={{ color: C.ochre }}>Anti-Eviction Mapping Project</a>{' '}
+              and{' '}
+              <a href="https://www.displacementalert.org/" target="_blank" rel="noopener noreferrer"
+                className="underline" style={{ color: C.ochre }}>NYC Displacement Alert Project</a>{' '}
+              frameworks, adapted to Cincinnati open data. A simplified model — it uses fewer
+              dimensions than those full methodologies (which add race, tenure, education, and
+              language isolation). Combines housing vulnerability (who is at risk) with market
+              pressure (what forces are acting) using only publicly available local data.
+            </p>
+            <div>
+              <p className="font-semibold mb-1">Vulnerability score (0–100) — who is at risk</p>
+              <p className="mb-1">Average of two components, each min-max normalized across all ~52 Cincinnati neighborhoods (0 = city minimum, 100 = city maximum):</p>
+              <ul className="list-disc list-inside space-y-0.5 ml-1">
+                <li><strong>Rent burden rate</strong> — % of renters paying &gt;30% of income on rent (ACS Census). Higher burden → higher score.</li>
+                <li><strong>Median household income</strong> — ACS Census. Lower income → higher score (inverted).</li>
+              </ul>
+              <p className="mt-1 italic" style={{ color: C.muted }}>Scores are relative to other Cincinnati neighborhoods, not absolute national thresholds. A "stable" neighborhood may still have objectively high rent burden.</p>
+            </div>
+            <div>
+              <p className="font-semibold mb-1">Pressure score (0–100) — what forces are acting</p>
+              <p className="mb-1">Average of three components, same normalization:</p>
+              <ul className="list-disc list-inside space-y-0.5 ml-1">
+                <li><strong>Permit volume trend</strong> — building permits (3-year rolling window vs. prior 3 years). Higher growth → higher score.</li>
+                <li><strong>Tax abatement count</strong> — commercial CRA subsidies (tax abatements, TIF, LEED credits, below-market land sales). More city-backed investment → higher score.</li>
+                <li><strong>Housing unit removal count</strong> — units removed via building permits. More removals → higher score.</li>
+              </ul>
+            </div>
+            <div>
+              <p className="font-semibold mb-1">Phase classification</p>
+              <p>Each score above 50 means "above the city midpoint" — not an absolute threshold. Four phases result from the two binary splits:</p>
+              <ul className="list-disc list-inside space-y-0.5 ml-1 mt-1">
+                <li><strong>Active Displacement Zone</strong>: Vulnerability &gt; 50 and Pressure &gt; 50</li>
+                <li><strong>Vulnerable / At Risk</strong>: Vulnerability &gt; 50, Pressure ≤ 50</li>
+                <li><strong>Development Pressure</strong>: Vulnerability ≤ 50, Pressure &gt; 50</li>
+                <li><strong>Stable</strong>: Both ≤ 50</li>
+              </ul>
+            </div>
           </div>
         </div>
       )}
@@ -770,17 +965,6 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
   }, [records])
 
   // ─── Filtered + sorted list ───────────────────────────────────────────────────
-  const filteredRecords = useMemo(() => {
-    const filtered = filter === 'all'
-      ? scoredRecords
-      : scoredRecords.filter(r => r.phase === filter)
-    return [...filtered].sort((a, b) => {
-      const va = a.vulnerability ?? -1
-      const vb = b.vulnerability ?? -1
-      return vb - va
-    })
-  }, [scoredRecords, filter])
-
   // ─── Cross-reference for selected neighborhood ────────────────────────────────
   const crossRefRows: CrossRefRow[] = useMemo(() => {
     if (!detailAbatements.length) return []
@@ -910,14 +1094,43 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
       {activeSection === 'displacement' && <>
 
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-8">
         <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: C.muted }}>Housing Justice</div>
-        <div className="serif mb-3" style={{ fontSize: 28, fontWeight: 500, color: C.ink }}>Displacement Pressure &amp; Housing Vulnerability</div>
-        <p className="text-[13px] leading-relaxed mb-4" style={{ color: C.muted }}>
-          A two-axis model showing which Cincinnati neighborhoods face both high housing vulnerability
-          (who is at risk) and high market pressure (what forces are acting on them). Neighborhoods
-          high on both axes need the most urgent attention.
+        <div className="serif mb-2" style={{ fontSize: 32, fontWeight: 500, color: C.ink, lineHeight: 1.1 }}>
+          Which neighborhoods are most at risk<br />of displacement?
+        </div>
+        <p className="text-[14px] leading-relaxed mb-5" style={{ color: C.muted, maxWidth: 680 }}>
+          A two-axis model combining housing vulnerability (who is economically exposed) with market pressure
+          (what forces are acting). Neighborhoods scoring above the city midpoint on <em>both</em> axes need
+          the most urgent attention.
         </p>
+
+        {/* City-wide summary stat row */}
+        {!isLoading && scoredRecords.length > 0 && (
+          <div className="flex flex-wrap gap-3 mb-5">
+            {([
+              { phase: 'active'      as const, label: 'At active risk',       color: C.brick },
+              { phase: 'vulnerable'  as const, label: 'Vulnerable',            color: C.ochre },
+              { phase: 'gentrifying' as const, label: 'Development pressure',  color: C.hill  },
+              { phase: 'stable'      as const, label: 'Stable',                color: C.river },
+            ]).map(({ phase, label, color }) => (
+              <div
+                key={phase}
+                className="page-paper rounded-md px-4 py-3 cursor-pointer transition-colors"
+                style={{
+                  borderLeft: `3px solid ${color}`,
+                  minWidth: 130,
+                  background: filter === phase ? C.limestone : C.paper,
+                }}
+                onClick={() => setFilter(filter === phase ? 'all' : phase)}
+              >
+                <div className="serif font-medium leading-none" style={{ fontSize: 32, color }}>{phaseCounts[phase]}</div>
+                <div className="text-[11px] mt-1" style={{ color: C.muted }}>{label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
         <MethodologyNote />
       </div>
 
@@ -934,22 +1147,6 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
         </div>
       )}
 
-      {/* Phase legend */}
-      <div className="mb-6 flex flex-wrap gap-3 text-sm">
-        {(['active', 'vulnerable', 'gentrifying', 'stable'] as DisplacementPhase[]).map(phase => (
-          <div key={phase} className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: PHASE_CONFIG[phase].dotColor }} />
-            <span style={{ color: C.ink }}>
-              <strong>{PHASE_CONFIG[phase].label}:</strong>{' '}
-              {phase === 'active' && 'High vulnerability + High pressure — most urgent'}
-              {phase === 'vulnerable' && 'High vulnerability + Low pressure — predatory conditions'}
-              {phase === 'gentrifying' && 'Low vulnerability + High pressure — watch for incoming displacement'}
-              {phase === 'stable' && 'Low vulnerability + Low pressure'}
-            </span>
-          </div>
-        ))}
-      </div>
-
       {/* Loading skeleton */}
       {isLoading && (
         <div className="flex flex-col gap-3 mb-6">
@@ -960,79 +1157,29 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
         </div>
       )}
 
-      {/* Main two-panel layout */}
+      {/* Main layout: scatter chart + detail below */}
       {!isLoading && scoredRecords.length > 0 && (
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col gap-6">
+          <CityScatterChart
+            records={scoredRecords}
+            selected={selected}
+            onSelect={setSelected}
+            filter={filter}
+            onTabChange={onTabChange}
+          />
 
-          {/* Left panel: Rankings list (40%) */}
-          <div className="lg:w-2/5 flex-shrink-0">
-            {/* Filter buttons */}
-            <div className="flex flex-wrap gap-1.5 mb-3">
-              {(['all', 'active', 'vulnerable', 'gentrifying', 'stable', 'insufficient'] as FilterPhase[]).map(ph => {
-                const isActive = filter === ph
-                return (
-                  <button
-                    key={ph}
-                    onClick={() => setFilter(ph)}
-                    className="px-2.5 py-1 rounded-full text-xs font-medium transition-colors"
-                    style={
-                      isActive
-                        ? { background: C.ink, color: '#fff', border: `1px solid ${C.ink}` }
-                        : { background: C.paper, color: C.muted, border: `1px solid ${C.rule}` }
-                    }
-                  >
-                    {ph === 'all' ? 'All' : PHASE_CONFIG[ph as DisplacementPhase].label.split('/')[0].trim()} ({phaseCounts[ph]})
-                  </button>
-                )
-              })}
+          {!selected && (
+            <div
+              className="flex items-center justify-center h-28 rounded-md"
+              style={{ border: `1px dashed ${C.rule}` }}
+            >
+              <p className="text-sm" style={{ color: C.muted }}>
+                Click a neighborhood dot or name above to view details
+              </p>
             </div>
+          )}
 
-            {/* List */}
-            <div className="flex flex-col gap-2 max-h-[680px] overflow-y-auto pr-1">
-              {filteredRecords.map(rec => (
-                <button
-                  key={rec.name}
-                  onClick={() => setSelected(rec.name === selected ? null : rec.name)}
-                  className="text-left w-full rounded-lg p-3 transition-all hover:shadow-sm page-paper"
-                  style={
-                    selected === rec.name
-                      ? { border: `2px solid ${C.river}`, background: C.riverLight }
-                      : { border: `1px solid ${C.rule}` }
-                  }
-                >
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <span className="font-semibold text-sm leading-tight" style={{ color: C.ink }}>{rec.name}</span>
-                    <PhaseBadge phase={rec.phase} />
-                  </div>
-                  <MiniBar value={rec.vulnerability} colorClass="bg-gradient-to-r from-orange-400 to-red-500" label="Vulnerability" />
-                  <MiniBar value={rec.pressure} colorClass="bg-gradient-to-r from-blue-400 to-blue-600" label="Pressure" />
-                </button>
-              ))}
-              {filteredRecords.length === 0 && (
-                <p className="text-sm text-center py-8" style={{ color: C.muted }}>No neighborhoods match this filter.</p>
-              )}
-            </div>
-          </div>
-
-          {/* Right panel: Detail view (60%) */}
-          <div className="lg:w-3/5">
-            {!selected && (
-              <div
-                className="flex items-center justify-center h-64 page-paper rounded-md"
-                style={{ border: `1px dashed ${C.rule}` }}
-              >
-                <div className="text-center" style={{ color: C.muted }}>
-                  <svg className="w-10 h-10 mx-auto mb-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                  <p className="text-sm font-medium">Select a neighborhood to view details</p>
-                  <p className="text-xs mt-1">Click any neighborhood in the list on the left</p>
-                </div>
-              </div>
-            )}
-
-            {selected && selectedRecord && (
+          {selected && selectedRecord && (
               <div className="page-paper rounded-md overflow-hidden" style={{ border: `1px solid ${C.rule}` }}>
                 {/* Detail header */}
                 <div
@@ -1074,11 +1221,11 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                       >
                         <p className="text-sm font-semibold" style={{ color: syn.textColor }}>{syn.headline}</p>
                         <p className="text-xs leading-relaxed" style={{ color: C.ink }}>{syn.interpretation}</p>
-                        <div className="pt-1" style={{ borderTop: `1px solid ${C.rule}` }}>
-                          <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: C.muted }}>What to do</p>
-                          <p className="text-xs leading-relaxed" style={{ color: C.ink }}>{syn.action}</p>
+                        <div className="pt-2 mt-1" style={{ borderTop: `1px solid ${syn.borderColor}` }}>
+                          <p className="text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: syn.textColor }}>What you can do</p>
+                          <p className="text-[13px] leading-relaxed font-medium" style={{ color: C.ink }}>{syn.action}</p>
                         </div>
-                        <div className="pt-2">
+                        <div className="pt-2 mt-1" style={{ borderTop: `1px solid ${C.rule}` }}>
                           <CivicOrgsPanel
                             categories={syn.orgCategories}
                             intro="Organizations working on this:"
@@ -1090,7 +1237,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
 
                   {/* Section 1: Two-Axis Profile */}
                   <div>
-                    <h3 className="text-sm font-semibold mb-3" style={{ color: C.ink }}>Two-Axis Profile</h3>
+                    <div className="smallcaps mb-3" style={{ color: C.muted }}>Two-Axis Profile</div>
                     <div className="flex flex-col sm:flex-row gap-4 items-start">
                       <QuadrantPlot record={selectedRecord} />
                       <div className="flex flex-col gap-3 flex-1 min-w-0">
@@ -1098,7 +1245,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                           <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: C.muted }}>Vulnerability Score</p>
                           <div className="flex items-center gap-2">
                             <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: C.limestone }}>
-                              <div className="h-full rounded-full bg-gradient-to-r from-orange-400 to-red-500" style={{ width: `${selectedRecord.vulnerability ?? 0}%` }} />
+                              <div className="h-full rounded-full" style={{ width: `${selectedRecord.vulnerability ?? 0}%`, background: C.brick }} />
                             </div>
                             <span className="text-sm font-bold w-8 text-right" style={{ color: C.ink }}>
                               {selectedRecord.vulnerability !== null ? selectedRecord.vulnerability : 'N/A'}
@@ -1109,7 +1256,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                           <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: C.muted }}>Pressure Score</p>
                           <div className="flex items-center gap-2">
                             <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: C.limestone }}>
-                              <div className="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-600" style={{ width: `${selectedRecord.pressure ?? 0}%` }} />
+                              <div className="h-full rounded-full" style={{ width: `${selectedRecord.pressure ?? 0}%`, background: C.river }} />
                             </div>
                             <span className="text-sm font-bold w-8 text-right" style={{ color: C.ink }}>
                               {selectedRecord.pressure !== null ? selectedRecord.pressure : 'N/A'}
@@ -1124,7 +1271,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
 
                   {/* Section 2: Vulnerability Factors */}
                   <div>
-                    <h3 className="text-sm font-semibold mb-3" style={{ color: C.ink }}>Vulnerability Factors</h3>
+                    <div className="smallcaps mb-3" style={{ color: C.muted }}>Vulnerability Factors</div>
                     <div className="flex flex-col gap-3">
                       <div className="flex justify-between items-start">
                         <div>
@@ -1164,7 +1311,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
 
                   {/* Section 3: Market Pressure Factors */}
                   <div>
-                    <h3 className="text-sm font-semibold mb-3" style={{ color: C.ink }}>Market Pressure Factors</h3>
+                    <div className="smallcaps mb-3" style={{ color: C.muted }}>Market Pressure Factors</div>
                     <div className="flex flex-col gap-3">
                       <div className="flex justify-between items-start">
                         <div>
@@ -1211,7 +1358,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
 
                   {/* Section 4: Tax Abatement Accountability */}
                   <div>
-                    <h3 className="text-sm font-semibold mb-1" style={{ color: C.ink }}>Tax Abatement Accountability</h3>
+                    <div className="smallcaps mb-1" style={{ color: C.muted }}>Tax Abatement Accountability</div>
                     <p className="text-xs mb-3" style={{ color: C.muted }}>
                       Cross-referencing properties receiving tax abatements against their PLAP blight violation history.
                     </p>
@@ -1432,8 +1579,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
 
                 </div>
               </div>
-            )}
-          </div>
+          )}
         </div>
       )}
 

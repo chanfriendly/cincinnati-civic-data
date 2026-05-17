@@ -6,6 +6,71 @@
 
 ## Session Log
 
+### Session 35 — Displacement scatter chart polish (May 2026)
+
+**What was built:**
+
+**Chart layout and copy fixes for `CityScatterChart` in `src/tabs/Displacement/index.tsx`:**
+
+1. **Empty space fixed** — SVG container changed from `flex flex-col xl:flex-row` to CSS grid `1fr 300px`. `maxWidth: W` removed from SVG style. W increased 560→720, H 390→420, PAD expanded. SVG now renders ~993px wide (fills available container).
+
+2. **Methodology button collapsed** — `MethodologyNote` redesigned: default state is a small "i Methodology" pill button (ochre border, rounded-full). Anti-Eviction Mapping Project text and all calculation details are hidden behind it. Expanded state shows the full panel including attribution links.
+
+3. **Copy corrected** — Lede updated to: "horizontal axis measures development pressure — permit volume, tax abatements, and unit removals over a 3-year rolling window. The vertical axis measures renter vulnerability — income and rent burden from Census ACS data." Removed inaccurate "share of renters" (not in our model) and "24 months" (we use 3-year rolling).
+
+4. **Reference design styling applied** — Added `smallcaps` eyebrow "01 / VULNERABILITY & PRESSURE", serif h2 heading with "Top-right" colored `C.brick`, and serif lede (fontSize 16, lineHeight 1.65) above the chart card.
+
+5. **Quadrant labels centered** — Changed from corner-anchored labels to `textAnchor="middle"` positioned at x=25%/75% and y=18%/82% of each quadrant. Sublabels use Newsreader serif italic.
+
+6. **Phase legend removed** — The redundant bullet-list phase legend below `MethodologyNote` was removed. Quadrant labels serve the same purpose.
+
+TypeScript: 0 errors.
+
+---
+
+### Session 34 — Displacement scatter chart (May 2026)
+
+**What was built:**
+
+**City-wide scatter plot for Housing Justice tab** — Replaced the old ranked-list-with-MiniBar-rows in `src/tabs/Displacement/index.tsx` with a `CityScatterChart` component. All 52 neighborhoods plot as dots on two axes (X = development pressure, Y = vulnerability), colored by phase (brick = active risk, ochre = vulnerable, river = stable, hill = gentrifying). Quadrant fills + dashed median lines divide the space. Notable neighborhoods labeled inline. Hover shows unlabeled neighborhood names. Clicking a dot or sidebar entry selects the neighborhood and loads the detail panel below the chart.
+
+Right sidebar ("TOP OF THE AT-RISK LIST") shows the top 8 active/vulnerable neighborhoods ranked by phase then vulnerability score, with rent burden %, and "profile →" links to Neighborhood Profiles.
+
+Removed: `MiniBar` component (unused), `filteredRecords` memo (unused after list removal). Phase count cards in the header still serve as filter controls — selected phase dims non-matching dots.
+
+TypeScript: 0 errors. Build: ✓ 2.77s.
+
+---
+
+### Session 33 — Phase 8: Design System Polish (May 2026)
+
+**What was built:**
+
+1. **Task 32 — Methodology & Limits in TabNav** — Added `about` as tab 08 ("Methodology & Limits") in `TabNav.tsx`. Updated `en.json` and `es.json` i18n nav keys. Migrated `About/index.tsx` sub-nav from legacy gray pill buttons to design system pattern (brick underline active state, C token colors).
+
+2. **Task 33 — OIS bar chart color coding** — In `PoliceAccountability/index.tsx`, replaced flat `C.muted` fill on the OIS legacy bar chart with per-bar `<Cell>` fills: 2001 bar → `C.river` (matches Collaborative Agreement callout), 2014–2016 bars → `C.ochre` (matches spike callout), all other bars → `C.muted`. Matches the DESIGN_SYSTEM.md reference pattern exactly.
+
+3. **Task 34 — Neighborhoods tab design system + Download Data** — Migrated `Neighborhoods/index.tsx` shell sub-nav from legacy gray pills to design system (brick underline, C tokens). Added `downloadCSV()` function to `NeighborhoodProfiles/index.tsx` that exports key neighborhood metrics (life expectancy, census stats, demographics, broadband, top 311 calls) as a labeled CSV. "Download data" button added alongside existing "Print brief" button in the controls bar.
+
+4. **Task 35 — Housing Justice editorial upgrade** — In `Displacement/index.tsx`: replaced `MiniBar colorClass` Tailwind gradient classes with `color` prop + inline styles using `C.brick`/`C.river`. Upgraded header to an editorial question headline with a city-wide summary stat row (4 clickable phase-count cards that double as filter toggles — at active risk, vulnerable, development pressure, stable). Made "What you can do" action block more prominent with phase-colored border and bold text. Upgraded detail panel section labels from `text-sm font-semibold` to `smallcaps`.
+
+5. **Task 36 — Lead Safety full design system migration** — `LeadSafety/index.tsx` was the most legacy-heavy tab. Changes: added `C` import; rewrote `riskColor()` → `riskStyle()` returning inline CSS objects; rewrote `materialRisk()` to return inline `style` and `badgeStyle` objects (no more Tailwind color class strings); migrated `StatRow` to C tokens; replaced `UrgencyBanner` dark red (`bg-red-900`) with editorial page-paper callout using brick left-border, serif headline, limestone stat cards; fixed bar chart cell fills to C tokens; migrated all `text-[#1A4A6B]`, `bg-blue-50`, `bg-amber-50`, `bg-gray-*`, `border-gray-*` throughout every sub-component; updated address search form, result cards, action guide, data gaps card, and sources block.
+
+**TypeScript:** ✅ clean (0 errors). Build: ✅ `✓ built in 2.62s`.
+
+**Key decisions:**
+- `downloadCSV()` placed in NeighborhoodProfiles rather than the Neighborhoods shell because that component holds all the loaded data state.
+- Housing Justice stat cards double as phase-filter toggles (click a card to filter the left list to that phase) — this surfaces the city-wide summary while adding a useful interaction.
+- Lead Safety `materialRisk()` changed return type from Tailwind class strings to CSS objects — breaking change that required updating all 3 call sites, but necessary for design system compliance.
+
+**Next unblocked tasks (from CLAUDE.md Phase 8):**
+- Item 32 partial: Limitations/About tab itself still has legacy `text-2xl font-bold text-gray-900` heading and dark-blue section icons — needs its own migration pass.
+- Mobile testing (Tabs 1 & 3)
+- Spanish translation review
+- Eviction data (blocked: needs Legal Aid partner)
+
+---
+
 ### Session 32 — Spending Tab + Flood Card Audit + Community Contributions Form (May 2026)
 
 **What was built:**
@@ -1201,6 +1266,35 @@ Cost. MiniMax M2.5 is a capable open-weight model available through OpenRouter a
 
 **Why closest-centroid for Census tract → neighborhood mapping?**
 Census tracts don't align with Cincinnati neighborhood statistical areas (SNAs). Point-in-polygon is expensive at runtime. Closest centroid is a fast approximation — tracts at boundaries get assigned to their nearest neighborhood, which is correct for most cases. An exact PiP mapping could be pre-built if precision matters.
+
+---
+
+## Session — May 2026 (Design System + Housing Justice Migration)
+
+**What changed:**
+
+### Police Accountability — Use of Force map fix
+The Leaflet map was initializing but never rendering tiles or markers. Root cause: the `forceCoordinatesQ` useSODA hook's state wasn't propagating to the useEffect before the `coords.length === 0` guard ran — the map was created but `setView` was never called. Fix: removed the useSODA dependency entirely for this effect; replaced with a direct `fetch()` inside the effect using `AbortController`. The effect now self-fetches coordinates, cleans up on unmount, and rebuilds when `forceYear` changes. The `mapLoading` state was added to drive the loading indicator. Zero TS errors; clean build.
+
+### Police Accountability — OIS section (prior session, confirmed clean)
+- New dataset `n625-s9aa` (firearm discharges, 2021–present) — only 5 total incidents; digit chip display replaces bar chart
+- `dxac-g4wm` (firearm discharge subjects) — labeled row display
+- `r6q4-muts` (legacy OIS, 1996–2019) — reference bar chart + officer race breakdown
+- CCIA context paragraph with link to `cincinnati-oh.gov/cca`
+- Two editorial callouts: 2001 Collaborative Agreement (river-bordered), 2014–2016 spike/decline (ochre-bordered)
+- Data gap note: no 2023 or 2025 data published; appears to be recording gap not zero incidents
+
+### Police Accountability — horizontal bar chart
+Subjects by Race chart switched from vertical bars (rotated labels overlapping) to `layout="vertical"` Recharts BarChart. `YAxis width={175}` handles long race label strings cleanly.
+
+### Design system documentation
+`DESIGN_SYSTEM.md` created as the canonical design reference. Covers: color token table (all `C.*` values + semantic usage), typography scale with exact class/style combinations, all named component patterns (card, callout, digit display, labeled row, select, loading), Recharts shared props and chart templates (vertical, horizontal, Cell-colored timeline), Leaflet canonical init pattern (direct fetch, double rAF, AbortController cleanup), tab migration checklist, phase status color mapping, file locations for reference tabs. `CLAUDE.md` quick reference updated to link to it. Inspired by `https://github.com/google-labs-code/design.md`.
+
+### Housing Justice tab (formerly "Displacement")
+- Nav label renamed: "Displacement" → "Housing Justice" (`TabNav.tsx`)
+- `Displacement/index.tsx` (1,480 lines) — full C-token migration: PHASE_CONFIG/PHASE_SYNTHESIS converted from Tailwind class strings to C hex values; PhaseBadge, MiniBar, QuadrantPlot SVG, MethodologyNote, all section panels migrated; severity color helpers converted to return `React.CSSProperties`; "Housing Justice" eyebrow added to section header
+- `ConnectedCommunitiesSection.tsx` — full C-token migration: tab switcher, KPI cards, ChangeBar rows, chart fills, tooltip, legend, attribution all updated
+- Zero TypeScript errors; production build passes
 
 ---
 

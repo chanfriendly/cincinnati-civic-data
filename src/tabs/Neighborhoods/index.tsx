@@ -12,12 +12,17 @@
 
 import React, { useState, Suspense } from 'react'
 import LoadingSkeleton from '../../components/ui/LoadingSkeleton'
+import { C } from '../../components/ui/DesignAtoms'
 
-// Lazy-load the heavy sub-components so the tab shell renders instantly
 const NeighborhoodProfiles = React.lazy(() => import('../NeighborhoodProfiles'))
 const NeighborhoodExplorer = React.lazy(() => import('../NeighborhoodExplorer'))
 
 type NeighborhoodsView = 'profiles' | 'map'
+
+const VIEWS: Array<{ id: NeighborhoodsView; label: string }> = [
+  { id: 'profiles', label: 'Profiles'      },
+  { id: 'map',      label: 'Map & Compare' },
+]
 
 const SubTabFallback: React.FC = () => (
   <div className="mt-6">
@@ -30,28 +35,25 @@ const Neighborhoods: React.FC = () => {
 
   return (
     <div>
-      {/* Internal sub-nav — matches the pill style used in Housing Justice */}
-      <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-6 w-fit">
-        <button
-          onClick={() => setActiveView('profiles')}
-          className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-            activeView === 'profiles'
-              ? 'bg-white shadow-sm text-[#1A4A6B]'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Profiles
-        </button>
-        <button
-          onClick={() => setActiveView('map')}
-          className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-            activeView === 'map'
-              ? 'bg-white shadow-sm text-[#1A4A6B]'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Map &amp; Compare
-        </button>
+      <div className="page-paper" style={{ borderBottom: `1px solid ${C.rule}` }}>
+        <div className="max-w-editorial mx-auto px-8 flex flex-wrap">
+          {VIEWS.map((v) => (
+            <button
+              key={v.id}
+              onClick={() => setActiveView(v.id)}
+              className="px-5 py-3 text-[13px] font-medium transition-colors"
+              style={{
+                borderBottom: activeView === v.id ? `2px solid ${C.brick}` : '2px solid transparent',
+                color: activeView === v.id ? C.ink : C.muted,
+                background: 'transparent',
+                fontFamily: '"Public Sans", sans-serif',
+                marginBottom: -1,
+              }}
+            >
+              {v.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {activeView === 'profiles' && (

@@ -14,6 +14,7 @@ A React/TypeScript web application that aggregates public civic data for Cincinn
 
 - **Changelog (failures + decisions):** `CHANGELOG.md` — **read this first every session**
 - Progress log: `PROGRESS.md` — narrative session history; read after CHANGELOG
+- **Design system:** `DESIGN_SYSTEM.md` — color tokens, typography, components, migration checklist. Read before touching any tab's visuals.
 - All API calls: `src/utils/api.ts` — the heart of the app
 - TypeScript interfaces: `src/types/index.ts`
 - Tab components: `src/tabs/`
@@ -244,6 +245,20 @@ OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...
 31. ✅ **Aging & Senior Health section** — `SeniorHealthSection.tsx` added to Neighborhood Profiles under "Public Health" divider (after HealthOutcomesSection). `neighborhood_health_outcomes.json` expanded from 10 → 24 CDC PLACES measures (added SLEEP, CHD, STROKE, COPD, COGNITION, DISABILITY, MOBILITY, SELFCARE, INDEPLIVE, LONELINESS, EMOTIONSPT, GHLTH, ARTHRITIS, TEETHLOST). Section includes: framing narrative (sleep → heart disease → repeat hospitalization), 6 county-level callout stats from published epidemiology (CMS, JACC, NEJM), Senior Population overview (% 65+, single-person HH rate), 4 metric clusters (Sleep & Cardiovascular, Disability & Independence, Social Isolation, Care Access), composite Senior Vulnerability Score (0–100, normalized across 41 neighborhoods), and collapsible city-wide Pattern Analysis showing top 15 most-at-risk neighborhoods with bar chart + detail table + action guide. Note: ACS elderly-living-alone field was not added — B11010 variable indices unclear at tract level; disability cluster (INDEPLIVE, SELFCARE, MOBILITY) covers the same narrative more reliably.
 
 > **What the nursing template covers that we cannot build:** "History" (no public API; qualitative), "Values and beliefs" (no neighborhood-level data; Community Perceptions Survey is city-wide only), "Perception of residents" at neighborhood level (same limitation). Flag these clearly in Limitations tab — nurses need to collect this via fieldwork. Do not fabricate proxies.
+
+### Phase 8 — Design System Polish & UX Consistency
+
+> Motivated by a Claude Design reference prototype (May 2026) that demonstrated a more editorial, user-friendly layout for Housing Justice and Lead Safety content. Reference: `DESIGN_SYSTEM.md` for all token/component specs.
+
+32. ✅ **About/Limitations nav deduplication** — Collapsed to single "Methodology & Limits" tab (08) in `TabNav.tsx`. `About/index.tsx` rewrapped with design system sub-nav (brick underline, C tokens). Updated `en.json` and `es.json` nav.about keys. Limitations + Roadmap accessible as sub-views.
+
+33. ✅ **OIS legacy chart — color-coded bars** — `src/tabs/PoliceAccountability/index.tsx` OIS bar chart now uses Recharts `<Cell>` per bar: 2001 → `C.river`, 2014–2016 → `C.ochre`, all others → `C.muted`.
+
+34. ✅ **Neighborhoods tab — Map & Compare rework** — `src/tabs/Neighborhoods/index.tsx` sub-nav migrated to design system pattern (brick underline, C tokens). `src/tabs/NeighborhoodProfiles/index.tsx` gained Print Brief (`window.print()`) and Download Data (CSV export via Blob) buttons.
+
+35. ✅ **Housing Justice tab rework** — `src/tabs/Displacement/index.tsx` migrated to C tokens throughout: editorial serif headline, 4 phase-count stat cards (clickable filters), `MiniBar` uses inline style instead of Tailwind gradient classes, detail panel uses `smallcaps` section headers, "What you can do" section has phase-colored border.
+
+36. ✅ **Lead Safety tab rework** — `src/tabs/LeadSafety/index.tsx` fully migrated: `riskStyle()`/`materialRisk()` return CSS objects (no Tailwind color classes), `UrgencyBanner` redesigned as editorial page-paper card with serif headline and limestone stat callouts, all cards use C tokens throughout.
 
 ## Known Issues & Workarounds
 
