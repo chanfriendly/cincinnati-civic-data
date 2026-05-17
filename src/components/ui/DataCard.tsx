@@ -67,17 +67,25 @@ const DataCard: React.FC<DataCardProps> = ({
   )
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 mb-4">
+    <div className="page-paper rounded-md p-6 mb-4">
       {/* Header */}
       <div
-        className={`flex items-center justify-between ${expandable ? 'cursor-pointer select-none' : ''}`}
+        className={`flex items-center justify-between mb-4 ${expandable ? 'cursor-pointer select-none' : ''}`}
         onClick={expandable ? () => setIsExpanded((v) => !v) : undefined}
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <StatusDot status={status} />
-          <h3 className="text-base font-bold text-[#1A4A6B] truncate">{title}</h3>
+          <h3
+            className="smallcaps truncate"
+            style={{ color: '#6b5f55' }}
+          >
+            {title}
+          </h3>
           {count !== undefined && (
-            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 flex-shrink-0">
+            <span
+              className="ml-2 inline-flex items-center px-2 py-0.5 rounded-sm text-[11px] font-medium"
+              style={{ background: '#e4ddd2', color: '#6b5f55' }}
+            >
               {count}
             </span>
           )}
@@ -87,7 +95,7 @@ const DataCard: React.FC<DataCardProps> = ({
 
       {/* Body */}
       {(!expandable || isExpanded) && (
-        <div className="mt-4 text-gray-700">{bodyContent}</div>
+        <div style={{ color: '#1a1410' }}>{bodyContent}</div>
       )}
 
       {/* Attribution — show below body */}

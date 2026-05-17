@@ -49,10 +49,10 @@ function HBarList({ items, color }: { items: { type: string; count: number }[]; 
       {items.map(({ type, count }) => (
         <div key={type}>
           <div className="flex justify-between text-xs mb-1">
-            <span className="text-gray-700 font-medium truncate max-w-[75%]">{type}</span>
-            <span className="text-gray-400 font-semibold ml-2 shrink-0">{count.toLocaleString()}</span>
+            <span className="font-medium truncate max-w-[75%]" style={{ color: '#1a1410' }}>{type}</span>
+            <span className="font-semibold ml-2 shrink-0" style={{ color: '#6b5f55' }}>{count.toLocaleString()}</span>
           </div>
-          <div className="h-1.5 bg-gray-100 rounded-full">
+          <div className="h-1.5 rounded-full" style={{ background: '#f6f1ea' }}>
             <div
               className="h-1.5 rounded-full transition-all duration-300"
               style={{ width: `${(count / max) * 100}%`, backgroundColor: color }}
@@ -149,33 +149,34 @@ export default function PublicSafetySection({ nbhSoQL, startDate, endDate }: Pro
     >
       {/* Shared KPI row */}
       <div className="grid grid-cols-3 gap-3 mb-5">
-        <div className="bg-blue-50 p-3 rounded">
-          <div className="text-2xl font-bold text-[#1A4A6B]">{totalCrime.toLocaleString()}</div>
-          <div className="text-xs text-blue-400 font-semibold mt-1">CPD Incidents</div>
+        <div className="p-3 rounded" style={{ background: '#e6efef' }}>
+          <div className="text-2xl font-bold" style={{ color: '#2f5d62' }}>{totalCrime.toLocaleString()}</div>
+          <div className="text-xs font-semibold mt-1" style={{ color: '#2f5d62' }}>CPD Incidents</div>
         </div>
-        <div className="bg-orange-50 p-3 rounded">
-          <div className="text-2xl font-bold text-[#C8861A]">{totalEms.toLocaleString()}</div>
-          <div className="text-xs text-amber-400 font-semibold mt-1">CFD Dispatches</div>
+        <div className="p-3 rounded" style={{ background: '#f5e8e1' }}>
+          <div className="text-2xl font-bold" style={{ color: '#c8861a' }}>{totalEms.toLocaleString()}</div>
+          <div className="text-xs font-semibold mt-1" style={{ color: '#c8861a' }}>CFD Dispatches</div>
         </div>
-        <div className="bg-purple-50 p-3 rounded">
-          <div className="text-2xl font-bold text-purple-700">
+        <div className="p-3 rounded" style={{ background: '#f6f1ea' }}>
+          <div className="text-2xl font-bold" style={{ color: '#1a1410' }}>
             {(totalCrime + totalEms).toLocaleString()}
           </div>
-          <div className="text-xs text-purple-300 font-semibold mt-1">Total Incidents</div>
+          <div className="text-xs font-semibold mt-1" style={{ color: '#6b5f55' }}>Total Incidents</div>
         </div>
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 border-b border-gray-200 mb-5">
+      <div className="flex gap-1 mb-5" style={{ borderBottom: '1px solid #e4ddd2' }}>
         {TABS.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-3 py-2 text-xs font-semibold rounded-t border-b-2 -mb-px transition-colors ${
+            className="px-3 py-2 text-xs font-semibold rounded-t border-b-2 -mb-px transition-colors"
+            style={
               activeTab === tab.id
-                ? 'text-[#1A4A6B] border-[#1A4A6B] bg-blue-50'
-                : 'text-gray-500 border-transparent hover:text-[#1A4A6B] hover:bg-gray-50'
-            }`}
+                ? { color: '#2f5d62', borderColor: '#2f5d62', background: '#e6efef' }
+                : { color: '#6b5f55', borderColor: 'transparent', background: 'transparent' }
+            }
           >
             {tab.label}
           </button>
@@ -185,30 +186,30 @@ export default function PublicSafetySection({ nbhSoQL, startDate, endDate }: Pro
       {/* Overview — side-by-side CPD vs CFD */}
       {activeTab === 'overview' && (
         <div className="grid grid-cols-2 gap-5">
-          <div className="border border-gray-100 rounded-lg p-4">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#1A4A6B] mb-1">
+          <div className="rounded-lg p-4" style={{ border: '1px solid #e4ddd2' }}>
+            <div className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: '#2f5d62' }}>
               Cincinnati Police
             </div>
-            <div className="text-2xl font-bold text-[#1A4A6B] mb-0.5">
+            <div className="text-2xl font-bold mb-0.5" style={{ color: '#2f5d62' }}>
               {totalCrime.toLocaleString()}
             </div>
-            <div className="text-xs text-gray-400 mb-4">top 5 offense categories</div>
+            <div className="text-xs mb-4" style={{ color: '#6b5f55' }}>top 5 offense categories</div>
             {crimeByType.length > 0
-              ? <HBarList items={crimeByType.slice(0, 5)} color="#1A4A6B" />
-              : <p className="text-xs text-gray-400 italic">No records found</p>
+              ? <HBarList items={crimeByType.slice(0, 5)} color="#2f5d62" />
+              : <p className="text-xs italic" style={{ color: '#6b5f55' }}>No records found</p>
             }
           </div>
-          <div className="border border-gray-100 rounded-lg p-4">
-            <div className="text-xs font-bold uppercase tracking-wider text-red-500 mb-1">
+          <div className="rounded-lg p-4" style={{ border: '1px solid #e4ddd2' }}>
+            <div className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: '#b34728' }}>
               Cincinnati Fire / EMS
             </div>
-            <div className="text-2xl font-bold text-red-500 mb-0.5">
+            <div className="text-2xl font-bold mb-0.5" style={{ color: '#b34728' }}>
               {totalEms.toLocaleString()}
             </div>
-            <div className="text-xs text-gray-400 mb-4">top 5 dispatch types</div>
+            <div className="text-xs mb-4" style={{ color: '#6b5f55' }}>top 5 dispatch types</div>
             {fireEmsByType.length > 0
-              ? <HBarList items={fireEmsByType.slice(0, 5)} color="#FF5722" />
-              : <p className="text-xs text-gray-400 italic">No records found</p>
+              ? <HBarList items={fireEmsByType.slice(0, 5)} color="#b34728" />
+              : <p className="text-xs italic" style={{ color: '#6b5f55' }}>No records found</p>
             }
           </div>
         </div>
@@ -218,17 +219,17 @@ export default function PublicSafetySection({ nbhSoQL, startDate, endDate }: Pro
       {activeTab === 'crime' && (
         crimeByType.length > 0 ? (
           <>
-            <p className="text-xs text-gray-500 italic mb-3">
+            <p className="text-xs italic mb-3" style={{ color: '#6b5f55' }}>
               Incidents reported to Cincinnati Police Department, broken down by offense category.
               Sourced from the PDI legacy dataset and the current STARS system.
             </p>
-            <div className="text-2xl font-bold text-[#C8861A] mb-1">
+            <div className="text-2xl font-bold mb-1" style={{ color: '#c8861a' }}>
               {totalCrime.toLocaleString()}
             </div>
-            <div className="text-sm text-gray-600 mb-4">
+            <div className="text-sm mb-4" style={{ color: '#6b5f55' }}>
               total incidents ({startDate} to {endDate})
               {totalCrime > 2000 && (
-                <span className="ml-1 text-xs text-gray-400">(chart shows sample of 2,000)</span>
+                <span className="ml-1 text-xs" style={{ color: '#6b5f55' }}>(chart shows sample of 2,000)</span>
               )}
             </div>
             <ResponsiveContainer width="100%" height={300}>
@@ -244,7 +245,7 @@ export default function PublicSafetySection({ nbhSoQL, startDate, endDate }: Pro
                 />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="count" fill="#1A4A6B" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="count" fill="#2f5d62" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </>
@@ -255,17 +256,17 @@ export default function PublicSafetySection({ nbhSoQL, startDate, endDate }: Pro
       {activeTab === 'ems' && (
         fireEmsByType.length > 0 ? (
           <>
-            <p className="text-xs text-gray-500 italic mb-3">
+            <p className="text-xs italic mb-3" style={{ color: '#6b5f55' }}>
               All incidents dispatched to Cincinnati Fire Department — including fires, medical
               emergencies, and rescue calls — within the selected date range.
             </p>
-            <div className="text-2xl font-bold text-[#1A4A6B] mb-1">
+            <div className="text-2xl font-bold mb-1" style={{ color: '#2f5d62' }}>
               {totalEms.toLocaleString()}
             </div>
-            <div className="text-sm text-gray-600 mb-4">
+            <div className="text-sm mb-4" style={{ color: '#6b5f55' }}>
               total dispatches
               {totalEms > 500 && (
-                <span className="ml-1 text-xs text-gray-400">(chart shows sample of 500)</span>
+                <span className="ml-1 text-xs" style={{ color: '#6b5f55' }}>(chart shows sample of 500)</span>
               )}
             </div>
             <ResponsiveContainer width="100%" height={340}>
@@ -282,14 +283,14 @@ export default function PublicSafetySection({ nbhSoQL, startDate, endDate }: Pro
                 />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="count" fill="#FF5722" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="count" fill="#b34728" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </>
         ) : <EmptyState message="No incidents found" />
       )}
 
-      <div className="mt-4 pt-3 border-t border-gray-100 flex flex-wrap gap-4">
+      <div className="mt-4 pt-3 flex flex-wrap gap-4" style={{ borderTop: '1px solid #e4ddd2' }}>
         <DataAttribution source="PDI Crime Incidents + STARS" uid="k59e-2pvf" />
         <DataAttribution source="Fire & EMS Incidents" uid="vnsz-a3wp" />
       </div>

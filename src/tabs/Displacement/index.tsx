@@ -4,6 +4,7 @@ import { normalize } from '../../utils/scoring'
 import OwnerActivity from '../OwnerActivity'
 import ConnectedCommunitiesSection from './ConnectedCommunitiesSection'
 import CivicOrgsPanel from '../../components/ui/CivicOrgsPanel'
+import { C } from '../../components/ui/DesignAtoms'
 import type { CivicOrgCategory } from '../../types'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -46,7 +47,7 @@ const PHASE_SYNTHESIS: Record<'active' | 'vulnerable' | 'gentrifying' | 'stable'
     action:
       'If you live here, act now: document everything, get legal help early (before receiving an eviction notice), and connect with organizing groups that are fighting displacement in this neighborhood.',
     orgCategories: ['housing-eviction'],
-    bgColor: 'bg-red-50', borderColor: 'border-red-200', textColor: 'text-red-900',
+    bgColor: C.brickLight, borderColor: C.brick, textColor: C.brick,
   },
   vulnerable: {
     headline: 'Neighborhood is vulnerable — development pressure could arrive soon',
@@ -55,7 +56,7 @@ const PHASE_SYNTHESIS: Record<'active' | 'vulnerable' | 'gentrifying' | 'stable'
     action:
       'Connect with housing and community development organizations before pressure accelerates. Building a stabilization strategy now — community land trusts, tenant organizing, zoning engagement — is far more effective than reacting after displacement begins.',
     orgCategories: ['housing-eviction', 'economic-development'],
-    bgColor: 'bg-orange-50', borderColor: 'border-orange-200', textColor: 'text-orange-900',
+    bgColor: 'rgba(200, 134, 26, 0.12)', borderColor: C.ochre, textColor: C.ochre,
   },
   gentrifying: {
     headline: 'Development pressure is arriving — resident protection is the question',
@@ -64,7 +65,7 @@ const PHASE_SYNTHESIS: Record<'active' | 'vulnerable' | 'gentrifying' | 'stable'
     action:
       'Engage the public process: attend Planning Commission hearings before major projects are approved, comment on zoning changes, and ask developers what\'s in it for current residents. Check the "Zoning Reform" tab to see how Connected Communities is playing out here.',
     orgCategories: ['housing-eviction', 'civic-engagement'],
-    bgColor: 'bg-yellow-50', borderColor: 'border-yellow-200', textColor: 'text-yellow-900',
+    bgColor: C.hillLight, borderColor: C.hill, textColor: C.hill,
   },
   stable: {
     headline: 'Currently stable',
@@ -73,7 +74,7 @@ const PHASE_SYNTHESIS: Record<'active' | 'vulnerable' | 'gentrifying' | 'stable'
     action:
       'Stay engaged with your neighborhood\'s civic process. Attending Planning Commission meetings before large projects are approved is the lowest-cost way to protect stability.',
     orgCategories: ['civic-engagement'],
-    bgColor: 'bg-green-50', borderColor: 'border-green-200', textColor: 'text-green-900',
+    bgColor: C.riverLight, borderColor: C.river, textColor: C.river,
   },
   insufficient: {
     headline: 'Not enough data to classify',
@@ -82,7 +83,7 @@ const PHASE_SYNTHESIS: Record<'active' | 'vulnerable' | 'gentrifying' | 'stable'
     action:
       'Your neighborhood community council may have local context not captured in city data. You can also check the Neighborhood Profiles tab for whatever data is available.',
     orgCategories: ['civic-engagement'],
-    bgColor: 'bg-gray-50', borderColor: 'border-gray-200', textColor: 'text-gray-700',
+    bgColor: C.limestone, borderColor: C.rule, textColor: C.muted,
   },
 }
 
@@ -174,20 +175,20 @@ function getPhase(vulnerability: number | null, pressure: number | null): Displa
   return 'stable'
 }
 
-const PHASE_CONFIG: Record<DisplacementPhase, { label: string; color: string; bg: string; border: string; dot: string }> = {
-  active:       { label: 'Active Displacement Zone', color: 'text-red-700',    bg: 'bg-red-50',    border: 'border-red-200',    dot: 'bg-red-500'    },
-  vulnerable:   { label: 'Vulnerable / At Risk',     color: 'text-orange-700', bg: 'bg-orange-50', border: 'border-orange-200', dot: 'bg-orange-500' },
-  gentrifying:  { label: 'Development Pressure',     color: 'text-yellow-700', bg: 'bg-yellow-50', border: 'border-yellow-200', dot: 'bg-yellow-500' },
-  stable:       { label: 'Stable',                   color: 'text-green-700',  bg: 'bg-green-50',  border: 'border-green-200',  dot: 'bg-green-500'  },
-  insufficient: { label: 'Insufficient Data',        color: 'text-gray-600',   bg: 'bg-gray-50',   border: 'border-gray-200',   dot: 'bg-gray-400'   },
+const PHASE_CONFIG: Record<DisplacementPhase, { label: string; textColor: string; bgColor: string; borderColor: string; dotColor: string }> = {
+  active:       { label: 'Active Displacement Zone', textColor: C.brick,      bgColor: C.brickLight,                    borderColor: C.brick, dotColor: C.brick      },
+  vulnerable:   { label: 'Vulnerable / At Risk',     textColor: C.ochre,      bgColor: 'rgba(200, 134, 26, 0.12)',       borderColor: C.ochre, dotColor: C.ochre      },
+  gentrifying:  { label: 'Development Pressure',     textColor: C.hill,       bgColor: C.hillLight,                     borderColor: C.hill,  dotColor: C.hill       },
+  stable:       { label: 'Stable',                   textColor: C.river,      bgColor: C.riverLight,                    borderColor: C.river, dotColor: C.river      },
+  insufficient: { label: 'Insufficient Data',        textColor: C.muted,      bgColor: C.limestone,                     borderColor: C.rule,  dotColor: C.muted      },
 }
 
 const PHASE_DOT_SVG: Record<DisplacementPhase, string> = {
-  active:       '#ef4444',
-  vulnerable:   '#f97316',
-  gentrifying:  '#eab308',
-  stable:       '#22c55e',
-  insufficient: '#9ca3af',
+  active:       C.brick,
+  vulnerable:   C.ochre,
+  gentrifying:  C.hill,
+  stable:       C.river,
+  insufficient: C.muted,
 }
 
 // ─── Address normalizer ────────────────────────────────────────────────────────
@@ -213,8 +214,11 @@ function addressesMatch(abatAddr: string, plapAddr: string): boolean {
 const PhaseBadge: React.FC<{ phase: DisplacementPhase }> = ({ phase }) => {
   const cfg = PHASE_CONFIG[phase]
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${cfg.bg} ${cfg.color} border ${cfg.border}`}>
-      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dot}`} />
+    <span
+      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium"
+      style={{ background: cfg.bgColor, color: cfg.textColor, border: `1px solid ${cfg.borderColor}` }}
+    >
+      <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: cfg.dotColor }} />
       {cfg.label}
     </span>
   )
@@ -223,10 +227,10 @@ const PhaseBadge: React.FC<{ phase: DisplacementPhase }> = ({ phase }) => {
 const MiniBar: React.FC<{ value: number | null; colorClass: string; label: string }> = ({ value, colorClass, label }) => (
   <div className="mb-1">
     <div className="flex justify-between items-center mb-0.5">
-      <span className="text-xs text-gray-500">{label}</span>
-      <span className="text-xs font-medium text-gray-700">{value !== null ? `${value}` : 'N/A'}</span>
+      <span className="text-xs" style={{ color: C.muted }}>{label}</span>
+      <span className="text-xs font-medium" style={{ color: C.ink }}>{value !== null ? `${value}` : 'N/A'}</span>
     </div>
-    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: C.limestone }}>
       <div
         className={`h-full rounded-full ${colorClass}`}
         style={{ width: value !== null ? `${value}%` : '0%' }}
@@ -256,41 +260,41 @@ const QuadrantPlot: React.FC<{ record: DisplacementRecord }> = ({ record }) => {
   return (
     <svg width={W} height={H} className="overflow-visible">
       {/* Quadrant fills */}
-      <rect x={PAD.left} y={PAD.top} width={plotW / 2} height={plotH / 2} fill="#fef2f2" opacity={0.6} />
-      <rect x={midX} y={PAD.top} width={plotW / 2} height={plotH / 2} fill="#fefce8" opacity={0.6} />
-      <rect x={PAD.left} y={midY} width={plotW / 2} height={plotH / 2} fill="#f0fdf4" opacity={0.6} />
-      <rect x={midX} y={midY} width={plotW / 2} height={plotH / 2} fill="#fffbeb" opacity={0.6} />
+      <rect x={PAD.left} y={PAD.top} width={plotW / 2} height={plotH / 2} fill={C.brickLight} opacity={0.5} />
+      <rect x={midX} y={PAD.top} width={plotW / 2} height={plotH / 2} fill={C.hillLight} opacity={0.5} />
+      <rect x={PAD.left} y={midY} width={plotW / 2} height={plotH / 2} fill={C.riverLight} opacity={0.5} />
+      <rect x={midX} y={midY} width={plotW / 2} height={plotH / 2} fill={C.limestone} opacity={0.5} />
 
       {/* Grid lines */}
-      <line x1={PAD.left} y1={midY} x2={PAD.left + plotW} y2={midY} stroke="#d1d5db" strokeWidth={1} strokeDasharray="4 3" />
-      <line x1={midX} y1={PAD.top} x2={midX} y2={PAD.top + plotH} stroke="#d1d5db" strokeWidth={1} strokeDasharray="4 3" />
+      <line x1={PAD.left} y1={midY} x2={PAD.left + plotW} y2={midY} stroke={C.rule} strokeWidth={1} strokeDasharray="4 3" />
+      <line x1={midX} y1={PAD.top} x2={midX} y2={PAD.top + plotH} stroke={C.rule} strokeWidth={1} strokeDasharray="4 3" />
 
       {/* Border */}
-      <rect x={PAD.left} y={PAD.top} width={plotW} height={plotH} fill="none" stroke="#e5e7eb" strokeWidth={1} />
+      <rect x={PAD.left} y={PAD.top} width={plotW} height={plotH} fill="none" stroke={C.rule} strokeWidth={1} />
 
       {/* Quadrant labels */}
-      <text x={PAD.left + 6} y={PAD.top + 14} fontSize={9} fill="#b91c1c" fontWeight="600">Active</text>
-      <text x={PAD.left + 6} y={PAD.top + 24} fontSize={9} fill="#b91c1c" fontWeight="600">Displacement</text>
+      <text x={PAD.left + 6} y={PAD.top + 14} fontSize={9} fill={C.brick} fontWeight="600">Active</text>
+      <text x={PAD.left + 6} y={PAD.top + 24} fontSize={9} fill={C.brick} fontWeight="600">Displacement</text>
 
-      <text x={midX + 6} y={PAD.top + 14} fontSize={9} fill="#a16207" fontWeight="600">Development</text>
-      <text x={midX + 6} y={PAD.top + 24} fontSize={9} fill="#a16207" fontWeight="600">Pressure</text>
+      <text x={midX + 6} y={PAD.top + 14} fontSize={9} fill={C.ochre} fontWeight="600">Development</text>
+      <text x={midX + 6} y={PAD.top + 24} fontSize={9} fill={C.ochre} fontWeight="600">Pressure</text>
 
-      <text x={PAD.left + 6} y={midY + plotH / 2 - 10} fontSize={9} fill="#15803d" fontWeight="600">Stable</text>
+      <text x={PAD.left + 6} y={midY + plotH / 2 - 10} fontSize={9} fill={C.river} fontWeight="600">Stable</text>
 
-      <text x={midX + 6} y={midY + plotH / 2 - 10} fontSize={9} fill="#c2410c" fontWeight="600">Vulnerable</text>
-      <text x={midX + 6} y={midY + plotH / 2} fontSize={9} fill="#c2410c" fontWeight="600">/ At Risk</text>
+      <text x={midX + 6} y={midY + plotH / 2 - 10} fontSize={9} fill={C.ochre} fontWeight="600">Vulnerable</text>
+      <text x={midX + 6} y={midY + plotH / 2} fontSize={9} fill={C.ochre} fontWeight="600">/ At Risk</text>
 
       {/* Axes */}
-      <line x1={PAD.left} y1={PAD.top + plotH} x2={PAD.left + plotW} y2={PAD.top + plotH} stroke="#6b7280" strokeWidth={1.5} />
-      <line x1={PAD.left} y1={PAD.top} x2={PAD.left} y2={PAD.top + plotH} stroke="#6b7280" strokeWidth={1.5} />
+      <line x1={PAD.left} y1={PAD.top + plotH} x2={PAD.left + plotW} y2={PAD.top + plotH} stroke={C.muted} strokeWidth={1.5} />
+      <line x1={PAD.left} y1={PAD.top} x2={PAD.left} y2={PAD.top + plotH} stroke={C.muted} strokeWidth={1.5} />
 
       {/* Axis labels */}
-      <text x={PAD.left + plotW / 2} y={H - 4} fontSize={10} fill="#374151" textAnchor="middle">Market Pressure →</text>
+      <text x={PAD.left + plotW / 2} y={H - 4} fontSize={10} fill={C.ink} textAnchor="middle">Market Pressure →</text>
       <text
         x={12}
         y={PAD.top + plotH / 2}
         fontSize={10}
-        fill="#374151"
+        fill={C.ink}
         textAnchor="middle"
         transform={`rotate(-90, 12, ${PAD.top + plotH / 2})`}
       >
@@ -300,10 +304,10 @@ const QuadrantPlot: React.FC<{ record: DisplacementRecord }> = ({ record }) => {
       {/* Tick marks */}
       {[0, 25, 50, 75, 100].map(v => (
         <g key={v}>
-          <line x1={toX(v)} y1={PAD.top + plotH} x2={toX(v)} y2={PAD.top + plotH + 4} stroke="#9ca3af" strokeWidth={1} />
-          <text x={toX(v)} y={PAD.top + plotH + 13} fontSize={8} fill="#9ca3af" textAnchor="middle">{v}</text>
-          <line x1={PAD.left - 4} y1={toY(v)} x2={PAD.left} y2={toY(v)} stroke="#9ca3af" strokeWidth={1} />
-          <text x={PAD.left - 6} y={toY(v) + 3} fontSize={8} fill="#9ca3af" textAnchor="end">{v}</text>
+          <line x1={toX(v)} y1={PAD.top + plotH} x2={toX(v)} y2={PAD.top + plotH + 4} stroke={C.muted} strokeWidth={1} />
+          <text x={toX(v)} y={PAD.top + plotH + 13} fontSize={8} fill={C.muted} textAnchor="middle">{v}</text>
+          <line x1={PAD.left - 4} y1={toY(v)} x2={PAD.left} y2={toY(v)} stroke={C.muted} strokeWidth={1} />
+          <text x={PAD.left - 6} y={toY(v) + 3} fontSize={8} fill={C.muted} textAnchor="end">{v}</text>
         </g>
       ))}
 
@@ -316,7 +320,7 @@ const QuadrantPlot: React.FC<{ record: DisplacementRecord }> = ({ record }) => {
       )}
 
       {dotX === null && dotY === null && (
-        <text x={PAD.left + plotW / 2} y={PAD.top + plotH / 2} fontSize={11} fill="#9ca3af" textAnchor="middle">
+        <text x={PAD.left + plotW / 2} y={PAD.top + plotH / 2} fontSize={11} fill={C.muted} textAnchor="middle">
           Insufficient data to plot
         </text>
       )}
@@ -329,9 +333,9 @@ const QuadrantPlot: React.FC<{ record: DisplacementRecord }> = ({ record }) => {
 const MethodologyNote: React.FC = () => {
   const [open, setOpen] = React.useState(false)
   return (
-    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 max-w-3xl">
+    <div className="rounded-lg p-4 max-w-3xl" style={{ background: 'rgba(200, 134, 26, 0.08)', border: `1px solid ${C.ochre}` }}>
       <div className="flex items-start justify-between gap-2">
-        <p className="text-sm text-amber-800 leading-relaxed">
+        <p className="text-sm leading-relaxed" style={{ color: C.ink }}>
           <span className="font-semibold">Methodology: </span>
           Inspired by the Anti-Eviction Mapping Project and NYC Displacement Alert Project
           frameworks, adapted to Cincinnati open data. This is a simplified model — it uses
@@ -344,14 +348,15 @@ const MethodologyNote: React.FC = () => {
           onClick={() => setOpen(v => !v)}
           aria-label="Show calculation details"
           title="How are these scores calculated?"
-          className="shrink-0 w-6 h-6 rounded-full border border-amber-400 text-amber-700 text-xs font-bold flex items-center justify-center hover:bg-amber-100 transition-colors"
+          className="shrink-0 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center transition-colors"
+          style={{ border: `1px solid ${C.ochre}`, color: C.ochre, background: 'transparent' }}
         >
           i
         </button>
       </div>
 
       {open && (
-        <div className="mt-4 pt-4 border-t border-amber-200 space-y-4 text-xs text-amber-900">
+        <div className="mt-4 pt-4 space-y-4 text-xs" style={{ borderTop: `1px solid ${C.ochre}`, color: C.ink }}>
           <div>
             <p className="font-semibold mb-1">Vulnerability score (0–100) — who is at risk</p>
             <p className="mb-1">Average of two components, each min-max normalized across all ~52 Cincinnati neighborhoods (0 = city minimum, 100 = city maximum):</p>
@@ -359,7 +364,7 @@ const MethodologyNote: React.FC = () => {
               <li><strong>Rent burden rate</strong> — % of renters paying &gt;30% of income on rent (ACS Census). Higher burden → higher score.</li>
               <li><strong>Median household income</strong> — ACS Census. Lower income → higher score (inverted).</li>
             </ul>
-            <p className="mt-1 text-amber-700 italic">Limitation: scores are relative to other Cincinnati neighborhoods, not absolute national thresholds. A "stable" neighborhood may still have objectively high rent burden.</p>
+            <p className="mt-1 italic" style={{ color: C.muted }}>Limitation: scores are relative to other Cincinnati neighborhoods, not absolute national thresholds. A "stable" neighborhood may still have objectively high rent burden.</p>
           </div>
           <div>
             <p className="font-semibold mb-1">Pressure score (0–100) — what forces are acting</p>
@@ -838,26 +843,26 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
   }, [scoredRecords])
 
   // ─── Severity color helpers ───────────────────────────────────────────────────
-  function rentBurdenColor(val: number | null): string {
-    if (val === null) return 'text-gray-400'
-    if (val >= 50) return 'text-red-600 font-semibold'
-    if (val >= 35) return 'text-orange-600 font-medium'
-    return 'text-gray-700'
+  function rentBurdenStyle(val: number | null): React.CSSProperties {
+    if (val === null) return { color: C.muted }
+    if (val >= 50) return { color: C.brick, fontWeight: 600 }
+    if (val >= 35) return { color: C.ochre, fontWeight: 500 }
+    return { color: C.ink }
   }
 
-  function incomeColor(val: number | null): string {
-    if (val === null) return 'text-gray-400'
-    if (val < 30000) return 'text-red-600 font-semibold'
-    if (val < 50000) return 'text-orange-600 font-medium'
-    return 'text-gray-700'
+  function incomeStyle(val: number | null): React.CSSProperties {
+    if (val === null) return { color: C.muted }
+    if (val < 30000) return { color: C.brick, fontWeight: 600 }
+    if (val < 50000) return { color: C.ochre, fontWeight: 500 }
+    return { color: C.ink }
   }
 
-  function permitYoYColor(val: number | null): string {
-    if (val === null) return 'text-gray-400'
-    if (val > 50) return 'text-red-600 font-semibold'
-    if (val > 20) return 'text-orange-600 font-medium'
-    if (val < 0) return 'text-green-600'
-    return 'text-gray-700'
+  function permitYoYStyle(val: number | null): React.CSSProperties {
+    if (val === null) return { color: C.muted }
+    if (val > 50) return { color: C.brick, fontWeight: 600 }
+    if (val > 20) return { color: C.ochre, fontWeight: 500 }
+    if (val < 0) return { color: C.hill }
+    return { color: C.ink }
   }
 
   // Suppress unused warning for craNeighborhoodMap (used for future features)
@@ -865,10 +870,10 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
 
   // ─── Render ───────────────────────────────────────────────────────────────────
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="px-8 py-2 space-y-0">
 
       {/* Section sub-tabs */}
-      <div className="bg-white rounded-lg shadow-sm border-b border-gray-200 mb-6">
+      <div className="page-paper rounded-md mb-5" style={{ borderBottom: `1px solid ${C.rule}` }}>
         <div className="flex flex-wrap">
           {([
             { id: 'displacement', label: 'Displacement Index' },
@@ -878,11 +883,12 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
             <button
               key={sec.id}
               onClick={() => setActiveSection(sec.id)}
-              className={`flex-1 px-4 py-3 text-sm font-medium border-b-2 transition ${
+              className="flex-1 px-4 py-3 text-sm font-medium transition"
+              style={
                 activeSection === sec.id
-                  ? 'border-[#1A4A6B] text-[#1A4A6B]'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
-              }`}
+                  ? { borderBottom: `2px solid ${C.brick}`, color: C.ink }
+                  : { borderBottom: '2px solid transparent', color: C.muted }
+              }
             >
               {sec.label}
             </button>
@@ -905,10 +911,9 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
 
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">
-          Displacement Pressure &amp; Housing Vulnerability
-        </h1>
-        <p className="text-gray-600 text-sm max-w-3xl leading-relaxed mb-4">
+        <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: C.muted }}>Housing Justice</div>
+        <div className="serif mb-3" style={{ fontSize: 28, fontWeight: 500, color: C.ink }}>Displacement Pressure &amp; Housing Vulnerability</div>
+        <p className="text-[13px] leading-relaxed mb-4" style={{ color: C.muted }}>
           A two-axis model showing which Cincinnati neighborhoods face both high housing vulnerability
           (who is at risk) and high market pressure (what forces are acting on them). Neighborhoods
           high on both axes need the most urgent attention.
@@ -919,42 +924,38 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
       {/* Error notices */}
       {(anyError || errorUnits || errorCRA) && (
         <div className="mb-4 flex flex-wrap gap-2">
-          {errorSNA && <span className="text-xs bg-red-50 text-red-700 px-2 py-1 rounded border border-red-200">SNA boundaries unavailable</span>}
-          {errorCensus && <span className="text-xs bg-red-50 text-red-700 px-2 py-1 rounded border border-red-200">Census data unavailable</span>}
-          {errorPermits && <span className="text-xs bg-red-50 text-red-700 px-2 py-1 rounded border border-red-200">Permit data unavailable</span>}
-          {errorAbatements && <span className="text-xs bg-red-50 text-red-700 px-2 py-1 rounded border border-red-200">Abatement data unavailable</span>}
-          {errorPLAP && <span className="text-xs bg-red-50 text-red-700 px-2 py-1 rounded border border-red-200">PLAP data unavailable</span>}
-          {errorUnits && <span className="text-xs bg-yellow-50 text-yellow-700 px-2 py-1 rounded border border-yellow-200">Unit activity data limited</span>}
-          {errorCRA && <span className="text-xs bg-yellow-50 text-yellow-700 px-2 py-1 rounded border border-yellow-200">CRA subsidy data limited</span>}
+          {errorSNA && <span className="text-xs px-2 py-1 rounded" style={{ background: C.brickLight, color: C.brick, border: `1px solid ${C.brick}` }}>SNA boundaries unavailable</span>}
+          {errorCensus && <span className="text-xs px-2 py-1 rounded" style={{ background: C.brickLight, color: C.brick, border: `1px solid ${C.brick}` }}>Census data unavailable</span>}
+          {errorPermits && <span className="text-xs px-2 py-1 rounded" style={{ background: C.brickLight, color: C.brick, border: `1px solid ${C.brick}` }}>Permit data unavailable</span>}
+          {errorAbatements && <span className="text-xs px-2 py-1 rounded" style={{ background: C.brickLight, color: C.brick, border: `1px solid ${C.brick}` }}>Abatement data unavailable</span>}
+          {errorPLAP && <span className="text-xs px-2 py-1 rounded" style={{ background: C.brickLight, color: C.brick, border: `1px solid ${C.brick}` }}>PLAP data unavailable</span>}
+          {errorUnits && <span className="text-xs px-2 py-1 rounded" style={{ background: C.hillLight, color: C.hill, border: `1px solid ${C.hill}` }}>Unit activity data limited</span>}
+          {errorCRA && <span className="text-xs px-2 py-1 rounded" style={{ background: C.hillLight, color: C.hill, border: `1px solid ${C.hill}` }}>CRA subsidy data limited</span>}
         </div>
       )}
 
       {/* Phase legend */}
       <div className="mb-6 flex flex-wrap gap-3 text-sm">
-        <div className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full bg-red-500 flex-shrink-0" />
-          <span className="text-gray-700"><strong>Active Displacement Zone:</strong> High vulnerability + High pressure — most urgent</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full bg-orange-500 flex-shrink-0" />
-          <span className="text-gray-700"><strong>Vulnerable / At Risk:</strong> High vulnerability + Low pressure — predatory conditions</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full bg-yellow-500 flex-shrink-0" />
-          <span className="text-gray-700"><strong>Development Pressure:</strong> Low vulnerability + High pressure — watch for incoming displacement</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full bg-green-500 flex-shrink-0" />
-          <span className="text-gray-700"><strong>Stable:</strong> Low vulnerability + Low pressure</span>
-        </div>
+        {(['active', 'vulnerable', 'gentrifying', 'stable'] as DisplacementPhase[]).map(phase => (
+          <div key={phase} className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: PHASE_CONFIG[phase].dotColor }} />
+            <span style={{ color: C.ink }}>
+              <strong>{PHASE_CONFIG[phase].label}:</strong>{' '}
+              {phase === 'active' && 'High vulnerability + High pressure — most urgent'}
+              {phase === 'vulnerable' && 'High vulnerability + Low pressure — predatory conditions'}
+              {phase === 'gentrifying' && 'Low vulnerability + High pressure — watch for incoming displacement'}
+              {phase === 'stable' && 'Low vulnerability + Low pressure'}
+            </span>
+          </div>
+        ))}
       </div>
 
       {/* Loading skeleton */}
       {isLoading && (
         <div className="flex flex-col gap-3 mb-6">
-          <div className="h-8 bg-gray-100 rounded animate-pulse w-48" />
+          <div className="h-8 rounded animate-pulse w-48" style={{ background: C.limestone }} />
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-20 bg-gray-100 rounded animate-pulse" />
+            <div key={i} className="h-20 rounded animate-pulse" style={{ background: C.limestone }} />
           ))}
         </div>
       )}
@@ -969,18 +970,16 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
             <div className="flex flex-wrap gap-1.5 mb-3">
               {(['all', 'active', 'vulnerable', 'gentrifying', 'stable', 'insufficient'] as FilterPhase[]).map(ph => {
                 const isActive = filter === ph
-                const cfg = ph === 'all'
-                  ? { label: 'All', bg: 'bg-gray-900', text: 'text-white', inactBg: 'bg-gray-100', inactText: 'text-gray-700' }
-                  : { label: PHASE_CONFIG[ph as DisplacementPhase].label.split('/')[0].trim(), bg: PHASE_CONFIG[ph as DisplacementPhase].bg, text: PHASE_CONFIG[ph as DisplacementPhase].color, inactBg: 'bg-white', inactText: 'text-gray-600' }
                 return (
                   <button
                     key={ph}
                     onClick={() => setFilter(ph)}
-                    className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
+                    className="px-2.5 py-1 rounded-full text-xs font-medium transition-colors"
+                    style={
                       isActive
-                        ? ph === 'all' ? 'bg-gray-900 text-white border-gray-900' : `${cfg.bg} ${cfg.text} border-current`
-                        : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
-                    }`}
+                        ? { background: C.ink, color: '#fff', border: `1px solid ${C.ink}` }
+                        : { background: C.paper, color: C.muted, border: `1px solid ${C.rule}` }
+                    }
                   >
                     {ph === 'all' ? 'All' : PHASE_CONFIG[ph as DisplacementPhase].label.split('/')[0].trim()} ({phaseCounts[ph]})
                   </button>
@@ -994,14 +993,15 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                 <button
                   key={rec.name}
                   onClick={() => setSelected(rec.name === selected ? null : rec.name)}
-                  className={`text-left w-full rounded-lg border p-3 transition-all hover:shadow-sm ${
+                  className="text-left w-full rounded-lg p-3 transition-all hover:shadow-sm page-paper"
+                  style={
                     selected === rec.name
-                      ? 'border-[#1A4A6B] shadow-sm bg-blue-50'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
-                  }`}
+                      ? { border: `2px solid ${C.river}`, background: C.riverLight }
+                      : { border: `1px solid ${C.rule}` }
+                  }
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <span className="font-semibold text-sm text-gray-900 leading-tight">{rec.name}</span>
+                    <span className="font-semibold text-sm leading-tight" style={{ color: C.ink }}>{rec.name}</span>
                     <PhaseBadge phase={rec.phase} />
                   </div>
                   <MiniBar value={rec.vulnerability} colorClass="bg-gradient-to-r from-orange-400 to-red-500" label="Vulnerability" />
@@ -1009,7 +1009,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                 </button>
               ))}
               {filteredRecords.length === 0 && (
-                <p className="text-sm text-gray-500 text-center py-8">No neighborhoods match this filter.</p>
+                <p className="text-sm text-center py-8" style={{ color: C.muted }}>No neighborhoods match this filter.</p>
               )}
             </div>
           </div>
@@ -1017,8 +1017,11 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
           {/* Right panel: Detail view (60%) */}
           <div className="lg:w-3/5">
             {!selected && (
-              <div className="flex items-center justify-center h-64 bg-white rounded-xl border border-gray-200 border-dashed">
-                <div className="text-center text-gray-400">
+              <div
+                className="flex items-center justify-center h-64 page-paper rounded-md"
+                style={{ border: `1px dashed ${C.rule}` }}
+              >
+                <div className="text-center" style={{ color: C.muted }}>
                   <svg className="w-10 h-10 mx-auto mb-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                       d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -1030,19 +1033,26 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
             )}
 
             {selected && selectedRecord && (
-              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="page-paper rounded-md overflow-hidden" style={{ border: `1px solid ${C.rule}` }}>
                 {/* Detail header */}
-                <div className={`px-5 py-4 ${PHASE_CONFIG[selectedRecord.phase].bg} border-b ${PHASE_CONFIG[selectedRecord.phase].border}`}>
+                <div
+                  className="px-5 py-4"
+                  style={{
+                    background: PHASE_CONFIG[selectedRecord.phase].bgColor,
+                    borderBottom: `1px solid ${PHASE_CONFIG[selectedRecord.phase].borderColor}`,
+                  }}
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h2 className="text-lg font-bold text-gray-900">{selectedRecord.name}</h2>
+                      <h2 className="text-lg font-bold serif" style={{ color: C.ink }}>{selectedRecord.name}</h2>
                       <div className="mt-1">
                         <PhaseBadge phase={selectedRecord.phase} />
                       </div>
                     </div>
                     <button
                       onClick={() => setSelected(null)}
-                      className="text-gray-400 hover:text-gray-600 p-1 rounded"
+                      className="p-1 rounded"
+                      style={{ color: C.muted }}
                       aria-label="Close detail"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1058,12 +1068,15 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                   {(() => {
                     const syn = PHASE_SYNTHESIS[selectedRecord.phase]
                     return (
-                      <div className={`rounded-lg border ${syn.borderColor} ${syn.bgColor} px-4 py-3 space-y-2`}>
-                        <p className={`text-sm font-semibold ${syn.textColor}`}>{syn.headline}</p>
-                        <p className="text-xs text-gray-700 leading-relaxed">{syn.interpretation}</p>
-                        <div className="pt-1 border-t border-gray-200">
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-0.5">What to do</p>
-                          <p className="text-xs text-gray-700 leading-relaxed">{syn.action}</p>
+                      <div
+                        className="rounded-lg px-4 py-3 space-y-2"
+                        style={{ background: syn.bgColor, border: `1px solid ${syn.borderColor}` }}
+                      >
+                        <p className="text-sm font-semibold" style={{ color: syn.textColor }}>{syn.headline}</p>
+                        <p className="text-xs leading-relaxed" style={{ color: C.ink }}>{syn.interpretation}</p>
+                        <div className="pt-1" style={{ borderTop: `1px solid ${C.rule}` }}>
+                          <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: C.muted }}>What to do</p>
+                          <p className="text-xs leading-relaxed" style={{ color: C.ink }}>{syn.action}</p>
                         </div>
                         <div className="pt-2">
                           <CivicOrgsPanel
@@ -1077,28 +1090,28 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
 
                   {/* Section 1: Two-Axis Profile */}
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-800 mb-3">Two-Axis Profile</h3>
+                    <h3 className="text-sm font-semibold mb-3" style={{ color: C.ink }}>Two-Axis Profile</h3>
                     <div className="flex flex-col sm:flex-row gap-4 items-start">
                       <QuadrantPlot record={selectedRecord} />
                       <div className="flex flex-col gap-3 flex-1 min-w-0">
                         <div>
-                          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Vulnerability Score</p>
+                          <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: C.muted }}>Vulnerability Score</p>
                           <div className="flex items-center gap-2">
-                            <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: C.limestone }}>
                               <div className="h-full rounded-full bg-gradient-to-r from-orange-400 to-red-500" style={{ width: `${selectedRecord.vulnerability ?? 0}%` }} />
                             </div>
-                            <span className="text-sm font-bold text-gray-900 w-8 text-right">
+                            <span className="text-sm font-bold w-8 text-right" style={{ color: C.ink }}>
                               {selectedRecord.vulnerability !== null ? selectedRecord.vulnerability : 'N/A'}
                             </span>
                           </div>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Pressure Score</p>
+                          <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: C.muted }}>Pressure Score</p>
                           <div className="flex items-center gap-2">
-                            <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="flex-1 h-3 rounded-full overflow-hidden" style={{ background: C.limestone }}>
                               <div className="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-600" style={{ width: `${selectedRecord.pressure ?? 0}%` }} />
                             </div>
-                            <span className="text-sm font-bold text-gray-900 w-8 text-right">
+                            <span className="text-sm font-bold w-8 text-right" style={{ color: C.ink }}>
                               {selectedRecord.pressure !== null ? selectedRecord.pressure : 'N/A'}
                             </span>
                           </div>
@@ -1107,18 +1120,18 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                     </div>
                   </div>
 
-                  <hr className="border-gray-100" />
+                  <hr style={{ borderColor: C.rule }} />
 
                   {/* Section 2: Vulnerability Factors */}
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-800 mb-3">Vulnerability Factors</h3>
+                    <h3 className="text-sm font-semibold mb-3" style={{ color: C.ink }}>Vulnerability Factors</h3>
                     <div className="flex flex-col gap-3">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm text-gray-600">Rent Burden Rate</p>
-                          <p className="text-xs text-gray-400">% of renters paying &gt;30% of income on rent</p>
+                          <p className="text-sm" style={{ color: C.muted }}>Rent Burden Rate</p>
+                          <p className="text-xs" style={{ color: C.muted, opacity: 0.7 }}>% of renters paying &gt;30% of income on rent</p>
                         </div>
-                        <span className={`text-sm ${rentBurdenColor(selectedRecord.rentBurdenRate)}`}>
+                        <span className="text-sm" style={rentBurdenStyle(selectedRecord.rentBurdenRate)}>
                           {selectedRecord.rentBurdenRate !== null
                             ? `${selectedRecord.rentBurdenRate.toFixed(1)}%`
                             : 'N/A'}
@@ -1126,10 +1139,10 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                       </div>
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm text-gray-600">Median Household Income</p>
-                          <p className="text-xs text-gray-400">Cincinnati median ≈ $47,000</p>
+                          <p className="text-sm" style={{ color: C.muted }}>Median Household Income</p>
+                          <p className="text-xs" style={{ color: C.muted, opacity: 0.7 }}>Cincinnati median ≈ $47,000</p>
                         </div>
-                        <span className={`text-sm ${incomeColor(selectedRecord.medianIncome)}`}>
+                        <span className="text-sm" style={incomeStyle(selectedRecord.medianIncome)}>
                           {selectedRecord.medianIncome !== null
                             ? `$${selectedRecord.medianIncome.toLocaleString()}`
                             : 'N/A'}
@@ -1139,29 +1152,30 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                     {onTabChange && (
                       <button
                         onClick={() => onTabChange('neighborhoods')}
-                        className="mt-3 text-xs text-[#1A4A6B] font-medium hover:underline"
+                        className="mt-3 text-xs font-medium hover:underline"
+                        style={{ color: C.river }}
                       >
                         Full economic profile &amp; demographics for {selectedRecord.name} →
                       </button>
                     )}
                   </div>
 
-                  <hr className="border-gray-100" />
+                  <hr style={{ borderColor: C.rule }} />
 
                   {/* Section 3: Market Pressure Factors */}
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-800 mb-3">Market Pressure Factors</h3>
+                    <h3 className="text-sm font-semibold mb-3" style={{ color: C.ink }}>Market Pressure Factors</h3>
                     <div className="flex flex-col gap-3">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm text-gray-600">Permit Growth (3yr YoY)</p>
-                          <p className="text-xs text-gray-400">
+                          <p className="text-sm" style={{ color: C.muted }}>Permit Growth (3yr YoY)</p>
+                          <p className="text-xs" style={{ color: C.muted, opacity: 0.7 }}>
                             {selectedRecord.recentPermitCount !== null
                               ? `${selectedRecord.recentPermitCount} recent permits`
                               : 'No recent permit data'}
                           </p>
                         </div>
-                        <span className={`text-sm ${permitYoYColor(selectedRecord.permitYoY)}`}>
+                        <span className="text-sm" style={permitYoYStyle(selectedRecord.permitYoY)}>
                           {selectedRecord.permitYoY !== null
                             ? `${selectedRecord.permitYoY > 0 ? '+' : ''}${selectedRecord.permitYoY.toFixed(1)}%`
                             : 'N/A'}
@@ -1169,49 +1183,49 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                       </div>
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm text-gray-600">Tax Abatements</p>
-                          <p className="text-xs text-gray-400">Active developer subsidies</p>
+                          <p className="text-sm" style={{ color: C.muted }}>Tax Abatements</p>
+                          <p className="text-xs" style={{ color: C.muted, opacity: 0.7 }}>Active developer subsidies</p>
                         </div>
-                        <span className="text-sm font-medium text-gray-800">{selectedRecord.abatementCount}</span>
+                        <span className="text-sm font-medium" style={{ color: C.ink }}>{selectedRecord.abatementCount}</span>
                       </div>
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm text-gray-600">PLAP Blight Violations</p>
-                          <p className="text-xs text-gray-400">Complaints logged</p>
+                          <p className="text-sm" style={{ color: C.muted }}>PLAP Blight Violations</p>
+                          <p className="text-xs" style={{ color: C.muted, opacity: 0.7 }}>Complaints logged</p>
                         </div>
-                        <span className="text-sm font-medium text-gray-800">{selectedRecord.plapCount}</span>
+                        <span className="text-sm font-medium" style={{ color: C.ink }}>{selectedRecord.plapCount}</span>
                       </div>
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm text-gray-600">Housing Units Removed</p>
-                          <p className="text-xs text-gray-400">Total units removed via permits</p>
+                          <p className="text-sm" style={{ color: C.muted }}>Housing Units Removed</p>
+                          <p className="text-xs" style={{ color: C.muted, opacity: 0.7 }}>Total units removed via permits</p>
                         </div>
-                        <span className={`text-sm ${selectedRecord.unitLossCount > 0 ? 'text-red-600 font-semibold' : 'text-gray-700'}`}>
+                        <span className="text-sm" style={{ color: selectedRecord.unitLossCount > 0 ? C.brick : C.ink, fontWeight: selectedRecord.unitLossCount > 0 ? 600 : undefined }}>
                           {selectedRecord.unitLossCount > 0 ? `−${selectedRecord.unitLossCount}` : '0'}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <hr className="border-gray-100" />
+                  <hr style={{ borderColor: C.rule }} />
 
                   {/* Section 4: Tax Abatement Accountability */}
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-800 mb-1">Tax Abatement Accountability</h3>
-                    <p className="text-xs text-gray-500 mb-3">
+                    <h3 className="text-sm font-semibold mb-1" style={{ color: C.ink }}>Tax Abatement Accountability</h3>
+                    <p className="text-xs mb-3" style={{ color: C.muted }}>
                       Cross-referencing properties receiving tax abatements against their PLAP blight violation history.
                     </p>
 
                     {loadingDetail && (
                       <div className="flex flex-col gap-2">
                         {[...Array(3)].map((_, i) => (
-                          <div key={i} className="h-8 bg-gray-100 rounded animate-pulse" />
+                          <div key={i} className="h-8 rounded animate-pulse" style={{ background: C.limestone }} />
                         ))}
                       </div>
                     )}
 
                     {!loadingDetail && crossRefRows.length === 0 && (
-                      <p className="text-sm text-gray-500 italic">
+                      <p className="text-sm italic" style={{ color: C.muted }}>
                         {detailAbatements.length === 0
                           ? 'No tax abatements found for this neighborhood.'
                           : 'Abatement addresses could not be cross-referenced.'}
@@ -1220,16 +1234,21 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
 
                     {!loadingDetail && crossRefRows.length > 0 && (
                       <>
-                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg mb-3 text-sm font-semibold ${
-                          violationCount > 0 ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-green-50 text-green-700 border border-green-200'
-                        }`}>
+                        <div
+                          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg mb-3 text-sm font-semibold"
+                          style={
+                            violationCount > 0
+                              ? { background: C.brickLight, color: C.brick, border: `1px solid ${C.brick}` }
+                              : { background: C.hillLight, color: C.hill, border: `1px solid ${C.hill}` }
+                          }
+                        >
                           {violationCount > 0
                             ? `${violationCount} propert${violationCount === 1 ? 'y' : 'ies'} with subsidies and violations`
                             : 'No cross-referenced violations found'}
                         </div>
 
                         {showFuzzyNote && (
-                          <p className="text-xs text-gray-400 italic mb-3">
+                          <p className="text-xs italic mb-3" style={{ color: C.muted }}>
                             Address-level cross-referencing uses fuzzy matching. Some matches may be missed due to address formatting differences.
                           </p>
                         )}
@@ -1237,32 +1256,32 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                         <div className="overflow-x-auto">
                           <table className="w-full text-xs border-collapse">
                             <thead>
-                              <tr className="bg-gray-50 border-b border-gray-200">
-                                <th className="text-left py-2 px-2 font-semibold text-gray-600">Address</th>
-                                <th className="text-left py-2 px-2 font-semibold text-gray-600">Abatement Type</th>
-                                <th className="text-center py-2 px-2 font-semibold text-gray-600">PLAP Violations</th>
-                                <th className="text-left py-2 px-2 font-semibold text-gray-600">Status</th>
+                              <tr style={{ background: C.limestone, borderBottom: `1px solid ${C.rule}` }}>
+                                <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Address</th>
+                                <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Abatement Type</th>
+                                <th className="text-center py-2 px-2 font-semibold" style={{ color: C.muted }}>PLAP Violations</th>
+                                <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Status</th>
                               </tr>
                             </thead>
                             <tbody>
                               {crossRefRows.slice(0, 30).map((row, i) => (
-                                <tr key={i} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                                  <td className="py-1.5 px-2 text-gray-700 max-w-[140px] truncate" title={row.address}>
+                                <tr key={i} style={{ borderBottom: `1px solid ${C.rule}`, background: i % 2 === 0 ? C.paper : C.limestone }}>
+                                  <td className="py-1.5 px-2 max-w-[140px] truncate" style={{ color: C.ink }} title={row.address}>
                                     {row.address}
                                   </td>
-                                  <td className="py-1.5 px-2 text-gray-600">{row.abatementType}</td>
-                                  <td className="py-1.5 px-2 text-center text-gray-700">{row.plapCount}</td>
+                                  <td className="py-1.5 px-2" style={{ color: C.muted }}>{row.abatementType}</td>
+                                  <td className="py-1.5 px-2 text-center" style={{ color: C.ink }}>{row.plapCount}</td>
                                   <td className="py-1.5 px-2">
                                     {row.hasViolations
-                                      ? <span className="text-red-600 font-medium">Has Violations</span>
-                                      : <span className="text-green-600">Clean</span>}
+                                      ? <span style={{ color: C.brick }} className="font-medium">Has Violations</span>
+                                      : <span style={{ color: C.hill }}>Clean</span>}
                                   </td>
                                 </tr>
                               ))}
                             </tbody>
                           </table>
                           {crossRefRows.length > 30 && (
-                            <p className="text-xs text-gray-400 mt-1 text-center">
+                            <p className="text-xs mt-1 text-center" style={{ color: C.muted }}>
                               Showing 30 of {crossRefRows.length} abatement records
                             </p>
                           )}
@@ -1271,39 +1290,42 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                     )}
                   </div>
 
-                  <hr className="border-gray-100" />
+                  <hr style={{ borderColor: C.rule }} />
 
                   {/* Section 5: Housing Units Removed */}
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-800 mb-1">Housing Units Removed</h3>
-                    <p className="text-xs text-gray-500 mb-3">
+                    <h3 className="text-sm font-semibold mb-1" style={{ color: C.ink }}>Housing Units Removed</h3>
+                    <p className="text-xs mb-3" style={{ color: C.muted }}>
                       Building permits showing a net reduction in housing units in this neighborhood, with the permit applicant (owner or LLC) from the city record. Source: Cincinnati Housing Unit Activity.
                     </p>
                     {unitLossForNeighborhood.length === 0 ? (
-                      <p className="text-sm text-gray-500 italic">No unit removal permits found for this neighborhood.</p>
+                      <p className="text-sm italic" style={{ color: C.muted }}>No unit removal permits found for this neighborhood.</p>
                     ) : (
                       <>
-                        <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-3 text-sm font-semibold text-red-700 inline-flex gap-2 items-center">
+                        <div
+                          className="rounded-lg px-3 py-2 mb-3 text-sm font-semibold inline-flex gap-2 items-center"
+                          style={{ background: C.brickLight, color: C.brick, border: `1px solid ${C.brick}` }}
+                        >
                           <span>⚠</span>
                           <span>{unitLossForNeighborhood.reduce((s, r) => s + (parseInt(r.units_removed, 10) || 0), 0)} units removed across {unitLossForNeighborhood.length} permits</span>
                         </div>
                         <div className="overflow-x-auto">
                           <table className="w-full text-xs border-collapse">
                             <thead>
-                              <tr className="bg-gray-50 border-b border-gray-200">
-                                <th className="text-left py-2 px-2 font-semibold text-gray-600">Address</th>
-                                <th className="text-left py-2 px-2 font-semibold text-gray-600">Permit Holder</th>
-                                <th className="text-center py-2 px-2 font-semibold text-gray-600">Units −</th>
-                                <th className="text-left py-2 px-2 font-semibold text-gray-600">Date</th>
+                              <tr style={{ background: C.limestone, borderBottom: `1px solid ${C.rule}` }}>
+                                <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Address</th>
+                                <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Permit Holder</th>
+                                <th className="text-center py-2 px-2 font-semibold" style={{ color: C.muted }}>Units −</th>
+                                <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Date</th>
                               </tr>
                             </thead>
                             <tbody>
                               {unitLossForNeighborhood.map((r, i) => (
-                                <tr key={i} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                                  <td className="py-1.5 px-2 text-gray-700 max-w-[130px] truncate" title={r.address}>{r.address}</td>
-                                  <td className="py-1.5 px-2 text-gray-600 max-w-[130px] truncate font-medium" title={r.title ?? ''}>{r.title || '—'}</td>
-                                  <td className="py-1.5 px-2 text-center text-red-600 font-bold">−{r.units_removed}</td>
-                                  <td className="py-1.5 px-2 text-gray-500">{r.issued_date ? r.issued_date.slice(0, 8) : '—'}</td>
+                                <tr key={i} style={{ borderBottom: `1px solid ${C.rule}`, background: i % 2 === 0 ? C.paper : C.limestone }}>
+                                  <td className="py-1.5 px-2 max-w-[130px] truncate" style={{ color: C.ink }} title={r.address}>{r.address}</td>
+                                  <td className="py-1.5 px-2 max-w-[130px] truncate font-medium" style={{ color: C.muted }} title={r.title ?? ''}>{r.title || '—'}</td>
+                                  <td className="py-1.5 px-2 text-center font-bold" style={{ color: C.brick }}>−{r.units_removed}</td>
+                                  <td className="py-1.5 px-2" style={{ color: C.muted }}>{r.issued_date ? r.issued_date.slice(0, 8) : '—'}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -1313,44 +1335,47 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                     )}
                   </div>
 
-                  <hr className="border-gray-100" />
+                  <hr style={{ borderColor: C.rule }} />
 
                   {/* Section 6: Developer Subsidies */}
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-800 mb-1">Developer Subsidies Approved Here</h3>
-                    <p className="text-xs text-gray-500 mb-3">
+                    <h3 className="text-sm font-semibold mb-1" style={{ color: C.ink }}>Developer Subsidies Approved Here</h3>
+                    <p className="text-xs mb-3" style={{ color: C.muted }}>
                       City-approved commercial CRA subsidies for this neighborhood. Includes tax abatements, TIF grants, LEED credits, and below-market city land sales. Source: Commercial CRA Abatements.
                     </p>
                     {craForNeighborhood.length === 0 ? (
-                      <p className="text-sm text-gray-500 italic">No CRA subsidies found for this neighborhood.</p>
+                      <p className="text-sm italic" style={{ color: C.muted }}>No CRA subsidies found for this neighborhood.</p>
                     ) : (
                       <>
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 mb-3 text-sm font-semibold text-blue-800 inline-flex gap-2 items-center">
+                        <div
+                          className="rounded-lg px-3 py-2 mb-3 text-sm font-semibold inline-flex gap-2 items-center"
+                          style={{ background: C.riverLight, color: C.riverDeep, border: `1px solid ${C.river}` }}
+                        >
                           <span>${(craForNeighborhood.reduce((s, r) => s + (parseFloat(r.est_program_total_value || '0') || 0), 0) / 1_000_000).toFixed(2)}M in city subsidies approved</span>
                         </div>
                         <div className="overflow-x-auto">
                           <table className="w-full text-xs border-collapse">
                             <thead>
-                              <tr className="bg-gray-50 border-b border-gray-200">
-                                <th className="text-left py-2 px-2 font-semibold text-gray-600">Developer</th>
-                                <th className="text-left py-2 px-2 font-semibold text-gray-600">Project</th>
-                                <th className="text-left py-2 px-2 font-semibold text-gray-600">Type</th>
-                                <th className="text-right py-2 px-2 font-semibold text-gray-600">Value</th>
-                                <th className="text-left py-2 px-2 font-semibold text-gray-600">Approved</th>
+                              <tr style={{ background: C.limestone, borderBottom: `1px solid ${C.rule}` }}>
+                                <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Developer</th>
+                                <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Project</th>
+                                <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Type</th>
+                                <th className="text-right py-2 px-2 font-semibold" style={{ color: C.muted }}>Value</th>
+                                <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Approved</th>
                               </tr>
                             </thead>
                             <tbody>
                               {craForNeighborhood.slice(0, 20).map((r, i) => (
-                                <tr key={i} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                                  <td className="py-1.5 px-2 text-gray-700 font-medium max-w-[120px] truncate" title={r.organization_legal_name ?? ''}>{r.organization_legal_name || '—'}</td>
-                                  <td className="py-1.5 px-2 text-gray-600 max-w-[120px] truncate" title={r.project_name ?? ''}>{r.project_name || '—'}</td>
-                                  <td className="py-1.5 px-2 text-gray-500">{r.program_type || '—'}</td>
-                                  <td className="py-1.5 px-2 text-right text-gray-700 font-medium">
+                                <tr key={i} style={{ borderBottom: `1px solid ${C.rule}`, background: i % 2 === 0 ? C.paper : C.limestone }}>
+                                  <td className="py-1.5 px-2 font-medium max-w-[120px] truncate" style={{ color: C.ink }} title={r.organization_legal_name ?? ''}>{r.organization_legal_name || '—'}</td>
+                                  <td className="py-1.5 px-2 max-w-[120px] truncate" style={{ color: C.muted }} title={r.project_name ?? ''}>{r.project_name || '—'}</td>
+                                  <td className="py-1.5 px-2" style={{ color: C.muted }}>{r.program_type || '—'}</td>
+                                  <td className="py-1.5 px-2 text-right font-medium" style={{ color: C.ink }}>
                                     {r.est_program_total_value && parseFloat(r.est_program_total_value) > 0
                                       ? `$${Math.round(parseFloat(r.est_program_total_value)).toLocaleString()}`
                                       : '—'}
                                   </td>
-                                  <td className="py-1.5 px-2 text-gray-500">{r.approved_by_city_council ? r.approved_by_city_council.slice(0, 10) : '—'}</td>
+                                  <td className="py-1.5 px-2" style={{ color: C.muted }}>{r.approved_by_city_council ? r.approved_by_city_council.slice(0, 10) : '—'}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -1360,42 +1385,42 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                     )}
                   </div>
 
-                  <hr className="border-gray-100" />
+                  <hr style={{ borderColor: C.rule }} />
 
                   {/* Section 7: Demolition Orders */}
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-800 mb-1">Demolition Orders</h3>
-                    <p className="text-xs text-gray-500 mb-3">
+                    <h3 className="text-sm font-semibold mb-1" style={{ color: C.ink }}>Demolition Orders</h3>
+                    <p className="text-xs mb-3" style={{ color: C.muted }}>
                       Active city demolition proceedings in this neighborhood. "Ready for Bid" means the property is actively being cleared for auction. Source: Cincinnati Code Enforcement.
                     </p>
                     {loadingDetail ? (
-                      <div className="h-12 bg-gray-100 rounded animate-pulse" />
+                      <div className="h-12 rounded animate-pulse" style={{ background: C.limestone }} />
                     ) : detailDemolitions.length === 0 ? (
-                      <p className="text-sm text-gray-500 italic">No demolition orders found for this neighborhood.</p>
+                      <p className="text-sm italic" style={{ color: C.muted }}>No demolition orders found for this neighborhood.</p>
                     ) : (
                       <div className="overflow-x-auto">
                         <table className="w-full text-xs border-collapse">
                           <thead>
-                            <tr className="bg-gray-50 border-b border-gray-200">
-                              <th className="text-left py-2 px-2 font-semibold text-gray-600">Address</th>
-                              <th className="text-left py-2 px-2 font-semibold text-gray-600">Type</th>
-                              <th className="text-left py-2 px-2 font-semibold text-gray-600">Status</th>
-                              <th className="text-left py-2 px-2 font-semibold text-gray-600">Filed</th>
+                            <tr style={{ background: C.limestone, borderBottom: `1px solid ${C.rule}` }}>
+                              <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Address</th>
+                              <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Type</th>
+                              <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Status</th>
+                              <th className="text-left py-2 px-2 font-semibold" style={{ color: C.muted }}>Filed</th>
                             </tr>
                           </thead>
                           <tbody>
                             {detailDemolitions.map((d, i) => {
                               const isUrgent = (d.data_status_display ?? '').toLowerCase().includes('bid') || (d.data_status_display ?? '').toLowerCase().includes('nuisance')
                               return (
-                                <tr key={i} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                                  <td className="py-1.5 px-2 text-gray-700 max-w-[130px] truncate" title={d.full_address ?? ''}>{d.full_address || '—'}</td>
-                                  <td className="py-1.5 px-2 text-gray-600">{d.sub_type_desc || '—'}</td>
+                                <tr key={i} style={{ borderBottom: `1px solid ${C.rule}`, background: i % 2 === 0 ? C.paper : C.limestone }}>
+                                  <td className="py-1.5 px-2 max-w-[130px] truncate" style={{ color: C.ink }} title={d.full_address ?? ''}>{d.full_address || '—'}</td>
+                                  <td className="py-1.5 px-2" style={{ color: C.muted }}>{d.sub_type_desc || '—'}</td>
                                   <td className="py-1.5 px-2">
-                                    <span className={isUrgent ? 'text-red-600 font-semibold' : 'text-gray-600'}>
+                                    <span style={{ color: isUrgent ? C.brick : C.muted, fontWeight: isUrgent ? 600 : undefined }}>
                                       {d.data_status_display || '—'}
                                     </span>
                                   </td>
-                                  <td className="py-1.5 px-2 text-gray-500">{d.entered_date ? d.entered_date.slice(0, 10) : '—'}</td>
+                                  <td className="py-1.5 px-2" style={{ color: C.muted }}>{d.entered_date ? d.entered_date.slice(0, 10) : '—'}</td>
                                 </tr>
                               )
                             })}
@@ -1414,7 +1439,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
 
       {/* Empty state after loading */}
       {!isLoading && scoredRecords.length === 0 && !anyError && (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16" style={{ color: C.muted }}>
           <p className="text-sm">No neighborhood data could be loaded. Please try refreshing the page.</p>
         </div>
       )}
@@ -1423,38 +1448,46 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
       {!isLoading && craLeaderboard.length > 0 && (
         <div className="mt-10">
           <div className="mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Who's Getting the Money?</h2>
-            <p className="text-sm text-gray-600 mt-1 max-w-3xl">
+            <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: C.muted }}>Developer Accountability</div>
+            <div className="serif mb-2" style={{ fontSize: 22, fontWeight: 500, color: C.ink }}>Who's Getting the Money?</div>
+            <p className="text-sm mt-1 max-w-3xl" style={{ color: C.muted }}>
               Developers ranked by total city subsidy value received city-wide — tax abatements, TIF grants, LEED credits, and below-market land sales.
               Only developers with reported dollar values are shown. Source: Cincinnati Commercial CRA Abatements dataset.
             </p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="page-paper rounded-md overflow-hidden" style={{ border: `1px solid ${C.rule}` }}>
             <div className="overflow-x-auto">
               <table className="w-full text-sm border-collapse">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Rank</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Developer / Organization</th>
-                    <th className="text-right py-3 px-4 font-semibold text-gray-700">Total Subsidy</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-700">Projects</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700 hidden md:table-cell">Neighborhoods</th>
+                  <tr style={{ background: C.limestone, borderBottom: `1px solid ${C.rule}` }}>
+                    <th className="text-left py-3 px-4 font-semibold" style={{ color: C.muted }}>Rank</th>
+                    <th className="text-left py-3 px-4 font-semibold" style={{ color: C.muted }}>Developer / Organization</th>
+                    <th className="text-right py-3 px-4 font-semibold" style={{ color: C.muted }}>Total Subsidy</th>
+                    <th className="text-center py-3 px-4 font-semibold" style={{ color: C.muted }}>Projects</th>
+                    <th className="text-left py-3 px-4 font-semibold hidden md:table-cell" style={{ color: C.muted }}>Neighborhoods</th>
                   </tr>
                 </thead>
                 <tbody>
                   {craLeaderboard.map((entry, i) => (
-                    <tr key={entry.name} className={`border-b border-gray-100 hover:bg-blue-50 transition-colors ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                      <td className="py-2.5 px-4 text-gray-500 font-medium">#{i + 1}</td>
-                      <td className="py-2.5 px-4 font-semibold text-gray-900">{entry.name}</td>
+                    <tr key={entry.name} style={{ borderBottom: `1px solid ${C.rule}`, background: i % 2 === 0 ? C.paper : C.limestone }}>
+                      <td className="py-2.5 px-4 font-medium" style={{ color: C.muted }}>#{i + 1}</td>
+                      <td className="py-2.5 px-4 font-semibold" style={{ color: C.ink }}>{entry.name}</td>
                       <td className="py-2.5 px-4 text-right">
-                        <span className={`font-bold ${entry.total >= 1_000_000 ? 'text-red-700' : entry.total >= 500_000 ? 'text-orange-700' : 'text-gray-800'}`}>
+                        <span
+                          className="font-bold"
+                          style={{
+                            color: entry.total >= 1_000_000 ? C.brick
+                              : entry.total >= 500_000 ? C.ochre
+                              : C.ink
+                          }}
+                        >
                           ${entry.total >= 1_000_000
                             ? `${(entry.total / 1_000_000).toFixed(2)}M`
                             : `${Math.round(entry.total / 1000)}K`}
                         </span>
                       </td>
-                      <td className="py-2.5 px-4 text-center text-gray-700">{entry.projectCount}</td>
-                      <td className="py-2.5 px-4 text-gray-500 text-xs hidden md:table-cell max-w-xs truncate" title={entry.neighborhoods}>
+                      <td className="py-2.5 px-4 text-center" style={{ color: C.ink }}>{entry.projectCount}</td>
+                      <td className="py-2.5 px-4 text-xs hidden md:table-cell max-w-xs truncate" style={{ color: C.muted }} title={entry.neighborhoods}>
                         {entry.neighborhoods || '—'}
                       </td>
                     </tr>
@@ -1462,8 +1495,8 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                 </tbody>
               </table>
             </div>
-            <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">
-              <p className="text-xs text-gray-400">
+            <div className="px-4 py-3" style={{ background: C.limestone, borderTop: `1px solid ${C.rule}` }}>
+              <p className="text-xs" style={{ color: C.muted }}>
                 Source: Cincinnati Open Data — Commercial CRA Abatements (m76i-p5p9). Values are estimated program totals as reported at time of city council approval. Showing top 25 by reported subsidy value.
               </p>
             </div>

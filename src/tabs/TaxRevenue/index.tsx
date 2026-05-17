@@ -1,11 +1,12 @@
 /**
  * TaxRevenue — Tax & Revenue tab.
  *
- * Four sections:
+ * Five sections:
  *   1. Cincinnati's flat local income tax rate (policy fact)
  *   2. Cincinnati household income percentiles over time (measured, ACS B19080)
  *   3. Modeled state+local effective tax burden by income quintile (ITEP applied)
  *   4. What the city actually collects, by revenue category (live Socrata)
+ *   5. Where the city spends, by fund category (live Socrata)
  *
  * Modeling disclosure is load-bearing: section 3 is a MODEL, not a measurement.
  * We show the ITEP Ohio incidence profile applied to Cincinnati's percentile
@@ -17,6 +18,7 @@
  *   public/data/itep_ohio_incidence.json          (ITEP 7th ed, 2024)
  *   public/data/cincinnati_income_percentiles.json (ACS B19080, 2012–2023)
  *   Socrata a9hy-bv25 (live, via fetchCityRevenue in src/utils/api.ts)
+ *   Socrata qmwc-pyt8 (live, via fetchCitySpending in src/utils/api.ts)
  */
 
 import React, { useEffect, useMemo, useState } from 'react'
@@ -29,6 +31,7 @@ import {
   fetchCitySpending, classifySpending, type CitySpendingRow, type SpendingCategory,
 } from '../../utils/api'
 import { useLanguage } from '../../context/LanguageContext'
+import { C, Eyebrow, PaintHeadline, Lede, Tag } from '../../components/ui/DesignAtoms'
 
 // ─── Types for static data ────────────────────────────────────────────────────
 
@@ -75,7 +78,7 @@ interface PercentileData {
   }>
 }
 
-// ─── Small UI helpers ─────────────────────────────────────────────────────────
+// ─── Formatters ───────────────────────────────────────────────────────────────
 
 const fmtUSD = (n: number) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 const fmtUSDShort = (n: number) => {
@@ -85,36 +88,31 @@ const fmtUSDShort = (n: number) => {
   return `$${n}`
 }
 
-const Badge: React.FC<{ variant: 'measured' | 'modeled'; children: React.ReactNode }> = ({ variant, children }) => {
-  const styles = variant === 'measured'
-    ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
-    : 'bg-amber-100 text-amber-800 border-amber-200'
-  return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide border ${styles}`}>
-      {variant === 'measured' ? '●' : '▲'} {children}
-    </span>
-  )
-}
+// ─── Editorial UI helpers ─────────────────────────────────────────────────────
 
-const Callout: React.FC<{ tone?: 'info' | 'warn'; title: string; children: React.ReactNode }> = ({ tone = 'info', title, children }) => {
-  const styles = tone === 'warn'
-    ? 'bg-amber-50 border-amber-200 text-amber-900'
-    : 'bg-blue-50 border-blue-200 text-blue-900'
+const MeasuredTag: React.FC = () => (
+  <Tag tone="good">● Measured</Tag>
+)
+const ModeledTag: React.FC = () => (
+  <Tag tone="neutral">▲ Modeled</Tag>
+)
+
+const EditorialCallout: React.FC<{ tone?: 'info' | 'warn'; title: string; children: React.ReactNode }> = ({ tone = 'info', title, children }) => {
+  const bg    = tone === 'warn' ? C.brickLight : C.riverLight
+  const border = tone === 'warn' ? '#e6c5b2' : '#bfd2d4'
+  const titleColor = tone === 'warn' ? C.brick : C.riverDeep
   return (
-    <div className={`border rounded-lg p-4 ${styles}`}>
-      <p className="font-semibold text-sm mb-1">{title}</p>
-      <div className="text-sm leading-relaxed opacity-90">{children}</div>
+    <div className="rounded-md p-4" style={{ background: bg, border: `1px solid ${border}` }}>
+      <p className="text-[13px] font-semibold mb-1" style={{ color: titleColor }}>{title}</p>
+      <div className="text-[13px] leading-relaxed" style={{ color: C.ink, opacity: 0.9 }}>{children}</div>
     </div>
   )
 }
 
-const SectionHeader: React.FC<{ eyebrow: string; title: string; blurb: string }> = ({ eyebrow, title, blurb }) => (
-  <div className="mb-5">
-    <p className="text-xs font-semibold text-[#1A4A6B] uppercase tracking-wider mb-1">{eyebrow}</p>
-    <h2 className="text-xl font-bold text-gray-900 mb-2">{title}</h2>
-    <p className="text-sm text-gray-600 leading-relaxed max-w-3xl">{blurb}</p>
-  </div>
-)
+// ─── Editorial chart axis/grid defaults ──────────────────────────────────────
+
+const axisProps = { stroke: C.muted, fontSize: 11 }
+const gridProps = { strokeDasharray: '3 3' as const, stroke: C.rule }
 
 // ─── Section 1: Cincinnati income tax rate history ────────────────────────────
 
@@ -125,53 +123,61 @@ const RateHistorySection: React.FC<{ data: TaxRateHistory | null }> = ({ data })
   const prior = data.history.find(h => h !== current)
 
   return (
-    <section className="mb-12 bg-white border border-gray-200 rounded-xl p-6">
-      <SectionHeader
-        eyebrow="Section 1 — Measured"
-        title="Cincinnati's local income tax rate"
-        blurb="Cincinnati charges a flat municipal income tax. Because the rate is flat, every income level pays the same percentage locally — any progressivity or regressivity in your total tax bill comes from federal, state, and sales/property taxes, not the city."
-      />
+    <section className="page-paper rounded-md p-6 mb-6">
+      <Eyebrow num={1}>Tax Rate <span style={{ marginLeft: 8 }}><MeasuredTag /></span></Eyebrow>
+      <PaintHeadline>
+        Cincinnati charges a flat <span style={{ color: C.river }}>{current.rate_pct}%</span> on every dollar earned here.
+      </PaintHeadline>
+      <Lede>
+        Because the rate is flat, every income level pays the same local percentage — any progressivity
+        or regressivity in your total bill comes from state, federal, and sales taxes, not the city.
+      </Lede>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <div className="bg-[#1A4A6B] text-white rounded-lg p-5">
-          <p className="text-xs uppercase tracking-wide text-blue-200 font-semibold mb-1">Current rate</p>
-          <p className="text-3xl font-bold">{current.rate_pct}%</p>
-          <p className="text-xs text-blue-100 mt-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+        {/* Current rate hero */}
+        <div className="rounded-md p-5" style={{ background: C.river, color: '#fff' }}>
+          <p className="smallcaps mb-1" style={{ color: 'rgba(255,255,255,0.7)' }}>Current rate</p>
+          <p className="serif font-medium leading-none" style={{ fontSize: 48 }}>{current.rate_pct}%</p>
+          <p className="text-[12px] mt-2" style={{ color: 'rgba(255,255,255,0.7)' }}>
             Effective {current.effective_from ?? '—'}
           </p>
         </div>
+
+        {/* Prior rate */}
         {prior && (
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-5">
-            <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-1">Immediate prior rate</p>
-            <p className="text-3xl font-bold text-gray-700">{prior.rate_pct}%</p>
-            <p className="text-xs text-gray-500 mt-1">
+          <div className="rounded-md p-5" style={{ background: C.limestone, border: `1px solid ${C.rule}` }}>
+            <p className="smallcaps mb-1" style={{ color: C.muted }}>Prior rate</p>
+            <p className="serif font-medium leading-none" style={{ fontSize: 48, color: C.muted }}>{prior.rate_pct}%</p>
+            <p className="text-[12px] mt-2" style={{ color: C.muted }}>
               Until {prior.effective_to ?? '—'}
             </p>
           </div>
         )}
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-5">
-          <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-1">Who decides</p>
-          <p className="text-sm font-semibold text-gray-800">Cincinnati City Council</p>
-          <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+
+        {/* Who decides */}
+        <div className="rounded-md p-5" style={{ background: C.limestone, border: `1px solid ${C.rule}` }}>
+          <p className="smallcaps mb-1" style={{ color: C.muted }}>Who decides</p>
+          <p className="text-[15px] font-semibold mt-1" style={{ color: C.ink }}>Cincinnati City Council</p>
+          <p className="text-[12px] mt-2 leading-relaxed" style={{ color: C.muted }}>
             All 9 at-large members vote on rate changes. Some changes require a ballot measure.
           </p>
         </div>
       </div>
 
-      <Callout tone="info" title={`Rate change: ${prior?.rate_pct}% → ${current.rate_pct}% on ${current.effective_from}`}>
-        <p>
-          {current.source_note}
-        </p>
-      </Callout>
+      <div className="mt-4">
+        <EditorialCallout tone="info" title={`Rate change: ${prior?.rate_pct}% → ${current.rate_pct}% on ${current.effective_from}`}>
+          <p>{current.source_note}</p>
+        </EditorialCallout>
+      </div>
 
-      <div className="mt-4 text-xs text-gray-500 leading-relaxed">
-        <strong>On earlier rate history:</strong> {data.source.note}
+      <p className="text-[11px] mt-4 leading-relaxed" style={{ color: C.muted }}>
+        <strong style={{ color: C.ink }}>On earlier rate history:</strong> {data.source.note}
         {' '}Source:{' '}
-        <a href={data.source.url} target="_blank" rel="noopener noreferrer" className="text-[#1A4A6B] hover:underline">
+        <a href={data.source.url} target="_blank" rel="noopener noreferrer" style={{ color: C.river }}>
           {data.source.name}
         </a>
         {' '}(fetched {data.source.fetched_at}).
-      </div>
+      </p>
     </section>
   )
 }
@@ -180,68 +186,56 @@ const RateHistorySection: React.FC<{ data: TaxRateHistory | null }> = ({ data })
 
 const PERCENTILE_KEYS = ['p20', 'p40', 'p60', 'p80', 'p95'] as const
 const PERCENTILE_LABELS: Record<typeof PERCENTILE_KEYS[number], string> = {
-  p20: '20th pct (top of lowest 20%)',
+  p20: '20th pct — lowest 20%',
   p40: '40th pct',
-  p60: '60th pct (median-ish)',
+  p60: '60th pct — median-ish',
   p80: '80th pct',
-  p95: '95th pct (top 5% threshold)',
+  p95: '95th pct — top 5% threshold',
 }
 const PERCENTILE_COLORS: Record<typeof PERCENTILE_KEYS[number], string> = {
-  p20: '#dc2626', // red
-  p40: '#ea580c', // orange
-  p60: '#1A4A6B', // navy
-  p80: '#059669', // green
-  p95: '#7c3aed', // purple
+  p20: C.brick,
+  p40: C.ochre,
+  p60: C.river,
+  p80: C.hill,
+  p95: C.riverDeep,
 }
 
 const PercentilesSection: React.FC<{ data: PercentileData | null }> = ({ data }) => {
   if (!data || data.years.length === 0) return null
 
-  const chartData = data.years.map(y => ({
-    year: y.year,
-    p20: y.p20 ?? null,
-    p40: y.p40 ?? null,
-    p60: y.p60 ?? null,
-    p80: y.p80 ?? null,
-    p95: y.p95 ?? null,
-  }))
-
+  const chartData = data.years.map(y => ({ ...y }))
   const latest = data.years[data.years.length - 1]
   const earliest = data.years[0]
 
-  // Nominal change at p20 vs p95
   const p20Change = latest.p20 && earliest.p20 ? ((latest.p20 - earliest.p20) / earliest.p20) * 100 : null
   const p95Change = latest.p95 && earliest.p95 ? ((latest.p95 - earliest.p95) / earliest.p95) * 100 : null
 
   return (
-    <section className="mb-12 bg-white border border-gray-200 rounded-xl p-6">
-      <div className="flex items-start justify-between gap-3 flex-wrap mb-5">
-        <div>
-          <p className="text-xs font-semibold text-[#1A4A6B] uppercase tracking-wider mb-1">
-            Section 2 &mdash; Measured <Badge variant="measured">ACS direct</Badge>
-          </p>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Cincinnati household incomes over time</h2>
-          <p className="text-sm text-gray-600 leading-relaxed max-w-3xl">
-            These are the household-income thresholds that mark each percentile of Cincinnati residents, from
-            U.S. Census ACS 5-year estimates. In {latest.year}, a household earning{' '}
-            <strong>{fmtUSD(latest.p20 ?? 0)} or less</strong> was in the lowest 20% of city incomes;
-            a household earning <strong>over {fmtUSD(latest.p95 ?? 0)}</strong> was in the top 5%.
-          </p>
-        </div>
-      </div>
+    <section className="page-paper rounded-md p-6 mb-6">
+      <Eyebrow num={2}>Household Income <span style={{ marginLeft: 8 }}><MeasuredTag /></span></Eyebrow>
+      <PaintHeadline>
+        In {latest.year}, half of Cincinnati households earned{' '}
+        <span style={{ color: C.river }}>less than ~{fmtUSDShort(Math.round(((latest.p40 ?? 0) + (latest.p60 ?? 0)) / 2))}</span>.
+      </PaintHeadline>
+      <Lede>
+        These are the household-income thresholds marking each percentile of Cincinnati residents,
+        from U.S. Census ACS 5-year estimates. In {latest.year}, a household earning{' '}
+        <strong>{fmtUSD(latest.p20 ?? 0)} or less</strong> was in the lowest 20%;
+        a household earning over <strong>{fmtUSD(latest.p95 ?? 0)}</strong> was in the top 5%.
+      </Lede>
 
-      {/* Chart */}
-      <div className="w-full" style={{ height: 320 }}>
+      <div className="w-full mt-6" style={{ height: 300 }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 5, right: 16, left: 0, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
-            <YAxis stroke="#6b7280" fontSize={12} tickFormatter={fmtUSDShort} />
+            <CartesianGrid {...gridProps} />
+            <XAxis dataKey="year" {...axisProps} />
+            <YAxis {...axisProps} tickFormatter={fmtUSDShort} />
             <Tooltip
               formatter={(v: number) => fmtUSD(v)}
               labelFormatter={(l) => `ACS 5-year ending ${l}`}
+              contentStyle={{ fontSize: 12, borderColor: C.rule, borderRadius: 6 }}
             />
-            <Legend wrapperStyle={{ fontSize: 12 }} />
+            <Legend wrapperStyle={{ fontSize: 11 }} />
             {PERCENTILE_KEYS.map(k => (
               <Line
                 key={k}
@@ -258,38 +252,36 @@ const PercentilesSection: React.FC<{ data: PercentileData | null }> = ({ data })
         </ResponsiveContainer>
       </div>
 
-      {/* Change callout */}
       {p20Change !== null && p95Change !== null && (
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-xs font-semibold text-red-700 uppercase tracking-wide mb-1">Lowest 20% nominal change</p>
-            <p className="text-lg font-bold text-red-900">
+        <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="rounded-md p-4" style={{ background: C.brickLight, border: `1px solid #e6c5b2` }}>
+            <p className="smallcaps mb-1" style={{ color: C.brick }}>Lowest 20% — nominal change</p>
+            <p className="serif font-medium text-[18px]" style={{ color: C.ink }}>
               {fmtUSD(earliest.p20 ?? 0)} → {fmtUSD(latest.p20 ?? 0)}
             </p>
-            <p className="text-xs text-red-800 mt-1">
-              +{p20Change.toFixed(1)}% nominal over {latest.year - earliest.year} years
-              &nbsp;&mdash;&nbsp; roughly tracking (or behind) inflation, depending on how you measure it.
+            <p className="text-[12px] mt-1" style={{ color: C.muted }}>
+              +{p20Change.toFixed(1)}% nominal over {latest.year - earliest.year} years — roughly tracking (or behind) inflation.
             </p>
           </div>
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-            <p className="text-xs font-semibold text-purple-700 uppercase tracking-wide mb-1">Top 5% threshold nominal change</p>
-            <p className="text-lg font-bold text-purple-900">
+          <div className="rounded-md p-4" style={{ background: C.riverLight, border: `1px solid #bfd2d4` }}>
+            <p className="smallcaps mb-1" style={{ color: C.riverDeep }}>Top 5% threshold — nominal change</p>
+            <p className="serif font-medium text-[18px]" style={{ color: C.ink }}>
               {fmtUSD(earliest.p95 ?? 0)} → {fmtUSD(latest.p95 ?? 0)}
             </p>
-            <p className="text-xs text-purple-800 mt-1">
+            <p className="text-[12px] mt-1" style={{ color: C.muted }}>
               +{p95Change.toFixed(1)}% nominal over {latest.year - earliest.year} years.
             </p>
           </div>
         </div>
       )}
 
-      <div className="mt-4 text-xs text-gray-500 leading-relaxed">
-        <strong>About this data:</strong> ACS 5-year estimates combine survey waves; a year of "2023" represents
-        2019–2023 combined. These are <em>nominal dollars</em> &mdash; not inflation-adjusted. If p20 grew 55% and
-        the CPI grew 35%, real lowest-quintile income still rose, but modestly. Interpret with care.{' '}
-        <a href="https://censusreporter.org/tables/B19080/" target="_blank" rel="noopener noreferrer"
-          className="text-[#1A4A6B] hover:underline">Source: ACS Table B19080</a>.
-      </div>
+      <p className="text-[11px] mt-4 leading-relaxed" style={{ color: C.muted }}>
+        <strong style={{ color: C.ink }}>About this data:</strong> ACS 5-year estimates combine survey waves;
+        a year of "2023" represents 2019–2023 combined. These are <em>nominal dollars</em> — not inflation-adjusted.{' '}
+        <a href="https://censusreporter.org/tables/B19080/" target="_blank" rel="noopener noreferrer" style={{ color: C.river }}>
+          Source: ACS Table B19080
+        </a>.
+      </p>
     </section>
   )
 }
@@ -306,60 +298,44 @@ const ITEPSection: React.FC<{ itep: ITEPData | null; latestPercentiles: Percenti
     avg: g.avg_income,
   }))
 
+  const highest = Math.max(...itep.groups.map(g => g.effective_tax_rate_pct))
+  const lowest  = Math.min(...itep.groups.map(g => g.effective_tax_rate_pct))
+
   return (
-    <section className="mb-12 bg-white border border-amber-200 rounded-xl p-6">
-      <div className="flex items-start justify-between gap-3 flex-wrap mb-3">
-        <div>
-          <p className="text-xs font-semibold text-amber-700 uppercase tracking-wider mb-1">
-            Section 3 &mdash; <Badge variant="modeled">Modeled</Badge>
-          </p>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Effective state + local tax rate by income group</h2>
-          <p className="text-sm text-gray-600 leading-relaxed max-w-3xl">
-            This is the Institute on Taxation &amp; Economic Policy&rsquo;s <em>Who Pays? 7th Edition</em> (2024)
-            analysis of Ohio's state and local tax system &mdash; sales, property, and income taxes combined,
-            expressed as a share of household income for each income group.
-          </p>
-        </div>
+    <section className="page-paper rounded-md p-6 mb-6" style={{ borderLeft: `3px solid ${C.ochre}` }}>
+      <Eyebrow num={3}>Effective Tax Burden <span style={{ marginLeft: 8 }}><ModeledTag /></span></Eyebrow>
+      <PaintHeadline>
+        Ohio's lowest earners pay{' '}
+        <span style={{ color: C.brick }}>{(highest / lowest).toFixed(1)}×</span>{' '}
+        the effective rate of the highest.
+      </PaintHeadline>
+      <Lede>
+        This is the Institute on Taxation &amp; Economic Policy's <em>Who Pays? 7th Edition</em> (2024)
+        analysis of Ohio's state and local tax system — sales, property, and income taxes combined,
+        as a share of household income for each income group.
+      </Lede>
+
+      <div className="mt-4 rounded-md p-4" style={{ background: C.limestone, border: `1px solid ${C.rule}` }}>
+        <p className="text-[13px] font-semibold mb-1" style={{ color: C.ink }}>Key finding</p>
+        <p className="text-[13px] leading-relaxed" style={{ color: C.ink }}>{itep.key_finding}</p>
       </div>
 
-      {/* Key finding callout */}
-      <div className="mb-5 bg-amber-50 border border-amber-200 rounded-lg p-4">
-        <p className="text-sm font-semibold text-amber-900 mb-1">Key finding</p>
-        <p className="text-sm text-amber-900 leading-relaxed">{itep.key_finding}</p>
-      </div>
-
-      {/* Chart */}
-      <div className="w-full" style={{ height: 320 }}>
+      <div className="w-full mt-6" style={{ height: 300 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} margin={{ top: 16, right: 16, left: 0, bottom: 40 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis
-              dataKey="name"
-              stroke="#6b7280"
-              fontSize={11}
-              angle={-20}
-              textAnchor="end"
-              height={60}
-              interval={0}
-            />
-            <YAxis
-              stroke="#6b7280"
-              fontSize={12}
-              tickFormatter={(v) => `${v}%`}
-              domain={[0, 15]}
-            />
+            <CartesianGrid {...gridProps} />
+            <XAxis dataKey="name" {...axisProps} angle={-20} textAnchor="end" height={60} interval={0} />
+            <YAxis {...axisProps} tickFormatter={(v) => `${v}%`} domain={[0, 15]} />
             <Tooltip
-              formatter={(v: number) => `${v.toFixed(1)}%`}
-              labelFormatter={(name) => `${name}`}
               content={({ active, payload, label }) => {
                 if (!active || !payload || payload.length === 0) return null
                 const row = payload[0].payload as typeof chartData[number]
                 return (
-                  <div className="bg-white border border-gray-200 shadow-lg rounded-lg p-3 text-xs">
-                    <p className="font-bold text-gray-900 mb-1">{label}</p>
-                    <p className="text-gray-600">Income range: {row.range}</p>
-                    <p className="text-gray-600">Avg income: {fmtUSD(row.avg)}</p>
-                    <p className="text-gray-900 font-semibold mt-1">
+                  <div className="rounded-md p-3 text-[12px]" style={{ background: C.paper, border: `1px solid ${C.rule}` }}>
+                    <p className="font-semibold mb-1" style={{ color: C.ink }}>{label}</p>
+                    <p style={{ color: C.muted }}>Income range: {row.range}</p>
+                    <p style={{ color: C.muted }}>Avg income: {fmtUSD(row.avg)}</p>
+                    <p className="font-semibold mt-1" style={{ color: C.ink }}>
                       Effective state + local tax: {row.rate.toFixed(1)}%
                     </p>
                   </div>
@@ -367,10 +343,8 @@ const ITEPSection: React.FC<{ itep: ITEPData | null; latestPercentiles: Percenti
               }}
             />
             <Bar dataKey="rate" name="Effective state + local tax rate">
-              {chartData.map((_, i) => {
-                // Color intensity inversely correlated with rate (higher rate = redder)
-                const rate = chartData[i].rate
-                const color = rate >= 12 ? '#dc2626' : rate >= 10 ? '#ea580c' : rate >= 8 ? '#f59e0b' : '#1A4A6B'
+              {chartData.map((row, i) => {
+                const color = row.rate >= 12 ? C.brick : row.rate >= 10 ? C.ochre : row.rate >= 8 ? C.hill : C.river
                 return <Cell key={i} fill={color} />
               })}
             </Bar>
@@ -378,74 +352,131 @@ const ITEPSection: React.FC<{ itep: ITEPData | null; latestPercentiles: Percenti
         </ResponsiveContainer>
       </div>
 
-      {/* Cincinnati context */}
       {latestPercentiles && (
-        <div className="mt-5 bg-gray-50 border border-gray-200 rounded-lg p-4">
-          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
+        <div className="mt-5 rounded-md p-4" style={{ background: C.limestone, border: `1px solid ${C.rule}` }}>
+          <p className="smallcaps mb-2" style={{ color: C.muted }}>
             Rough Cincinnati alignment ({latestPercentiles.year})
           </p>
-          <p className="text-sm text-gray-700 leading-relaxed">
-            Cincinnati&rsquo;s lowest 20% tops out at about <strong>{fmtUSD(latestPercentiles.p20 ?? 0)}</strong>,
-            close to Ohio&rsquo;s lowest-20% bracket ({fmtUSD(itep.groups[0].income_high ?? 22500)} statewide).
-            Cincinnati&rsquo;s top 5% threshold is around <strong>{fmtUSD(latestPercentiles.p95 ?? 0)}</strong>,
-            placing those households in ITEP&rsquo;s &ldquo;Next 4%&rdquo; income bracket (above the $235,800 bracket cutoff).
-            <em> These are Ohio-wide incidence rates applied to Cincinnati incomes &mdash; a reasonable
-            estimate, not a Cincinnati-specific measurement.</em>
+          <p className="text-[13px] leading-relaxed" style={{ color: C.ink }}>
+            Cincinnati's lowest 20% tops out at about <strong>{fmtUSD(latestPercentiles.p20 ?? 0)}</strong>,
+            close to Ohio's lowest-20% bracket ({fmtUSD(itep.groups[0].income_high ?? 22500)} statewide).
+            Cincinnati's top 5% threshold is around <strong>{fmtUSD(latestPercentiles.p95 ?? 0)}</strong>.
+            {' '}<em style={{ color: C.muted }}>These are Ohio-wide incidence rates applied to Cincinnati incomes — a reasonable estimate, not a Cincinnati-specific measurement.</em>
           </p>
         </div>
       )}
 
-      {/* Modeling note and caveats */}
-      <div className="mt-5">
-        <p className="text-xs font-semibold text-amber-800 uppercase tracking-wide mb-2">
-          What &ldquo;Modeled&rdquo; means here
-        </p>
-        <p className="text-sm text-gray-700 leading-relaxed mb-3">
-          {itep.modeling_note}
-        </p>
-        <p className="text-xs font-semibold text-amber-800 uppercase tracking-wide mb-2">Important caveats</p>
-        <ul className="text-xs text-gray-600 space-y-1.5 leading-relaxed list-disc pl-5">
+      <div className="mt-5 pt-4" style={{ borderTop: `1px solid ${C.rule}` }}>
+        <p className="smallcaps mb-2" style={{ color: C.ochre }}>What "Modeled" means here</p>
+        <p className="text-[13px] leading-relaxed mb-3" style={{ color: C.ink }}>{itep.modeling_note}</p>
+        <p className="smallcaps mb-2" style={{ color: C.ochre }}>Important caveats</p>
+        <ul className="text-[12px] space-y-1.5 leading-relaxed list-disc pl-5" style={{ color: C.muted }}>
           {itep.caveats.map((c, i) => <li key={i}>{c}</li>)}
         </ul>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 leading-relaxed">
+      <p className="text-[11px] mt-4 pt-3 leading-relaxed" style={{ borderTop: `1px solid ${C.rule}`, color: C.muted }}>
         Source:{' '}
-        <a href={itep.source.url} target="_blank" rel="noopener noreferrer" className="text-[#1A4A6B] hover:underline">
+        <a href={itep.source.url} target="_blank" rel="noopener noreferrer" style={{ color: C.river }}>
           {itep.source.name}
         </a>
-        {' '}&mdash; {itep.source.data_year_note}. If you need citable numbers for advocacy, cite ITEP directly,
-        not this site.
-      </div>
+        {' '}— {itep.source.data_year_note}. If you need citable numbers for advocacy, cite ITEP directly, not this site.
+      </p>
     </section>
   )
 }
 
-// ─── Section 4: What the city actually collects ───────────────────────────────
+// ─── Revenue & Spending color palettes ───────────────────────────────────────
 
 const CATEGORY_ORDER: RevenueCategory[] = [
-  'Income Tax',
-  'Property Tax',
-  'Utility Charges',
-  'Charges for Services',
-  'Intergovernmental',
-  'Licenses, Fines & Permits',
-  'Investment Income',
-  'Internal Transfers',
-  'Other',
+  'Income Tax', 'Property Tax', 'Utility Charges', 'Charges for Services',
+  'Intergovernmental', 'Licenses, Fines & Permits', 'Investment Income',
+  'Internal Transfers', 'Other',
 ]
 
 const CATEGORY_COLORS: Record<RevenueCategory, string> = {
-  'Income Tax':                '#1A4A6B',
-  'Property Tax':              '#059669',
-  'Utility Charges':           '#0891b2',
-  'Charges for Services':      '#7c3aed',
-  'Intergovernmental':         '#ea580c',
-  'Licenses, Fines & Permits': '#db2777',
-  'Investment Income':         '#65a30d',
-  'Internal Transfers':        '#9ca3af',
-  'Other':                     '#6b7280',
+  'Income Tax':                C.river,
+  'Property Tax':              C.hill,
+  'Utility Charges':           C.riverDeep,
+  'Charges for Services':      C.ochre,
+  'Intergovernmental':         '#8a6e3e',
+  'Licenses, Fines & Permits': C.brick,
+  'Investment Income':         '#2e5438',
+  'Internal Transfers':        '#a89880',
+  'Other':                     C.muted,
 }
+
+const SPENDING_CATEGORY_ORDER: SpendingCategory[] = [
+  'Water & Sewer', 'Capital Projects', 'General Government', 'Community Development',
+  'Risk & Insurance', 'Public Health', 'Transit & Streets', 'Recreation & Culture',
+  'Internal Services', 'Other',
+]
+
+const SPENDING_CATEGORY_COLORS: Record<SpendingCategory, string> = {
+  'Water & Sewer':        C.riverDeep,
+  'Capital Projects':     C.river,
+  'General Government':   C.hill,
+  'Community Development':C.ochre,
+  'Risk & Insurance':     '#a89880',
+  'Public Health':        C.brick,
+  'Transit & Streets':    '#2e5438',
+  'Recreation & Culture': '#8a6e3e',
+  'Internal Services':    '#c4a96e',
+  'Other':                C.muted,
+}
+
+// ─── Shared breakdown table ───────────────────────────────────────────────────
+
+function BreakdownTable<T extends string>({
+  latestFY,
+  categories,
+  colors,
+  label,
+}: {
+  latestFY: Record<string, number | string | undefined>
+  categories: T[]
+  colors: Record<T, string>
+  label: string
+}) {
+  const total = categories.reduce((s, c) => s + ((latestFY[c] as number) ?? 0), 0)
+  const rows = categories
+    .map(cat => ({ cat, amount: (latestFY[cat] as number) ?? 0 }))
+    .filter(r => r.amount > 0)
+    .sort((a, b) => b.amount - a.amount)
+
+  return (
+    <div className="mt-5">
+      <p className="smallcaps mb-2" style={{ color: C.muted }}>{label}</p>
+      <div className="overflow-x-auto rounded-md" style={{ border: `1px solid ${C.rule}` }}>
+        <table className="w-full text-[13px]">
+          <thead style={{ background: C.limestone }}>
+            <tr>
+              <th className="text-left px-3 py-2 font-semibold" style={{ color: C.ink }}>Category</th>
+              <th className="text-right px-3 py-2 font-semibold" style={{ color: C.ink }}>Amount</th>
+              <th className="text-right px-3 py-2 font-semibold" style={{ color: C.ink }}>Share</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={r.cat} style={{ borderTop: i > 0 ? `1px solid ${C.rule}` : undefined }}>
+                <td className="px-3 py-2" style={{ color: C.ink }}>
+                  <span className="inline-block w-2.5 h-2.5 rounded-sm mr-2 align-middle" style={{ background: colors[r.cat as T] }} />
+                  {r.cat}
+                </td>
+                <td className="px-3 py-2 text-right tnum" style={{ color: C.ink }}>{fmtUSD(r.amount)}</td>
+                <td className="px-3 py-2 text-right tnum" style={{ color: C.muted }}>
+                  {total > 0 ? ((r.amount / total) * 100).toFixed(1) : '—'}%
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+// ─── Section 4: What the city actually collects ───────────────────────────────
 
 const RevenueSection: React.FC = () => {
   const [rows, setRows] = useState<CityRevenueRow[] | null>(null)
@@ -461,7 +492,6 @@ const RevenueSection: React.FC = () => {
     return () => { cancelled = true }
   }, [])
 
-  // Aggregate by fiscal_year × category
   const chartData = useMemo(() => {
     if (!rows) return []
     const byYear = new Map<string, Partial<Record<RevenueCategory, number>> & { year: string }>()
@@ -471,67 +501,71 @@ const RevenueSection: React.FC = () => {
       entry[cat] = (entry[cat] || 0) + r.total
       byYear.set(r.fiscal_year, entry)
     }
-    return Array.from(byYear.values())
-      .sort((a, b) => a.year.localeCompare(b.year))
+    return Array.from(byYear.values()).sort((a, b) => a.year.localeCompare(b.year))
   }, [rows])
 
-  // Also compute "last full FY" breakdown for a table
   const latestFY = useMemo(() => {
     if (chartData.length === 0) return null
-    // Last entry may be partial current FY — take the most recent complete year heuristically:
-    // "complete" meaning it's not the highest year (which may be mid-FY)
     const sorted = [...chartData].sort((a, b) => a.year.localeCompare(b.year))
-    // Prefer the second-to-last if the last one has notably less total
     const last = sorted[sorted.length - 1]
     const prev = sorted[sorted.length - 2]
     const lastTotal = CATEGORY_ORDER.reduce((s, c) => s + ((last as Record<string, number | string | undefined>)[c] as number ?? 0), 0)
     const prevTotal = prev ? CATEGORY_ORDER.reduce((s, c) => s + ((prev as Record<string, number | string | undefined>)[c] as number ?? 0), 0) : 0
-    const chosen = (prev && lastTotal < prevTotal * 0.6) ? prev : last
-    return chosen
+    return (prev && lastTotal < prevTotal * 0.6) ? prev : last
   }, [chartData])
 
-  return (
-    <section className="mb-12 bg-white border border-gray-200 rounded-xl p-6">
-      <div className="flex items-start justify-between gap-3 flex-wrap mb-3">
-        <div>
-          <p className="text-xs font-semibold text-[#1A4A6B] uppercase tracking-wider mb-1">
-            Section 4 &mdash; Measured <Badge variant="measured">Live Socrata</Badge>
-          </p>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">What the city actually collects</h2>
-          <p className="text-sm text-gray-600 leading-relaxed max-w-3xl">
-            Cincinnati&rsquo;s positive revenue lines, FY 2014&ndash;present, aggregated from the city&rsquo;s open revenue
-            dataset and grouped into broad categories. The current fiscal year is typically partial &mdash; don&rsquo;t
-            read a drop at the far right as a real decline.
-          </p>
-        </div>
-      </div>
+  const incomeTaxShare = useMemo(() => {
+    if (!latestFY) return null
+    const total = CATEGORY_ORDER.reduce((s, c) => s + ((latestFY as Record<string, number | string | undefined>)[c] as number ?? 0), 0)
+    const itx = ((latestFY as Record<string, number | string | undefined>)['Income Tax'] as number) ?? 0
+    return total > 0 ? ((itx / total) * 100).toFixed(0) : null
+  }, [latestFY])
 
-      {loading && <div className="py-10 text-center text-sm text-gray-500">Loading revenue data from Cincinnati Open Data…</div>}
+  return (
+    <section className="page-paper rounded-md p-6 mb-6">
+      <Eyebrow num={4}>What the City Collects <span style={{ marginLeft: 8 }}><MeasuredTag /></span></Eyebrow>
+      <PaintHeadline>
+        Income tax funds{' '}
+        <span style={{ color: C.river }}>{incomeTaxShare ? `${incomeTaxShare}%` : 'more than a third'}</span>{' '}
+        of what the city brings in.
+      </PaintHeadline>
+      <Lede>
+        Cincinnati's positive revenue lines, FY 2014–present, grouped into broad categories.
+        The current fiscal year is typically partial — don't read a drop at the far right as a real decline.
+      </Lede>
+
+      {loading && (
+        <div className="py-10 text-center text-[13px]" style={{ color: C.muted }}>
+          Loading revenue data from Cincinnati Open Data…
+        </div>
+      )}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-900">
-          <p className="font-semibold mb-1">Couldn&rsquo;t load revenue data.</p>
-          <p className="opacity-80">{error}</p>
-          <p className="mt-2 text-xs">This section queries dataset <code>a9hy-bv25</code> live. If the portal is down this section may be empty.</p>
+        <div className="rounded-md p-4 mt-4" style={{ background: C.brickLight, border: `1px solid #e6c5b2` }}>
+          <p className="text-[13px] font-semibold mb-1" style={{ color: C.brick }}>Couldn't load revenue data.</p>
+          <p className="text-[13px]" style={{ color: C.ink, opacity: 0.8 }}>{error}</p>
+          <p className="text-[11px] mt-2" style={{ color: C.muted }}>Queries dataset <code>a9hy-bv25</code> live. If the portal is down this section may be empty.</p>
         </div>
       )}
 
       {!loading && !error && chartData.length > 0 && (
         <>
-          <Callout tone="info" title="About Internal Transfers">
-            <p>
-              &ldquo;Internal Transfers&rdquo; is often the largest category but it represents money moving <em>within</em> city
-              government, not new revenue from taxpayers. Excluding it gives a cleaner picture of external revenue sources.
-              Not all city revenue is tax revenue — fees for services and utility charges are shown too.
-            </p>
-          </Callout>
+          <div className="mt-4">
+            <EditorialCallout tone="info" title="About Internal Transfers">
+              <p>
+                "Internal Transfers" is often the largest category but represents money moving <em>within</em> city
+                government, not new revenue from taxpayers. Not all city revenue is tax revenue — fees for
+                services and utility charges are shown too.
+              </p>
+            </EditorialCallout>
+          </div>
 
-          <div className="w-full mt-4" style={{ height: 360 }}>
+          <div className="w-full mt-5" style={{ height: 340 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 10, right: 16, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
-                <YAxis stroke="#6b7280" fontSize={12} tickFormatter={fmtUSDShort} />
-                <Tooltip formatter={(v: number) => fmtUSD(v)} />
+                <CartesianGrid {...gridProps} />
+                <XAxis dataKey="year" {...axisProps} />
+                <YAxis {...axisProps} tickFormatter={fmtUSDShort} />
+                <Tooltip formatter={(v: number) => fmtUSD(v)} contentStyle={{ fontSize: 12, borderColor: C.rule, borderRadius: 6 }} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 {CATEGORY_ORDER.map(cat => (
                   <Bar key={cat} dataKey={cat} stackId="revenue" fill={CATEGORY_COLORS[cat]} name={cat} />
@@ -541,96 +575,29 @@ const RevenueSection: React.FC = () => {
           </div>
 
           {latestFY && (
-            <div className="mt-5">
-              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
-                Revenue mix, FY {latestFY.year}
-              </p>
-              <div className="overflow-x-auto border border-gray-200 rounded-lg">
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50 text-gray-700">
-                    <tr>
-                      <th className="text-left px-3 py-2 font-semibold">Category</th>
-                      <th className="text-right px-3 py-2 font-semibold">Amount</th>
-                      <th className="text-right px-3 py-2 font-semibold">Share</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {(() => {
-                      const total = CATEGORY_ORDER.reduce((s, c) => s + ((latestFY as Record<string, number | string | undefined>)[c] as number ?? 0), 0)
-                      return CATEGORY_ORDER
-                        .map(cat => ({ cat, amount: ((latestFY as Record<string, number | string | undefined>)[cat] as number) ?? 0 }))
-                        .filter(r => r.amount > 0)
-                        .sort((a, b) => b.amount - a.amount)
-                        .map(r => (
-                          <tr key={r.cat}>
-                            <td className="px-3 py-2">
-                              <span className="inline-block w-3 h-3 rounded-sm mr-2 align-middle" style={{ background: CATEGORY_COLORS[r.cat] }} />
-                              {r.cat}
-                            </td>
-                            <td className="px-3 py-2 text-right font-mono">{fmtUSD(r.amount)}</td>
-                            <td className="px-3 py-2 text-right text-gray-600">
-                              {total > 0 ? ((r.amount / total) * 100).toFixed(1) : '—'}%
-                            </td>
-                          </tr>
-                        ))
-                    })()}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <BreakdownTable
+              latestFY={latestFY as Record<string, number | string | undefined>}
+              categories={CATEGORY_ORDER}
+              colors={CATEGORY_COLORS}
+              label={`Revenue mix, FY ${latestFY.year}`}
+            />
           )}
-
-          <Callout tone="info" title="How we categorize these lines">
-            <p>
-              The raw dataset has hundreds of resource_name values, one per accounting line. We group them into
-              broad buckets (Income Tax, Property Tax, Utility Charges, etc.) using a deterministic string-match
-              classifier in <code>src/utils/api.ts</code>. &ldquo;Internal Transfers&rdquo; is often the biggest line but it
-              represents money moving <em>within</em> city government, not new revenue from taxpayers. Not all
-              city revenue is tax revenue &mdash; fees for services and utility charges are shown too.
-            </p>
-          </Callout>
         </>
       )}
 
-      <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 leading-relaxed">
+      <p className="text-[11px] mt-4 pt-3 leading-relaxed" style={{ borderTop: `1px solid ${C.rule}`, color: C.muted }}>
         Source: City of Cincinnati Revenue dataset{' '}
         <a href="https://data.cincinnati-oh.gov/Fiscal-Sustainability/City-of-Cincinnati-Revenue/a9hy-bv25"
-          target="_blank" rel="noopener noreferrer" className="text-[#1A4A6B] hover:underline">
+          target="_blank" rel="noopener noreferrer" style={{ color: C.river }}>
           a9hy-bv25
         </a>
         {' '}on the Open Data Portal, updated daily.
-      </div>
+      </p>
     </section>
   )
 }
 
 // ─── Section 5: What the city spends ─────────────────────────────────────────
-
-const SPENDING_CATEGORY_ORDER: SpendingCategory[] = [
-  'Water & Sewer',
-  'Capital Projects',
-  'General Government',
-  'Community Development',
-  'Risk & Insurance',
-  'Public Health',
-  'Transit & Streets',
-  'Recreation & Culture',
-  'Internal Services',
-  'Other',
-]
-
-const SPENDING_CATEGORY_COLORS: Record<SpendingCategory, string> = {
-  'Water & Sewer':        '#0891b2',
-  'Capital Projects':     '#1A4A6B',
-  'General Government':   '#059669',
-  'Community Development':'#ea580c',
-  'Risk & Insurance':     '#9ca3af',
-  'Public Health':        '#7c3aed',
-  'Transit & Streets':    '#db2777',
-  'Recreation & Culture': '#65a30d',
-  'Internal Services':    '#f59e0b',
-  'Other':                '#6b7280',
-}
 
 const SpendingSection: React.FC = () => {
   const [rows, setRows] = useState<CitySpendingRow[] | null>(null)
@@ -657,63 +624,60 @@ const SpendingSection: React.FC = () => {
     }
     return Array.from(byYear.values())
       .sort((a, b) => a.year.localeCompare(b.year))
-      // Drop the current partial FY if it's notably smaller than prior year
       .filter((_, i, arr) => {
         if (i !== arr.length - 1) return true
-        const cur = SPENDING_CATEGORY_ORDER.reduce((s, c) => s + ((arr[i] as Record<string, number | string | undefined>)[c] as number ?? 0), 0)
+        const cur  = SPENDING_CATEGORY_ORDER.reduce((s, c) => s + ((arr[i]    as Record<string, number | string | undefined>)[c] as number ?? 0), 0)
         const prev = arr[i - 1] ? SPENDING_CATEGORY_ORDER.reduce((s, c) => s + ((arr[i - 1] as Record<string, number | string | undefined>)[c] as number ?? 0), 0) : cur
         return cur >= prev * 0.6
       })
   }, [rows])
 
-  const latestFY = useMemo(() => {
-    if (chartData.length === 0) return null
-    return chartData[chartData.length - 1]
-  }, [chartData])
+  const latestFY = useMemo(() => chartData.length ? chartData[chartData.length - 1] : null, [chartData])
 
   return (
-    <section className="mb-12 bg-white border border-gray-200 rounded-xl p-6">
-      <div className="flex items-start justify-between gap-3 flex-wrap mb-3">
-        <div>
-          <p className="text-xs font-semibold text-[#1A4A6B] uppercase tracking-wider mb-1">
-            Section 5 &mdash; Measured <Badge variant="measured">Live Socrata</Badge>
+    <section className="page-paper rounded-md p-6 mb-6">
+      <Eyebrow num={5}>Where the Money Goes <span style={{ marginLeft: 8 }}><MeasuredTag /></span></Eyebrow>
+      <PaintHeadline>
+        Water, sewer, and capital projects dominate{' '}
+        <span style={{ color: C.river }}>what the city buys from contractors.</span>
+      </PaintHeadline>
+      <Lede>
+        Cincinnati's vendor payments, FY 2014–present, grouped by fund. These are procurement and
+        contracting dollars — the "what did the city buy?" side of the ledger.
+      </Lede>
+
+      <div className="mt-4">
+        <EditorialCallout tone="warn" title="Payroll not included">
+          <p>
+            This dataset contains vendor and contractor payments only. Personnel costs (salaries,
+            wages, benefits) — typically 60–70% of a city's operating budget — are not in this
+            dataset.
           </p>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Where the city spends its money</h2>
-          <p className="text-sm text-gray-600 leading-relaxed max-w-3xl">
-            Cincinnati&rsquo;s vendor payments, FY 2014&ndash;present, grouped by the fund they were paid from.
-            These are procurement and contracting dollars from the Cincinnati Financial System &mdash;
-            the &ldquo;what did the city buy?&rdquo; side of the ledger.
-          </p>
-        </div>
+        </EditorialCallout>
       </div>
 
-      <Callout tone="warn" title="Payroll not included">
-        <p>
-          This dataset contains vendor and contractor payments only. Personnel costs
-          (salaries, wages, benefits) &mdash; typically 60&ndash;70% of a city&rsquo;s operating budget &mdash;
-          are not in this dataset. These numbers show how Cincinnati spends on goods, services,
-          and capital projects, not on its workforce.
-        </p>
-      </Callout>
-
-      {loading && <div className="py-10 text-center text-sm text-gray-500 mt-4">Loading spending data from Cincinnati Open Data…</div>}
+      {loading && (
+        <div className="py-10 text-center text-[13px] mt-4" style={{ color: C.muted }}>
+          Loading spending data from Cincinnati Open Data…
+        </div>
+      )}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-900 mt-4">
-          <p className="font-semibold mb-1">Couldn&rsquo;t load spending data.</p>
-          <p className="opacity-80">{error}</p>
-          <p className="mt-2 text-xs">This section queries dataset <code>qmwc-pyt8</code> live.</p>
+        <div className="rounded-md p-4 mt-4" style={{ background: C.brickLight, border: `1px solid #e6c5b2` }}>
+          <p className="text-[13px] font-semibold mb-1" style={{ color: C.brick }}>Couldn't load spending data.</p>
+          <p className="text-[13px]" style={{ color: C.ink, opacity: 0.8 }}>{error}</p>
+          <p className="text-[11px] mt-2" style={{ color: C.muted }}>Queries dataset <code>qmwc-pyt8</code> live.</p>
         </div>
       )}
 
       {!loading && !error && chartData.length > 0 && (
         <>
-          <div className="w-full mt-5" style={{ height: 380 }}>
+          <div className="w-full mt-5" style={{ height: 360 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 10, right: 16, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
-                <YAxis stroke="#6b7280" fontSize={12} tickFormatter={fmtUSDShort} />
-                <Tooltip formatter={(v: number) => fmtUSD(v)} />
+                <CartesianGrid {...gridProps} />
+                <XAxis dataKey="year" {...axisProps} />
+                <YAxis {...axisProps} tickFormatter={fmtUSDShort} />
+                <Tooltip formatter={(v: number) => fmtUSD(v)} contentStyle={{ fontSize: 12, borderColor: C.rule, borderRadius: 6 }} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 {SPENDING_CATEGORY_ORDER.map(cat => (
                   <Bar key={cat} dataKey={cat} stackId="spending" fill={SPENDING_CATEGORY_COLORS[cat]} name={cat} />
@@ -723,56 +687,25 @@ const SpendingSection: React.FC = () => {
           </div>
 
           {latestFY && (
-            <div className="mt-5">
-              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
-                Spending mix, FY {latestFY.year} (vendor payments)
-              </p>
-              <div className="overflow-x-auto border border-gray-200 rounded-lg">
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50 text-gray-700">
-                    <tr>
-                      <th className="text-left px-3 py-2 font-semibold">Category</th>
-                      <th className="text-right px-3 py-2 font-semibold">Amount</th>
-                      <th className="text-right px-3 py-2 font-semibold">Share</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {(() => {
-                      const total = SPENDING_CATEGORY_ORDER.reduce((s, c) => s + ((latestFY as Record<string, number | string | undefined>)[c] as number ?? 0), 0)
-                      return SPENDING_CATEGORY_ORDER
-                        .map(cat => ({ cat, amount: ((latestFY as Record<string, number | string | undefined>)[cat] as number) ?? 0 }))
-                        .filter(r => r.amount > 0)
-                        .sort((a, b) => b.amount - a.amount)
-                        .map(r => (
-                          <tr key={r.cat}>
-                            <td className="px-3 py-2">
-                              <span className="inline-block w-3 h-3 rounded-sm mr-2 align-middle" style={{ background: SPENDING_CATEGORY_COLORS[r.cat] }} />
-                              {r.cat}
-                            </td>
-                            <td className="px-3 py-2 text-right font-mono">{fmtUSD(r.amount)}</td>
-                            <td className="px-3 py-2 text-right text-gray-600">
-                              {total > 0 ? ((r.amount / total) * 100).toFixed(1) : '—'}%
-                            </td>
-                          </tr>
-                        ))
-                    })()}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <BreakdownTable
+              latestFY={latestFY as Record<string, number | string | undefined>}
+              categories={SPENDING_CATEGORY_ORDER}
+              colors={SPENDING_CATEGORY_COLORS}
+              label={`Spending mix, FY ${latestFY.year} (vendor payments only)`}
+            />
           )}
         </>
       )}
 
-      <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 leading-relaxed">
+      <p className="text-[11px] mt-4 pt-3 leading-relaxed" style={{ borderTop: `1px solid ${C.rule}`, color: C.muted }}>
         Source: City of Cincinnati vendor payments dataset{' '}
         <a href="https://data.cincinnati-oh.gov/Growing-Economic-Opportunities/Non-negative-amount-data/qmwc-pyt8"
-          target="_blank" rel="noopener noreferrer" className="text-[#1A4A6B] hover:underline">
+          target="_blank" rel="noopener noreferrer" style={{ color: C.river }}>
           qmwc-pyt8
         </a>
-        {' '}on the Open Data Portal, updated weekly. Fund groupings are deterministic
-        string-match categories, not official City of Cincinnati budget classifications.
-      </div>
+        {' '}on the Open Data Portal, updated weekly. Fund groupings are deterministic string-match
+        categories, not official City of Cincinnati budget classifications.
+      </p>
     </section>
   )
 }
@@ -792,26 +725,22 @@ const TaxRevenue: React.FC = () => {
       fetch('/data/itep_ohio_incidence.json').then(r => r.ok ? r.json() : Promise.reject(`itep ${r.status}`)),
       fetch('/data/cincinnati_income_percentiles.json').then(r => r.ok ? r.json() : Promise.reject(`pct ${r.status}`)),
     ])
-      .then(([rate, it, pct]) => {
-        setRateHistory(rate)
-        setItep(it)
-        setPercentiles(pct)
-      })
+      .then(([rate, it, pct]) => { setRateHistory(rate); setItep(it); setPercentiles(pct) })
       .catch(e => setLoadError(String(e)))
   }, [])
 
   const latestPercentileRow = percentiles?.years[percentiles.years.length - 1] ?? null
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="px-8 py-2 max-w-5xl">
 
       {/* Spanish AI-translation disclaimer */}
       {language === 'es' && (
-        <div className="mb-6 flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
-          <span className="text-amber-500 text-lg shrink-0 mt-0.5">⚠️</span>
+        <div className="mb-6 flex items-start gap-3 rounded-md p-4" style={{ background: C.brickLight, border: `1px solid #e6c5b2` }}>
+          <span className="text-lg shrink-0 mt-0.5" style={{ color: C.brick }}>⚠</span>
           <div>
-            <p className="text-sm font-semibold text-amber-800 mb-1">Nota sobre la traducción al español</p>
-            <p className="text-xs text-amber-700 leading-relaxed">
+            <p className="text-[13px] font-semibold mb-1" style={{ color: C.brick }}>Nota sobre la traducción al español</p>
+            <p className="text-[12px] leading-relaxed" style={{ color: C.ink }}>
               Las traducciones al español en este sitio fueron generadas por inteligencia artificial y aún no
               han sido revisadas por un hablante nativo.
             </p>
@@ -819,44 +748,42 @@ const TaxRevenue: React.FC = () => {
         </div>
       )}
 
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Tax &amp; Revenue</h1>
-        <p className="text-gray-600 max-w-3xl leading-relaxed">
-          Who pays what in Cincinnati &mdash; and what the city actually collects. Some of these numbers are
-          direct measurements from public data; some are modeled estimates. Each section is labeled so you
-          know what you&rsquo;re looking at.
+      {/* Page header */}
+      <header className="page-paper rounded-md px-8 pt-8 pb-7 mb-8">
+        <span className="smallcaps" style={{ color: C.brick }}>Tax &amp; Revenue</span>
+        <h1
+          className="serif font-medium leading-none mt-2 mb-4"
+          style={{ fontSize: 'clamp(36px, 5vw, 64px)', letterSpacing: '-0.02em', color: C.ink }}
+        >
+          Who pays what — and what the city collects.
+        </h1>
+        <p className="serif leading-relaxed" style={{ fontSize: 17, color: C.ink, maxWidth: 700 }}>
+          Some of these numbers are direct measurements from public data; some are modeled estimates.
+          Each section is labeled so you know what you're looking at.
         </p>
-      </div>
 
-      {/* Reader orientation banner */}
-      <div className="mb-8 bg-gray-50 border border-gray-200 rounded-xl p-5">
-        <p className="text-sm font-semibold text-gray-800 mb-3">Two kinds of number on this page</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+        {/* Measured vs Modeled key */}
+        <div className="mt-6 pt-5 grid grid-cols-1 md:grid-cols-2 gap-4" style={{ borderTop: `1px solid ${C.rule}` }}>
           <div className="flex items-start gap-3">
-            <Badge variant="measured">Measured</Badge>
-            <span className="text-gray-700 leading-relaxed">
+            <MeasuredTag />
+            <span className="text-[13px] leading-relaxed" style={{ color: C.ink }}>
               Direct values from public data (rate history, city revenue, ACS percentile thresholds).
             </span>
           </div>
           <div className="flex items-start gap-3">
-            <Badge variant="modeled">Modeled</Badge>
-            <span className="text-gray-700 leading-relaxed">
-              Estimates derived from a statewide model (ITEP) applied to Cincinnati incomes &mdash; not a
-              measurement of any specific household.
+            <ModeledTag />
+            <span className="text-[13px] leading-relaxed" style={{ color: C.ink }}>
+              Estimates from a statewide model (ITEP) applied to Cincinnati incomes — not a measurement
+              of any specific household.
             </span>
           </div>
         </div>
-        <p className="text-xs text-gray-500 mt-3 leading-relaxed">
-          For the full methodology and caveats, see the{' '}
-          <strong>About &amp; Limitations</strong> tab (Tax burden modeling section).
-        </p>
-      </div>
+      </header>
 
       {loadError && (
-        <div className="mb-8 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-900">
-          <p className="font-semibold mb-1">Couldn&rsquo;t load static tax data.</p>
-          <p className="opacity-80">{loadError}</p>
+        <div className="mb-6 rounded-md p-4" style={{ background: C.brickLight, border: `1px solid #e6c5b2` }}>
+          <p className="text-[13px] font-semibold mb-1" style={{ color: C.brick }}>Couldn't load static tax data.</p>
+          <p className="text-[13px] opacity-80" style={{ color: C.ink }}>{loadError}</p>
         </div>
       )}
 
@@ -867,21 +794,26 @@ const TaxRevenue: React.FC = () => {
       <SpendingSection />
 
       {/* What's missing */}
-      <section className="mb-8 bg-gray-900 text-white rounded-xl p-6">
-        <h2 className="text-lg font-bold mb-2">What this page <em>doesn&rsquo;t</em> show</h2>
-        <ul className="text-sm text-gray-300 space-y-2 leading-relaxed list-disc pl-5">
-          <li>Federal taxes. Including federal incidence (which is progressive) would change the overall picture.</li>
-          <li>Property-tax burden for individual Cincinnati neighborhoods &mdash; property tax rates vary by school district and jurisdiction inside city limits.</li>
-          <li>The effect of tax abatements on what residential and commercial property owners actually pay. Cincinnati&rsquo;s abatement data is in the Displacement tab but not yet joined to this view.</li>
-          <li>The 99th and 99.9th percentiles of Cincinnati income &mdash; not resolvable from public data without microdata access.</li>
-          <li>Personnel costs &mdash; payroll, salaries, and benefits make up the majority of the city&rsquo;s operating budget but are not in the vendor-payments dataset (Section 5).</li>
-          <li>Spending by neighborhood &mdash; the City&rsquo;s Capital Improvement Plan Public Viewer shows where capital dollars land geographically; connecting that to resident need is a future goal.</li>
+      <section className="rounded-md p-6 mb-8" style={{ background: C.ink, color: C.limestone }}>
+        <h2
+          className="serif font-medium mb-3"
+          style={{ fontSize: 22, color: C.limestone }}
+        >
+          What this page <em>doesn't</em> show
+        </h2>
+        <ul className="text-[13px] space-y-2.5 leading-relaxed list-disc pl-5" style={{ color: '#c9bfb3' }}>
+          <li>Federal taxes. Including federal incidence (which is progressive) would change the overall picture significantly.</li>
+          <li>Property-tax burden for individual Cincinnati neighborhoods — rates vary by school district and jurisdiction inside city limits.</li>
+          <li>The effect of tax abatements on what residential and commercial property owners actually pay. Cincinnati's abatement data is in the Displacement tab but not yet joined to this view.</li>
+          <li>The 99th and 99.9th percentiles of Cincinnati income — not resolvable from public ACS data without microdata access.</li>
+          <li>Personnel costs — payroll, salaries, and benefits make up the majority of the city's operating budget but are not in the vendor-payments dataset (Section 5).</li>
+          <li>Spending by neighborhood — the City's Capital Improvement Plan Public Viewer shows where capital dollars land geographically; connecting that to resident need is a future goal.</li>
         </ul>
       </section>
 
-      <p className="text-xs text-gray-500 mb-8">
+      <p className="text-[11px] mb-8 leading-relaxed" style={{ color: C.muted }}>
         For the full list of data vintages, modeling assumptions, and known gaps across the site,
-        see the <strong>About &amp; Limitations</strong> tab.
+        see the <strong style={{ color: C.ink }}>About &amp; Limitations</strong> tab.
       </p>
     </div>
   )

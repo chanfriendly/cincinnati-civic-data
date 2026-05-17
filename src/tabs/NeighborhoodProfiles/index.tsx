@@ -1,8 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSODA } from '../../hooks/useSODA';
-import { formatCurrency, fetchSODA, fetchNeighborhoodCensusStats, stripNeighborhoodName } from '../../utils/api';
+import { fetchSODA, fetchNeighborhoodCensusStats, stripNeighborhoodName } from '../../utils/api';
 import type { NeighborhoodCensusStats } from '../../utils/api';
+import { getNeighborhoodBlurb } from '../../data/neighborhoodBlurbs';
+import demographicsData from '../../../public/data/neighborhood_demographics.json';
+import { Chip, Section, PaintHeadline, Lede, C } from '../../components/ui/DesignAtoms';
+import VisitBriefSidebar from './VisitBriefSidebar';
 import UnifiedEquitySection from '../RacialEquity/UnifiedEquitySection';
 import PublicSafetySection from './PublicSafetySection';
 import CityServicesSection from './CityServicesSection';
@@ -15,16 +19,13 @@ import SeniorHealthSection from './SeniorHealthSection';
 import ExpandedDemographicsSection from './ExpandedDemographicsSection';
 import CommunityCouncilSection from './CommunityCouncilSection';
 import RecreationCentersSection from './RecreationCentersSection';
-import {
-  DataCard,
-  CivicOrgsPanel,
-  EmptyState,
-  DataAttribution,
-} from '../../components/ui';
+import { CivicOrgsPanel, EmptyState, DataAttribution, DataCard } from '../../components/ui';
 
-// Neighborhoods sourced from CPD crime dataset (k59e-2pvf) — only Cincinnati
-// proper neighborhoods with actual data are included. Separate municipalities
-// (Cheviot, Madeira, Norwood, etc.) have been removed.
+// Static data for life expectancy context in headlines
+import lifeExpData from '../../../public/data/neighborhood_life_expectancy.json';
+const lifeExp = lifeExpData as Record<string, { name: string; lifeExpectancy: number }>;
+const CITY_LIFE_EXP = 77.1;
+
 const NEIGHBORHOODS = [
   'Avondale', 'Bond Hill', 'California', 'Camp Washington', 'Carthage',
   'CBD / Riverfront', 'Clifton', 'Clifton Heights', 'College Hill',
@@ -40,9 +41,6 @@ const NEIGHBORHOODS = [
   'West Price Hill', 'Westwood', 'Winton Hills',
 ];
 
-// Some display names don't produce the exact UPPER CASE value stored in the
-// CPD datasets when calling .toUpperCase(). This lookup provides the correct
-// dataset key for those neighborhoods.
 const NEIGHBORHOOD_DATASET_KEY: Record<string, string> = {
   'Bond Hill':         'BONDHILL',
   'CBD / Riverfront':  'C. B. D. / RIVERFRONT',
@@ -54,14 +52,12 @@ const NEIGHBORHOOD_DATASET_KEY: Record<string, string> = {
   'South Cumminsville':'S. CUMMINSVILLE',
 };
 
-// Maps Tab 2 CPD neighborhood names to the stripped SNA keys used by the
-// census utility. Only needed where names differ across datasets.
 const CENSUS_KEY_OVERRIDE: Record<string, string> = {
   'CBD / Riverfront':  'downtown',
   'Clifton Heights':   'cuf',
   'Fairview':          'cuf',
-  'Fay Apartments':    'wesend',           // closest SNA match — limited data
-  "O'Bryonville":      'hydeparkobryonville', // OBryonville is within Hyde Park SNA
+  'Fay Apartments':    'wesend',
+  "O'Bryonville":      'hydeparkobryonville',
   'Queensgate':        'lowerpricehillqueensgate',
   'Sedamsville':       'riversidesedamsville',
   'English Woods':     'englishwoodsnorthfairmount',
@@ -73,6 +69,7 @@ interface NeighborhoodProfilesProps {
   onViewMap?: () => void;
 }
 
+
 export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfilesProps = {}) {
   const { t } = useTranslation();
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>(NEIGHBORHOODS[0]);
@@ -81,14 +78,10 @@ export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfiles
     d.setFullYear(d.getFullYear() - 1);
     return d.toISOString().split('T')[0];
   });
-  const [endDate, setEndDate] = useState(
-    new Date().toISOString().split('T')[0]
-  );
-
-  // Dynamic neighborhood list — filtered to only show neighborhoods that have
-  // at least one record in the current STARS crime dataset (7aqy-xrv9).
-  // Falls back to the full static list if the fetch fails.
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
   const [availableNeighborhoods, setAvailableNeighborhoods] = useState<string[]>(NEIGHBORHOODS);
+
+  // Populate neighborhood dropdown from live crime data
   useEffect(() => {
     fetchSODA<{ cpd_neighborhood: string }>('7aqy-xrv9', {
       $select: 'cpd_neighborhood',
@@ -96,67 +89,53 @@ export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfiles
       $limit: 100,
     }).then(({ data: rows }) => {
       if (!rows || rows.length === 0) return;
-      const activeKeys = new Set(rows.map((r: { cpd_neighborhood: string }) => r.cpd_neighborhood?.toUpperCase().trim()).filter(Boolean));
-      const filtered = NEIGHBORHOODS.filter(nb => {
-        const key = NEIGHBORHOOD_DATASET_KEY[nb] ?? nb.toUpperCase();
-        return activeKeys.has(key);
+      const activeKeys = new Set(
+        rows.map((r) => r.cpd_neighborhood?.toUpperCase().trim()).filter(Boolean)
+      );
+      const filtered = NEIGHBORHOODS.filter((nb) => {
+        const k = NEIGHBORHOOD_DATASET_KEY[nb] ?? nb.toUpperCase();
+        return activeKeys.has(k);
       });
       if (filtered.length > 0) {
         setAvailableNeighborhoods(filtered);
-        // If the current selection was filtered out, reset to the first available.
-        setSelectedNeighborhood(prev =>
-          filtered.includes(prev) ? prev : filtered[0]
-        );
+        setSelectedNeighborhood((prev) => (filtered.includes(prev) ? prev : filtered[0]));
       }
-    }).catch(() => { /* silently keep static list on error */ });
-  // Only run once on mount — we don't re-fetch when the date range changes
-  // because the neighborhood list should reflect all-time presence, not just
-  // the selected window.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    }).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Resolve the exact dataset key (UPPER CASE) for the selected neighborhood.
-  // Most names map cleanly via .toUpperCase(), but a few have quirks in the
-  // CPD dataset (e.g. BONDHILL, MT. LOOKOUT) that require an explicit lookup.
   const nbhUpper = NEIGHBORHOOD_DATASET_KEY[selectedNeighborhood] ?? selectedNeighborhood.toUpperCase();
-  // Escape single quotes for SoQL string literals (e.g. O'Bryonville → O''Bryonville)
-  const nbhSoQL = nbhUpper.replace(/'/g, "''");
+  const nbhSoQL  = nbhUpper.replace(/'/g, "''");
 
-  // Food safety — neighborhood field is UPPER CASE; date field is action_date.
-  // Dataset is per-violation (one row per violation per inspection), so the same
-  // business can appear many times. Filter out 'N/A' geocoding failures and
-  // apply the selected date range.
+  // Food safety data
   const foodSafety = useSODA('rg6p-b3h3', {
     $where: `neighborhood='${nbhSoQL}' AND neighborhood != 'N/A' AND action_date >= '${startDate}' AND action_date <= '${endDate}'`,
     $limit: 500,
   });
 
-  // Deduplicate by license_no to get one entry per facility for the list display.
   const uniqueFacilities = useMemo(() => {
     const seen = new Set<string>();
     return (foodSafety.data || []).filter((item: any) => {
-      const key = item.license_no || item.business_name || String(Math.random());
-      if (seen.has(key)) return false;
-      seen.add(key);
+      const k = item.license_no || item.business_name || String(Math.random());
+      if (seen.has(k)) return false;
+      seen.add(k);
       return true;
     });
   }, [foodSafety.data]);
 
-  // Count unique facilities (by license_no) that have at least one active violation.
   const activeViolations = useMemo(() => {
-    const facilitiesWithViolation = new Set<string>();
+    const fwv = new Set<string>();
     (foodSafety.data || []).forEach((item: any) => {
-      const status = (item.action_status || '').toLowerCase();
-      if (status.includes('no violation')) return;
-      if (status.includes('violation') || status.includes('fail') || status.includes('critical')) {
-        facilitiesWithViolation.add(item.license_no || item.business_name || '');
+      const st = (item.action_status || '').toLowerCase();
+      if (!st.includes('no violation') &&
+        (st.includes('violation') || st.includes('fail') || st.includes('critical'))) {
+        fwv.add(item.license_no || item.business_name || '');
       }
     });
-    return facilitiesWithViolation;
+    return fwv;
   }, [foodSafety.data]);
 
-  // Per-neighborhood ACS census data — loaded from /data/neighborhood_acs.json
-  // via fetchNeighborhoodCensusStats(). Falls back to null values while loading.
+  // Census stats
   const [censusStats, setCensusStats] = useState<Map<string, NeighborhoodCensusStats> | null>(null);
   const [censusLoading, setCensusLoading] = useState(true);
 
@@ -169,333 +148,439 @@ export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfiles
 
   const censusData = useMemo(() => {
     if (!censusStats) return null;
-    const key = CENSUS_KEY_OVERRIDE[selectedNeighborhood] ?? stripNeighborhoodName(selectedNeighborhood);
-    return censusStats.get(key) ?? null;
+    const k = CENSUS_KEY_OVERRIDE[selectedNeighborhood] ?? stripNeighborhoodName(selectedNeighborhood);
+    return censusStats.get(k) ?? null;
   }, [censusStats, selectedNeighborhood]);
 
-  // Compute rankings across all neighborhoods using already-loaded census data.
-  // Sorted descending for income (higher = better rank), ascending for rent burden (lower = better).
   const rankings = useMemo(() => {
     if (!censusStats || !censusData) return null;
-    const allEntries = [...censusStats.values()];
-    const totalNeighborhoods = allEntries.length;
-
-    const incomes = allEntries
-      .map(s => s.medianHouseholdIncome)
-      .filter((v): v is number => v != null)
-      .sort((a, b) => b - a);
-    const incomeRank = censusData.medianHouseholdIncome != null
-      ? incomes.indexOf(censusData.medianHouseholdIncome) + 1
-      : null;
-
-    const burdens = allEntries
-      .map(s => s.rentBurdenRate)
-      .filter((v): v is number => v != null)
-      .sort((a, b) => a - b); // lower burden = better rank
-    const burdenRank = censusData.rentBurdenRate != null
-      ? burdens.indexOf(censusData.rentBurdenRate) + 1
-      : null;
-
-    return { incomeRank, burdenRank, totalNeighborhoods };
+    const all = [...censusStats.values()];
+    const incomes = all.map(s => s.medianHouseholdIncome).filter((v): v is number => v != null).sort((a, b) => b - a);
+    const burdens = all.map(s => s.rentBurdenRate).filter((v): v is number => v != null).sort((a, b) => a - b);
+    return {
+      incomeRank:         censusData.medianHouseholdIncome != null ? incomes.indexOf(censusData.medianHouseholdIncome) + 1 : null,
+      burdenRank:         censusData.rentBurdenRate        != null ? burdens.indexOf(censusData.rentBurdenRate)        + 1 : null,
+      totalNeighborhoods: all.length,
+    };
   }, [censusStats, censusData]);
 
+  // Top 311 calls — minimal query for Visit Brief sidebar
+  // Note: 311 dataset (gcej-gmiw) uses date_created and sr_type_desc, not requested_date/service_name
+  const [topRequests, setTopRequests] = useState<Array<{ label: string; count: number }>>([]);
+  useEffect(() => {
+    fetchSODA<{ sr_type_desc: string; count: string }>('gcej-gmiw', {
+      $select:  'sr_type_desc,count(sr_type_desc) as count',
+      $where:   `neighborhood='${nbhSoQL}' AND date_created >= '${startDate}' AND date_created <= '${endDate}'`,
+      $group:   'sr_type_desc',
+      $order:   'count desc',
+      $limit:   5,
+    }).then(({ data: rows }) => {
+      if (!rows) return;
+      setTopRequests(rows.map((r) => ({ label: r.sr_type_desc, count: parseInt(r.count, 10) || 0 })));
+    }).catch(() => {});
+  }, [selectedNeighborhood, startDate, endDate, nbhSoQL]);
+
+  // Life expectancy — for picture-painting headlines
+  const lifeKey = stripNeighborhoodName(selectedNeighborhood);
+  const lifeYrs = lifeExp[lifeKey]?.lifeExpectancy;
+  const lifeGap = lifeYrs != null ? CITY_LIFE_EXP - lifeYrs : null;
+
+  // Income headline fragment
+  const income    = censusData?.medianHouseholdIncome;
+  const cityInc   = 40000; // Cincinnati citywide approximate
+  const incomeRatio = income != null ? income / cityInc : null;
+  const rentBurden  = censusData?.rentBurdenRate;
+
+  const blurb = getNeighborhoodBlurb(selectedNeighborhood);
+
+  // Data sentence for hero — derived from static demographics JSON
+  const demoRecord = (demographicsData as Record<string, any>)[stripNeighborhoodName(selectedNeighborhood)];
+  const demoSentence = useMemo(() => {
+    if (!demoRecord?.totalPopulation) return null;
+    const pop = demoRecord.totalPopulation.toLocaleString();
+    const seniors = demoRecord.over65Pct != null
+      ? Math.round(demoRecord.over65Pct / 100 * demoRecord.totalPopulation).toLocaleString()
+      : null;
+    const youth = demoRecord.under18Pct != null
+      ? Math.round(demoRecord.under18Pct / 100 * demoRecord.totalPopulation).toLocaleString()
+      : null;
+    if (seniors && youth) {
+      return `About ${pop} residents — roughly ${youth} under 18 and ${seniors} age 65 or older.`;
+    }
+    return `About ${pop} residents.`;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [demoRecord]);
+
   return (
-    <div className="space-y-6">
-      {/* Print Header - hidden by default, shown on print */}
-      <div className="no-print">
-        {/* Controls */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('neighborhood.selectNeighborhood', 'Select Neighborhood')}
-              </label>
-              <select
-                value={selectedNeighborhood}
-                onChange={(e) => setSelectedNeighborhood(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4A6B] focus:border-transparent"
-              >
-                {availableNeighborhoods.map((nb) => (
-                  <option key={nb} value={nb}>
-                    {nb}
-                  </option>
-                ))}
-              </select>
-            </div>
+    <div className="px-8 py-2">
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('neighborhood.startDate', 'Start Date')}
-              </label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4A6B] focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('neighborhood.endDate', 'End Date')}
-              </label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4A6B] focus:border-transparent"
-              />
-            </div>
-          </div>
-
-          <button
-            onClick={() => window.print()}
-            className="px-6 py-2 bg-[#1A4A6B] text-white rounded-lg hover:bg-[#143850] print:hidden"
-          >
-            {t('neighborhood.printPDF', 'Print / Save as PDF')}
-          </button>
-        </div>
-      </div>
-
-      {/* Print Header */}
-      <div className="hidden print:block bg-white p-8 text-center border-b-4 border-[#1A4A6B]">
-        <div className="text-4xl font-bold text-[#1A4A6B] mb-2">
-          Cincinnati Neighborhood Profile
-        </div>
-        <div className="text-2xl font-semibold text-gray-900 mb-4">
-          {selectedNeighborhood}
-        </div>
-        <div className="text-sm text-gray-600">
-          Generated {new Date().toLocaleDateString()}
-        </div>
-      </div>
-
-      {/* Neighborhood Rankings Snapshot */}
-      {rankings && (
-        <div className="bg-white rounded-lg shadow-sm p-4 flex flex-col sm:flex-row sm:items-center gap-4 print:hidden">
-          <div className="flex-1">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">How {selectedNeighborhood} ranks</p>
-            <div className="flex flex-wrap gap-x-6 gap-y-2">
-              {rankings.incomeRank != null && (
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-lg font-bold text-[#1A4A6B]">#{rankings.incomeRank}</span>
-                  <span className="text-xs text-gray-500">median income of {rankings.totalNeighborhoods}</span>
-                </div>
-              )}
-              {rankings.burdenRank != null && (
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-lg font-bold text-[#1A4A6B]">#{rankings.burdenRank}</span>
-                  <span className="text-xs text-gray-500">least rent-burdened of {rankings.totalNeighborhoods}</span>
-                </div>
-              )}
-            </div>
-            <p className="text-[10px] text-gray-400 mt-1.5">Based on ACS 2022 · Lower rank = more affordable · Compared to {rankings.totalNeighborhoods} Cincinnati neighborhoods</p>
-          </div>
-          {onViewMap && (
-            <button
-              onClick={onViewMap}
-              className="shrink-0 px-4 py-2 text-sm font-medium text-[#1A4A6B] border border-[#1A4A6B] rounded-lg hover:bg-blue-50 transition-colors whitespace-nowrap"
-            >
-              Compare all neighborhoods →
-            </button>
-          )}
-        </div>
-      )}
-
-      <div className="flex items-center gap-3 pt-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Economic Profile</span>
-        <div className="flex-1 h-px bg-gray-200" />
-      </div>
-
-      {/* Income & Housing — per-neighborhood ACS data */}
-      <DataCard
-        title={t('neighborhood.censusData', 'Income & Housing')}
-        loading={censusLoading}
-        error={null}
-        empty={false}
-        className="print-page"
+      {/* ── Top controls bar ─────────────────────────────────────────────── */}
+      <div
+        className="flex flex-wrap items-center gap-4 py-5 text-[13px] no-print"
+        style={{ color: C.muted }}
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-blue-50 p-4 rounded">
-            <div className="text-xs text-gray-600 uppercase tracking-wide">
-              {t('neighborhood.medianHouseholdIncome', 'Median Household Income')}
-            </div>
-            <div className="text-2xl font-bold text-[#1A4A6B] mt-2">
-              {censusData?.medianHouseholdIncome != null
-                ? formatCurrency(censusData.medianHouseholdIncome)
-                : '—'}
-            </div>
-          </div>
+        <span className="smallcaps">Neighborhood</span>
+        <select
+          value={selectedNeighborhood}
+          onChange={(e) => setSelectedNeighborhood(e.target.value)}
+          className="appearance-none pl-3 pr-8 py-1.5 rounded-md font-medium text-[14px] cursor-pointer"
+          style={{
+            background: C.paper,
+            color:      C.ink,
+            border:     `1px solid ${C.rule}`,
+            fontFamily: 'Newsreader, serif',
+          }}
+        >
+          {availableNeighborhoods.map((nb) => (
+            <option key={nb} value={nb}>{nb}</option>
+          ))}
+        </select>
 
-          <div className="bg-amber-50 p-4 rounded">
-            <div className="text-xs text-gray-600 uppercase tracking-wide">
-              {t('neighborhood.medianGrossRent', 'Median Gross Rent')}
-            </div>
-            <div className="text-2xl font-bold text-[#C8861A] mt-2">
-              {censusData?.medianGrossRent != null
-                ? `${formatCurrency(censusData.medianGrossRent)}/mo`
-                : '—'}
-            </div>
-          </div>
+        <span style={{ color: C.rule }}>·</span>
 
-          <div className="bg-green-50 p-4 rounded">
-            <div className="text-xs text-gray-600 uppercase tracking-wide">
-              {t('neighborhood.rentBurdenRate', 'Rent Burden Rate')}
-            </div>
-            <div className="text-2xl font-bold text-green-700 mt-2">
-              {censusData?.rentBurdenRate != null
-                ? `${censusData.rentBurdenRate.toFixed(0)}%`
-                : '—'}
-            </div>
-            <div className="text-xs text-gray-500 mt-1">
-              {t('neighborhood.rentBurdenNote', '% of renters paying >30% of income on rent')}
-            </div>
-          </div>
-        </div>
-
-        {censusData == null && !censusLoading && (
-          <div className="mt-3 text-xs text-gray-500 italic">
-            {t('neighborhood.censusNoData', 'No ACS data available for this neighborhood.')}
-          </div>
-        )}
-
-        <div className="mt-4 text-xs text-gray-500 italic border-t pt-4">
-          {t(
-            'neighborhood.censusNote',
-            'ACS 2022 5-Year Estimates — neighborhood averages weighted by Census tract population.'
-          )}
-        </div>
-
-        <DataAttribution
-          source={t('neighborhood.attributionCensus', 'U.S. Census Bureau ACS 2022')}
-          url="https://www.census.gov/programs-surveys/acs"
+        <label className="smallcaps">From</label>
+        <input
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className="px-2 py-1 rounded-md text-[13px]"
+          style={{ background: C.paper, border: `1px solid ${C.rule}`, color: C.ink }}
         />
-      </DataCard>
+        <label className="smallcaps">To</label>
+        <input
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          className="px-2 py-1 rounded-md text-[13px]"
+          style={{ background: C.paper, border: `1px solid ${C.rule}`, color: C.ink }}
+        />
 
-      {/* Racial Equity & Mortgage Lending — unified panel with 3 selectable views */}
-      {/* Self-contained: transplant to own tab by wrapping in a tab shell */}
-      <UnifiedEquitySection neighborhood={selectedNeighborhood} />
+        <div className="flex-1" />
 
-      <ExpandedDemographicsSection neighborhood={selectedNeighborhood} />
+        <button
+          onClick={() => window.print()}
+          className="flex items-center gap-1.5 hover:underline transition-colors"
+          style={{ color: C.river }}
+        >
+          Print brief
+        </button>
 
-      <div className="flex items-center gap-3 pt-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Public Safety</span>
-        <div className="flex-1 h-px bg-gray-200" />
+        {onViewMap && (
+          <button
+            onClick={onViewMap}
+            className="flex items-center gap-1.5 hover:underline transition-colors"
+            style={{ color: C.river }}
+          >
+            Compare all →
+          </button>
+        )}
       </div>
 
-      <PublicSafetySection nbhSoQL={nbhSoQL} startDate={startDate} endDate={endDate} />
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      <header className="page-paper rounded-md px-10 pt-10 pb-9 mb-8">
+        <div className="flex items-baseline justify-between mb-3">
+          <span className="smallcaps" style={{ color: C.brick }}>Neighborhood Profile</span>
+          <span className="serif italic text-[14px]" style={{ color: C.muted }}>
+            Cincinnati, Ohio
+          </span>
+        </div>
 
-      <div className="flex items-center gap-3 pt-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">City Services</span>
-        <div className="flex-1 h-px bg-gray-200" />
-      </div>
+        <h1
+          className="serif font-medium leading-none"
+          style={{ fontSize: 'clamp(48px, 7vw, 96px)', letterSpacing: '-0.025em', color: C.ink }}
+        >
+          {selectedNeighborhood}<span style={{ color: C.brick }}>.</span>
+        </h1>
 
-      <CityServicesSection nbhSoQL={nbhSoQL} startDate={startDate} endDate={endDate} />
-
-      <div className="flex items-center gap-3 pt-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Transportation</span>
-        <div className="flex-1 h-px bg-gray-200" />
-      </div>
-
-      <TransitEquitySection neighborhood={selectedNeighborhood} />
-
-      <div className="flex items-center gap-3 pt-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Development &amp; Land Use</span>
-        <div className="flex-1 h-px bg-gray-200" />
-      </div>
-
-      <DevelopmentSection nbhSoQL={nbhSoQL} neighborhood={selectedNeighborhood} />
-
-      <div className="flex items-center gap-3 pt-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Affordable Housing</span>
-        <div className="flex-1 h-px bg-gray-200" />
-      </div>
-
-      <HousingInventorySection neighborhood={selectedNeighborhood} />
-
-      <div className="flex items-center gap-3 pt-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Public Health</span>
-        <div className="flex-1 h-px bg-gray-200" />
-      </div>
-
-      {/* Food Safety */}
-      <DataCard
-        title={t('neighborhood.foodSafety', 'Food Safety')}
-        loading={foodSafety.loading}
-        error={foodSafety.error}
-        empty={uniqueFacilities.length === 0}
-        className="print-page"
-      >
-        <p className="text-xs text-gray-500 italic mb-3">
-          {t('neighborhood.foodSafetyDef', 'Health inspection results for restaurants, food trucks, and other licensed food facilities. Each entry reflects the most recent inspection status within the selected date range.')}
-        </p>
-        {uniqueFacilities.length > 0 ? (
-          <div>
-            {activeViolations.size > 0 && (
-              <div className="bg-yellow-50 border border-yellow-200 p-3 rounded mb-3">
-                <div className="text-sm font-semibold text-yellow-900">
-                  {activeViolations.size} {t('neighborhood.facilitiesWithViolations', 'Facilities with Active Violations')}
-                </div>
-              </div>
+        <div
+          className="mt-6 grid gap-10 items-start"
+          style={{ gridTemplateColumns: rankings ? '1fr auto' : '1fr' }}
+        >
+          <div style={{ maxWidth: 760 }}>
+            <p className="serif leading-relaxed" style={{ fontSize: 18, color: C.ink }}>
+              {blurb}
+            </p>
+            {demoSentence && (
+              <p className="serif mt-2" style={{ fontSize: 15, color: C.muted }}>
+                {demoSentence}
+              </p>
             )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-              {uniqueFacilities.slice(0, 20).map((facility: any, idx: number) => {
-                const status = facility.action_status || '';
-                const hasViolation = !status.toLowerCase().includes('no violation') &&
-                  (status.toLowerCase().includes('violation') || status.toLowerCase().includes('fail') || status.toLowerCase().includes('critical'));
-                return (
-                  <div key={idx} className="border-b border-gray-100 pb-1.5">
-                    <div className="text-xs font-medium text-gray-900 truncate">
-                      {facility.business_name || facility.facility_name || facility.name}
+          </div>
+
+          {rankings && (
+            <div className="border-l pl-6 self-stretch shrink-0" style={{ borderColor: C.rule }}>
+              <div className="smallcaps mb-2" style={{ color: C.muted }}>Where it ranks</div>
+              <div className="space-y-2 text-[13px]">
+                {rankings.incomeRank != null && (
+                  <div className="tnum">
+                    <span className="serif font-medium" style={{ fontSize: 20, color: C.river }}>
+                      #{rankings.incomeRank}
+                    </span>
+                    <span style={{ color: C.muted }}>/{rankings.totalNeighborhoods} income</span>
+                  </div>
+                )}
+                {rankings.burdenRank != null && (
+                  <div className="tnum">
+                    <span className="serif font-medium" style={{ fontSize: 20, color: C.river }}>
+                      #{rankings.burdenRank}
+                    </span>
+                    <span style={{ color: C.muted }}>/{rankings.totalNeighborhoods} affordability</span>
+                  </div>
+                )}
+              </div>
+              <p className="text-[10px] mt-2" style={{ color: C.muted }}>ACS 2022 · {rankings.totalNeighborhoods} nbhds</p>
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* ── Two-column body: Visit Brief (sticky) + scrolling sections ────── */}
+      <div
+        className="grid gap-10 pb-16 items-start"
+        style={{ gridTemplateColumns: '320px 1fr' }}
+      >
+
+        {/* LEFT: Visit Brief rail */}
+        <aside className="no-print">
+          <VisitBriefSidebar
+            neighborhood={selectedNeighborhood}
+            topRequests={topRequests}
+            cityLifeExpectancy={CITY_LIFE_EXP}
+          />
+        </aside>
+
+        {/* RIGHT: scrolling editorial content */}
+        <article className="min-w-0 space-y-14">
+
+          {/* ── 1. Public Health ──────────────────────────────────────────── */}
+          <Section num={1} eyebrow="Public Health">
+            <PaintHeadline>
+              {lifeGap != null && lifeGap >= 3
+                ? <>Residents here live <span style={{ color: C.brick }}>{lifeGap.toFixed(0)} years less</span> than the average Cincinnatian.</>
+                : lifeGap != null && lifeGap <= -1
+                ? <>Residents here live <span style={{ color: C.hill }}>{Math.abs(lifeGap).toFixed(0)} years longer</span> than the city average.</>
+                : <>Health outcomes in this neighborhood track close to the city average — but the details matter.</>
+              }
+            </PaintHeadline>
+            <Lede>
+              {lifeYrs != null
+                ? <>Average life expectancy of <Chip tone={lifeGap != null && lifeGap >= 5 ? 'warn' : 'default'}>{lifeYrs} years</Chip> at birth, against a citywide <Chip>{CITY_LIFE_EXP} years</Chip>. Chronic disease rates — asthma, diabetes, high blood pressure — are the proximate cause. Income, housing, and environmental exposure are the upstream ones.</>
+                : <>Scroll below for CDC PLACES chronic disease rates and senior health indicators — the data that tells you what a neighborhood's healthcare burden actually looks like.</>
+              }
+            </Lede>
+            <div className="mt-8 space-y-6">
+              <LifeExpectancySection neighborhood={selectedNeighborhood} />
+              <HealthOutcomesSection neighborhood={selectedNeighborhood} />
+              <SeniorHealthSection neighborhood={selectedNeighborhood} />
+            </div>
+          </Section>
+
+          {/* ── 2. Income & Housing ──────────────────────────────────────── */}
+          <Section num={2} eyebrow="Income & Housing">
+            <PaintHeadline>
+              {incomeRatio != null && incomeRatio < 0.6
+                ? <><span style={{ color: C.river }}>Well below the city's median income</span> — and rent that still takes more than a third.</>
+                : incomeRatio != null && incomeRatio > 1.3
+                ? <>Above the city median, with <span style={{ color: C.hill }}>lower rent burden</span> than most Cincinnati neighborhoods.</>
+                : <>Income close to the city median, but rent burden is where the real picture shows.</>
+              }
+            </PaintHeadline>
+            <Lede>
+              {income != null
+                ? <>Median household income of <Chip>${(income / 1000).toFixed(0)}k</Chip>{' '}
+                    {rentBurden != null && <>, with <Chip tone={rentBurden > 40 ? 'warn' : rentBurden > 30 ? 'default' : 'good'}>{rentBurden.toFixed(0)}%</Chip> of renters cost-burdened — paying more than 30% of income on rent.</>}
+                    {' '}Cost-burden is the polite phrase for the line at which a missed shift or a copay becomes structurally consequential.</>
+                : <>Census income, rent, and affordability data for this neighborhood.</>
+              }
+            </Lede>
+            <div className="mt-8 space-y-6">
+              {/* Income & Housing card */}
+              <div className="page-paper rounded-md p-6">
+                <div className="smallcaps mb-4" style={{ color: C.muted }}>ACS 2022 estimates</div>
+                {censusLoading ? (
+                  <div className="text-[13px]" style={{ color: C.muted }}>Loading…</div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-5">
+                    <div>
+                      <div className="smallcaps mb-1.5" style={{ color: C.muted }}>Median income</div>
+                      <div className="serif tnum font-medium" style={{ fontSize: 28, color: C.ink }}>
+                        {censusData?.medianHouseholdIncome != null
+                          ? `$${(censusData.medianHouseholdIncome / 1000).toFixed(0)}k`
+                          : '—'}
+                      </div>
                     </div>
-                    <div className={`text-[10px] mt-0.5 ${hasViolation ? 'text-red-600 font-medium' : 'text-gray-400'}`}>
-                      {hasViolation ? '⚠ ' : ''}{status.slice(0, 40)}{status.length > 40 ? '…' : ''}
-                      {facility.action_date && (
-                        <span className="ml-1 text-gray-300">
-                          {new Date(facility.action_date).toLocaleDateString()}
-                        </span>
-                      )}
+                    <div>
+                      <div className="smallcaps mb-1.5" style={{ color: C.muted }}>Median rent</div>
+                      <div className="serif tnum font-medium" style={{ fontSize: 28, color: C.ink }}>
+                        {censusData?.medianGrossRent != null
+                          ? `$${censusData.medianGrossRent}/mo`
+                          : '—'}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="smallcaps mb-1.5" style={{ color: C.muted }}>Rent-burdened</div>
+                      <div
+                        className="serif tnum font-medium"
+                        style={{ fontSize: 28, color: rentBurden && rentBurden > 40 ? C.brick : C.ink }}
+                      >
+                        {censusData?.rentBurdenRate != null
+                          ? `${censusData.rentBurdenRate.toFixed(0)}%`
+                          : '—'}
+                      </div>
+                      <div className="text-[11px] mt-1" style={{ color: C.muted }}>pay &gt;30% on rent</div>
                     </div>
                   </div>
-                );
-              })}
+                )}
+              </div>
+              <UnifiedEquitySection neighborhood={selectedNeighborhood} />
+              <ExpandedDemographicsSection neighborhood={selectedNeighborhood} />
+              <HousingInventorySection neighborhood={selectedNeighborhood} />
             </div>
-          </div>
-        ) : (
-          <EmptyState message={t('neighborhood.noFoodSafety', 'No facilities found')} />
-        )}
-        <DataAttribution
-          source={t('neighborhood.attributionFoodSafety', 'Food Safety')}
-          uid="rg6p-b3h3"
-        />
-      </DataCard>
+          </Section>
 
-      <LifeExpectancySection neighborhood={selectedNeighborhood} />
-      <HealthOutcomesSection neighborhood={selectedNeighborhood} />
-      <SeniorHealthSection neighborhood={selectedNeighborhood} />
+          {/* ── 3. Public Safety ─────────────────────────────────────────── */}
+          <Section num={3} eyebrow="Public Safety">
+            <PaintHeadline>
+              Crime patterns here follow the city's rhythm — a midsummer rise, a winter drop — but the rate per resident is what counts.
+            </PaintHeadline>
+            <Lede>
+              Incident data below comes from CPD's STARS reporting system. Use it to understand patterns and timing, not just raw totals — the population denominator matters, and Avondale's density means the per-capita rate can look different than the headline count.
+            </Lede>
+            <div className="mt-8">
+              <PublicSafetySection nbhSoQL={nbhSoQL} startDate={startDate} endDate={endDate} />
+            </div>
+          </Section>
 
-      {/* ── Community & Civic ─────────────────────────────────────────────── */}
-      <div className="flex items-center gap-3 pt-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Community &amp; Civic</span>
-        <div className="flex-1 h-px bg-gray-200" />
+          {/* ── 4. City Services ─────────────────────────────────────────── */}
+          <Section num={4} eyebrow="City Services (311)">
+            <PaintHeadline>
+              {topRequests.length > 0
+                ? <>The top 311 call is <span style={{ color: C.river }}>{topRequests[0].label.toLowerCase()}</span> — and how fast the city responds is the more telling number.</>
+                : <>311 requests reveal both what's breaking and how long residents wait for a response.</>
+              }
+            </PaintHeadline>
+            <Lede>
+              Response time and closure rate matter as much as volume. A flood of open requests in a given category is a signal about service equity, not just demand.
+            </Lede>
+            <div className="mt-8">
+              <CityServicesSection nbhSoQL={nbhSoQL} startDate={startDate} endDate={endDate} />
+            </div>
+          </Section>
+
+          {/* ── 5. Transportation ────────────────────────────────────────── */}
+          <Section num={5} eyebrow="Transportation">
+            <PaintHeadline>
+              Transit access here is about stops on the map, but the real question is whether routes run when people need to get to work.
+            </PaintHeadline>
+            <Lede>
+              SORTA bus stop density and income are shown together below — the neighborhoods with the fewest stops are often those with the fewest cars.
+            </Lede>
+            <div className="mt-8">
+              <TransitEquitySection neighborhood={selectedNeighborhood} />
+            </div>
+          </Section>
+
+          {/* ── 6. Development ───────────────────────────────────────────── */}
+          <Section num={6} eyebrow="Development & Land Use">
+            <PaintHeadline>
+              Building permits track investment — what's being built, where, and by whom.
+            </PaintHeadline>
+            <Lede>
+              Permit volume alone doesn't distinguish community-serving development from displacement-driving investment. Look at the permit type and the pace of change together.
+            </Lede>
+            <div className="mt-8">
+              <DevelopmentSection nbhSoQL={nbhSoQL} neighborhood={selectedNeighborhood} />
+            </div>
+          </Section>
+
+          {/* ── 7. Food Safety ───────────────────────────────────────────── */}
+          <Section num={7} eyebrow="Food Safety">
+            <PaintHeadline>
+              {uniqueFacilities.length > 0
+                ? <><span style={{ color: C.river }}>{uniqueFacilities.length} facilities</span> inspected in the last year — {activeViolations.size > 0 ? `${activeViolations.size} with active violations.` : 'none with active violations.'}</>
+                : <>Health inspection results for licensed food facilities in this neighborhood.</>
+              }
+            </PaintHeadline>
+            <Lede>
+              Each row below reflects the most recent inspection within the selected date range. Violations flagged as "critical" can indicate risk to public health; non-critical violations are typically documentation or facility issues.
+            </Lede>
+            <div className="mt-8">
+              <DataCard
+                title={t('neighborhood.foodSafety', 'Food Safety')}
+                loading={foodSafety.loading}
+                error={foodSafety.error}
+                empty={uniqueFacilities.length === 0}
+                className="print-page"
+              >
+                {uniqueFacilities.length > 0 && (
+                  <div>
+                    {activeViolations.size > 0 && (
+                      <div
+                        className="rounded-md px-4 py-3 mb-4 text-[13px]"
+                        style={{ background: C.brickLight, color: '#7c2e16' }}
+                      >
+                        <strong>{activeViolations.size}</strong> facilit{activeViolations.size === 1 ? 'y' : 'ies'} with active violations in this period.
+                      </div>
+                    )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+                      {uniqueFacilities.slice(0, 20).map((facility: any, idx: number) => {
+                        const status = facility.action_status || '';
+                        const hasViolation = !status.toLowerCase().includes('no violation') &&
+                          (status.toLowerCase().includes('violation') || status.toLowerCase().includes('fail') || status.toLowerCase().includes('critical'));
+                        return (
+                          <div key={idx} className="border-b pb-1.5" style={{ borderColor: C.rule }}>
+                            <div className="text-[13px] font-medium truncate" style={{ color: C.ink }}>
+                              {facility.business_name || facility.facility_name || facility.name}
+                            </div>
+                            <div className="text-[11px] mt-0.5" style={{ color: hasViolation ? C.brick : C.muted }}>
+                              {hasViolation ? '⚠ ' : ''}{status.slice(0, 50)}{status.length > 50 ? '…' : ''}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+                {uniqueFacilities.length === 0 && !foodSafety.loading && (
+                  <EmptyState message={t('neighborhood.noFoodSafety', 'No facilities found in this date range')} />
+                )}
+                <DataAttribution source="Food Safety" uid="rg6p-b3h3" />
+              </DataCard>
+            </div>
+          </Section>
+
+          {/* ── 8. Community & Civic ─────────────────────────────────────── */}
+          <Section num={8} eyebrow="Community & Civic">
+            <PaintHeadline>
+              The neighborhood council and recreation center are the civic infrastructure most residents actually touch.
+            </PaintHeadline>
+            <Lede>
+              Community councils are the formal voice of neighborhoods at City Hall — but their meeting frequency and accessibility vary widely. Recreation centers serve as de-facto community hubs, especially for youth and seniors.
+            </Lede>
+            <div className="mt-8 space-y-6">
+              <CommunityCouncilSection neighborhood={selectedNeighborhood} />
+              <RecreationCentersSection neighborhood={selectedNeighborhood} />
+            </div>
+          </Section>
+
+          {/* ── 9. Organizations ─────────────────────────────────────────── */}
+          <Section num={9} eyebrow="Resources & Organizations">
+            <PaintHeadline>
+              These organizations work on the conditions the data above describes.
+            </PaintHeadline>
+            <Lede>
+              Direct-service organizations address immediate needs; organizing groups build the power to change the upstream conditions that create those needs.
+            </Lede>
+            <div className="mt-8 page-paper rounded-md p-6">
+              <CivicOrgsPanel
+                compact
+                intro={`Organizations working on the issues surfaced in ${selectedNeighborhood}'s data.`}
+              />
+            </div>
+          </Section>
+
+        </article>
       </div>
-
-      <CommunityCouncilSection neighborhood={selectedNeighborhood} />
-      <RecreationCentersSection neighborhood={selectedNeighborhood} />
-
-      {/* ── Resources & Organizations ──────────────────────────────────────── */}
-      <div className="flex items-center gap-3 pt-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Resources &amp; Organizations</span>
-        <div className="flex-1 h-px bg-gray-200" />
-      </div>
-
-      <DataCard title="Cincinnati Civic Organizations">
-        <CivicOrgsPanel
-          compact
-          intro={`These organizations work on the issues surfaced in ${selectedNeighborhood}'s data. Direct service orgs can help residents immediately — organizing groups build the power to change the conditions that create these problems.`}
-        />
-      </DataCard>
-
     </div>
   );
 }

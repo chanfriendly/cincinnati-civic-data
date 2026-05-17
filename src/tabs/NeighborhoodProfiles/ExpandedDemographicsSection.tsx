@@ -60,10 +60,10 @@ function cityAverages(data: DemoData): Partial<DemoRecord> {
 }
 
 // Mini horizontal bar component
-function MiniBar({ value, max = 100, color = '#1A4A6B' }: { value: number; max?: number; color?: string }) {
+function MiniBar({ value, max = 100, color = '#2f5d62' }: { value: number; max?: number; color?: string }) {
   const pct = Math.min(100, (value / max) * 100);
   return (
-    <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden mt-1">
+    <div className="h-1.5 w-full rounded-full overflow-hidden mt-1" style={{ background: '#e4ddd2' }}>
       <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: color }} />
     </div>
   );
@@ -77,9 +77,9 @@ function CmpBadge({ value, cityAvg, higherIsBetter = true }: { value: number; ci
   const better = higherIsBetter ? diff > threshold : diff < -threshold;
   const worse  = higherIsBetter ? diff < -threshold : diff > threshold;
 
-  if (better) return <span className="ml-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">better than avg</span>;
-  if (worse)  return <span className="ml-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-200">worse than avg</span>;
-  return <span className="ml-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-gray-50 text-gray-500 border border-gray-200">near avg</span>;
+  if (better) return <span className="ml-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ background: '#ecefdf', color: '#5a7a3e', border: '1px solid #cfd9b2' }}>better than avg</span>;
+  if (worse)  return <span className="ml-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ background: '#f5e8e1', color: '#b34728', border: '1px solid #e6c5b2' }}>worse than avg</span>;
+  return <span className="ml-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ background: '#f6f1ea', color: '#6b5f55', border: '1px solid #e4ddd2' }}>near avg</span>;
 }
 
 interface StatRowProps {
@@ -97,13 +97,13 @@ function StatRow({ label, value, cityAvg, suffix = '%', higherIsBetter = true, b
   return (
     <div className="py-1.5">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-gray-600">{label}</span>
+        <span className="text-xs" style={{ color: '#6b5f55' }}>{label}</span>
         <div className="flex items-center">
-          <span className="text-xs font-semibold text-gray-900">{value}{suffix}</span>
+          <span className="text-xs font-semibold" style={{ color: '#1a1410' }}>{value}{suffix}</span>
           {cityAvg != null && <CmpBadge value={value} cityAvg={cityAvg} higherIsBetter={higherIsBetter} />}
         </div>
       </div>
-      <MiniBar value={value} max={maxBar} color={barColor ?? '#1A4A6B'} />
+      <MiniBar value={value} max={maxBar} color={barColor ?? '#2f5d62'} />
     </div>
   );
 }
@@ -137,82 +137,76 @@ export default function ExpandedDemographicsSection({ neighborhood }: Props) {
       {record && (
         <div className="space-y-5">
           {/* Population headline */}
-          <div className="flex items-center gap-4 pb-3 border-b border-gray-100">
+          <div className="flex items-center gap-4 pb-3" style={{ borderBottom: '1px solid #e4ddd2' }}>
             <div className="text-center">
-              <div className="text-xl font-bold text-[#1A4A6B]">{record.totalPopulation.toLocaleString()}</div>
-              <div className="text-[10px] text-gray-500 uppercase tracking-widest">Total Population</div>
+              <div className="text-xl font-bold" style={{ color: '#2f5d62' }}>{record.totalPopulation.toLocaleString()}</div>
+              <div className="text-[10px] uppercase tracking-widest" style={{ color: '#6b5f55' }}>Total Population</div>
             </div>
             {record.medianAge != null && (
               <div className="text-center">
-                <div className="text-xl font-bold text-[#1A4A6B]">{record.medianAge}</div>
-                <div className="text-[10px] text-gray-500 uppercase tracking-widest">Median Age</div>
+                <div className="text-xl font-bold" style={{ color: '#2f5d62' }}>{record.medianAge}</div>
+                <div className="text-[10px] uppercase tracking-widest" style={{ color: '#6b5f55' }}>Median Age</div>
               </div>
             )}
           </div>
           {record.tractCount >= 6 && (
-            <div className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+            <div className="text-[11px] rounded px-3 py-2" style={{ color: '#c8861a', background: '#f5e8e1', border: '1px solid #e6c5b2' }}>
               ⚠ Population count may be over-estimated. This neighborhood's centroid aligns with {record.tractCount} Census tracts, some of which may extend into adjacent areas. Use the figure as an approximate order of magnitude.
             </div>
           )}
 
           {/* Age structure */}
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Age Structure</div>
-            <div className="divide-y divide-gray-50">
-              <StatRow label="Under 18" value={record.under18Pct} cityAvg={cityAvg.under18Pct} barColor="#3B82F6" />
-              <StatRow label="65 and older" value={record.over65Pct} cityAvg={cityAvg.over65Pct} barColor="#8B5CF6" />
+            <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#6b5f55' }}>Age Structure</div>
+            <div className="divide-y">
+              <StatRow label="Under 18" value={record.under18Pct} cityAvg={cityAvg.under18Pct} />
+              <StatRow label="65 and older" value={record.over65Pct} cityAvg={cityAvg.over65Pct} />
             </div>
           </div>
 
           {/* Origin & Language */}
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Origin & Language</div>
-            <div className="divide-y divide-gray-50">
-              <StatRow label="Speak non-English at home" value={record.nonEnglishHomePct} cityAvg={cityAvg.nonEnglishHomePct} barColor="#F59E0B" />
-              <StatRow label="Foreign-born" value={record.foreignBornPct} cityAvg={cityAvg.foreignBornPct} barColor="#10B981" />
+            <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#6b5f55' }}>Origin & Language</div>
+            <div className="divide-y">
+              <StatRow label="Speak non-English at home" value={record.nonEnglishHomePct} cityAvg={cityAvg.nonEnglishHomePct} higherIsBetter={false} />
+              <StatRow label="Foreign-born" value={record.foreignBornPct} cityAvg={cityAvg.foreignBornPct} />
             </div>
           </div>
 
           {/* Education */}
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Education (Pop. 25+)</div>
-            <div className="divide-y divide-gray-50">
-              <StatRow label="HS diploma or higher" value={record.hsCompletionPct} cityAvg={cityAvg.hsCompletionPct} barColor="#1A4A6B" />
-              <StatRow label="Bachelor's degree or higher" value={record.bachelorsPlusPct} cityAvg={cityAvg.bachelorsPlusPct} barColor="#2563EB" />
+            <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#6b5f55' }}>Education (Pop. 25+)</div>
+            <div className="divide-y">
+              <StatRow label="HS diploma or higher" value={record.hsCompletionPct} cityAvg={cityAvg.hsCompletionPct} />
+              <StatRow label="Bachelor's degree or higher" value={record.bachelorsPlusPct} cityAvg={cityAvg.bachelorsPlusPct} />
             </div>
           </div>
 
           {/* Household */}
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Household Type</div>
-            <div className="divide-y divide-gray-50">
-              <StatRow label="Living alone (of all households)" value={record.livingAlonePct} cityAvg={cityAvg.livingAlonePct} barColor="#6366F1" />
+            <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#6b5f55' }}>Household Type</div>
+            <div className="divide-y">
+              <StatRow label="Living alone (of all households)" value={record.livingAlonePct} cityAvg={cityAvg.livingAlonePct} higherIsBetter={false} />
             </div>
           </div>
 
           {/* Broadband */}
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Internet Access</div>
-            <div className="divide-y divide-gray-50">
-              <StatRow label="Broadband (cable/fiber/DSL)" value={record.broadbandPct} cityAvg={cityAvg.broadbandPct} barColor="#059669" />
-              <StatRow
-                label="No internet access"
-                value={record.noInternetPct}
-                cityAvg={cityAvg.noInternetPct}
-                higherIsBetter={false}
-                barColor="#EF4444"
-              />
+            <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#6b5f55' }}>Internet Access</div>
+            <div className="divide-y">
+              <StatRow label="Broadband (cable/fiber/DSL)" value={record.broadbandPct} cityAvg={cityAvg.broadbandPct} />
+              <StatRow label="No internet access" value={record.noInternetPct} cityAvg={cityAvg.noInternetPct} higherIsBetter={false} />
             </div>
           </div>
 
-          <p className="text-[10px] text-gray-400 italic pt-1">
+          <p className="text-[10px] italic pt-1" style={{ color: '#6b5f55' }}>
             Data: ACS 5-Year 2022. Census tracts mapped to neighborhoods via nearest-centroid approximation.
             {record.tractCount > 1 ? ` Aggregated across ${record.tractCount} tracts; tracts near neighborhood boundaries may span adjacent areas.` : ''}
           </p>
         </div>
       )}
 
-      <div className="mt-4 pt-3 border-t border-gray-100">
+      <div className="mt-4 pt-3 border-t" style={{ borderColor: '#e4ddd2' }}>
         <DataAttribution source="U.S. Census Bureau · American Community Survey 5-Year 2022" url="https://www.census.gov/programs-surveys/acs" />
       </div>
     </DataCard>

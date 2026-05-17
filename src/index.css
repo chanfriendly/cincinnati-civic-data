@@ -1,33 +1,102 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+/* Editorial typography — Newsreader serif + Public Sans UI */
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=Public+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  html { font-family: 'IBM Plex Sans', system-ui, sans-serif; }
-  body { @apply bg-civic-gray text-gray-800 antialiased; }
+  html {
+    font-family: 'Public Sans', system-ui, sans-serif;
+    font-feature-settings: "ss01" on, "cv11" on;
+  }
+  body {
+    @apply bg-limestone text-ink antialiased;
+  }
 }
 
-/* ── Print styles (Tab 2 Neighborhood Profiles) ────────────────────────────── */
+/* ── Design atom utilities ───────────────────────────────────────────────── */
+
+.serif   { font-family: 'Newsreader', Georgia, serif; }
+.sans    { font-family: 'Public Sans', system-ui, sans-serif; }
+.tnum    { font-variant-numeric: tabular-nums; }
+
+.smallcaps {
+  font-family: 'Public Sans', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+/* Inline data chips — numbers embedded in prose */
+.chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-family: 'Public Sans', sans-serif;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  background: #e6efef;
+  color: #1f3f43;
+  font-size: 0.875em;
+  line-height: 1.4;
+}
+.chip.warn { background: #f5e8e1; color: #7c2e16; }
+.chip.good { background: #ecefdf; color: #3d5527; }
+
+/* Paper card surface */
+.page-paper {
+  background: #fbf8f3;
+  border: 1px solid #e4ddd2;
+}
+
+/* Topographic dot-grid background */
+.topo-bg {
+  background-color: #f6f1ea;
+  background-image: radial-gradient(circle at 1px 1px, rgba(47,93,98,0.10) 1px, transparent 0);
+  background-size: 14px 14px;
+}
+
+/* Drop-cap for editorial lede paragraphs */
+.drop-cap::first-letter {
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 600;
+  float: left;
+  font-size: 3.4em;
+  line-height: 0.85;
+  padding: 0.05em 0.08em 0 0;
+  color: #1a1410;
+}
+
+/* ── Page transitions ────────────────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.fade-up { animation: fade-up 0.25s ease-out; }
+
+/* ── Print styles ────────────────────────────────────────────────────────── */
 @media print {
   .no-print { display: none !important; }
   .print-only { display: block !important; }
   body { background: white; }
   .print-page { box-shadow: none !important; border: none !important; }
 }
-
 .print-only { display: none; }
 
 /* ── Leaflet map fix ─────────────────────────────────────────────────────── */
 .leaflet-container { font-family: inherit; }
 
-/* ── Scrollbar hide utility (used by TabNav) ─────────────────────────────── */
+/* ── Scrollbar hide utility ──────────────────────────────────────────────── */
 .scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 
 /* ── Skeleton animation ──────────────────────────────────────────────────── */
 @keyframes skeleton-pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  50%       { opacity: 0.4; }
 }
 .skeleton { animation: skeleton-pulse 1.5s ease-in-out infinite; }

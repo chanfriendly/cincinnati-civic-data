@@ -90,34 +90,34 @@ export default function DevelopmentSection({ nbhSoQL, neighborhood }: Props) {
     >
       {/* KPI row */}
       <div className="grid grid-cols-3 gap-3 mb-5">
-        <div className="bg-blue-50 p-4 rounded">
-          <div className="text-2xl font-bold text-[#1A4A6B]">{totalPermits.toLocaleString()}</div>
-          <div className="text-xs text-blue-400 font-semibold mt-1">Building Permits</div>
-          <div className="text-xs text-gray-400 mt-0.5">structural only, excl. trade permits</div>
+        <div className="p-4 rounded" style={{ background: '#e6efef' }}>
+          <div className="text-2xl font-bold" style={{ color: '#2f5d62' }}>{totalPermits.toLocaleString()}</div>
+          <div className="text-xs font-semibold mt-1" style={{ color: '#2f5d62' }}>Building Permits</div>
+          <div className="text-xs mt-0.5" style={{ color: '#6b5f55' }}>structural only, excl. trade permits</div>
         </div>
-        <div className="bg-green-50 p-4 rounded">
-          <div className="text-2xl font-bold text-green-700">
+        <div className="p-4 rounded" style={{ background: '#ecefdf' }}>
+          <div className="text-2xl font-bold" style={{ color: '#5a7a3e' }}>
             {abatementTotal > 0
               ? formatCurrency(abatementTotal)
               : activeAbatements > 0
               ? `${activeAbatements} active`
               : '—'}
           </div>
-          <div className="text-xs text-green-500 font-semibold mt-1">Tax Abatement Value</div>
-          <div className="text-xs text-gray-400 mt-0.5">
+          <div className="text-xs font-semibold mt-1" style={{ color: '#5a7a3e' }}>Tax Abatement Value</div>
+          <div className="text-xs mt-0.5" style={{ color: '#6b5f55' }}>
             {activeAbatements} active abatement{activeAbatements !== 1 ? 's' : ''}
           </div>
         </div>
-        <div className="bg-amber-50 p-4 rounded">
-          <div className="text-2xl font-bold text-[#C8861A]">{totalBlight.toLocaleString()}</div>
-          <div className="text-xs text-amber-400 font-semibold mt-1">Blight Records</div>
-          <div className="text-xs text-gray-400 mt-0.5">active PLAP complaints</div>
+        <div className="p-4 rounded" style={{ background: '#f5e8e1' }}>
+          <div className="text-2xl font-bold" style={{ color: '#c8861a' }}>{totalBlight.toLocaleString()}</div>
+          <div className="text-xs font-semibold mt-1" style={{ color: '#c8861a' }}>Blight Records</div>
+          <div className="text-xs mt-0.5" style={{ color: '#6b5f55' }}>active PLAP complaints</div>
         </div>
       </div>
 
       {/* Demolition alert */}
       {demolitionCount > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-5 flex items-start gap-2 text-sm text-red-800">
+        <div className="rounded-lg p-3 mb-5 flex items-start gap-2 text-sm" style={{ background: '#f5e8e1', border: '1px solid #e6c5b2', color: '#b34728' }}>
           <span className="text-base mt-0.5 shrink-0">⚠</span>
           <span>
             <strong>
@@ -131,7 +131,7 @@ export default function DevelopmentSection({ nbhSoQL, neighborhood }: Props) {
       {/* Permits by type chart — demolitions highlighted in red */}
       {permitsByType.length > 0 ? (
         <>
-          <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
+          <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: '#6b5f55' }}>
             Permits by type
           </div>
           <ResponsiveContainer width="100%" height={220}>
@@ -162,7 +162,7 @@ export default function DevelopmentSection({ nbhSoQL, neighborhood }: Props) {
         <EmptyState message="No permits found" />
       )}
 
-      <div className="mt-4 pt-3 border-t border-gray-100 flex flex-wrap gap-4">
+      <div className="mt-4 pt-3 flex flex-wrap gap-4" style={{ borderTop: '1px solid #e4ddd2' }}>
         <DataAttribution source="Building Permits" uid="uhjb-xac9" />
         <DataAttribution source="Tax Abatements" uid="tkp7-yf64" />
         <DataAttribution source="PLAP Blight" uid="pk9w-99n6" />

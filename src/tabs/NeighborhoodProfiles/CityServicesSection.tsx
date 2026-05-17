@@ -40,10 +40,10 @@ function HBarList({ items, color }: { items: { type: string; count: number }[]; 
       {items.map(({ type, count }) => (
         <div key={type}>
           <div className="flex justify-between text-xs mb-1">
-            <span className="text-gray-700 font-medium truncate max-w-[80%]">{type}</span>
-            <span className="text-gray-400 font-semibold ml-2 shrink-0">{count.toLocaleString()}</span>
+            <span className="font-medium truncate max-w-[80%]" style={{ color: '#1a1410' }}>{type}</span>
+            <span className="font-semibold ml-2 shrink-0" style={{ color: '#6b5f55' }}>{count.toLocaleString()}</span>
           </div>
-          <div className="h-1.5 bg-gray-100 rounded-full">
+          <div className="h-1.5 rounded-full" style={{ background: '#f6f1ea' }}>
             <div
               className="h-1.5 rounded-full transition-all duration-300"
               style={{ width: `${(count / max) * 100}%`, backgroundColor: color }}
@@ -135,32 +135,32 @@ export default function CityServicesSection({ nbhSoQL, startDate, endDate }: Pro
 
         {/* ── Left: 311 ── */}
         <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
+          <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: '#6b5f55' }}>
             311 Non-Emergency Requests
           </div>
 
           <div className="grid grid-cols-3 gap-2 mb-4">
-            <div className="bg-blue-50 p-3 rounded text-center">
-              <div className="text-xl font-bold text-[#1A4A6B]">{total311.toLocaleString()}</div>
-              <div className="text-xs text-gray-500 mt-1">Total Requests</div>
+            <div className="p-3 rounded text-center" style={{ background: '#e6efef' }}>
+              <div className="text-xl font-bold" style={{ color: '#2f5d62' }}>{total311.toLocaleString()}</div>
+              <div className="text-xs mt-1" style={{ color: '#6b5f55' }}>Total Requests</div>
             </div>
-            <div className="bg-amber-50 p-3 rounded text-center">
-              <div className="text-xl font-bold text-amber-700">
+            <div className="p-3 rounded text-center" style={{ background: '#f5e8e1' }}>
+              <div className="text-xl font-bold" style={{ color: '#c8861a' }}>
                 {openRequestCount.toLocaleString()}
               </div>
-              <div className="text-xs text-gray-500 mt-1">Still Open</div>
+              <div className="text-xs mt-1" style={{ color: '#6b5f55' }}>Still Open</div>
             </div>
-            <div className="bg-green-50 p-3 rounded text-center">
-              <div className="text-xl font-bold text-green-700">
+            <div className="p-3 rounded text-center" style={{ background: '#ecefdf' }}>
+              <div className="text-xl font-bold" style={{ color: '#5a7a3e' }}>
                 {avgResolutionDays != null ? `${avgResolutionDays}d` : '—'}
               </div>
-              <div className="text-xs text-gray-500 mt-1">Avg Resolution</div>
+              <div className="text-xs mt-1" style={{ color: '#6b5f55' }}>Avg Resolution</div>
             </div>
           </div>
 
           {requests311ByType.length > 0 ? (
             <>
-              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
+              <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#6b5f55' }}>
                 Top request types
               </div>
               <HBarList items={requests311ByType.slice(0, 6)} color="#6366F1" />
@@ -174,10 +174,10 @@ export default function CityServicesSection({ nbhSoQL, startDate, endDate }: Pro
 
         {/* ── Right: Community Perceptions ── */}
         <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">
+          <div className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: '#6b5f55' }}>
             Resident Satisfaction Survey (1–5)
           </div>
-          <p className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded px-2 py-1 mb-3">
+          <p className="text-xs rounded px-2 py-1 mb-3" style={{ color: '#c8861a', background: '#f5e8e1', border: '1px solid #e6c5b2' }}>
             City-wide averages — not specific to {/* neighborhood name injected below if possible */}this neighborhood
           </p>
 
@@ -186,13 +186,13 @@ export default function CityServicesSection({ nbhSoQL, startDate, endDate }: Pro
               {perceptionAverages.map(({ label, avg }) => (
                 <div key={label}>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-700">{label}</span>
-                    <span className="font-semibold text-[#1A4A6B]">{avg} / 5</span>
+                    <span style={{ color: '#1a1410' }}>{label}</span>
+                    <span className="font-semibold" style={{ color: '#2f5d62' }}>{avg} / 5</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full rounded-full h-2" style={{ background: '#e4ddd2' }}>
                     <div
-                      className="bg-[#1A4A6B] rounded-full h-2 transition-all"
-                      style={{ width: `${((avg ?? 0) / 5) * 100}%` }}
+                      className="rounded-full h-2 transition-all"
+                      style={{ width: `${((avg ?? 0) / 5) * 100}%`, background: '#2f5d62' }}
                     />
                   </div>
                 </div>

@@ -78,7 +78,7 @@ export default function LifeExpectancySection({ neighborhood }: Props) {
       empty={noData}
     >
       {noData && (
-        <p className="text-sm text-gray-500 italic">
+        <p className="text-sm italic" style={{ color: '#6b5f55' }}>
           No life expectancy estimate available for {neighborhood}. Census tracts with
           fewer than 5,000 residents or insufficient death records are suppressed in USALEEP data.
         </p>
@@ -89,22 +89,25 @@ export default function LifeExpectancySection({ neighborhood }: Props) {
           {/* Headline number */}
           <div className="flex items-end gap-4">
             <div>
-              <div className="text-4xl font-bold text-[#1A4A6B] leading-none">
+              <div className="text-4xl font-bold leading-none" style={{ color: '#2f5d62' }}>
                 {record.lifeExpectancy}
               </div>
-              <div className="text-xs text-gray-500 mt-1 uppercase tracking-widest">
+              <div className="text-xs mt-1 uppercase tracking-widest" style={{ color: '#6b5f55' }}>
                 years at birth
               </div>
             </div>
             <div className="mb-1">
               {diffFromAvg != null && (
-                <span className={`text-sm font-semibold px-2 py-1 rounded-full border ${
-                  diffFromAvg >= 2
-                    ? 'bg-green-50 text-green-700 border-green-200'
-                    : diffFromAvg <= -2
-                    ? 'bg-red-50 text-red-600 border-red-200'
-                    : 'bg-gray-50 text-gray-600 border-gray-200'
-                }`}>
+                <span
+                  className="text-sm font-semibold px-2 py-1 rounded-full border"
+                  style={
+                    diffFromAvg >= 2
+                      ? { background: '#ecefdf', color: '#5a7a3e', borderColor: '#cfd9b2' }
+                      : diffFromAvg <= -2
+                      ? { background: '#f5e8e1', color: '#b34728', borderColor: '#e6c5b2' }
+                      : { background: '#f6f1ea', color: '#6b5f55', borderColor: '#e4ddd2' }
+                  }
+                >
                   {diffFromAvg > 0 ? '+' : ''}{diffFromAvg} vs city avg ({stats.avg})
                 </span>
               )}
@@ -114,9 +117,9 @@ export default function LifeExpectancySection({ neighborhood }: Props) {
           {/* City-range gradient bar */}
           {rangePosition != null && (
             <div>
-              <div className="flex justify-between text-[10px] text-gray-400 mb-1">
+              <div className="flex justify-between text-[10px] mb-1" style={{ color: '#6b5f55' }}>
                 <span>{stats.min} yrs</span>
-                <span className="font-medium text-gray-600">City range</span>
+                <span className="font-medium">City range</span>
                 <span>{stats.max} yrs</span>
               </div>
               <div className="relative h-3 rounded-full overflow-hidden"
@@ -131,22 +134,22 @@ export default function LifeExpectancySection({ neighborhood }: Props) {
                 )}
                 {/* Neighborhood marker */}
                 <div
-                  className="absolute top-0 bottom-0 w-1 bg-[#1A4A6B] rounded-full shadow"
-                  style={{ left: `calc(${rangePosition}% - 2px)` }}
+                  className="absolute top-0 bottom-0 w-1 rounded-full"
+                  style={{ left: `calc(${rangePosition}% - 2px)`, background: '#2f5d62' }}
                 />
               </div>
-              <div className="text-[10px] text-gray-400 mt-1 text-center">
+              <div className="text-[10px] mt-1 text-center" style={{ color: '#6b5f55' }}>
                 White line = city average · Blue bar = {record.name}
               </div>
             </div>
           )}
 
           {/* Equity callout — the 23-year gap */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-            <div className="text-xs font-semibold text-amber-900 mb-1">
+          <div className="rounded-lg p-3" style={{ background: '#f5e8e1', border: '1px solid #e6c5b2' }}>
+            <div className="text-xs font-semibold mb-1" style={{ color: '#b34728' }}>
               📊 Cincinnati's Life Expectancy Gap
             </div>
-            <div className="text-xs text-amber-800">
+            <div className="text-xs" style={{ color: '#b34728' }}>
               As of 2010–2015, the {Math.round(stats.max - stats.min)}-year gap between Cincinnati's highest and
               lowest-expectancy neighborhoods ({stats.min}–{stats.max} yrs) ranked among the
               largest within-city disparities in the U.S. — comparable in magnitude to the
@@ -155,11 +158,11 @@ export default function LifeExpectancySection({ neighborhood }: Props) {
           </div>
 
           {/* Data note */}
-          <div className="text-[10px] text-gray-400 italic space-y-0.5">
+          <div className="text-[10px] italic space-y-0.5" style={{ color: '#6b5f55' }}>
             <p>
               Estimate based on {record.tractCount} census tract{record.tractCount !== 1 ? 's' : ''}.
               {record.tractCount === 1 && (
-                <span className="text-amber-600 font-medium"> Single-tract estimate — interpret with caution.</span>
+                <span className="font-medium" style={{ color: '#c8861a' }}> Single-tract estimate — interpret with caution.</span>
               )}
               {record.tractSuppressed > 0 && (
                 <span> {record.tractSuppressed} additional tract{record.tractSuppressed !== 1 ? 's' : ''} suppressed due to small population.</span>
@@ -170,7 +173,7 @@ export default function LifeExpectancySection({ neighborhood }: Props) {
         </div>
       )}
 
-      <div className="mt-4 pt-3 border-t border-gray-100">
+      <div className="mt-4 pt-3 border-t" style={{ borderColor: '#e4ddd2' }}>
         <DataAttribution
           source="CDC NCHS / NVSS · USALEEP 2010–2015"
           url="https://www.cdc.gov/nchs/nvss/usaleep/usaleep.html"

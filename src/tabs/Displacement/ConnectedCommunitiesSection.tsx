@@ -23,6 +23,7 @@ import {
 } from 'recharts';
 import { useSODA } from '../../hooks/useSODA';
 import { DataCard, DataAttribution, EmptyState } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 
 // ── Date constants ─────────────────────────────────────────────────────────────
 
@@ -88,9 +89,9 @@ function ChangeBar({ label, baseline, reform }: ChangeBarProps) {
 
   return (
     <div className="flex items-center gap-3 py-1.5">
-      <div className="w-36 text-xs text-gray-700 font-medium truncate shrink-0">{label}</div>
+      <div className="w-36 text-xs font-medium truncate shrink-0" style={{ color: C.ink }}>{label}</div>
       <div className="flex-1 flex items-center gap-2">
-        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: C.limestone }}>
           <div
             className="h-2 rounded-full transition-all duration-300"
             style={{
@@ -106,7 +107,7 @@ function ChangeBar({ label, baseline, reform }: ChangeBarProps) {
               : '—'}
           </span>
         </div>
-        <div className="text-xs text-gray-400 w-20 text-right shrink-0">
+        <div className="w-20 text-right shrink-0" style={{ color: C.muted, fontSize: 12 }}>
           {reform.toLocaleString()} permits
         </div>
       </div>
@@ -257,9 +258,9 @@ export default function ConnectedCommunitiesSection() {
       empty={false}
     >
       {/* Reform context banner */}
-      <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-5 text-sm text-blue-900">
-        <div className="font-semibold mb-1">What changed on July 1, 2024</div>
-        <p className="text-blue-800 leading-relaxed">
+      <div className="rounded-md p-4 mb-5 text-sm" style={{ background: C.riverLight, border: '1px solid ' + C.rule }}>
+        <div className="font-semibold mb-1" style={{ color: C.riverDeep }}>What changed on July 1, 2024</div>
+        <p className="leading-relaxed" style={{ color: C.riverDeep }}>
           Cincinnati's Connected Communities ordinance legalized duplexes, triplexes, and
           accessory dwelling units (ADUs) by-right in most residential zones, and eliminated
           parking minimums city-wide. This tracker compares{' '}
@@ -269,16 +270,17 @@ export default function ConnectedCommunitiesSection() {
       </div>
 
       {/* View tabs */}
-      <div className="flex gap-1 mb-5 bg-gray-100 p-1 rounded-lg">
+      <div className="flex gap-1 mb-5" style={{ background: C.limestone, padding: 4, borderRadius: 8 }}>
         {tabs.map(t => (
           <button
             key={t.id}
             onClick={() => setView(t.id)}
-            className={`flex-1 px-3 py-1.5 rounded-md text-xs font-semibold transition ${
+            className="flex-1 px-3 py-1.5 rounded-md text-xs font-semibold transition"
+            style={
               view === t.id
-                ? 'bg-white text-[#1A4A6B] shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
+                ? { background: C.paper, color: C.river, boxShadow: '0 1px 2px rgba(0,0,0,0.08)' }
+                : { color: C.muted }
+            }
           >
             {t.label}
           </button>
@@ -290,51 +292,53 @@ export default function ConnectedCommunitiesSection() {
         <>
           {/* KPI row */}
           <div className="grid grid-cols-2 gap-3 mb-5">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
+            <div className="p-4 rounded-md" style={{ background: C.limestone }}>
+              <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: C.muted }}>
                 All Structural Permits
               </div>
               <div className="flex items-end gap-2">
-                <div className="text-2xl font-bold text-[#1A4A6B]">
+                <div className="text-2xl font-bold serif tnum" style={{ color: C.river }}>
                   {cityTotals.reformTotal.toLocaleString()}
                 </div>
                 <div
-                  className={`text-sm font-semibold mb-0.5 ${
-                    overallPct === null ? 'text-gray-400'
-                    : overallPct > 0    ? 'text-green-600'
-                    : 'text-red-600'
-                  }`}
+                  className="text-sm font-semibold mb-0.5"
+                  style={{
+                    color: overallPct === null ? C.muted
+                      : overallPct > 0 ? '#16a34a'
+                      : '#dc2626'
+                  }}
                 >
                   {overallPct !== null
                     ? `${overallPct > 0 ? '+' : ''}${overallPct.toFixed(1)}%`
                     : '—'}
                 </div>
               </div>
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="mt-1" style={{ color: C.muted, fontSize: 12 }}>
                 Reform Year 1 vs. {cityTotals.baselineTotal.toLocaleString()} baseline
               </div>
             </div>
-            <div className="bg-green-50 p-4 rounded-lg">
-              <div className="text-xs font-bold uppercase tracking-wider text-green-400 mb-2">
+            <div className="p-4 rounded-md" style={{ background: C.hillLight }}>
+              <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: C.muted }}>
                 Structural Permits
               </div>
               <div className="flex items-end gap-2">
-                <div className="text-2xl font-bold text-green-700">
+                <div className="text-2xl font-bold serif tnum" style={{ color: C.hill }}>
                   {cityTotals.reformRes.toLocaleString()}
                 </div>
                 <div
-                  className={`text-sm font-semibold mb-0.5 ${
-                    residentialPct === null ? 'text-gray-400'
-                    : residentialPct > 0    ? 'text-green-600'
-                    : 'text-red-600'
-                  }`}
+                  className="text-sm font-semibold mb-0.5"
+                  style={{
+                    color: residentialPct === null ? C.muted
+                      : residentialPct > 0 ? '#16a34a'
+                      : '#dc2626'
+                  }}
                 >
                   {residentialPct !== null
                     ? `${residentialPct > 0 ? '+' : ''}${residentialPct.toFixed(1)}%`
                     : '—'}
                 </div>
               </div>
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="mt-1" style={{ color: C.muted, fontSize: 12 }}>
                 Building, Misc. Structures, Wrecking, Signs, etc.
               </div>
             </div>
@@ -343,10 +347,10 @@ export default function ConnectedCommunitiesSection() {
           {/* Top 10 neighborhoods by reform-year activity */}
           {neighborhoodComparison.length > 0 ? (
             <>
-              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
+              <div className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: C.muted }}>
                 Top neighborhoods — Reform Year 1 activity
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y" style={{ borderColor: C.rule }}>
                 {neighborhoodComparison.slice(0, 10).map(r => (
                   <ChangeBar
                     key={r.name}
@@ -368,7 +372,7 @@ export default function ConnectedCommunitiesSection() {
         <>
           {neighborhoodComparison.length > 0 ? (
             <>
-              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
+              <div className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: C.muted }}>
                 Year-over-year change — all structural permits
               </div>
               <ResponsiveContainer width="100%" height={380}>
@@ -396,7 +400,7 @@ export default function ConnectedCommunitiesSection() {
                     }
                     labelFormatter={(label: string) => label}
                   />
-                  <ReferenceLine x={0} stroke="#374151" strokeWidth={1.5} />
+                  <ReferenceLine x={0} stroke={C.ink} strokeWidth={1.5} />
                   <Bar dataKey="pct" radius={[0, 3, 3, 0]}>
                     {neighborhoodComparison.map(entry => (
                       <Cell
@@ -413,7 +417,7 @@ export default function ConnectedCommunitiesSection() {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
-              <div className="flex gap-4 mt-3 text-xs text-gray-500 justify-center flex-wrap">
+              <div className="flex gap-4 mt-3 justify-center flex-wrap" style={{ color: C.muted, fontSize: 12 }}>
                 <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block bg-[#16a34a]" /> +20%+ growth</span>
                 <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block bg-[#65a30d]" /> 0–20% growth</span>
                 <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block bg-[#f97316]" /> 0–20% decline</span>
@@ -431,7 +435,7 @@ export default function ConnectedCommunitiesSection() {
         <>
           {typeComparison.length > 0 ? (
             <>
-              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
+              <div className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: C.muted }}>
                 Structural permit types — Reform Year 1 vs. Baseline
               </div>
               <ResponsiveContainer width="100%" height={280}>
@@ -452,7 +456,7 @@ export default function ConnectedCommunitiesSection() {
                       const d = typeComparison.find(t => t.type === label);
                       if (!d) return null;
                       return (
-                        <div className="bg-white border border-gray-200 rounded shadow p-2 text-xs">
+                        <div className="rounded-md shadow p-2 text-xs" style={{ background: C.paper, border: '1px solid ' + C.rule }}>
                           <div className="font-semibold mb-1">{label}</div>
                           <div>Reform Year 1: <strong>{d.reform.toLocaleString()}</strong></div>
                           <div>Baseline: <strong>{d.baseline.toLocaleString()}</strong></div>
@@ -465,25 +469,25 @@ export default function ConnectedCommunitiesSection() {
                       );
                     }}
                   />
-                  <Bar dataKey="baseline" fill="#cbd5e1" radius={[2, 2, 0, 0]} name="Baseline" />
+                  <Bar dataKey="baseline" fill={C.rule} radius={[2, 2, 0, 0]} name="Baseline" />
                   <Bar dataKey="reform" radius={[2, 2, 0, 0]} name="Reform Year 1">
                     {typeComparison.map(entry => (
                       <Cell
                         key={entry.type}
                         fill={
-                          (entry.pct ?? 0) >= 0 ? '#1A4A6B' : '#dc2626'
+                          (entry.pct ?? 0) >= 0 ? C.river : '#dc2626'
                         }
                       />
                     ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
-              <div className="flex gap-4 mt-2 text-xs text-gray-500 justify-center">
-                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block bg-[#cbd5e1]" /> Baseline year</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block bg-[#1A4A6B]" /> Reform Year 1 (increase)</span>
+              <div className="flex gap-4 mt-2 justify-center" style={{ color: C.muted, fontSize: 12 }}>
+                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block" style={{ background: C.rule }} /> Baseline year</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block" style={{ background: C.river }} /> Reform Year 1 (increase)</span>
                 <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block bg-[#dc2626]" /> Reform Year 1 (decrease)</span>
               </div>
-              <p className="text-xs text-gray-400 mt-3">
+              <p className="mt-3" style={{ color: C.muted, fontSize: 12 }}>
                 Cincinnati's permit data classifies by trade/structural category, not by residential vs. commercial use.
                 "Building" is the main structural category covering all construction types.
                 Trade permits (HVAC, plumbing, electrical, fire protection, elevator) excluded.
@@ -495,7 +499,7 @@ export default function ConnectedCommunitiesSection() {
         </>
       )}
 
-      <div className="mt-4 pt-3 border-t border-gray-100">
+      <div className="mt-4 pt-3" style={{ borderTop: '1px solid ' + C.rule }}>
         <DataAttribution source="Building Permits" uid="uhjb-xac9" />
       </div>
     </DataCard>

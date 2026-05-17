@@ -182,10 +182,10 @@ function ratingColor(
 
 function CalloutStat({ value, label, source }: { value: string; label: string; source: string }) {
   return (
-    <div className="bg-[#1A4A6B]/5 border border-[#1A4A6B]/15 rounded-lg p-3 text-center">
-      <div className="text-2xl font-bold text-[#1A4A6B]">{value}</div>
-      <div className="text-[11px] text-gray-700 mt-0.5 leading-tight">{label}</div>
-      <div className="text-[9px] text-gray-400 mt-1">{source}</div>
+    <div className="rounded-lg p-3 text-center" style={{ background: '#e6efef', border: '1px solid #c5d8d8' }}>
+      <div className="text-2xl font-bold" style={{ color: '#2f5d62' }}>{value}</div>
+      <div className="text-[11px] mt-0.5 leading-tight" style={{ color: '#1a1410' }}>{label}</div>
+      <div className="text-[9px] mt-1" style={{ color: '#6b5f55' }}>{source}</div>
     </div>
   );
 }
@@ -212,11 +212,11 @@ function MetricRow({
     <div>
       <div className="flex items-baseline justify-between">
         <div>
-          <span className="text-sm font-medium text-gray-800">{label}</span>
-          <span className="text-[10px] text-gray-400 ml-1.5">{description}</span>
+          <span className="text-sm font-medium" style={{ color: '#1a1410' }}>{label}</span>
+          <span className="text-[10px] ml-1.5" style={{ color: '#6b5f55' }}>{description}</span>
         </div>
         <div className="flex items-center gap-2 shrink-0 ml-2">
-          <span className="text-sm font-bold text-gray-900">{value.toFixed(1)}%</span>
+          <span className="text-sm font-bold" style={{ color: '#1a1410' }}>{value.toFixed(1)}%</span>
           {rating && (
             <span
               className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full"
@@ -227,7 +227,7 @@ function MetricRow({
           )}
         </div>
       </div>
-      <div className="relative h-2 bg-gray-100 rounded-full overflow-visible mt-1">
+      <div className="relative h-2 rounded-full overflow-visible mt-1" style={{ background: '#f6f1ea' }}>
         <div
           className="absolute left-0 top-0 h-2 rounded-full"
           style={{
@@ -249,7 +249,7 @@ function MetricRow({
         )}
       </div>
       {avg !== null && (
-        <div className="text-[9px] text-gray-400 mt-0.5">City avg: {avg.toFixed(1)}%</div>
+        <div className="text-[9px] mt-0.5" style={{ color: '#6b5f55' }}>City avg: {avg.toFixed(1)}%</div>
       )}
     </div>
   );
@@ -257,7 +257,7 @@ function MetricRow({
 
 function SectionHeader({ label }: { label: string }) {
   return (
-    <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2 border-b border-gray-100 pb-1">
+    <div className="text-[10px] font-bold uppercase tracking-widest mb-2 pb-1" style={{ color: '#6b5f55', borderBottom: '1px solid #e4ddd2' }}>
       {label}
     </div>
   );
@@ -357,7 +357,7 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
       empty={!loading && !error && !health}
     >
       {!health && !loading && (
-        <p className="text-sm text-gray-500 italic">
+        <p className="text-sm italic" style={{ color: '#6b5f55' }}>
           No health data available for {neighborhood}. CDC PLACES covers most Cincinnati neighborhoods.
         </p>
       )}
@@ -366,11 +366,11 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
         <div className="space-y-5">
 
           {/* ── Framing narrative ─────────────────────────────────────────── */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm font-semibold text-[#1A4A6B] mb-2">
+          <div className="rounded-lg p-4" style={{ background: '#e6efef', border: '1px solid #c5d8d8' }}>
+            <p className="text-sm font-semibold mb-2" style={{ color: '#2f5d62' }}>
               Sleep is heart medicine — and awareness is the gap.
             </p>
-            <p className="text-[12px] text-gray-700 leading-relaxed mb-2">
+            <p className="text-[12px] leading-relaxed mb-2" style={{ color: '#1a1410' }}>
               Sleep-disordered breathing — like sleep apnea — is a direct upstream cause of
               coronary heart disease, atrial fibrillation, congestive heart failure, and stroke.
               An estimated <strong>{COUNTY_STATS.elderlyWithSleepApneaEstPct}–50%</strong> of
@@ -379,7 +379,7 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
               undiagnosed. When untreated, these patients cycle through repeated hospitalizations —
               each visit straining care capacity further — until a fatal event ends the cycle.
             </p>
-            <p className="text-[12px] text-gray-700 leading-relaxed">
+            <p className="text-[12px] leading-relaxed" style={{ color: '#1a1410' }}>
               Older adults who live alone are at compounded risk: no partner notices the
               apneas, no one advocates at appointments, and social isolation itself is an
               independent predictor of cardiovascular mortality and cognitive decline.
@@ -421,7 +421,7 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
                 source="AARP Public Policy Institute 2021"
               />
             </div>
-            <p className="text-[10px] text-gray-400 mt-2 italic">
+            <p className="text-[10px] mt-2 italic" style={{ color: '#6b5f55' }}>
               County and national statistics shown above are not neighborhood-level data.
               They provide clinical context for the neighborhood indicators below.
             </p>
@@ -431,27 +431,27 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
           <div>
             <SectionHeader label="Senior Population" />
             <div className="grid grid-cols-2 gap-3 mb-2">
-              <div className="bg-gray-50 rounded-lg p-3 text-center">
-                <div className="text-2xl font-bold text-[#1A4A6B]">
+              <div className="rounded-lg p-3 text-center" style={{ background: '#f6f1ea' }}>
+                <div className="text-2xl font-bold" style={{ color: '#2f5d62' }}>
                   {dem?.over65Pct !== undefined ? `${dem.over65Pct.toFixed(1)}%` : '—'}
                 </div>
-                <div className="text-[11px] text-gray-600 mt-0.5">of residents are 65+</div>
+                <div className="text-[11px] mt-0.5" style={{ color: '#6b5f55' }}>of residents are 65+</div>
                 {avgOver65Pct !== null && dem?.over65Pct !== undefined && (
-                  <div className="text-[9px] text-gray-400 mt-0.5">
+                  <div className="text-[9px] mt-0.5" style={{ color: '#6b5f55' }}>
                     city avg: {avgOver65Pct.toFixed(1)}%
                   </div>
                 )}
               </div>
-              <div className="bg-gray-50 rounded-lg p-3 text-center">
-                <div className="text-2xl font-bold text-[#1A4A6B]">
+              <div className="rounded-lg p-3 text-center" style={{ background: '#f6f1ea' }}>
+                <div className="text-2xl font-bold" style={{ color: '#2f5d62' }}>
                   {dem?.livingAlonePct !== undefined ? `${dem.livingAlonePct.toFixed(1)}%` : '—'}
                 </div>
-                <div className="text-[11px] text-gray-600 mt-0.5">of households are single-person</div>
-                <div className="text-[9px] text-gray-400 mt-0.5">all ages · ACS 2022</div>
+                <div className="text-[11px] mt-0.5" style={{ color: '#6b5f55' }}>of households are single-person</div>
+                <div className="text-[9px] mt-0.5" style={{ color: '#6b5f55' }}>all ages · ACS 2022</div>
               </div>
             </div>
             {dem?.over65Count !== undefined && dem.over65Count > 0 && (
-              <p className="text-[11px] text-gray-500">
+              <p className="text-[11px]" style={{ color: '#6b5f55' }}>
                 Approximately <strong>{dem.over65Count.toLocaleString()}</strong> residents in{' '}
                 {neighborhood} are 65 or older (ACS 2022 estimate, census-tract aggregation).
               </p>
@@ -461,7 +461,7 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
           {/* ── Sleep & cardiovascular risk ────────────────────────────── */}
           <div>
             <SectionHeader label="Sleep & Cardiovascular Risk" />
-            <p className="text-[11px] text-gray-500 mb-3">
+            <p className="text-[11px] mb-3" style={{ color: '#6b5f55' }}>
               Short sleep and cardiovascular disease form a reinforcing cycle. OSA causes
               repeated oxygen drops that stress the heart; untreated heart failure worsens
               sleep further. COPD frequently co-occurs with both.
@@ -497,7 +497,7 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
           {/* ── Disability & independence ──────────────────────────────── */}
           <div>
             <SectionHeader label="Disability & Independence" />
-            <p className="text-[11px] text-gray-500 mb-3">
+            <p className="text-[11px] mb-3" style={{ color: '#6b5f55' }}>
               These measures reflect adults who have difficulty with basic activities.
               High rates signal a population that may struggle to self-manage a chronic
               condition like sleep apnea — navigating equipment, medical appointments,
@@ -540,7 +540,7 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
           {/* ── Social isolation ───────────────────────────────────────── */}
           <div>
             <SectionHeader label="Social Isolation & Wellbeing" />
-            <p className="text-[11px] text-gray-500 mb-3">
+            <p className="text-[11px] mb-3" style={{ color: '#6b5f55' }}>
               Social isolation is an independent risk factor for cardiovascular disease
               and dementia, with effects comparable in magnitude to smoking. It also
               delays care-seeking: people without social support are less likely to
@@ -572,7 +572,7 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
           {selectedScore !== null && (
             <div>
               <SectionHeader label="Senior Vulnerability Score" />
-              <div className="bg-gray-50 rounded-lg p-4">
+              <div className="rounded-lg p-4" style={{ background: '#f6f1ea' }}>
                 <div className="flex items-center gap-4 mb-3">
                   <div className="text-center">
                     <div
@@ -586,10 +586,10 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
                     >
                       {selectedScore}
                     </div>
-                    <div className="text-[10px] text-gray-500 uppercase tracking-wide">/ 100</div>
+                    <div className="text-[10px] uppercase tracking-wide" style={{ color: '#6b5f55' }}>/ 100</div>
                   </div>
                   <div className="flex-1">
-                    <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-3 rounded-full overflow-hidden" style={{ background: '#e4ddd2' }}>
                       <div
                         className="h-3 rounded-full transition-all"
                         style={{
@@ -601,13 +601,13 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
                         }}
                       />
                     </div>
-                    <div className="flex justify-between text-[9px] text-gray-400 mt-0.5">
+                    <div className="flex justify-between text-[9px] mt-0.5" style={{ color: '#6b5f55' }}>
                       <span>Lower risk</span>
                       <span>Higher risk</span>
                     </div>
                   </div>
                 </div>
-                <p className="text-[11px] text-gray-600">
+                <p className="text-[11px]" style={{ color: '#6b5f55' }}>
                   {neighborhood} ranks{' '}
                   <strong>
                     #{selectedRank} of {totalNeighborhoods}
@@ -624,17 +624,18 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
           <div>
             <button
               onClick={() => setShowPatternAnalysis((v) => !v)}
-              className="w-full text-left flex items-center justify-between px-3 py-2.5 bg-[#1A4A6B]/5 hover:bg-[#1A4A6B]/10 border border-[#1A4A6B]/20 rounded-lg transition-colors"
+              className="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors"
+              style={{ background: '#e6efef', border: '1px solid #c5d8d8' }}
             >
-              <span className="text-sm font-semibold text-[#1A4A6B]">
+              <span className="text-sm font-semibold" style={{ color: '#2f5d62' }}>
                 City-Wide Pattern Analysis: Where Are Seniors Most At Risk?
               </span>
-              <span className="text-[#1A4A6B] text-lg">{showPatternAnalysis ? '▲' : '▼'}</span>
+              <span className="text-lg" style={{ color: '#2f5d62' }}>{showPatternAnalysis ? '▲' : '▼'}</span>
             </button>
 
             {showPatternAnalysis && (
               <div className="mt-3 space-y-4">
-                <p className="text-[11px] text-gray-600">
+                <p className="text-[11px]" style={{ color: '#6b5f55' }}>
                   The neighborhoods below show the highest composite senior vulnerability scores —
                   meaning multiple risk factors co-occur: poor sleep, high cardiovascular disease
                   rates, disability burden, and social isolation. These communities may especially
@@ -670,7 +671,7 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
                       {chartData.map((entry, idx) => (
                         <Cell
                           key={idx}
-                          fill={entry.isSelected ? '#f59e0b' : '#1A4A6B'}
+                          fill={entry.isSelected ? '#c8861a' : '#2f5d62'}
                           opacity={entry.isSelected ? 1 : 0.7}
                         />
                       ))}
@@ -682,32 +683,32 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
                 <div className="overflow-x-auto">
                   <table className="w-full text-[10px] border-collapse">
                     <thead>
-                      <tr className="bg-gray-100">
-                        <th className="text-left p-1.5 font-semibold text-gray-600">Neighborhood</th>
-                        <th className="text-center p-1.5 font-semibold text-gray-600">Score</th>
-                        <th className="text-center p-1.5 font-semibold text-gray-600">Short Sleep</th>
-                        <th className="text-center p-1.5 font-semibold text-gray-600">Heart Dis.</th>
-                        <th className="text-center p-1.5 font-semibold text-gray-600">Indep. Living Dis.</th>
-                        <th className="text-center p-1.5 font-semibold text-gray-600">Loneliness</th>
-                        <th className="text-center p-1.5 font-semibold text-gray-600">No Insurance</th>
+                      <tr style={{ background: '#f6f1ea' }}>
+                        <th className="text-left p-1.5 font-semibold" style={{ color: '#6b5f55' }}>Neighborhood</th>
+                        <th className="text-center p-1.5 font-semibold" style={{ color: '#6b5f55' }}>Score</th>
+                        <th className="text-center p-1.5 font-semibold" style={{ color: '#6b5f55' }}>Short Sleep</th>
+                        <th className="text-center p-1.5 font-semibold" style={{ color: '#6b5f55' }}>Heart Dis.</th>
+                        <th className="text-center p-1.5 font-semibold" style={{ color: '#6b5f55' }}>Indep. Living Dis.</th>
+                        <th className="text-center p-1.5 font-semibold" style={{ color: '#6b5f55' }}>Loneliness</th>
+                        <th className="text-center p-1.5 font-semibold" style={{ color: '#6b5f55' }}>No Insurance</th>
                       </tr>
                     </thead>
                     <tbody>
                       {vulnerabilityRankings.slice(0, 10).map((r, i) => (
                         <tr
                           key={r.key}
-                          className={
+                          style={
                             r.key === key
-                              ? 'bg-amber-50 border-l-2 border-amber-400'
+                              ? { background: '#f5e8e1', borderLeft: '2px solid #c8861a' }
                               : i % 2 === 0
-                              ? 'bg-white'
-                              : 'bg-gray-50'
+                              ? { background: '#fbf8f3' }
+                              : { background: '#f6f1ea' }
                           }
                         >
-                          <td className="p-1.5 font-medium text-gray-800">
+                          <td className="p-1.5 font-medium" style={{ color: '#1a1410' }}>
                             {i + 1}. {r.name}
                           </td>
-                          <td className="p-1.5 text-center font-bold text-[#1A4A6B]">{r.score}</td>
+                          <td className="p-1.5 text-center font-bold" style={{ color: '#2f5d62' }}>{r.score}</td>
                           <td className="p-1.5 text-center">{r.shortSleep?.toFixed(1) ?? '—'}%</td>
                           <td className="p-1.5 text-center">{r.heartDisease?.toFixed(1) ?? '—'}%</td>
                           <td className="p-1.5 text-center">{r.independentLivingDisability?.toFixed(1) ?? '—'}%</td>
@@ -717,16 +718,16 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
                       ))}
                     </tbody>
                   </table>
-                  <p className="text-[9px] text-gray-400 mt-1">
+                  <p className="text-[9px] mt-1" style={{ color: '#6b5f55' }}>
                     Selected neighborhood highlighted in amber. Score is a composite index
                     (0–100) normalized across all Cincinnati neighborhoods.
                   </p>
                 </div>
 
                 {/* Action framing */}
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                  <p className="text-[11px] font-semibold text-green-800 mb-1">What can change outcomes?</p>
-                  <ul className="text-[11px] text-green-900 space-y-1 list-disc list-inside">
+                <div className="rounded-lg p-3" style={{ background: '#ecefdf', border: '1px solid #cfd9b2' }}>
+                  <p className="text-[11px] font-semibold mb-1" style={{ color: '#5a7a3e' }}>What can change outcomes?</p>
+                  <ul className="text-[11px] space-y-1 list-disc list-inside" style={{ color: '#5a7a3e' }}>
                     <li>
                       <strong>Sleep health screenings</strong> at community health events in
                       high-risk neighborhoods — primary care referral pathways for sleep studies.
@@ -751,35 +752,36 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
           </div>
 
           {/* ── What would unlock this ────────────────────────────────── */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-[11px] text-gray-700">
-            <p className="font-semibold text-gray-800 mb-1.5">What this data can't show — and what would</p>
+          <div className="rounded-lg p-3 text-[11px]" style={{ background: '#f6f1ea', border: '1px solid #e4ddd2', color: '#6b5f55' }}>
+            <p className="font-semibold mb-1.5" style={{ color: '#1a1410' }}>What this data can't show — and what would</p>
             <ul className="space-y-1.5 list-none">
               <li>
-                <span className="font-medium text-gray-800">Repeat hospitalization rates by neighborhood</span>
+                <span className="font-medium" style={{ color: '#1a1410' }}>Repeat hospitalization rates by neighborhood</span>
                 {' '}— the most direct measure of the problem described above. TriHealth, UC Health, and Hamilton
                 County Public Health hold discharge data at ZIP-code level. A data-sharing agreement with any of
                 these partners would unlock it.
               </li>
               <li>
-                <span className="font-medium text-gray-800">Sleep apnea diagnosis and CPAP prescription rates</span>
+                <span className="font-medium" style={{ color: '#1a1410' }}>Sleep apnea diagnosis and CPAP prescription rates</span>
                 {' '}— available in Medicare/Medicaid claims (ICD-10 G47.33, HCPCS E0601) but not publicly
                 downloadable below the county level. Requires a CMS Data Use Agreement or Ohio ODJFS research
                 partnership.
               </li>
               <li>
-                <span className="font-medium text-gray-800">Elderly living alone, specifically</span>
+                <span className="font-medium" style={{ color: '#1a1410' }}>Elderly living alone, specifically</span>
                 {' '}— ACS table B11010 provides this at the census-tract level, but variable-level documentation
                 is ambiguous enough that the derived rates were unreliable. A direct Census API query validated
                 against county totals could resolve this.
               </li>
             </ul>
-            <p className="mt-2 text-gray-500">
+            <p className="mt-2" style={{ color: '#6b5f55' }}>
               If you work at a health system, county agency, or research institution and can share any of these,{' '}
               <a
                 href="https://forms.gle/sMHyvc4Hu8FMwARE8"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline text-[#1A4A6B]"
+                className="underline"
+                style={{ color: '#2f5d62' }}
               >
                 get in touch via the contribution form
               </a>.
@@ -787,7 +789,7 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
           </div>
 
           {/* ── Methodology note ───────────────────────────────────────── */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-[11px] text-amber-800">
+          <div className="rounded-lg p-3 text-[11px]" style={{ background: '#f5e8e1', border: '1px solid #e6c5b2', color: '#b34728' }}>
             <p className="font-semibold mb-0.5">Methodology note</p>
             <p>
               Health outcome data is from CDC PLACES 2023 (census-tract level, model-based
@@ -800,12 +802,12 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
             </p>
           </div>
 
-          <div className="mt-2 pt-3 border-t border-gray-100">
+          <div className="mt-2 pt-3 border-t" style={{ borderColor: '#e4ddd2' }}>
             <DataAttribution
               source={`CDC PLACES: Local Data for Better Health · Hamilton County, OH · ${health.dataYear}`}
               url="https://www.cdc.gov/places/"
             />
-            <p className="text-[10px] text-gray-400 italic mt-2">
+            <p className="text-[10px] italic mt-2" style={{ color: '#6b5f55' }}>
               For Emily, who made this possible. Thanks, neighbor.
             </p>
           </div>

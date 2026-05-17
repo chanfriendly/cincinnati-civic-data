@@ -16,13 +16,13 @@ const TaxRevenue = React.lazy(() => import('./tabs/TaxRevenue'))
 const About = React.lazy(() => import('./tabs/About'))
 
 const TabLoadingFallback: React.FC = () => (
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div className="max-w-editorial mx-auto px-8 py-10">
     <LoadingSkeleton lines={5} height="h-8" />
   </div>
 )
 
 const AppContent: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<TabId>('address')
+  const [activeTab, setActiveTab] = useState<TabId>('neighborhoods')
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -80,78 +80,101 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-limestone">
       <Header onTabChange={setActiveTab} />
       <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
-      <main className="flex-1">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {renderTabContent()}
-        </div>
+      <main className="flex-1 fade-up">
+        {renderTabContent()}
       </main>
-      <footer className="bg-white border-t border-gray-200 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
 
-            {/* Left: attribution */}
-            <div className="text-center sm:text-left space-y-1">
-              <p className="font-medium text-gray-700">Cincinnati Civic Data Platform</p>
-              <p>Open data for community organizers, researchers, and residents.</p>
-              <p>
-                Data sourced from{' '}
-                <a href="https://data.cincinnati-oh.gov" target="_blank" rel="noopener noreferrer"
-                  className="text-[#1A4A6B] hover:underline">Cincinnati Open Data</a>
-                {', '}
-                <a href="https://www.census.gov/programs-surveys/acs" target="_blank" rel="noopener noreferrer"
-                  className="text-[#1A4A6B] hover:underline">U.S. Census ACS</a>
-                {', and '}
-                <a href="https://cagis.hamilton-co.org/" target="_blank" rel="noopener noreferrer"
-                  className="text-[#1A4A6B] hover:underline">Hamilton County CAGIS</a>.
-              </p>
+      {/* Editorial 4-column footer */}
+      <footer
+        className="mt-20 pb-12 no-print"
+        style={{ borderTop: '1px solid #e4ddd2', background: '#fbf8f3' }}
+      >
+        <div className="max-w-editorial mx-auto px-8 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 text-[13px]">
+
+          {/* Wordmark + mission */}
+          <div>
+            <div className="serif text-[18px] leading-none font-medium mb-2" style={{ color: '#1a1410' }}>
+              Cincinnati{' '}
+              <span className="italic font-normal" style={{ color: '#6b5f55' }}>Civic Data</span>
             </div>
-
-            {/* Right: made by */}
-            <div className="text-center sm:text-right space-y-1 shrink-0">
-              <p>
-                Made by{' '}
-                {/* TODO: replace # with your personal website URL, e.g. https://christianglass.com */}
-                <a href="https://christianglass.vercel.app/" className="font-medium text-[#1A4A6B] hover:underline">
-                  Christian Glass
-                </a>
-              </p>
-              <div className="flex items-center justify-center sm:justify-end gap-3">
-                {/* GitHub link — update URL once the repo is public */}
-                <a
-                  href="https://github.com/chanfriendly/cincinnati-civic-data"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-gray-500 hover:text-[#1A4A6B] transition-colors"
-                  aria-label="View source on GitHub"
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fillRule="evenodd" clipRule="evenodd"
-                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.92.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                    />
-                  </svg>
-                  GitHub
-                </a>
-                <span className="text-gray-300">·</span>
-                <span>{new Date().getFullYear()}</span>
-              </div>
-            </div>
-
+            <p className="leading-relaxed max-w-[360px]" style={{ color: '#6b5f55' }}>
+              A civic project. Public records for residents, organizers, and neighbors. Not affiliated
+              with the City of Cincinnati.
+            </p>
           </div>
+
+          {/* Sources */}
+          <div>
+            <div className="smallcaps mb-3" style={{ color: '#6b5f55' }}>Sources</div>
+            <ul className="space-y-2" style={{ color: '#1a1410' }}>
+              <li>
+                <a href="https://data.cincinnati-oh.gov" target="_blank" rel="noopener noreferrer"
+                  className="hover:underline">Cincinnati Open Data</a>
+              </li>
+              <li>
+                <a href="https://www.census.gov/programs-surveys/acs" target="_blank" rel="noopener noreferrer"
+                  className="hover:underline">U.S. Census ACS</a>
+              </li>
+              <li>
+                <a href="https://cdc.gov/places" target="_blank" rel="noopener noreferrer"
+                  className="hover:underline">CDC PLACES</a>
+              </li>
+              <li>
+                <a href="https://cagis.hamilton-co.org" target="_blank" rel="noopener noreferrer"
+                  className="hover:underline">CAGIS Hamilton Co.</a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Help */}
+          <div>
+            <div className="smallcaps mb-3" style={{ color: '#6b5f55' }}>Help</div>
+            <ul className="space-y-2" style={{ color: '#1a1410' }}>
+              <li>
+                <button onClick={() => setActiveTab('about')} className="hover:underline text-left">
+                  About this site
+                </button>
+              </li>
+              <li>
+                <button onClick={() => setActiveTab('about')} className="hover:underline text-left">
+                  Methodology
+                </button>
+              </li>
+              <li>
+                <a href="https://forms.gle/sMHyvc4Hu8FMwARE8" target="_blank" rel="noopener noreferrer"
+                  className="hover:underline">Submit a correction</a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Made by */}
+          <div>
+            <div className="smallcaps mb-3" style={{ color: '#6b5f55' }}>Made by</div>
+            <p className="leading-relaxed" style={{ color: '#6b5f55' }}>
+              <a href="https://christianglass.vercel.app/" className="hover:underline font-medium" style={{ color: '#1a1410' }}>
+                Christian Glass
+              </a>
+              {' '}· {new Date().getFullYear()} ·{' '}
+              <a href="https://github.com/chanfriendly/cincinnati-civic-data" target="_blank"
+                rel="noopener noreferrer" className="hover:underline">
+                Open source on GitHub
+              </a>
+            </p>
+          </div>
+
         </div>
       </footer>
     </div>
   )
 }
 
-const App: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <AppContent />
-    </LanguageProvider>
-  )
-}
+const App: React.FC = () => (
+  <LanguageProvider>
+    <AppContent />
+  </LanguageProvider>
+)
 
 export default App

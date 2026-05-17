@@ -64,7 +64,7 @@ function equityLabel(
   if (highTransit && highIncome) {
     return {
       label: 'Transit-rich, higher-income',
-      color: '#1A4A6B',
+      color: '#2f5d62',
       description:
         'Above-median transit access in a higher-income area. Well-served neighborhood.',
     };
@@ -83,11 +83,11 @@ function CustomTooltip({ active, payload }: any) {
   if (!active || !payload?.[0]) return null;
   const d: TransitEquityRecord = payload[0].payload;
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-md p-2.5 text-xs">
-      <p className="font-semibold text-gray-900 mb-0.5">{d.name}</p>
-      <p className="text-gray-600">{d.stopCount} stops within 0.4 mi</p>
+    <div className="rounded-lg p-2.5 text-xs" style={{ background: '#fbf8f3', border: '1px solid #e4ddd2' }}>
+      <p className="font-semibold mb-0.5" style={{ color: '#1a1410' }}>{d.name}</p>
+      <p style={{ color: '#6b5f55' }}>{d.stopCount} stops within 0.4 mi</p>
       {d.medianIncome !== null && (
-        <p className="text-gray-600">Median income: ${d.medianIncome.toLocaleString()}</p>
+        <p style={{ color: '#6b5f55' }}>Median income: ${d.medianIncome.toLocaleString()}</p>
       )}
     </div>
   );
@@ -162,24 +162,24 @@ export default function TransitEquitySection({ neighborhood }: Props) {
         <>
           {/* KPI row */}
           <div className="grid grid-cols-3 gap-3 mb-5">
-            <div className="bg-blue-50 p-3 rounded-lg text-center">
-              <div className="text-2xl font-bold text-[#1A4A6B]">{selected.stopCount}</div>
-              <div className="text-[10px] text-blue-400 font-semibold mt-0.5 uppercase tracking-wide">Bus Stops</div>
-              <div className="text-[10px] text-gray-400">within 0.4 mi</div>
+            <div className="p-3 rounded-lg text-center" style={{ background: '#e6efef' }}>
+              <div className="text-2xl font-bold" style={{ color: '#2f5d62' }}>{selected.stopCount}</div>
+              <div className="text-[10px] font-semibold mt-0.5 uppercase tracking-wide" style={{ color: '#2f5d62' }}>Bus Stops</div>
+              <div className="text-[10px]" style={{ color: '#6b5f55' }}>within 0.4 mi</div>
             </div>
-            <div className="bg-gray-50 p-3 rounded-lg text-center">
-              <div className="text-2xl font-bold text-gray-700">
+            <div className="p-3 rounded-lg text-center" style={{ background: '#f6f1ea' }}>
+              <div className="text-2xl font-bold" style={{ color: '#1a1410' }}>
                 #{selectedRank}
               </div>
-              <div className="text-[10px] text-gray-500 font-semibold mt-0.5 uppercase tracking-wide">Rank</div>
-              <div className="text-[10px] text-gray-400">of {totalNeighborhoods} neighborhoods</div>
+              <div className="text-[10px] font-semibold mt-0.5 uppercase tracking-wide" style={{ color: '#6b5f55' }}>Rank</div>
+              <div className="text-[10px]" style={{ color: '#6b5f55' }}>of {totalNeighborhoods} neighborhoods</div>
             </div>
-            <div className="bg-gray-50 p-3 rounded-lg text-center">
-              <div className="text-2xl font-bold text-gray-700">
+            <div className="p-3 rounded-lg text-center" style={{ background: '#f6f1ea' }}>
+              <div className="text-2xl font-bold" style={{ color: '#1a1410' }}>
                 {medianStops}
               </div>
-              <div className="text-[10px] text-gray-500 font-semibold mt-0.5 uppercase tracking-wide">City Median</div>
-              <div className="text-[10px] text-gray-400">bus stops</div>
+              <div className="text-[10px] font-semibold mt-0.5 uppercase tracking-wide" style={{ color: '#6b5f55' }}>City Median</div>
+              <div className="text-[10px]" style={{ color: '#6b5f55' }}>bus stops</div>
             </div>
           </div>
 
@@ -205,7 +205,7 @@ export default function TransitEquitySection({ neighborhood }: Props) {
       )}
 
       {!selected && !loading && (
-        <p className="text-sm text-gray-500 italic mb-4">
+        <p className="text-sm italic mb-4" style={{ color: '#6b5f55' }}>
           No transit equity data found for {neighborhood}. It may not be in the 50-neighborhood SNA dataset.
         </p>
       )}
@@ -213,10 +213,10 @@ export default function TransitEquitySection({ neighborhood }: Props) {
       {/* Scatter chart — stop count vs. income */}
       {scatterData.length > 0 && (
         <>
-          <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">
+          <div className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: '#6b5f55' }}>
             All neighborhoods — transit access vs. income
           </div>
-          <p className="text-[10px] text-gray-400 mb-3">
+          <p className="text-[10px] mb-3" style={{ color: '#6b5f55' }}>
             Each dot is one of Cincinnati's 50 neighborhoods.
             {selected && ' Your neighborhood is highlighted in amber.'}
             Reference lines show city medians.
@@ -250,8 +250,8 @@ export default function TransitEquitySection({ neighborhood }: Props) {
                   return (
                     <Cell
                       key={index}
-                      fill={isSelected ? '#C8861A' : '#93c5fd'}
-                      stroke={isSelected ? '#92400e' : '#3b82f6'}
+                      fill={isSelected ? '#c8861a' : '#a8c8c8'}
+                      stroke={isSelected ? '#92400e' : '#2f5d62'}
                       strokeWidth={isSelected ? 2 : 1}
                       r={isSelected ? 7 : 4}
                     />
@@ -268,7 +268,7 @@ export default function TransitEquitySection({ neighborhood }: Props) {
               Upper-left: transit-rich, lower-income (equity win)
             </div>
             <div className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-[#1A4A6B] shrink-0" />
+              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: '#2f5d62' }} />
               Upper-right: transit-rich, higher-income
             </div>
             <div className="flex items-center gap-1">
@@ -276,14 +276,14 @@ export default function TransitEquitySection({ neighborhood }: Props) {
               Lower-left: transit gap, lower-income (equity concern)
             </div>
             <div className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-[#C8861A] shrink-0" />
+              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: '#c8861a' }} />
               Lower-right: car-dependent, higher-income
             </div>
           </div>
         </>
       )}
 
-      <div className="mt-4 pt-3 border-t border-gray-100">
+      <div className="mt-4 pt-3 border-t" style={{ borderColor: '#e4ddd2' }}>
         <DataAttribution
           source="SORTA GTFS (bus stops) · CAGIS Neighborhood Centroids · ACS 2022"
           uid="sorta-transit-equity"

@@ -1,5 +1,4 @@
 import React from 'react'
-import { useTranslation } from 'react-i18next'
 import { useLanguage } from '../../context/LanguageContext'
 import type { TabId } from '../../types'
 
@@ -7,71 +6,95 @@ interface HeaderProps {
   onTabChange: (tab: TabId) => void
 }
 
+const CivicSeal: React.FC = () => (
+  <svg width="36" height="36" viewBox="0 0 34 34" aria-hidden="true">
+    <circle cx="17" cy="17" r="16" fill="none" stroke="#1a1410" strokeWidth="1" />
+    {/* Ohio River — two flowing curves */}
+    <path d="M 4 22 Q 9 14, 14 18 T 22 16 T 30 20" fill="none" stroke="#2f5d62" strokeWidth="1.4" />
+    <path d="M 4 25 Q 12 22, 17 24 T 30 23" fill="none" stroke="#2f5d62" strokeWidth="1.4" opacity="0.55" />
+    {/* Cincinnati hills silhouette */}
+    <path d="M 7 22 L 11 15 L 14 19 L 18 12 L 22 17 L 26 13 L 28 18" fill="none" stroke="#5a7a3e" strokeWidth="1.2" />
+  </svg>
+)
+
 const Header: React.FC<HeaderProps> = ({ onTabChange }) => {
-  const { t } = useTranslation()
   const { language, setLanguage } = useLanguage()
 
   return (
     <header
-      className="sticky top-0 z-50 bg-white border-b-2 border-[#1A4A6B] shadow-sm"
-      aria-label={t('app.title')}
+      className="sticky top-0 z-50"
+      style={{ background: '#fbf8f3', borderBottom: '1px solid #e4ddd2' }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4 sm:gap-0">
-          {/* Left: Logo/Title */}
-          <div className="flex flex-col">
-            <div className="flex items-baseline gap-2">
-              <h1 className="text-2xl font-bold text-[#1A4A6B]" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
-                Cincinnati
-              </h1>
-              <p className="text-lg text-gray-700 font-normal" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
-                Civic Data Platform
-              </p>
-            </div>
-            <p className="text-xs text-gray-500 hidden sm:block" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
-              Public records for residents, organizers, and journalists
-            </p>
-          </div>
+      <div className="max-w-editorial mx-auto px-8 py-5 flex items-center justify-between">
 
-          {/* Right: About link + Language Toggle */}
-          <nav className="flex items-center gap-4" aria-label="Site navigation">
-            {/* About & Methods — meta link, lives outside the data tab row */}
-            <button
-              onClick={() => onTabChange('about')}
-              className="text-sm text-gray-500 hover:text-[#1A4A6B] transition-colors hidden sm:block"
-              aria-label="About & Methods"
+        {/* Wordmark — civic seal + serif italic masthead */}
+        <div className="flex items-center gap-3">
+          <CivicSeal />
+          <div>
+            <div
+              className="serif leading-none font-medium"
+              style={{ fontSize: 22, letterSpacing: '-0.01em', color: '#1a1410' }}
             >
-              About &amp; Methods
-            </button>
-
-            <div className="flex gap-3 border-l border-gray-200 pl-4">
-              <button
-                onClick={() => setLanguage('en')}
-                className={`px-3 py-1 font-medium transition-colors ${
-                  language === 'en'
-                    ? 'text-[#1A4A6B] border-b-2 border-[#1A4A6B]'
-                    : 'text-gray-600 hover:text-[#1A4A6B]'
-                }`}
-                aria-label="Switch to English"
-                aria-current={language === 'en' ? 'true' : 'false'}
-              >
-                EN
-              </button>
-              <button
-                onClick={() => setLanguage('es')}
-                className={`px-3 py-1 font-medium transition-colors ${
-                  language === 'es'
-                    ? 'text-[#1A4A6B] border-b-2 border-[#1A4A6B]'
-                    : 'text-gray-600 hover:text-[#1A4A6B]'
-                }`}
-                aria-label="Switch to Spanish"
-                aria-current={language === 'es' ? 'true' : 'false'}
-              >
-                ES
-              </button>
+              Cincinnati{' '}
+              <span className="serif italic font-normal" style={{ color: '#6b5f55' }}>
+                Civic Data
+              </span>
             </div>
-          </nav>
+            <div className="text-[11px] mt-0.5 hidden sm:block" style={{ color: '#6b5f55' }}>
+              Public records for residents, organizers, and neighbors
+            </div>
+          </div>
         </div>
+
+        {/* Nav links + language toggle */}
+        <nav className="flex items-center gap-5 text-[13px]" aria-label="Site navigation">
+          <button
+            onClick={() => onTabChange('about')}
+            className="hover:underline transition-colors"
+            style={{ color: '#6b5f55' }}
+          >
+            About &amp; methods
+          </button>
+          <span style={{ color: '#e4ddd2' }}>·</span>
+          <button
+            onClick={() => onTabChange('about')}
+            className="hover:underline transition-colors"
+            style={{ color: '#6b5f55' }}
+          >
+            Limitations
+          </button>
+
+          {/* Language toggle */}
+          <div
+            className="flex border rounded-sm overflow-hidden ml-2"
+            style={{ borderColor: '#e4ddd2' }}
+          >
+            <button
+              onClick={() => setLanguage('en')}
+              className="px-2.5 py-1 text-[12px] font-medium transition-colors"
+              style={
+                language === 'en'
+                  ? { background: '#1a1410', color: '#fbf8f3' }
+                  : { color: '#6b5f55' }
+              }
+              aria-label="Switch to English"
+            >
+              EN
+            </button>
+            <button
+              onClick={() => setLanguage('es')}
+              className="px-2.5 py-1 text-[12px] font-medium transition-colors"
+              style={
+                language === 'es'
+                  ? { background: '#1a1410', color: '#fbf8f3' }
+                  : { color: '#6b5f55' }
+              }
+              aria-label="Switch to Spanish"
+            >
+              ES
+            </button>
+          </div>
+        </nav>
       </div>
     </header>
   )
