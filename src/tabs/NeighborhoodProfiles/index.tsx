@@ -316,9 +316,6 @@ export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfiles
       <header className="page-paper rounded-md px-10 pt-10 pb-9 mb-8">
         <div className="flex items-baseline justify-between mb-3">
           <span className="smallcaps" style={{ color: C.brick }}>Neighborhood Profile</span>
-          <span className="serif italic text-[14px]" style={{ color: C.muted }}>
-            Cincinnati, Ohio
-          </span>
         </div>
 
         <h1

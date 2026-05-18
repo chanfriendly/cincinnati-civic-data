@@ -8,6 +8,18 @@ belong to the same publication.
 If you only read one section, read **§3 The Visualization Through-Line**.
 Everything else exists to support it.
 
+> **Note on code references.** Throughout this document, atoms are
+> referenced by their JSX file paths (`atoms.jsx`, `data.jsx`,
+> `pages/*.jsx`). Those refer to the **static HTML design prototype**
+> that lives in *this* project — a Babel-in-the-browser sandbox we use
+> to iterate on visual decisions without a build step.
+>
+> The **production codebase** carries the same atoms as TypeScript
+> components in `src/components/ui/DesignAtoms.tsx` (with data in the
+> equivalent typed module). Names, props, and semantic rules match
+> 1:1 — when this Bible says `<CompareBar>`, the production import is
+> the typed one. See §9 for the full mapping.
+
 ---
 
 ## 0. What this project actually is
@@ -455,20 +467,62 @@ When adding a new direction (e.g. *Eviction filings*, *Air quality*,
 
 ## 9. Repo conventions (so the next agent doesn't break things)
 
+### 9.1 Two codebases, one design system
+
+This project ships in two places. Keep them in sync **conceptually**;
+don't try to share files between them.
+
+| Surface              | Lives in                                         | Purpose                                                    |
+|----------------------|--------------------------------------------------|------------------------------------------------------------|
+| **Design prototype** | This project (`index.html`, `atoms.jsx`, etc.)   | Fast visual iteration. Babel-in-browser. No build step.    |
+| **Production app**   | The main repo (`src/components/ui/DesignAtoms.tsx`) | Typed, bundled, shipped to users.                          |
+
+When the Bible references `atoms.jsx`, the production equivalent is
+**`src/components/ui/DesignAtoms.tsx`**. The atom names, props, and
+semantic rules in §3 and §4 apply to **both**.
+
+Prototype → Production file mapping:
+
+| Prototype path                | Production path                                  |
+|-------------------------------|--------------------------------------------------|
+| `atoms.jsx`                   | `src/components/ui/DesignAtoms.tsx`              |
+| `data.jsx`                    | Typed data modules (per the production repo)     |
+| `pages/<name>.jsx`            | `src/pages/<Name>.tsx` (or equivalent route file)|
+| `shell.jsx`                   | App shell / router in the production repo        |
+
+**Workflow rule**: design changes start in the prototype (so we can
+see them without rebuilding), then port to the TypeScript components
+once approved. Don't add a new atom to the production codebase without
+first sketching it here — the prototype is where the visual language
+gets argued out.
+
+### 9.2 Prototype conventions
+
 - One file per page in `pages/`, each defines a single React component
   attached to `window` (e.g. `window.NeighborhoodsPage`).
 - All shared atoms in `atoms.jsx`, all mock data in `data.jsx`,
   attached to `window` at the bottom of the file.
 - Routing is a `useState('neighborhoods')` in `shell.jsx`. Don't add
-  a router library; if we go beyond ~10 pages we'll graduate to
-  Next.js, not React Router.
+  a router library here; routing belongs in the production app.
 - Tailwind via the CDN config block in `index.html`. CSS variables
   mirror Tailwind colors so plain CSS works too.
 - React 18.3.1 + Babel standalone, pinned with integrity hashes.
   Don't bump these casually.
-- File-edit etiquette: if you change a token (color, font size,
-  spacing constant), grep the codebase and update everywhere. The
-  system only works because it's consistent.
+
+### 9.3 Cross-surface etiquette
+
+- If you change a token (color, font size, spacing constant), update
+  it in **both** the prototype's Tailwind config + CSS variables and
+  the production theme file. The system only works because it's
+  consistent.
+- If you add an atom to the prototype, port it to
+  `src/components/ui/DesignAtoms.tsx` with proper TypeScript types
+  before the next page in production lands. Don't let the surfaces
+  drift.
+- If you find a divergence (atom exists in one place but not the
+  other, or the semantic rules differ), flag it — the prototype is
+  the source of truth for visual decisions, the production code is
+  the source of truth for behavior.
 
 ---
 

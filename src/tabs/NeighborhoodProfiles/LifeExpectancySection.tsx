@@ -125,22 +125,40 @@ export default function LifeExpectancySection({ neighborhood }: Props) {
               </div>
               <div className="relative h-2 rounded-full overflow-hidden"
                 style={{ background: C.rule }}>
-                {/* City average marker */}
-                {stats.min != null && stats.max != null && (
-                  <div
-                    className="absolute top-0 bottom-0 w-0.5"
-                    style={{ left: `${Math.round(((stats.avg - stats.min) / (stats.max - stats.min)) * 100)}%`, background: C.muted }}
-                    title={`City avg: ${stats.avg}`}
-                  />
-                )}
+                {stats.min != null && stats.max != null && (() => {
+                  const avgPos = Math.round(((stats.avg - stats.min) / (stats.max - stats.min)) * 100)
+                  const isAbove = rangePosition > avgPos
+                  const fillLeft = Math.min(avgPos, rangePosition)
+                  const fillWidth = Math.abs(rangePosition - avgPos)
+                  return (
+                    <>
+                      {/* Colored fill between city avg and neighborhood */}
+                      <div
+                        className="absolute top-0 bottom-0"
+                        style={{
+                          left: `${fillLeft}%`,
+                          width: `${fillWidth}%`,
+                          background: isAbove ? C.hill : C.brick,
+                          opacity: 0.7,
+                        }}
+                      />
+                      {/* City average marker */}
+                      <div
+                        className="absolute top-0 bottom-0 w-0.5"
+                        style={{ left: `${avgPos}%`, background: C.muted }}
+                        title={`City avg: ${stats.avg}`}
+                      />
+                    </>
+                  )
+                })()}
                 {/* Neighborhood marker */}
                 <div
                   className="absolute top-0 bottom-0 w-1 rounded-full"
-                  style={{ left: `calc(${rangePosition}% - 2px)`, background: C.river }}
+                  style={{ left: `calc(${rangePosition}% - 2px)`, background: diffFromAvg != null && diffFromAvg >= 0 ? C.hill : C.brick }}
                 />
               </div>
               <div className="text-[10px] mt-1 text-center" style={{ color: C.muted }}>
-                Muted line = city average · River bar = {record.name}
+                Muted line = city average · Colored bar = {record.name}
               </div>
             </div>
           )}

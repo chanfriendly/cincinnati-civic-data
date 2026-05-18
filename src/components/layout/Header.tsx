@@ -48,22 +48,6 @@ const Header: React.FC<HeaderProps> = ({ onTabChange }) => {
 
         {/* Nav links + language toggle */}
         <nav className="flex items-center gap-5 text-[13px]" aria-label="Site navigation">
-          <button
-            onClick={() => onTabChange('about')}
-            className="hover:underline transition-colors"
-            style={{ color: '#6b5f55' }}
-          >
-            About &amp; methods
-          </button>
-          <span style={{ color: '#e4ddd2' }}>·</span>
-          <button
-            onClick={() => onTabChange('about')}
-            className="hover:underline transition-colors"
-            style={{ color: '#6b5f55' }}
-          >
-            Limitations
-          </button>
-
           {/* Language toggle */}
           <div
             className="flex border rounded-sm overflow-hidden ml-2"

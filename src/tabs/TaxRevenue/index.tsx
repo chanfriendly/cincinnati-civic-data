@@ -732,7 +732,7 @@ const TaxRevenue: React.FC = () => {
   const latestPercentileRow = percentiles?.years[percentiles.years.length - 1] ?? null
 
   return (
-    <div className="px-8 py-2 max-w-5xl">
+    <div className="px-8 py-2">
 
       {/* Spanish AI-translation disclaimer */}
       {language === 'es' && (
