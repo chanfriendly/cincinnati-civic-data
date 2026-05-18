@@ -396,14 +396,14 @@ const CATEGORY_ORDER: RevenueCategory[] = [
 
 const CATEGORY_COLORS: Record<RevenueCategory, string> = {
   'Income Tax':                C.river,
-  'Property Tax':              C.hill,
-  'Utility Charges':           C.riverDeep,
-  'Charges for Services':      C.ochre,
-  'Intergovernmental':         '#8a6e3e',
+  'Property Tax':              C.riverDeep,
+  'Utility Charges':           C.hill,
+  'Charges for Services':      '#5a7a3eb3',   // hill at 70%
+  'Intergovernmental':         C.muted,
   'Licenses, Fines & Permits': C.brick,
-  'Investment Income':         '#2e5438',
-  'Internal Transfers':        '#a89880',
-  'Other':                     C.muted,
+  'Investment Income':         '#2f5d62b3',   // river at 70%
+  'Internal Transfers':        '#6b5f55b3',   // muted at 70%
+  'Other':                     C.rule,
 }
 
 const SPENDING_CATEGORY_ORDER: SpendingCategory[] = [
@@ -416,13 +416,13 @@ const SPENDING_CATEGORY_COLORS: Record<SpendingCategory, string> = {
   'Water & Sewer':        C.riverDeep,
   'Capital Projects':     C.river,
   'General Government':   C.hill,
-  'Community Development':C.ochre,
-  'Risk & Insurance':     '#a89880',
+  'Community Development':'#5a7a3eb3',   // hill at 70%
+  'Risk & Insurance':     C.muted,
   'Public Health':        C.brick,
-  'Transit & Streets':    '#2e5438',
-  'Recreation & Culture': '#8a6e3e',
-  'Internal Services':    '#c4a96e',
-  'Other':                C.muted,
+  'Transit & Streets':    '#2f5d62b3',   // river at 70%
+  'Recreation & Culture': '#6b5f55b3',   // muted at 70%
+  'Internal Services':    C.rule,
+  'Other':                C.limestone,
 }
 
 // ─── Shared breakdown table ───────────────────────────────────────────────────

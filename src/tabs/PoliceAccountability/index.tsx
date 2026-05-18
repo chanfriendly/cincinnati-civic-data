@@ -18,8 +18,8 @@ const RACE_COLORS: Record<string, string> = {
   'BLACK':                                      C.river,
   'WHITE':                                      C.hill,
   'HISPANIC':                                   C.muted,
-  'ASIAN/PACIFIC ISLANDER':                     '#9c6b98',
-  'AMERICAN INDIAN/ALASKAN NATIVE':             '#8a6e3e',
+  'ASIAN/PACIFIC ISLANDER':                     C.hill,
+  'AMERICAN INDIAN/ALASKAN NATIVE':             C.riverDeep,
   'NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER':  C.riverDeep,
   'UNKNOWN':                                    C.muted,
 };

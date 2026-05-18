@@ -28,6 +28,7 @@ import {
 } from '../../utils/api';
 import type { NeighborhoodDisabilityStats } from '../../types';
 import { DataCard } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 
 // ── Neighborhood list (matches Tab 2 — CPD SNA names) ────────────────────────
 
@@ -115,39 +116,94 @@ type ImpairmentView = 'overview' | 'mobility' | 'vision' | 'hearing' | 'cognitiv
 interface ViewConfig {
   id: ImpairmentView;
   label: string;
-  icon: string;
+  icon: React.ReactNode;
   description: string;
 }
+
+// SVG icons replacing raw emoji
+const IconAccessibility = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="4" r="2"/>
+    <path d="M12 6v6l4 2M8 8h8"/>
+    <path d="M9 20a3 3 0 106 0"/>
+  </svg>
+);
+const IconMobility = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="5" r="2"/>
+    <path d="M8 11h8l-1 7H9l-1-7z"/>
+    <path d="M9 18l-1 4M15 18l1 4"/>
+  </svg>
+);
+const IconVision = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+    <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+  </svg>
+);
+const IconHearing = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15.536 8.464a5 5 0 010 7.072"/>
+    <path d="M12 6a7 7 0 010 12"/>
+    <path d="M9 10a3 3 0 000 4"/>
+  </svg>
+);
+const IconCognitive = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="9"/>
+    <path d="M9 9h.01M15 9h.01M9.5 14a3.5 3.5 0 005 0"/>
+  </svg>
+);
+const IconCheck = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 13l4 4L19 7"/>
+  </svg>
+);
+const IconWarning = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+  </svg>
+);
+const IconMegaphone = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 11l19-9-9 19-2-8-8-2z"/>
+  </svg>
+);
+const IconBarChart = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/>
+  </svg>
+);
 
 const VIEWS: ViewConfig[] = [
   {
     id: 'overview',
     label: 'All Disabilities',
-    icon: '♿',
+    icon: <IconAccessibility />,
     description: 'Population-level disability demographics, poverty crosswalk, and earnings gap.',
   },
   {
     id: 'mobility',
     label: 'Mobility & Physical',
-    icon: '🦽',
+    icon: <IconMobility />,
     description: 'Ambulatory difficulty, ADA paratransit coverage, and accessible transit.',
   },
   {
     id: 'vision',
     label: 'Vision',
-    icon: '👁',
+    icon: <IconVision />,
     description: 'Vision difficulty rates and infrastructure relevant to the visually impaired.',
   },
   {
     id: 'hearing',
     label: 'Hearing',
-    icon: '👂',
+    icon: <IconHearing />,
     description: 'Hearing difficulty rates and relevant community context.',
   },
   {
     id: 'cognitive',
     label: 'Cognitive & Independent Living',
-    icon: '🧠',
+    icon: <IconCognitive />,
     description: 'Cognitive difficulty and independent living difficulty rates.',
   },
 ];
@@ -161,12 +217,12 @@ function pct(numerator: number, denominator: number): number | null {
 
 function statRow(label: string, value: string | null, note?: string) {
   return (
-    <div className="flex justify-between items-start py-2 border-b border-gray-100 last:border-0">
+    <div className="flex justify-between items-start py-2 border-b last:border-0" style={{ borderColor: C.rule }}>
       <div>
-        <span className="text-sm text-gray-700">{label}</span>
-        {note && <p className="text-xs text-gray-500 mt-0.5">{note}</p>}
+        <span className="text-sm" style={{ color: C.ink }}>{label}</span>
+        {note && <p className="text-xs mt-0.5" style={{ color: C.muted }}>{note}</p>}
       </div>
-      <span className="text-sm font-semibold text-[#1A4A6B] ml-4 shrink-0">
+      <span className="text-sm font-semibold ml-4 shrink-0" style={{ color: C.river }}>
         {value ?? 'N/A'}
       </span>
     </div>
@@ -174,10 +230,11 @@ function statRow(label: string, value: string | null, note?: string) {
 }
 
 // Color scale for disability rates: green (low) → yellow → red (high)
-function rateColor(rate: number): string {
-  if (rate < 10) return 'text-green-700 bg-green-50';
-  if (rate < 18) return 'text-yellow-700 bg-yellow-50';
-  return 'text-red-700 bg-red-50';
+// Returns a style object instead of Tailwind class strings
+function rateStyle(rate: number): React.CSSProperties {
+  if (rate < 10) return { color: C.hill, background: C.hillLight };
+  if (rate < 18) return { color: C.ochre, background: C.limestone };
+  return { color: C.brick, background: C.brickLight };
 }
 
 // ── SORTA paratransit helpers ─────────────────────────────────────────────────
@@ -202,18 +259,26 @@ function StatCallout({
   value,
   label,
   sub,
-  colorClass,
+  rateStyles,
 }: {
   value: string;
   label: string;
   sub?: string;
-  colorClass?: string;
+  rateStyles?: React.CSSProperties;
 }) {
+  const containerStyle: React.CSSProperties = {
+    background: rateStyles?.background ?? C.riverLight,
+    borderRadius: 6,
+    padding: '1rem',
+    textAlign: 'center',
+  };
+  const numColor = rateStyles?.color ?? C.riverDeep;
+
   return (
-    <div className={`rounded-lg p-4 text-center ${colorClass ?? 'bg-blue-50'}`}>
-      <div className={`text-3xl font-bold ${colorClass ? '' : 'text-[#1A4A6B]'}`}>{value}</div>
-      <div className="text-sm font-medium mt-1">{label}</div>
-      {sub && <div className="text-xs text-gray-500 mt-0.5">{sub}</div>}
+    <div style={containerStyle}>
+      <div className="serif font-medium tnum" style={{ fontSize: 36, color: numColor, lineHeight: 1 }}>{value}</div>
+      <div className="text-sm font-medium mt-1" style={{ color: C.ink }}>{label}</div>
+      {sub && <div className="text-xs mt-0.5" style={{ color: C.muted }}>{sub}</div>}
     </div>
   );
 }
@@ -260,15 +325,20 @@ function ParatransitCard({ neighborhood }: { neighborhood: string }) {
     >
       <div className="space-y-3">
         {/* Coverage status */}
-        <div className={`flex items-center gap-3 p-3 rounded-lg ${covered ? 'bg-green-50' : 'bg-red-50'}`}>
-          <span className="text-2xl">{covered ? '✅' : '⚠️'}</span>
+        <div
+          className="flex items-center gap-3 p-3 rounded-md"
+          style={{ background: covered ? C.hillLight : C.brickLight }}
+        >
+          <span className="shrink-0" style={{ color: covered ? C.hill : C.brick }}>
+            {covered ? <IconCheck /> : <IconWarning />}
+          </span>
           <div>
-            <p className={`font-semibold text-sm ${covered ? 'text-green-800' : 'text-red-800'}`}>
+            <p className="font-semibold text-sm" style={{ color: covered ? C.hill : C.brick }}>
               {covered
                 ? `SORTA Access paratransit is available here`
                 : `Paratransit coverage is uncertain for this neighborhood`}
             </p>
-            <p className="text-xs text-gray-600 mt-0.5">
+            <p className="text-xs mt-0.5" style={{ color: C.muted }}>
               {stopsNearby !== null
                 ? `${stopsNearby} fixed-route bus stop${stopsNearby !== 1 ? 's' : ''} within ¾ mile of neighborhood center`
                 : 'Loading…'}
@@ -277,7 +347,7 @@ function ParatransitCard({ neighborhood }: { neighborhood: string }) {
         </div>
 
         {/* How this works */}
-        <div className="text-sm text-gray-700 space-y-1.5">
+        <div className="text-sm space-y-1.5" style={{ color: C.ink }}>
           <p>
             Under the <strong>Americans with Disabilities Act (ADA)</strong>, transit agencies must
             offer paratransit service within <strong>¾ mile</strong> of every fixed-route bus line,
@@ -290,7 +360,8 @@ function ParatransitCard({ neighborhood }: { neighborhood: string }) {
               href="https://www.go-metro.com/riding-metro/accessibility/access"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#1A4A6B] underline"
+              style={{ color: C.river }}
+              className="underline"
             >
               SORTA's Access eligibility tool
             </a>{' '}
@@ -299,8 +370,14 @@ function ParatransitCard({ neighborhood }: { neighborhood: string }) {
         </div>
 
         {/* Data gap callout */}
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800 space-y-1">
-          <p className="font-semibold">📊 Data we don't have yet</p>
+        <div
+          className="rounded-md p-3 text-xs space-y-1"
+          style={{ background: C.limestone, border: `1px solid ${C.rule}`, color: C.muted }}
+        >
+          <div className="flex items-center gap-1.5 font-semibold" style={{ color: C.ochre }}>
+            <IconBarChart />
+            <span>Data we don't have yet</span>
+          </div>
           <p>
             SORTA's GTFS feed includes a <code>wheelchair_boarding</code> field indicating which
             stops have accessible boarding. Our current stops file was built without it — this
@@ -312,6 +389,7 @@ function ParatransitCard({ neighborhood }: { neighborhood: string }) {
               target="_blank"
               rel="noopener noreferrer"
               className="underline font-medium"
+              style={{ color: C.river }}
             >
               View SORTA's open developer data →
             </a>
@@ -411,15 +489,20 @@ function DataGapsCard({ view }: { view: ImpairmentView }) {
   const currentGaps = gaps[view] ?? [];
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-blue-200 p-5 mb-4">
+    <div
+      className="rounded-md shadow-sm p-5 mb-4 bg-white"
+      style={{ border: `1px solid ${C.rule}` }}
+    >
       {/* Header */}
       <div className="flex items-start gap-3 mb-4">
-        <div className="text-2xl">📣</div>
+        <span className="shrink-0 mt-0.5" style={{ color: C.brick }}>
+          <IconMegaphone />
+        </span>
         <div>
-          <h3 className="text-base font-bold text-[#1A4A6B]">
+          <h3 className="text-base font-bold" style={{ color: C.riverDeep }}>
             This data should be public — here's how to make it happen
           </h3>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm mt-1" style={{ color: C.muted }}>
             The gaps below represent real barriers for Cincinnati's disabled community.
             Each one is a request that a resident, advocate, or council member can make right now.
           </p>
@@ -429,18 +512,19 @@ function DataGapsCard({ view }: { view: ImpairmentView }) {
       {/* Gap list */}
       <div className="space-y-3">
         {currentGaps.map((gap, i) => (
-          <div key={i} className="border border-gray-200 rounded-lg p-3">
-            <p className="text-sm text-gray-800">{gap.what}</p>
+          <div key={i} className="rounded-md p-3" style={{ border: `1px solid ${C.rule}` }}>
+            <p className="text-sm" style={{ color: C.ink }}>{gap.what}</p>
             <div className="flex items-center justify-between mt-2 flex-wrap gap-2">
-              <span className="text-xs text-gray-500 font-medium">
-                Ask: <span className="text-gray-700">{gap.who}</span>
+              <span className="text-xs font-medium" style={{ color: C.muted }}>
+                Ask: <span style={{ color: C.ink }}>{gap.who}</span>
               </span>
               {gap.link && (
                 <a
                   href={gap.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-[#1A4A6B] underline font-medium"
+                  className="text-xs underline font-medium"
+                  style={{ color: C.river }}
                 >
                   {gap.linkLabel ?? gap.link} →
                 </a>
@@ -451,14 +535,15 @@ function DataGapsCard({ view }: { view: ImpairmentView }) {
       </div>
 
       {/* Universal call to action */}
-      <div className="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-600 space-y-1.5">
-        <p className="font-semibold text-gray-700">Want to help fill these gaps?</p>
+      <div className="mt-4 pt-4 text-xs space-y-1.5" style={{ borderTop: `1px solid ${C.rule}`, color: C.muted }}>
+        <p className="font-semibold" style={{ color: C.ink }}>Want to help fill these gaps?</p>
         <div className="flex flex-wrap gap-3">
           <a
             href="https://www.cincinnati-oh.gov/citycouncil/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#1A4A6B] underline"
+            className="underline"
+            style={{ color: C.river }}
           >
             Cincinnati City Council →
           </a>
@@ -466,7 +551,8 @@ function DataGapsCard({ view }: { view: ImpairmentView }) {
             href="https://data.cincinnati-oh.gov"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#1A4A6B] underline"
+            className="underline"
+            style={{ color: C.river }}
           >
             Request data on Cincinnati Open Data →
           </a>
@@ -474,7 +560,8 @@ function DataGapsCard({ view }: { view: ImpairmentView }) {
             href="https://github.com/chanfriendly/cincinnati-civic-data"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#1A4A6B] underline"
+            className="underline"
+            style={{ color: C.river }}
           >
             Contribute to this project →
           </a>
@@ -495,11 +582,14 @@ function OverviewView({
 }) {
   if (!stats) {
     return (
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4 text-sm text-amber-800">
+      <div
+        className="rounded-md p-4 mb-4 text-sm"
+        style={{ background: C.limestone, border: `1px solid ${C.rule}`, color: C.ochre }}
+      >
         <p className="font-semibold">Census disability data not yet loaded</p>
-        <p className="mt-1">
-          Run <code className="bg-amber-100 px-1 rounded">python3 scripts/build_disability.py</code>{' '}
-          locally to generate <code className="bg-amber-100 px-1 rounded">public/data/neighborhood_disability.json</code>,
+        <p className="mt-1" style={{ color: C.muted }}>
+          Run <code className="px-1 rounded" style={{ background: C.rule }}>python3 scripts/build_disability.py</code>{' '}
+          locally to generate <code className="px-1 rounded" style={{ background: C.rule }}>public/data/neighborhood_disability.json</code>,
           then commit and redeploy.
         </p>
       </div>
@@ -507,6 +597,7 @@ function OverviewView({
   }
 
   const anyPct = pct(stats.anyDisability, stats.pop);
+  const povertyPct = stats.disabilityTotal > 0 ? pct(stats.disabilityPoverty, stats.disabilityTotal) : null;
 
   return (
     <div className="space-y-4">
@@ -516,27 +607,20 @@ function OverviewView({
           value={anyPct !== null ? formatPercent(anyPct) : 'N/A'}
           label="with a disability"
           sub="any type"
-          colorClass={anyPct !== null ? rateColor(anyPct) : 'bg-gray-50 text-gray-700'}
+          rateStyles={anyPct !== null ? rateStyle(anyPct) : { color: C.muted, background: C.limestone }}
         />
         <StatCallout
           value={stats.pop.toLocaleString()}
           label="total population"
           sub="civilian, non-institutionalized"
-          colorClass="bg-blue-50 text-[#1A4A6B]"
         />
         <StatCallout
-          value={
-            stats.disabilityTotal > 0
-              ? formatPercent(pct(stats.disabilityPoverty, stats.disabilityTotal) ?? 0)
-              : 'N/A'
-          }
+          value={povertyPct !== null ? formatPercent(povertyPct) : 'N/A'}
           label="disabled + below poverty"
           sub="federal poverty level"
-          colorClass={
-            stats.disabilityTotal > 0 && pct(stats.disabilityPoverty, stats.disabilityTotal)! > 25
-              ? 'bg-red-50 text-red-700'
-              : 'bg-blue-50 text-[#1A4A6B]'
-          }
+          rateStyles={povertyPct !== null && povertyPct > 25
+            ? { color: C.brick, background: C.brickLight }
+            : undefined}
         />
       </div>
 
@@ -545,7 +629,7 @@ function OverviewView({
         title="Disability Types — Population Breakdown"
         attribution={{ datasetName: 'ACS 5-Year 2022 — B18102–B18107', lastUpdated: null, uid: 'census-acs' }}
       >
-        <div className="mb-3 text-xs text-gray-500 bg-gray-50 rounded p-2">
+        <div className="mb-3 text-xs rounded p-2" style={{ color: C.muted, background: C.limestone }}>
           People may have more than one disability type; totals may exceed the "any disability" count.
           ACS data is survey-based — small neighborhoods have wider margins of error.
         </div>
@@ -563,18 +647,19 @@ function OverviewView({
         title="Economic Vulnerability"
         attribution={{ datasetName: 'ACS 5-Year 2022 — C18130', lastUpdated: null }}
       >
-        <p className="text-sm text-gray-600 mb-3">
+        <p className="text-sm mb-3" style={{ color: C.muted }}>
           People with disabilities face significantly higher rates of poverty nationwide.
           This section shows the intersection in {neighborhood}.
         </p>
         {statRow(
           'Disabled residents below poverty line',
-          stats.disabilityTotal > 0
-            ? formatPercent(pct(stats.disabilityPoverty, stats.disabilityTotal) ?? 0)
-            : 'N/A',
+          povertyPct !== null ? formatPercent(povertyPct) : 'N/A',
           'As a share of all residents with a disability'
         )}
-        <div className="mt-3 text-xs text-gray-500 bg-yellow-50 border border-yellow-100 rounded p-2">
+        <div
+          className="mt-3 text-xs rounded p-2"
+          style={{ color: C.muted, background: C.limestone, border: `1px solid ${C.rule}` }}
+        >
           For reference: the national disability poverty rate is approximately 25–28% (ACS 2022).
           Rates above 30% indicate concentrated economic hardship in this community.
         </div>
@@ -601,21 +686,23 @@ function MobilityView({
             value={ambulatoryPct !== null ? formatPercent(ambulatoryPct) : 'N/A'}
             label="ambulatory difficulty"
             sub="mobility impairment — ACS B18105"
-            colorClass={ambulatoryPct !== null ? rateColor(ambulatoryPct) : 'bg-gray-50 text-gray-700'}
+            rateStyles={ambulatoryPct !== null ? rateStyle(ambulatoryPct) : { color: C.muted, background: C.limestone }}
           />
           <StatCallout
             value={stats.ambulatory.toLocaleString()}
             label="residents with mobility limitations"
             sub="civilian non-institutionalized"
-            colorClass="bg-blue-50 text-[#1A4A6B]"
           />
         </div>
       )}
 
       {!stats && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+        <div
+          className="rounded-md p-3 text-sm"
+          style={{ background: C.limestone, border: `1px solid ${C.rule}`, color: C.ochre }}
+        >
           Census mobility data will appear here after running{' '}
-          <code className="bg-amber-100 px-1 rounded">scripts/build_disability.py</code>.
+          <code className="px-1 rounded" style={{ background: C.rule }}>scripts/build_disability.py</code>.
         </div>
       )}
 
@@ -624,7 +711,7 @@ function MobilityView({
 
       {/* OSM infrastructure — future */}
       <DataCard title="Pedestrian Infrastructure (Coming Soon)">
-        <div className="text-sm text-gray-600 space-y-2">
+        <div className="text-sm space-y-2" style={{ color: C.muted }}>
           <p>
             We are working to integrate <strong>OpenStreetMap</strong> data on curb cuts,
             wheelchair-accessible paths, and accessible parking in Cincinnati.
@@ -639,7 +726,8 @@ function MobilityView({
               href="https://www.openstreetmap.org/#map=13/39.1031/-84.5120"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#1A4A6B] underline"
+              className="underline"
+              style={{ color: C.river }}
             >
               Help map Cincinnati accessibility on OSM →
             </a>
@@ -649,7 +737,7 @@ function MobilityView({
 
       {/* CMS care facilities — future */}
       <DataCard title="Nearby Care & Support Facilities (Coming Soon)">
-        <div className="text-sm text-gray-600 space-y-2">
+        <div className="text-sm space-y-2" style={{ color: C.muted }}>
           <p>
             This section will show <strong>nursing homes, home health agencies, and rehabilitation
             facilities</strong> near {neighborhood} using CMS Care Compare data — a free federal
@@ -659,7 +747,8 @@ function MobilityView({
             href="https://www.medicare.gov/care-compare/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-[#1A4A6B] underline"
+            className="text-xs underline"
+            style={{ color: C.river }}
           >
             View CMS Care Compare directly →
           </a>
@@ -680,25 +769,27 @@ function VisionView({ stats }: { stats: NeighborhoodDisabilityStats | null }) {
             value={visionPct !== null ? formatPercent(visionPct) : 'N/A'}
             label="vision difficulty"
             sub="ACS B18103"
-            colorClass={visionPct !== null ? rateColor(visionPct) : 'bg-gray-50 text-gray-700'}
+            rateStyles={visionPct !== null ? rateStyle(visionPct) : { color: C.muted, background: C.limestone }}
           />
           <StatCallout
             value={stats.vision.toLocaleString()}
             label="residents with vision impairment"
-            colorClass="bg-blue-50 text-[#1A4A6B]"
           />
         </div>
       )}
 
       {!stats && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+        <div
+          className="rounded-md p-3 text-sm"
+          style={{ background: C.limestone, border: `1px solid ${C.rule}`, color: C.ochre }}
+        >
           Census vision data will appear here after running{' '}
-          <code className="bg-amber-100 px-1 rounded">scripts/build_disability.py</code>.
+          <code className="px-1 rounded" style={{ background: C.rule }}>scripts/build_disability.py</code>.
         </div>
       )}
 
       <DataCard title="Accessible Pedestrian Signals & Tactile Infrastructure (Coming Soon)">
-        <div className="text-sm text-gray-600 space-y-2">
+        <div className="text-sm space-y-2" style={{ color: C.muted }}>
           <p>
             Audible pedestrian signals (APS) and tactile detectable warning surfaces are critical
             infrastructure for blind and low-vision residents. Cincinnati does not yet publish an
@@ -712,7 +803,7 @@ function VisionView({ stats }: { stats: NeighborhoodDisabilityStats | null }) {
       </DataCard>
 
       <DataCard title="Local Vision Support Organizations">
-        <div className="text-sm text-gray-700 space-y-3">
+        <div className="text-sm space-y-3" style={{ color: C.ink }}>
           {[
             {
               name: 'Cincinnati Association for the Blind and Visually Impaired (CABVI)',
@@ -725,16 +816,17 @@ function VisionView({ stats }: { stats: NeighborhoodDisabilityStats | null }) {
               desc: 'Free talking books, braille, and accessible formats for Ohioans who cannot read standard print.',
             },
           ].map((org) => (
-            <div key={org.name} className="border border-gray-100 rounded p-3">
+            <div key={org.name} className="rounded p-3" style={{ border: `1px solid ${C.rule}` }}>
               <a
                 href={org.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#1A4A6B] font-medium text-sm underline"
+                className="font-medium text-sm underline"
+                style={{ color: C.river }}
               >
                 {org.name}
               </a>
-              <p className="text-xs text-gray-600 mt-1">{org.desc}</p>
+              <p className="text-xs mt-1" style={{ color: C.muted }}>{org.desc}</p>
             </div>
           ))}
         </div>
@@ -754,25 +846,27 @@ function HearingView({ stats }: { stats: NeighborhoodDisabilityStats | null }) {
             value={hearingPct !== null ? formatPercent(hearingPct) : 'N/A'}
             label="hearing difficulty"
             sub="ACS B18102"
-            colorClass={hearingPct !== null ? rateColor(hearingPct) : 'bg-gray-50 text-gray-700'}
+            rateStyles={hearingPct !== null ? rateStyle(hearingPct) : { color: C.muted, background: C.limestone }}
           />
           <StatCallout
             value={stats.hearing.toLocaleString()}
             label="residents with hearing impairment"
-            colorClass="bg-blue-50 text-[#1A4A6B]"
           />
         </div>
       )}
 
       {!stats && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+        <div
+          className="rounded-md p-3 text-sm"
+          style={{ background: C.limestone, border: `1px solid ${C.rule}`, color: C.ochre }}
+        >
           Census hearing data will appear here after running{' '}
-          <code className="bg-amber-100 px-1 rounded">scripts/build_disability.py</code>.
+          <code className="px-1 rounded" style={{ background: C.rule }}>scripts/build_disability.py</code>.
         </div>
       )}
 
       <DataCard title="Public Communication Infrastructure">
-        <div className="text-sm text-gray-600 space-y-2">
+        <div className="text-sm space-y-2" style={{ color: C.muted }}>
           <p>
             Visual alert systems, TTY/TDD availability at government offices, and ASL interpretation
             at public meetings are important for Deaf and hard-of-hearing residents. Cincinnati does
@@ -785,7 +879,8 @@ function HearingView({ stats }: { stats: NeighborhoodDisabilityStats | null }) {
               href="https://www.cincinnati-oh.gov/ada/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#1A4A6B] underline"
+              className="underline"
+              style={{ color: C.river }}
             >
               City of Cincinnati ADA Coordinator
             </a>.
@@ -794,7 +889,7 @@ function HearingView({ stats }: { stats: NeighborhoodDisabilityStats | null }) {
       </DataCard>
 
       <DataCard title="Local Deaf & Hard-of-Hearing Organizations">
-        <div className="text-sm text-gray-700 space-y-3">
+        <div className="text-sm space-y-3" style={{ color: C.ink }}>
           {[
             {
               name: 'Hearing, Speech & Deaf Center of Greater Cincinnati',
@@ -807,16 +902,17 @@ function HearingView({ stats }: { stats: NeighborhoodDisabilityStats | null }) {
               desc: 'Community connection and advocacy for the Deaf community in Ohio.',
             },
           ].map((org) => (
-            <div key={org.name} className="border border-gray-100 rounded p-3">
+            <div key={org.name} className="rounded p-3" style={{ border: `1px solid ${C.rule}` }}>
               <a
                 href={org.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#1A4A6B] font-medium text-sm underline"
+                className="font-medium text-sm underline"
+                style={{ color: C.river }}
               >
                 {org.name}
               </a>
-              <p className="text-xs text-gray-600 mt-1">{org.desc}</p>
+              <p className="text-xs mt-1" style={{ color: C.muted }}>{org.desc}</p>
             </div>
           ))}
         </div>
@@ -837,39 +933,41 @@ function CognitiveView({ stats }: { stats: NeighborhoodDisabilityStats | null })
             value={cognitivePct !== null ? formatPercent(cognitivePct) : 'N/A'}
             label="cognitive difficulty"
             sub="ACS B18104"
-            colorClass={cognitivePct !== null ? rateColor(cognitivePct) : 'bg-gray-50 text-gray-700'}
+            rateStyles={cognitivePct !== null ? rateStyle(cognitivePct) : { color: C.muted, background: C.limestone }}
           />
           <StatCallout
             value={independentPct !== null ? formatPercent(independentPct) : 'N/A'}
             label="independent living difficulty"
             sub="ACS B18107"
-            colorClass={independentPct !== null ? rateColor(independentPct) : 'bg-gray-50 text-gray-700'}
+            rateStyles={independentPct !== null ? rateStyle(independentPct) : { color: C.muted, background: C.limestone }}
           />
           <StatCallout
             value={stats ? pct(stats.selfCare, stats.pop) !== null ? formatPercent(pct(stats.selfCare, stats.pop)!) : 'N/A' : 'N/A'}
             label="self-care difficulty"
             sub="ACS B18106"
-            colorClass="bg-blue-50 text-[#1A4A6B]"
           />
         </div>
       )}
 
       {!stats && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+        <div
+          className="rounded-md p-3 text-sm"
+          style={{ background: C.limestone, border: `1px solid ${C.rule}`, color: C.ochre }}
+        >
           Census cognitive data will appear here after running{' '}
-          <code className="bg-amber-100 px-1 rounded">scripts/build_disability.py</code>.
+          <code className="px-1 rounded" style={{ background: C.rule }}>scripts/build_disability.py</code>.
         </div>
       )}
 
       <DataCard title="Mental Health & Developmental Disability Services">
-        <div className="text-sm text-gray-600 space-y-2">
+        <div className="text-sm space-y-2" style={{ color: C.muted }}>
           <p>
             This section will show nearby <strong>community mental health centers, supported living
             facilities, and developmental disability service providers</strong> when those datasets
             become available as open data.
           </p>
           <div className="mt-3 space-y-2">
-            <p className="font-medium text-gray-700 text-xs">Available now:</p>
+            <p className="font-medium text-xs" style={{ color: C.ink }}>Available now:</p>
             {[
               {
                 label: 'ADAMHS Board of Hamilton County — Community mental health services directory',
@@ -889,7 +987,8 @@ function CognitiveView({ stats }: { stats: NeighborhoodDisabilityStats | null })
                 href={r.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-xs text-[#1A4A6B] underline"
+                className="block text-xs underline"
+                style={{ color: C.river }}
               >
                 {r.label} →
               </a>
@@ -930,19 +1029,24 @@ export default function Accessibility() {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-[#1A4A6B]">Disability Access Resource Center</h1>
-        <p className="text-gray-600 mt-1 text-sm">
+        <h1 className="text-2xl font-bold" style={{ color: C.riverDeep }}>Disability Access Resource Center</h1>
+        <p className="mt-1 text-sm" style={{ color: C.muted }}>
           Disability demographics, transit coverage, and infrastructure data for Cincinnati neighborhoods.
           Use the impairment type selector to focus on what matters to you.
         </p>
       </div>
 
       {/* Data scarcity banner */}
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
-        <span className="text-amber-500 text-lg shrink-0 mt-0.5">⚠️</span>
+      <div
+        className="rounded-md p-4 flex items-start gap-3"
+        style={{ background: C.limestone, border: `1px solid ${C.rule}` }}
+      >
+        <span className="shrink-0 mt-0.5" style={{ color: C.ochre }}>
+          <IconWarning />
+        </span>
         <div>
-          <p className="text-sm font-semibold text-amber-800 mb-1">This section has limited data — and that's part of the story</p>
-          <p className="text-sm text-amber-700 leading-relaxed">
+          <p className="text-sm font-semibold mb-1" style={{ color: C.ochre }}>This section has limited data — and that's part of the story</p>
+          <p className="text-sm leading-relaxed" style={{ color: C.muted }}>
             Cincinnati does not publish most disability-related infrastructure data as open data — no curb-cut
             inventory, no audible pedestrian signal map, no accessible parking enforcement records. What you see
             here is drawn from U.S. Census ACS demographics and SORTA's bus stop network. The gaps are documented
@@ -953,43 +1057,47 @@ export default function Accessibility() {
       </div>
 
       {/* Controls: neighborhood + view selector */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 space-y-4">
+      <div
+        className="bg-white rounded-md shadow-sm p-4 space-y-4"
+        style={{ border: `1px solid ${C.rule}` }}
+      >
         {/* Neighborhood selector */}
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-          <label htmlFor="acc-neighborhood" className="text-sm font-medium text-gray-700 shrink-0">
+          <label htmlFor="acc-neighborhood" className="text-sm font-medium shrink-0" style={{ color: C.ink }}>
             Neighborhood
           </label>
           <select
             id="acc-neighborhood"
             value={selectedNeighborhood}
             onChange={(e) => setSelectedNeighborhood(e.target.value)}
-            className="w-full sm:w-auto border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A4A6B] bg-white"
+            className="w-full sm:w-auto rounded-md px-3 py-2 text-sm focus:outline-none bg-white"
+            style={{ border: `1px solid ${C.rule}`, color: C.ink }}
           >
             {NEIGHBORHOODS.map((n) => (
               <option key={n} value={n}>{n}</option>
             ))}
           </select>
           {loadingStats && (
-            <span className="text-xs text-gray-500 animate-pulse">Loading disability data…</span>
+            <span className="text-xs animate-pulse" style={{ color: C.muted }}>Loading disability data…</span>
           )}
           {statsError && (
-            <span className="text-xs text-red-500">{statsError}</span>
+            <span className="text-xs" style={{ color: C.brick }}>{statsError}</span>
           )}
         </div>
 
         {/* Impairment view pills */}
         <div>
-          <p className="text-xs font-medium text-gray-500 mb-2">View by impairment type</p>
+          <p className="text-xs font-medium mb-2" style={{ color: C.muted }}>View by impairment type</p>
           <div className="flex flex-wrap gap-2">
             {VIEWS.map((view) => (
               <button
                 key={view.id}
                 onClick={() => setActiveView(view.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${
-                  activeView === view.id
-                    ? 'bg-[#1A4A6B] text-white border-[#1A4A6B]'
-                    : 'bg-white text-gray-700 border-gray-300 hover:border-[#1A4A6B] hover:text-[#1A4A6B]'
-                }`}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors"
+                style={activeView === view.id
+                  ? { background: C.riverDeep, color: '#fff', border: `1px solid ${C.riverDeep}` }
+                  : { background: '#fff', color: C.ink, border: `1px solid ${C.rule}` }
+                }
                 title={view.description}
               >
                 <span>{view.icon}</span>
@@ -997,7 +1105,7 @@ export default function Accessibility() {
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-500 mt-2 italic">
+          <p className="text-xs mt-2 italic" style={{ color: C.muted }}>
             {VIEWS.find((v) => v.id === activeView)?.description}
           </p>
         </div>
@@ -1026,8 +1134,11 @@ export default function Accessibility() {
       <DataGapsCard view={activeView} />
 
       {/* ACS data note */}
-      <div className="text-xs text-gray-500 bg-gray-50 rounded-lg p-3 space-y-1">
-        <p className="font-medium text-gray-600">About this data</p>
+      <div
+        className="text-xs rounded-md p-3 space-y-1"
+        style={{ color: C.muted, background: C.limestone }}
+      >
+        <p className="font-medium" style={{ color: C.ink }}>About this data</p>
         <p>
           Disability statistics are from the <strong>U.S. Census American Community Survey
           5-Year estimates (2022)</strong>, table series B18101–B18107 and C18130.
@@ -1041,7 +1152,8 @@ export default function Accessibility() {
             href="https://www.census.gov/programs-surveys/acs/data.html"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#1A4A6B] underline"
+            className="underline"
+            style={{ color: C.river }}
           >
             U.S. Census ACS →
           </a>
@@ -1050,7 +1162,8 @@ export default function Accessibility() {
             href="https://censusreporter.org/tables/B18101/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#1A4A6B] underline"
+            className="underline"
+            style={{ color: C.river }}
           >
             Explore disability tables on Census Reporter →
           </a>

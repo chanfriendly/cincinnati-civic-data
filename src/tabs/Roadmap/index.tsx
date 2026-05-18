@@ -1,5 +1,6 @@
 import React from 'react'
 import { useLanguage } from '../../context/LanguageContext'
+import { C } from '../../components/ui/DesignAtoms'
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
@@ -8,19 +9,22 @@ type Status = 'completed' | 'in-progress' | 'planned' | 'seeking-data' | 'needs-
 interface StatusCfg { label: string; bg: string; text: string; dot: string }
 
 const STATUS_CONFIG: Record<Status, StatusCfg> = {
-  'completed':     { label: 'Completed',      bg: 'bg-green-50',  text: 'text-green-800',  dot: 'bg-green-500'  },
-  'in-progress':   { label: 'In Progress',    bg: 'bg-amber-50',  text: 'text-amber-800',  dot: 'bg-amber-400'  },
-  'planned':       { label: 'Planned',        bg: 'bg-blue-50',   text: 'text-blue-800',   dot: 'bg-blue-400'   },
-  'seeking-data':  { label: 'Seeking Data',   bg: 'bg-red-50',    text: 'text-red-800',    dot: 'bg-red-400'    },
-  'needs-partner': { label: 'Needs Partner',  bg: 'bg-purple-50', text: 'text-purple-800', dot: 'bg-purple-400' },
-  'open-question': { label: 'Open Question',  bg: 'bg-gray-100',  text: 'text-gray-700',   dot: 'bg-gray-400'   },
+  'completed':     { label: 'Completed',     bg: C.hillLight,  text: C.hill,      dot: C.hill      },
+  'in-progress':   { label: 'In Progress',   bg: C.limestone,  text: C.ochre,     dot: C.ochre     },
+  'planned':       { label: 'Planned',       bg: C.riverLight, text: C.riverDeep, dot: C.river     },
+  'seeking-data':  { label: 'Seeking Data',  bg: C.brickLight, text: C.brick,     dot: C.brick     },
+  'needs-partner': { label: 'Needs Partner', bg: C.limestone,  text: C.muted,     dot: C.muted     },
+  'open-question': { label: 'Open Question', bg: C.limestone,  text: C.muted,     dot: C.muted     },
 }
 
 const StatusBadge: React.FC<{ status: Status }> = ({ status }) => {
   const cfg = STATUS_CONFIG[status]
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${cfg.bg} ${cfg.text}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+    <span
+      className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
+      style={{ background: cfg.bg, color: cfg.text }}
+    >
+      <span className="w-1.5 h-1.5 rounded-full" style={{ background: cfg.dot }} />
       {cfg.label}
     </span>
   )
@@ -44,7 +48,7 @@ interface RoadmapSection {
   heading: string
   subheading: string
   Icon: React.FC<{ className?: string }>
-  iconBg: string
+  iconStyle: { background: string; color: string }
   items: RoadmapItem[]
 }
 
@@ -115,7 +119,7 @@ const SECTIONS: RoadmapSection[] = [
     heading: 'Housing Justice & Displacement',
     subheading: 'Tools for tenants, organizers, and advocates fighting displacement in Cincinnati\'s changing neighborhoods.',
     Icon: HouseIcon,
-    iconBg: 'bg-red-100 text-red-700',
+    iconStyle: { background: C.brickLight, color: C.brick },
     items: [
       {
         title: 'Displacement Pressure Index',
@@ -177,7 +181,7 @@ const SECTIONS: RoadmapSection[] = [
     heading: 'School Quality & Educational Equity',
     subheading: 'Cincinnati families making housing decisions deserve school-level data alongside neighborhood profiles.',
     Icon: SchoolIcon,
-    iconBg: 'bg-blue-100 text-blue-700',
+    iconStyle: { background: C.riverLight, color: C.riverDeep },
     items: [
       {
         title: 'Cincinnati Public Schools Performance by Neighborhood',
@@ -211,7 +215,7 @@ const SECTIONS: RoadmapSection[] = [
     heading: 'Transportation & Mobility Equity',
     subheading: 'Transit access shapes economic opportunity — especially for residents without cars.',
     Icon: BusIcon,
-    iconBg: 'bg-green-100 text-green-700',
+    iconStyle: { background: C.hillLight, color: C.hill },
     items: [
       {
         title: 'OHGO Real-Time Traffic Integration',
@@ -253,7 +257,7 @@ const SECTIONS: RoadmapSection[] = [
     heading: 'Civic Transparency & Public Health',
     subheading: 'Connecting residents to the decisions and conditions shaping their communities.',
     Icon: ChartIcon,
-    iconBg: 'bg-amber-100 text-amber-700',
+    iconStyle: { background: C.limestone, color: C.muted },
     items: [
       {
         title: '311 Service Request Heat Map',
@@ -295,7 +299,7 @@ const SECTIONS: RoadmapSection[] = [
     heading: 'Environmental Health & Lead Safety',
     subheading: 'Cincinnati\'s industrial legacy and aging infrastructure create public health risks that are not evenly distributed — and are barely visible in public data.',
     Icon: LeafIcon,
-    iconBg: 'bg-emerald-100 text-emerald-700',
+    iconStyle: { background: C.hillLight, color: C.hill },
     items: [
       {
         title: 'Lead Service Line Replacement Tracker',
@@ -340,7 +344,7 @@ const SECTIONS: RoadmapSection[] = [
     heading: 'Public Health & Community Assets',
     subheading: 'Health outcomes, healthcare access, civic infrastructure, and community resources — the building blocks of a neighborhood health assessment.',
     Icon: HeartIcon,
-    iconBg: 'bg-pink-100 text-pink-700',
+    iconStyle: { background: C.brickLight, color: C.brick },
     items: [
       {
         title: 'Neighborhood Health Outcomes (CDC PLACES)',
@@ -422,7 +426,7 @@ const SECTIONS: RoadmapSection[] = [
     heading: 'Racial Equity & Economic Mobility',
     subheading: 'Cincinnati\'s racial wealth gap is not historical background — it is the current operating reality. The data to make it visible is public.',
     Icon: ScaleIcon,
-    iconBg: 'bg-rose-100 text-rose-700',
+    iconStyle: { background: C.brickLight, color: C.brick },
     items: [
       {
         title: 'Racial Equity Dashboard',
@@ -467,7 +471,7 @@ const SECTIONS: RoadmapSection[] = [
     heading: 'Accountability & Civic Action',
     subheading: 'Connecting the data this platform surfaces to the decisions that created it — and the civic actions that can change it.',
     Icon: ScaleIcon,
-    iconBg: 'bg-amber-100 text-amber-700',
+    iconStyle: { background: C.limestone, color: C.muted },
     items: [
       {
         title: 'City Council Voting Records',
@@ -524,7 +528,7 @@ const SECTIONS: RoadmapSection[] = [
     heading: 'Open Questions & Community Input',
     subheading: 'We\'re building this with community activists, not just for them. Your knowledge shapes what comes next.',
     Icon: GlobeIcon,
-    iconBg: 'bg-purple-100 text-purple-700',
+    iconStyle: { background: C.riverLight, color: C.riverDeep },
     items: [
       {
         title: 'What neighborhoods need priority attention?',
@@ -553,20 +557,20 @@ const SECTIONS: RoadmapSection[] = [
 // ─── Item card ────────────────────────────────────────────────────────────────
 
 const ItemCard: React.FC<{ item: RoadmapItem }> = ({ item }) => (
-  <div className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-sm transition-shadow">
+  <div className="page-paper rounded-md border p-5 hover:shadow-sm transition-shadow" style={{ borderColor: C.rule }}>
     <div className="flex items-start justify-between gap-3 mb-3">
-      <h3 className="font-semibold text-gray-900 text-sm leading-snug">{item.title}</h3>
+      <h3 className="font-semibold text-sm leading-snug" style={{ color: C.ink }}>{item.title}</h3>
       <StatusBadge status={item.status} />
     </div>
 
-    <p className="text-sm text-gray-600 mb-3 leading-relaxed">{item.description}</p>
+    <p className="text-sm mb-3 leading-relaxed" style={{ color: C.muted }}>{item.description}</p>
 
-    <div className="bg-blue-50 border-l-4 border-blue-300 px-3 py-2 mb-3 rounded-r">
-      <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-0.5">Why it matters</p>
-      <p className="text-xs text-blue-800 leading-relaxed">{item.why}</p>
+    <div className="px-3 py-2 mb-3 rounded-r border-l-4" style={{ background: C.riverLight, borderColor: C.river }}>
+      <p className="text-xs font-semibold uppercase tracking-wide mb-0.5" style={{ color: C.riverDeep }}>Why it matters</p>
+      <p className="text-xs leading-relaxed" style={{ color: C.river }}>{item.why}</p>
     </div>
 
-    <div className="flex flex-wrap gap-3 text-xs text-gray-500">
+    <div className="flex flex-wrap gap-3 text-xs" style={{ color: C.muted }}>
       {item.dataSource && (
         <div className="flex items-center gap-1">
           <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -575,7 +579,7 @@ const ItemCard: React.FC<{ item: RoadmapItem }> = ({ item }) => (
           </svg>
           {item.dataSourceUrl
             ? <a href={item.dataSourceUrl} target="_blank" rel="noopener noreferrer"
-                className="underline hover:text-blue-600">{item.dataSource}</a>
+                className="underline" style={{ color: C.river }}>{item.dataSource}</a>
             : <span>{item.dataSource}</span>
           }
         </div>
@@ -593,10 +597,10 @@ const ItemCard: React.FC<{ item: RoadmapItem }> = ({ item }) => (
 
     {item.relatedOrgs && item.relatedOrgs.length > 0 && (
       <div className="mt-3">
-        <p className="text-xs text-gray-400 mb-1">Organizations you may be interested in supporting:</p>
+        <p className="text-xs mb-1" style={{ color: C.muted }}>Organizations you may be interested in supporting:</p>
         <div className="flex flex-wrap gap-1">
           {item.relatedOrgs.map(org => (
-            <span key={org} className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">
+            <span key={org} className="inline-block text-xs px-2 py-0.5 rounded-full" style={{ background: C.limestone, color: C.muted }}>
               {org}
             </span>
           ))}
@@ -612,8 +616,10 @@ const Legend: React.FC = () => (
   <div className="flex flex-wrap gap-3">
     {(Object.entries(STATUS_CONFIG) as Array<[Status, StatusCfg]>).map(([key, cfg]) => (
       <span key={key}
-        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${cfg.bg} ${cfg.text}`}>
-        <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+        style={{ background: cfg.bg, color: cfg.text }}
+      >
+        <span className="w-1.5 h-1.5 rounded-full" style={{ background: cfg.dot }} />
         {cfg.label}
       </span>
     ))}
@@ -623,12 +629,12 @@ const Legend: React.FC = () => (
 // ─── Progress summary ────────────────────────────────────────────────────────
 
 const SEGMENT_ORDER: Array<[Status, string]> = [
-  ['completed',    'bg-green-500'],
-  ['in-progress',  'bg-amber-400'],
-  ['planned',      'bg-blue-400'],
-  ['seeking-data', 'bg-red-400'],
-  ['needs-partner','bg-purple-400'],
-  ['open-question','bg-gray-400'],
+  ['completed',    C.hill],
+  ['in-progress',  C.ochre],
+  ['planned',      C.river],
+  ['seeking-data', C.brick],
+  ['needs-partner',C.muted],
+  ['open-question',C.rule],
 ]
 
 const RoadmapProgress: React.FC = () => {
@@ -644,27 +650,27 @@ const RoadmapProgress: React.FC = () => {
   const pct = Math.round((completed / total) * 100)
 
   return (
-    <div className="mb-8 bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+    <div className="mb-8 page-paper rounded-md border p-5" style={{ borderColor: C.rule }}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div>
-          <p className="text-base font-bold text-gray-900">
+          <p className="text-base font-bold" style={{ color: C.ink }}>
             {completed} of {total} features complete
           </p>
-          <p className="text-sm text-gray-500 mt-0.5">
-            {inProgress > 0 && <span className="text-amber-700 font-medium">{inProgress} in progress · </span>}
+          <p className="text-sm mt-0.5" style={{ color: C.muted }}>
+            {inProgress > 0 && <span className="font-medium" style={{ color: C.ochre }}>{inProgress} in progress · </span>}
             {byStatus['planned'] ?? 0} planned · {blocked} blocked on data or partners
           </p>
         </div>
-        <span className="text-2xl font-bold text-[#1A4A6B] shrink-0">{pct}%</span>
+        <span className="text-2xl font-bold shrink-0 tnum" style={{ color: C.riverDeep }}>{pct}%</span>
       </div>
 
       {/* Segmented progress bar */}
-      <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden flex">
+      <div className="w-full h-3 rounded-full overflow-hidden flex" style={{ background: C.limestone }}>
         {SEGMENT_ORDER.filter(([status]) => (byStatus[status] ?? 0) > 0).map(([status, color]) => (
           <div
             key={status}
-            className={`h-full ${color} transition-all duration-700`}
-            style={{ width: `${((byStatus[status] ?? 0) / total) * 100}%` }}
+            className="h-full transition-all duration-700"
+            style={{ width: `${((byStatus[status] ?? 0) / total) * 100}%`, background: color }}
           />
         ))}
       </div>
@@ -676,8 +682,8 @@ const RoadmapProgress: React.FC = () => {
           if (count === 0) return null
           const label = STATUS_CONFIG[status].label
           return (
-            <span key={status} className="inline-flex items-center gap-1.5 text-xs text-gray-600">
-              <span className={`w-2 h-2 rounded-full ${dotColor}`} />
+            <span key={status} className="inline-flex items-center gap-1.5 text-xs" style={{ color: C.muted }}>
+              <span className="w-2 h-2 rounded-full" style={{ background: dotColor }} />
               {count} {label.toLowerCase()}
             </span>
           )
@@ -697,11 +703,11 @@ const Roadmap: React.FC = () => {
 
     {/* Spanish AI-translation disclaimer — shown only when language is ES */}
     {language === 'es' && (
-      <div className="mb-6 flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
-        <span className="text-amber-500 text-lg shrink-0 mt-0.5">⚠️</span>
+      <div className="mb-6 flex items-start gap-3 rounded-md p-4" style={{ background: C.brickLight, border: `1px solid #e6c5b2` }}>
+        <span className="text-lg shrink-0 mt-0.5" style={{ color: C.brick }}>⚠</span>
         <div>
-          <p className="text-sm font-semibold text-amber-800 mb-1">Nota sobre la traducción al español</p>
-          <p className="text-xs text-amber-700 leading-relaxed">
+          <p className="text-sm font-semibold mb-1" style={{ color: C.brick }}>Nota sobre la traducción al español</p>
+          <p className="text-xs leading-relaxed" style={{ color: C.muted }}>
             Las traducciones al español en este sitio fueron generadas por inteligencia artificial y aún
             no han sido revisadas por un hablante nativo. Es posible que haya errores de redacción o
             terminología. Si deseas colaborar como revisor voluntario o tienes comentarios sobre la
@@ -713,8 +719,8 @@ const Roadmap: React.FC = () => {
 
     {/* Page header */}
     <div className="mb-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Future Work &amp; Data Roadmap</h1>
-      <p className="text-gray-600 max-w-3xl leading-relaxed">
+      <h1 className="text-2xl font-bold mb-2" style={{ color: C.ink }}>Future Work &amp; Data Roadmap</h1>
+      <p className="max-w-3xl leading-relaxed" style={{ color: C.muted }}>
         This platform is built for community activists, tenants, journalists, and anyone who
         needs public data to make Cincinnati more equitable. Below is a transparent view of
         what we&apos;re building, what data gaps exist, and where we need partners to unlock
@@ -726,9 +732,9 @@ const Roadmap: React.FC = () => {
     <RoadmapProgress />
 
     {/* What we won't build */}
-    <div className="mb-8 border border-gray-200 rounded-xl p-5 bg-white">
-      <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-1">What we won&apos;t build</h2>
-      <p className="text-xs text-gray-500 mb-4">
+    <div className="mb-8 page-paper rounded-md border p-5" style={{ borderColor: C.rule }}>
+      <h2 className="text-sm font-bold uppercase tracking-wide mb-1" style={{ color: C.ink }}>What we won&apos;t build</h2>
+      <p className="text-xs mb-4" style={{ color: C.muted }}>
         Clarity about our limits is part of being trustworthy. These are explicit commitments, not omissions.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -750,15 +756,15 @@ const Roadmap: React.FC = () => {
             body: 'We use public government datasets. We don\'t scrape social media, purchase data broker records, or aggregate information about private individuals.',
           },
         ].map(({ title, body }) => (
-          <div key={title} className="flex gap-3 bg-gray-50 rounded-lg p-3">
+          <div key={title} className="flex gap-3 rounded-md p-3" style={{ background: C.limestone }}>
             <div className="flex-shrink-0 mt-0.5">
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" style={{ color: C.muted }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
               </svg>
             </div>
             <div>
-              <p className="text-xs font-semibold text-gray-700">{title}</p>
-              <p className="text-xs text-gray-500 leading-relaxed mt-0.5">{body}</p>
+              <p className="text-xs font-semibold" style={{ color: C.ink }}>{title}</p>
+              <p className="text-xs leading-relaxed mt-0.5" style={{ color: C.muted }}>{body}</p>
             </div>
           </div>
         ))}
@@ -766,15 +772,15 @@ const Roadmap: React.FC = () => {
     </div>
 
     {/* Why this exists */}
-    <div className="mb-8 bg-[#1A4A6B] text-white rounded-xl p-6">
-      <h2 className="text-base font-bold mb-3 text-white">Why we built this</h2>
-      <p className="text-blue-100 text-sm leading-relaxed mb-4">
+    <div className="mb-8 rounded-md p-6" style={{ background: C.riverDeep, color: '#fbf8f3' }}>
+      <h2 className="text-base font-bold mb-3">Why we built this</h2>
+      <p className="text-sm leading-relaxed mb-4" style={{ color: C.riverLight }}>
         Cincinnati&apos;s public data is largely open — but it&apos;s scattered across dozens of portals,
         in formats that require technical expertise to use. That means the people with the most at
         stake in civic decisions — tenants, parents, community organizers — are the least likely to
         access it. We exist to close that gap.
       </p>
-      <p className="text-blue-100 text-sm leading-relaxed mb-5">
+      <p className="text-sm leading-relaxed mb-5" style={{ color: C.riverLight }}>
         Every number on this platform represents a real tradeoff: zoning reform vs. displacement risk.
         Transit investment vs. who actually benefits. Police accountability vs. community trust. Flood
         protection vs. riverfront development. We try to make those tradeoffs legible, not obscure them.
@@ -787,9 +793,9 @@ const Roadmap: React.FC = () => {
           { stat: '$31,520', label: 'median household income for Black families vs. $70,909 for white families' },
           { stat: '7%', label: 'of tenants have legal representation in housing court — vs. 93% of landlords' },
         ].map(({ stat, label }) => (
-          <div key={stat} className="bg-white/10 rounded-lg p-3">
-            <div className="text-xl font-bold text-white">{stat}</div>
-            <div className="text-xs text-blue-200 leading-tight mt-1">{label}</div>
+          <div key={stat} className="rounded-md p-3" style={{ background: 'rgba(255,255,255,0.1)' }}>
+            <div className="serif font-medium tnum" style={{ fontSize: 20 }}>{stat}</div>
+            <div className="text-xs leading-tight mt-1" style={{ color: C.riverLight }}>{label}</div>
           </div>
         ))}
       </div>
@@ -797,7 +803,7 @@ const Roadmap: React.FC = () => {
 
     {/* Legend */}
     <div className="mb-8">
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Status key</p>
+      <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: C.muted }}>Status key</p>
       <Legend />
     </div>
 
@@ -805,12 +811,12 @@ const Roadmap: React.FC = () => {
     {SECTIONS.map(section => (
       <section key={section.id} className="mb-12">
         <div className="flex items-center gap-3 mb-2">
-          <span className={`p-2 rounded-lg ${section.iconBg}`}>
+          <span className="p-2 rounded-md" style={section.iconStyle}>
             <section.Icon />
           </span>
-          <h2 className="text-lg font-bold text-gray-900">{section.heading}</h2>
+          <h2 className="text-lg font-bold" style={{ color: C.ink }}>{section.heading}</h2>
         </div>
-        <p className="text-sm text-gray-500 mb-5 ml-11">{section.subheading}</p>
+        <p className="text-sm mb-5 ml-11" style={{ color: C.muted }}>{section.subheading}</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {section.items.map(item => (
             <ItemCard key={item.title} item={item} />
@@ -820,11 +826,11 @@ const Roadmap: React.FC = () => {
     ))}
 
     {/* Footer pointer */}
-    <div className="border-t border-gray-200 pt-6 mb-8">
-      <p className="text-sm text-gray-500">
+    <div className="pt-6 mb-8" style={{ borderTop: `1px solid ${C.rule}` }}>
+      <p className="text-sm" style={{ color: C.muted }}>
         Have data to share, a correction, or a feature suggestion?{' '}
         Contact options — email and GitHub — are in the{' '}
-        <span className="font-medium text-[#1A4A6B]">About &amp; Methods</span> tab under &ldquo;Report an issue or contribute.&rdquo;
+        <span className="font-medium" style={{ color: C.riverDeep }}>About &amp; Methods</span> tab under &ldquo;Report an issue or contribute.&rdquo;
       </p>
     </div>
   </div>

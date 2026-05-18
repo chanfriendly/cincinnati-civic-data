@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../context/LanguageContext';
+import { C } from '../../components/ui/DesignAtoms';
 import { computeScores } from '../../utils/scoring';
 import { fetchSODA, distanceMiles, normalizeNeighborhoodName, stripNeighborhoodName, calculateCentroid, fetchNearbyParks, fetchFloodZone, fetchFARAHamilton, fetchNeighborhoodEJStats } from '../../utils/api';
 import type { Dimension, NeighborhoodRawMetrics, DimensionId } from '../../types';
@@ -846,7 +847,7 @@ export default function NeighborhoodExplorer() {
     <div className="w-full h-full bg-gray-100 p-4 lg:p-6">
       <div className="mb-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <h1 className="text-3xl font-bold text-civic-blue">
+          <h1 className="text-3xl font-bold" style={{ color: C.riverDeep }}>
             {t('explorer.title', 'Neighborhood Explorer')}
           </h1>
 
@@ -885,24 +886,18 @@ export default function NeighborhoodExplorer() {
         <div className="lg:col-span-2 flex flex-col gap-6">
 
           {/* View toggle */}
-          <div className="flex gap-1 bg-gray-200 rounded-lg p-1 self-start">
+          <div className="flex gap-1 rounded-md p-1 self-start" style={{ background: C.rule }}>
             <button
               onClick={() => setRightView('rankings')}
-              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                rightView === 'rankings'
-                  ? 'bg-white text-[#1A4A6B] shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+              className="px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
+              style={rightView === 'rankings' ? { background: C.paper, color: C.riverDeep, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' } : { color: C.muted }}
             >
               {t('explorer.viewRankings', 'Rankings & Map')}
             </button>
             <button
               onClick={() => setRightView('compare')}
-              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                rightView === 'compare'
-                  ? 'bg-white text-[#1A4A6B] shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+              className="px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
+              style={rightView === 'compare' ? { background: C.paper, color: C.riverDeep, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' } : { color: C.muted }}
             >
               {t('explorer.viewCompare', 'Compare Neighborhoods')}
             </button>
@@ -965,7 +960,7 @@ export default function NeighborhoodExplorer() {
       {selectedScore && (
         <div className="hidden lg:block fixed right-6 bottom-6 w-96 bg-white rounded-lg shadow-lg p-6 max-h-96 overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold text-civic-blue">{selectedScore.name}</h3>
+            <h3 className="text-lg font-bold" style={{ color: C.riverDeep }}>{selectedScore.name}</h3>
             <button
               onClick={() => setSelectedNeighborhood(null)}
               className="text-gray-400 hover:text-gray-600"
@@ -973,9 +968,9 @@ export default function NeighborhoodExplorer() {
               ✕
             </button>
           </div>
-          <div className="bg-gradient-to-r from-civic-blue to-civic-blue-light p-4 rounded text-white mb-4">
-            <p className="text-xs opacity-90 mb-1">Composite Score</p>
-            <p className="text-3xl font-bold">{selectedScore.compositeScore}/100</p>
+          <div className="p-4 rounded-md mb-4" style={{ background: C.riverLight }}>
+            <p className="text-xs mb-1 smallcaps" style={{ color: C.riverDeep }}>Composite Score</p>
+            <p className="serif font-medium tnum" style={{ fontSize: 36, color: C.riverDeep }}>{selectedScore.compositeScore}/100</p>
           </div>
         </div>
       )}

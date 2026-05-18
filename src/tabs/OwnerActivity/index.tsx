@@ -27,6 +27,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { fetchSODA, formatDate } from '../../utils/api'
 import { CivicOrgsPanel, DataAttribution } from '../../components/ui'
+import { C } from '../../components/ui/DesignAtoms'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -125,19 +126,19 @@ const EXAMPLE_NAMES = ['LARKIN', 'TREVARREN', 'GREENUP DANA', 'VICAM', 'USS REAL
 
 const SectionDivider: React.FC<{ label: string }> = ({ label }) => (
   <div className="flex items-center gap-3 mt-2">
-    <span className="text-xs font-bold uppercase tracking-widest text-gray-400">{label}</span>
-    <div className="flex-1 h-px bg-gray-200" />
+    <span className="text-xs font-bold uppercase tracking-widest" style={{ color: C.muted }}>{label}</span>
+    <div className="flex-1 h-px" style={{ background: C.rule }} />
   </div>
 )
 
 const StatBox: React.FC<{
   value: React.ReactNode
   label: string
-  color?: string
-}> = ({ value, label, color = 'text-gray-800' }) => (
-  <div className="bg-gray-50 rounded-lg p-3 text-center">
-    <div className={`text-2xl font-bold ${color}`}>{value}</div>
-    <div className="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide leading-tight">{label}</div>
+  style?: React.CSSProperties
+}> = ({ value, label, style }) => (
+  <div className="rounded-md p-3 text-center" style={{ background: C.limestone }}>
+    <div className="text-2xl font-bold" style={style ?? { color: C.ink }}>{value}</div>
+    <div className="text-[10px] mt-0.5 uppercase tracking-wide leading-tight" style={{ color: C.muted }}>{label}</div>
   </div>
 )
 
@@ -345,22 +346,23 @@ const OwnerActivity: React.FC = () => {
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Owner &amp; Property Activity</h1>
-        <p className="text-sm text-gray-500 leading-relaxed max-w-2xl">
+        <h1 className="text-2xl font-bold mb-1" style={{ color: C.ink }}>Owner &amp; Property Activity</h1>
+        <p className="text-sm leading-relaxed max-w-2xl" style={{ color: C.muted }}>
           For tenants, advocates, and organizers. Start with an address to see its enforcement record
           and who has been active there — then follow that name to their full portfolio across Cincinnati.
         </p>
       </div>
 
       {/* Mode switcher */}
-      <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit">
+      <div className="flex gap-1 p-1 w-fit rounded-md" style={{ background: C.rule }}>
         {(['address', 'owner'] as const).map(m => (
           <button
             key={m}
             onClick={() => setMode(m)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              mode === m ? 'bg-white text-[#1A4A6B] shadow-sm' : 'text-gray-500 hover:text-gray-800'
-            }`}
+            className="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+            style={mode === m
+              ? { background: C.paper, color: C.river, boxShadow: '0 1px 2px rgba(0,0,0,0.08)' }
+              : { color: C.muted }}
           >
             {m === 'address' ? '🏠 By Address' : '🔍 By Owner / LLC'}
           </button>
@@ -370,8 +372,8 @@ const OwnerActivity: React.FC = () => {
       {/* ── ADDRESS MODE ──────────────────────────────────────────────────── */}
       {mode === 'address' && (
         <div className="space-y-5">
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="bg-white rounded-md shadow-sm p-6">
+            <label className="block text-sm font-medium mb-2" style={{ color: C.ink }}>
               Enter a Cincinnati address
             </label>
             <div className="relative max-w-xl">
@@ -381,18 +383,20 @@ const OwnerActivity: React.FC = () => {
                 onChange={e => handleAddrChange(e.target.value)}
                 placeholder="e.g. 1600 Race Street, Cincinnati"
                 autoComplete="off"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4A6B] focus:border-transparent text-base"
+                className="w-full px-4 py-3 border rounded-md text-base outline-none"
+                style={{ borderColor: C.rule, color: C.ink }}
               />
               {addrSuggestions.length > 0 && (
-                <ul className="absolute z-10 top-full left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg mt-1 overflow-hidden">
+                <ul className="absolute z-10 top-full left-0 right-0 bg-white border shadow-lg mt-1 overflow-hidden rounded-md" style={{ borderColor: C.rule }}>
                   {addrSuggestions.map((f, i) => (
                     <li key={i}>
                       <button
                         onMouseDown={e => { e.preventDefault(); handleAddrSelect(f) }}
-                        className="w-full text-left px-4 py-2.5 hover:bg-gray-50 text-sm border-b border-gray-100 last:border-0"
+                        className="w-full text-left px-4 py-2.5 text-sm border-b last:border-0"
+                        style={{ borderColor: C.rule, color: C.ink }}
                       >
                         <span className="font-medium">{f.place_name.split(',')[0]}</span>
-                        <span className="text-gray-500 ml-1 text-xs">
+                        <span className="ml-1 text-xs" style={{ color: C.muted }}>
                           {f.place_name.split(',').slice(1).join(',').trim()}
                         </span>
                       </button>
@@ -401,21 +405,21 @@ const OwnerActivity: React.FC = () => {
                 </ul>
               )}
             </div>
-            <p className="text-xs text-gray-400 mt-1.5">
+            <p className="text-xs mt-1.5" style={{ color: C.muted }}>
               Shows blight flags, inspection violations, and permit activity within 300m.
             </p>
           </div>
 
           {addrLoading && (
-            <div className="flex items-center gap-3 py-6 px-6 bg-white rounded-lg shadow-sm">
-              <div className="w-5 h-5 border-2 border-[#1A4A6B] border-t-transparent rounded-full animate-spin shrink-0" />
-              <p className="text-sm text-gray-500">Checking enforcement records…</p>
+            <div className="flex items-center gap-3 py-6 px-6 bg-white rounded-md shadow-sm">
+              <div className="w-5 h-5 border-2 border-t-transparent rounded-full animate-spin shrink-0" style={{ borderColor: C.river, borderTopColor: 'transparent' }} />
+              <p className="text-sm" style={{ color: C.muted }}>Checking enforcement records…</p>
             </div>
           )}
 
           {addrError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-sm text-red-700">{addrError}</p>
+            <div className="rounded-md p-4" style={{ background: C.brickLight, border: `1px solid ${C.brick}` }}>
+              <p className="text-sm" style={{ color: C.brick }}>{addrError}</p>
             </div>
           )}
 
@@ -424,47 +428,47 @@ const OwnerActivity: React.FC = () => {
 
               {/* Enforcement summary */}
               <SectionDivider label="Enforcement Record" />
-              <div className="bg-white rounded-lg shadow-sm p-5 space-y-4">
-                <p className="text-xs text-gray-500">
+              <div className="bg-white rounded-md shadow-sm p-5 space-y-4">
+                <p className="text-xs" style={{ color: C.muted }}>
                   Blight flags and inspection records within 300m of{' '}
-                  <span className="font-medium text-gray-700">{selectedAddr?.formatted?.split(',')[0]}</span>.
+                  <span className="font-medium" style={{ color: C.ink }}>{selectedAddr?.formatted?.split(',')[0]}</span>.
                 </p>
                 <div className="grid grid-cols-3 gap-3">
                   <StatBox
                     value={blightRecords?.length ?? 0}
                     label="Blight Flags"
-                    color={(blightRecords?.length ?? 0) > 0 ? 'text-red-600' : 'text-gray-400'}
+                    style={{ color: (blightRecords?.length ?? 0) > 0 ? C.brick : C.muted }}
                   />
                   <StatBox
                     value={inspections?.length ?? 0}
                     label="Inspections"
-                    color={(inspections?.length ?? 0) > 0 ? 'text-[#C8861A]' : 'text-gray-400'}
+                    style={{ color: (inspections?.length ?? 0) > 0 ? C.ochre : C.muted }}
                   />
                   <StatBox
                     value={violations.length}
                     label="Violations"
-                    color={violations.length > 0 ? 'text-red-600' : 'text-green-600'}
+                    style={{ color: violations.length > 0 ? C.brick : C.hill }}
                   />
                 </div>
 
                 {(blightRecords?.length ?? 0) === 0 && violations.length === 0 && (
-                  <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                  <p className="text-sm rounded-md px-3 py-2" style={{ color: C.hill, background: C.hillLight, border: `1px solid ${C.hill}` }}>
                     ✓ No blight flags or violations found near this address.
                   </p>
                 )}
 
                 {(blightRecords?.length ?? 0) > 0 && (
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Blight / PLAP Records</p>
+                    <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: C.muted }}>Blight / PLAP Records</p>
                     <div className="space-y-2">
                       {blightRecords!.slice(0, 6).map((r, i) => (
-                        <div key={i} className="flex items-start gap-2 border-b border-gray-100 pb-2 last:border-0">
-                          <span className="text-red-400 shrink-0 mt-0.5">🏚</span>
+                        <div key={i} className="flex items-start gap-2 border-b pb-2 last:border-0" style={{ borderColor: C.rule }}>
+                          <span className="shrink-0 mt-0.5" style={{ color: C.brick }}>🏚</span>
                           <div>
-                            <p className="text-xs font-medium text-gray-800">
+                            <p className="text-xs font-medium" style={{ color: C.ink }}>
                               {r.sr_sub_type || r.enf_sub_type || 'Blight flag'}
                             </p>
-                            <p className="text-[10px] text-gray-500">
+                            <p className="text-[10px]" style={{ color: C.muted }}>
                               {r.full_address} · {formatDate(r.sr_recd_date || r.enf_recd_date)}
                               {r.sr_status ? ` · ${r.sr_status}` : ''}
                             </p>
@@ -478,12 +482,12 @@ const OwnerActivity: React.FC = () => {
 
                 {violations.length > 0 && (
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Inspection Violations</p>
+                    <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: C.muted }}>Inspection Violations</p>
                     <div className="space-y-2">
                       {violations.slice(0, 6).map((r, i) => (
-                        <div key={i} className="bg-yellow-50 border border-yellow-100 rounded px-3 py-2">
-                          <p className="text-xs font-medium text-yellow-900">{r.comp_type_desc || 'Violation'}</p>
-                          <p className="text-[10px] text-yellow-700">{formatDate(r.entered_date)} · {r.data_status}</p>
+                        <div key={i} className="rounded px-3 py-2" style={{ background: C.limestone, border: `1px solid ${C.rule}` }}>
+                          <p className="text-xs font-medium" style={{ color: C.ink }}>{r.comp_type_desc || 'Violation'}</p>
+                          <p className="text-[10px]" style={{ color: C.muted }}>{formatDate(r.entered_date)} · {r.data_status}</p>
                         </div>
                       ))}
                     </div>
@@ -494,12 +498,12 @@ const OwnerActivity: React.FC = () => {
 
               {/* Permit filers / owner signal */}
               <SectionDivider label="Who Has Been Active Here" />
-              <div className="bg-white rounded-lg shadow-sm p-5 space-y-4">
+              <div className="bg-white rounded-md shadow-sm p-5 space-y-4">
                 {(addrPermits?.length ?? 0) === 0 ? (
-                  <p className="text-sm text-gray-400 italic">No permit records found at this address.</p>
+                  <p className="text-sm italic" style={{ color: C.muted }}>No permit records found at this address.</p>
                 ) : (
                   <>
-                    <p className="text-xs text-gray-500 leading-relaxed">
+                    <p className="text-xs leading-relaxed" style={{ color: C.muted }}>
                       These companies filed permits at this address. For residential properties, the permit
                       applicant is often the owner or a related LLC. Search their name to see everything
                       they've filed across Cincinnati.
@@ -510,16 +514,17 @@ const OwnerActivity: React.FC = () => {
                         {permitFilers.map((name, i) => {
                           const count = addrPermits!.filter(p => clean(p.companyname) === name).length
                           return (
-                            <div key={i} className="flex items-center justify-between gap-3 bg-gray-50 border border-gray-200 rounded-lg px-4 py-3">
+                            <div key={i} className="flex items-center justify-between gap-3 rounded-md px-4 py-3" style={{ background: C.limestone, border: `1px solid ${C.rule}` }}>
                               <div>
-                                <p className="text-sm font-semibold text-gray-900">{name}</p>
-                                <p className="text-xs text-gray-500 mt-0.5">
+                                <p className="text-sm font-semibold" style={{ color: C.ink }}>{name}</p>
+                                <p className="text-xs mt-0.5" style={{ color: C.muted }}>
                                   {count} permit{count !== 1 ? 's' : ''} at this address
                                 </p>
                               </div>
                               <button
                                 onClick={() => pivotToOwner(name)}
-                                className="shrink-0 text-xs font-semibold bg-[#1A4A6B] text-white px-3 py-1.5 rounded-md hover:bg-[#143850] transition-colors whitespace-nowrap"
+                                className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-md transition-colors whitespace-nowrap text-white"
+                                style={{ background: C.river }}
                               >
                                 See all their properties →
                               </button>
@@ -530,17 +535,17 @@ const OwnerActivity: React.FC = () => {
                     )}
 
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
+                      <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: C.muted }}>
                         Recent Permits ({addrPermits!.length})
                       </p>
                       <div className="space-y-1.5">
                         {addrPermits!.slice(0, 8).map((p, i) => (
-                          <div key={i} className="flex items-start gap-2 border-b border-gray-100 pb-1.5 last:border-0">
+                          <div key={i} className="flex items-start gap-2 border-b pb-1.5 last:border-0" style={{ borderColor: C.rule }}>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-medium text-gray-800 truncate">
+                              <p className="text-xs font-medium truncate" style={{ color: C.ink }}>
                                 {p.permittypemapped || 'Permit'} · {clean(p.companyname) || '—'}
                               </p>
-                              <p className="text-[10px] text-gray-500">
+                              <p className="text-[10px]" style={{ color: C.muted }}>
                                 {formatDate(p.applieddate)} · {p.statuscurrent || '—'}
                                 {p.estprojectcostdec && parseFloat(p.estprojectcostdec) > 0
                                   ? ` · $${Math.round(parseFloat(p.estprojectcostdec)).toLocaleString()}` : ''}
@@ -573,8 +578,8 @@ const OwnerActivity: React.FC = () => {
       {/* ── OWNER / LLC MODE ──────────────────────────────────────────────── */}
       {mode === 'owner' && (
         <div className="space-y-5">
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="bg-white rounded-md shadow-sm p-6">
+            <label className="block text-sm font-medium mb-2" style={{ color: C.ink }}>
               Owner name, LLC, or developer keyword
             </label>
             <div className="flex gap-2 max-w-xl">
@@ -584,51 +589,54 @@ const OwnerActivity: React.FC = () => {
                 onChange={e => setOwnerInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleOwnerSearch()}
                 placeholder="e.g. LARKIN, TREVARREN, OVER-THE-RHINE COMMUNITY"
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A4A6B] focus:border-transparent"
+                className="flex-1 rounded-md px-4 py-2.5 text-sm outline-none"
+                style={{ border: `1px solid ${C.rule}`, color: C.ink }}
               />
               <button
                 onClick={() => handleOwnerSearch()}
                 disabled={ownerLoading || ownerInput.trim().length < 3}
-                className="px-5 py-2.5 bg-[#1A4A6B] text-white text-sm font-medium rounded-lg hover:bg-[#153d59] disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+                className="px-5 py-2.5 text-white text-sm font-medium rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+                style={{ background: C.river }}
               >
                 {ownerLoading ? 'Searching…' : 'Search'}
               </button>
             </div>
             <div className="mt-3 flex flex-wrap gap-2 items-center">
-              <span className="text-xs text-gray-400">Try:</span>
+              <span className="text-xs" style={{ color: C.muted }}>Try:</span>
               {EXAMPLE_NAMES.map(ex => (
                 <button
                   key={ex}
                   onClick={() => { setOwnerInput(ex); handleOwnerSearch(ex) }}
-                  className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2.5 py-1 rounded-full transition-colors border border-gray-200"
+                  className="text-xs px-2.5 py-1 rounded-full transition-colors"
+                  style={{ background: C.limestone, color: C.ink, border: `1px solid ${C.rule}` }}
                 >
                   {ex}
                 </button>
               ))}
             </div>
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs mt-2" style={{ color: C.muted }}>
               LLCs often file under slightly different names. Use a short keyword to catch all variations.
             </p>
           </div>
 
           {ownerLoading && (
-            <div className="flex items-center gap-3 py-6 px-6 bg-white rounded-lg shadow-sm">
-              <div className="w-5 h-5 border-2 border-[#1A4A6B] border-t-transparent rounded-full animate-spin shrink-0" />
-              <p className="text-sm text-gray-500">Searching permits, unit activity, and city subsidies…</p>
+            <div className="flex items-center gap-3 py-6 px-6 bg-white rounded-md shadow-sm">
+              <div className="w-5 h-5 border-2 border-t-transparent rounded-full animate-spin shrink-0" style={{ borderColor: C.river, borderTopColor: 'transparent' }} />
+              <p className="text-sm" style={{ color: C.muted }}>Searching permits, unit activity, and city subsidies…</p>
             </div>
           )}
 
           {ownerError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-sm text-red-700">{ownerError}</p>
+            <div className="rounded-md p-4" style={{ background: C.brickLight, border: `1px solid ${C.brick}` }}>
+              <p className="text-sm" style={{ color: C.brick }}>{ownerError}</p>
             </div>
           )}
 
           {!ownerLoading && ownerHasResults &&
             (unitActivity?.length ?? 0) + (craResults?.length ?? 0) + (ownerPermits?.length ?? 0) === 0 && (
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center">
-              <p className="text-gray-700 font-semibold mb-1">No records found for "{submittedOwner}"</p>
-              <p className="text-sm text-gray-500 max-w-md mx-auto">
+            <div className="rounded-md p-8 text-center" style={{ background: C.limestone, border: `1px solid ${C.rule}` }}>
+              <p className="font-semibold mb-1" style={{ color: C.ink }}>No records found for "{submittedOwner}"</p>
+              <p className="text-sm max-w-md mx-auto" style={{ color: C.muted }}>
                 Try a shorter keyword, check LLC spelling variations, or search just the first word of the name.
               </p>
             </div>
@@ -640,20 +648,20 @@ const OwnerActivity: React.FC = () => {
 
               {/* Portfolio briefing */}
               <SectionDivider label="Portfolio Summary" />
-              <div className="bg-white rounded-lg shadow-sm p-5">
-                <p className="text-xs text-gray-500 mb-3">
+              <div className="bg-white rounded-md shadow-sm p-5">
+                <p className="text-xs mb-3" style={{ color: C.muted }}>
                   All records matching "{submittedOwner}" across permit filings, unit activity, and city subsidies.
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
                   <StatBox
                     value={(unitActivity?.length ?? 0) + (ownerPermits?.length ?? 0)}
                     label="Total Permits"
-                    color="text-[#1A4A6B]"
+                    style={{ color: C.river }}
                   />
                   <StatBox
                     value={totalRemoved > 0 ? `−${totalRemoved}` : '0'}
                     label="Units Removed"
-                    color={totalRemoved > 0 ? 'text-red-600' : 'text-gray-400'}
+                    style={{ color: totalRemoved > 0 ? C.brick : C.muted }}
                   />
                   <StatBox
                     value={totalSubsidy > 0
@@ -662,18 +670,18 @@ const OwnerActivity: React.FC = () => {
                           : `$${Math.round(totalSubsidy / 1000)}K`)
                       : '$0'}
                     label="City Subsidies"
-                    color={totalSubsidy > 0 ? 'text-blue-700' : 'text-gray-400'}
+                    style={{ color: totalSubsidy > 0 ? C.riverDeep : C.muted }}
                   />
                   <StatBox
                     value={ownerNeighborhoods.length}
                     label="Neighborhoods"
-                    color="text-gray-700"
+                    style={{ color: C.ink }}
                   />
                 </div>
                 {ownerNeighborhoods.length > 0 && (
-                  <p className="text-xs text-gray-500 mb-3">
+                  <p className="text-xs mb-3" style={{ color: C.muted }}>
                     Active in:{' '}
-                    <span className="font-medium text-gray-700">
+                    <span className="font-medium" style={{ color: C.ink }}>
                       {ownerNeighborhoods.slice(0, 8).join(', ')}
                       {ownerNeighborhoods.length > 8 ? ` +${ownerNeighborhoods.length - 8} more` : ''}
                     </span>
@@ -681,9 +689,9 @@ const OwnerActivity: React.FC = () => {
                 )}
 
                 {totalRemoved > 0 && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3">
-                    <p className="text-xs font-semibold text-red-800 mb-1">Displacement signal</p>
-                    <p className="text-xs text-red-700 leading-relaxed">
+                  <div className="rounded-md px-4 py-3" style={{ background: C.brickLight, border: `1px solid ${C.brick}` }}>
+                    <p className="text-xs font-semibold mb-1" style={{ color: C.brick }}>Displacement signal</p>
+                    <p className="text-xs leading-relaxed" style={{ color: C.brick }}>
                       {totalRemoved} housing unit{totalRemoved !== 1 ? 's' : ''} removed across{' '}
                       {unitRemovals.length} permit{unitRemovals.length !== 1 ? 's' : ''}.{' '}
                       {totalAdded > 0
@@ -694,8 +702,8 @@ const OwnerActivity: React.FC = () => {
                 )}
 
                 {totalRemoved > 0 && totalSubsidy > 0 && (totalAdded - totalRemoved) < 0 && (
-                  <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
-                    <p className="text-xs text-amber-800 leading-relaxed">
+                  <div className="mt-2 rounded-md px-4 py-3" style={{ background: C.limestone, border: `1px solid ${C.ochre}` }}>
+                    <p className="text-xs leading-relaxed" style={{ color: C.ink }}>
                       ⚠ This owner received city subsidies while achieving a net reduction in housing units — a pattern
                       advocates document when making cases to council for subsidy reform.
                     </p>
@@ -707,16 +715,16 @@ const OwnerActivity: React.FC = () => {
               {unitRemovals.length > 0 && (
                 <>
                   <SectionDivider label="Unit Removal Activity" />
-                  <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                  <div className="bg-white rounded-md shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
                       <table className="w-full text-xs border-collapse">
                         <thead>
-                          <tr className="bg-gray-50 border-b border-gray-200">
-                            <th className="text-left py-2 px-3 font-semibold text-gray-600">Address</th>
-                            <th className="text-left py-2 px-3 font-semibold text-gray-600">Neighborhood</th>
-                            <th className="text-center py-2 px-3 font-semibold text-red-600">Removed</th>
-                            <th className="text-center py-2 px-3 font-semibold text-green-700">Added</th>
-                            <th className="text-left py-2 px-3 font-semibold text-gray-600">Date</th>
+                          <tr className="border-b" style={{ background: C.limestone, borderColor: C.rule }}>
+                            <th className="text-left py-2 px-3 font-semibold" style={{ color: C.muted }}>Address</th>
+                            <th className="text-left py-2 px-3 font-semibold" style={{ color: C.muted }}>Neighborhood</th>
+                            <th className="text-center py-2 px-3 font-semibold" style={{ color: C.brick }}>Removed</th>
+                            <th className="text-center py-2 px-3 font-semibold" style={{ color: C.hill }}>Added</th>
+                            <th className="text-left py-2 px-3 font-semibold" style={{ color: C.muted }}>Date</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -724,12 +732,12 @@ const OwnerActivity: React.FC = () => {
                             const removed = parseInt(r.units_removed ?? '0', 10) || 0
                             const added = parseInt(r.units_added ?? '0', 10) || 0
                             return (
-                              <tr key={i} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-red-50/30'}`}>
-                                <td className="py-1.5 px-3 font-medium text-gray-800 max-w-[140px] truncate" title={r.address}>{r.address || '—'}</td>
-                                <td className="py-1.5 px-3 text-gray-600 max-w-[110px] truncate">{isReal(r.neighborhood) ? r.neighborhood : '—'}</td>
-                                <td className="py-1.5 px-3 text-center font-bold text-red-600">−{removed}</td>
-                                <td className="py-1.5 px-3 text-center font-semibold text-green-600">{added > 0 ? `+${added}` : '—'}</td>
-                                <td className="py-1.5 px-3 text-gray-500 whitespace-nowrap">{r.issued_date?.slice(0, 10) ?? '—'}</td>
+                              <tr key={i} className="border-b" style={{ borderColor: C.rule, background: i % 2 === 0 ? '#fff' : C.paper }}>
+                                <td className="py-1.5 px-3 font-medium max-w-[140px] truncate" style={{ color: C.ink }} title={r.address}>{r.address || '—'}</td>
+                                <td className="py-1.5 px-3 max-w-[110px] truncate" style={{ color: C.muted }}>{isReal(r.neighborhood) ? r.neighborhood : '—'}</td>
+                                <td className="py-1.5 px-3 text-center font-bold" style={{ color: C.brick }}>−{removed}</td>
+                                <td className="py-1.5 px-3 text-center font-semibold" style={{ color: C.hill }}>{added > 0 ? `+${added}` : '—'}</td>
+                                <td className="py-1.5 px-3 whitespace-nowrap" style={{ color: C.muted }}>{r.issued_date?.slice(0, 10) ?? '—'}</td>
                               </tr>
                             )
                           })}
@@ -745,29 +753,29 @@ const OwnerActivity: React.FC = () => {
               {(craResults?.length ?? 0) > 0 && (
                 <>
                   <SectionDivider label="City Subsidies Received" />
-                  <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                  <div className="bg-white rounded-md shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
                       <table className="w-full text-xs border-collapse">
                         <thead>
-                          <tr className="bg-gray-50 border-b border-gray-200">
-                            <th className="text-left py-2 px-3 font-semibold text-gray-600">Project</th>
-                            <th className="text-left py-2 px-3 font-semibold text-gray-600">Neighborhood</th>
-                            <th className="text-left py-2 px-3 font-semibold text-gray-600">Program</th>
-                            <th className="text-right py-2 px-3 font-semibold text-gray-600">Value</th>
-                            <th className="text-left py-2 px-3 font-semibold text-gray-600">Approved</th>
+                          <tr className="border-b" style={{ background: C.limestone, borderColor: C.rule }}>
+                            <th className="text-left py-2 px-3 font-semibold" style={{ color: C.muted }}>Project</th>
+                            <th className="text-left py-2 px-3 font-semibold" style={{ color: C.muted }}>Neighborhood</th>
+                            <th className="text-left py-2 px-3 font-semibold" style={{ color: C.muted }}>Program</th>
+                            <th className="text-right py-2 px-3 font-semibold" style={{ color: C.muted }}>Value</th>
+                            <th className="text-left py-2 px-3 font-semibold" style={{ color: C.muted }}>Approved</th>
                           </tr>
                         </thead>
                         <tbody>
                           {craResults!.map((r, i) => {
                             const val = parseFloat(r.est_program_total_value ?? '0') || 0
                             return (
-                              <tr key={i} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                                <td className="py-1.5 px-3 font-medium text-gray-800 max-w-[130px] truncate" title={r.project_name ?? ''}>{r.project_name || '—'}</td>
-                                <td className="py-1.5 px-3 text-gray-600 max-w-[110px] truncate">{isReal(r.community_council_neighborhood) ? r.community_council_neighborhood : '—'}</td>
-                                <td className="py-1.5 px-3 text-gray-500">{r.program_type || '—'}</td>
+                              <tr key={i} className="border-b" style={{ borderColor: C.rule, background: i % 2 === 0 ? '#fff' : C.paper }}>
+                                <td className="py-1.5 px-3 font-medium max-w-[130px] truncate" style={{ color: C.ink }} title={r.project_name ?? ''}>{r.project_name || '—'}</td>
+                                <td className="py-1.5 px-3 max-w-[110px] truncate" style={{ color: C.muted }}>{isReal(r.community_council_neighborhood) ? r.community_council_neighborhood : '—'}</td>
+                                <td className="py-1.5 px-3" style={{ color: C.muted }}>{r.program_type || '—'}</td>
                                 <td className="py-1.5 px-3 text-right font-medium whitespace-nowrap">
                                   {val > 0
-                                    ? <span className={val >= 1_000_000 ? 'text-red-700' : 'text-gray-800'}>
+                                    ? <span style={{ color: val >= 1_000_000 ? C.brick : C.ink }}>
                                         ${val >= 1_000_000
                                           ? `${(val / 1_000_000).toFixed(2)}M`
                                           : val >= 1000
@@ -776,7 +784,7 @@ const OwnerActivity: React.FC = () => {
                                       </span>
                                     : '—'}
                                 </td>
-                                <td className="py-1.5 px-3 text-gray-500 whitespace-nowrap">{r.approved_by_city_council?.slice(0, 10) ?? '—'}</td>
+                                <td className="py-1.5 px-3 whitespace-nowrap" style={{ color: C.muted }}>{r.approved_by_city_council?.slice(0, 10) ?? '—'}</td>
                               </tr>
                             )
                           })}
@@ -792,31 +800,31 @@ const OwnerActivity: React.FC = () => {
               {(ownerPermits?.length ?? 0) > 0 && (
                 <>
                   <SectionDivider label="Permit History" />
-                  <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                  <div className="bg-white rounded-md shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
                       <table className="w-full text-xs border-collapse">
                         <thead>
-                          <tr className="bg-gray-50 border-b border-gray-200">
-                            <th className="text-left py-2 px-3 font-semibold text-gray-600">Address</th>
-                            <th className="text-left py-2 px-3 font-semibold text-gray-600">Type</th>
-                            <th className="text-left py-2 px-3 font-semibold text-gray-600">Status</th>
-                            <th className="text-left py-2 px-3 font-semibold text-gray-600">Date</th>
+                          <tr className="border-b" style={{ background: C.limestone, borderColor: C.rule }}>
+                            <th className="text-left py-2 px-3 font-semibold" style={{ color: C.muted }}>Address</th>
+                            <th className="text-left py-2 px-3 font-semibold" style={{ color: C.muted }}>Type</th>
+                            <th className="text-left py-2 px-3 font-semibold" style={{ color: C.muted }}>Status</th>
+                            <th className="text-left py-2 px-3 font-semibold" style={{ color: C.muted }}>Date</th>
                           </tr>
                         </thead>
                         <tbody>
                           {ownerPermits!.slice(0, 50).map((p, i) => (
-                            <tr key={i} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                              <td className="py-1.5 px-3 font-medium text-gray-800 max-w-[140px] truncate" title={p.originaladdress1}>{p.originaladdress1 || '—'}</td>
-                              <td className="py-1.5 px-3 text-gray-600">{p.permittypemapped || '—'}</td>
-                              <td className="py-1.5 px-3 text-gray-500">{clean(p.statuscurrent) || '—'}</td>
-                              <td className="py-1.5 px-3 text-gray-500 whitespace-nowrap">{p.applieddate?.slice(0, 10) ?? '—'}</td>
+                            <tr key={i} className="border-b" style={{ borderColor: C.rule, background: i % 2 === 0 ? '#fff' : C.paper }}>
+                              <td className="py-1.5 px-3 font-medium max-w-[140px] truncate" style={{ color: C.ink }} title={p.originaladdress1}>{p.originaladdress1 || '—'}</td>
+                              <td className="py-1.5 px-3" style={{ color: C.muted }}>{p.permittypemapped || '—'}</td>
+                              <td className="py-1.5 px-3" style={{ color: C.muted }}>{clean(p.statuscurrent) || '—'}</td>
+                              <td className="py-1.5 px-3 whitespace-nowrap" style={{ color: C.muted }}>{p.applieddate?.slice(0, 10) ?? '—'}</td>
                             </tr>
                           ))}
                         </tbody>
                         {(ownerPermits?.length ?? 0) > 50 && (
                           <tfoot>
                             <tr>
-                              <td colSpan={4} className="px-3 py-2 text-xs text-gray-400 text-center border-t border-gray-100">
+                              <td colSpan={4} className="px-3 py-2 text-xs text-center border-t" style={{ color: C.muted, borderColor: C.rule }}>
                                 Showing 50 of {ownerPermits?.length} permits
                               </td>
                             </tr>
