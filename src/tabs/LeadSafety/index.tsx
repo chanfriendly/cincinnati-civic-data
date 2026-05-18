@@ -377,7 +377,8 @@ function ReplacementActivityCard({ neighborhood }: { neighborhood: string }) {
                     {yearData.map((_, i) => (
                       <Cell
                         key={i}
-                        fill={i === yearData.length - 1 ? C.ochre : C.river}
+                        fill={C.river}
+                        opacity={i === yearData.length - 1 ? 0.55 : 1}
                       />
                     ))}
                   </Bar>

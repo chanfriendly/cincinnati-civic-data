@@ -17,7 +17,7 @@ type SubSection = 'traffic' | 'force' | 'ois' | 'question';
 const RACE_COLORS: Record<string, string> = {
   'BLACK':                                      C.river,
   'WHITE':                                      C.hill,
-  'HISPANIC':                                   C.ochre,
+  'HISPANIC':                                   C.muted,
   'ASIAN/PACIFIC ISLANDER':                     '#9c6b98',
   'AMERICAN INDIAN/ALASKAN NATIVE':             '#8a6e3e',
   'NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER':  C.riverDeep,
@@ -362,7 +362,7 @@ export default function PoliceAccountability() {
               onClick={() => setActiveSection(tab.id)}
               className="px-5 py-3 text-[13px] font-medium transition-colors"
               style={{
-                borderBottom: activeSection === tab.id ? `2px solid ${C.brick}` : '2px solid transparent',
+                borderBottom: activeSection === tab.id ? `2px solid ${C.river}` : '2px solid transparent',
                 color: activeSection === tab.id ? C.ink : C.muted,
                 background: 'transparent',
                 fontFamily: '"Public Sans", sans-serif',

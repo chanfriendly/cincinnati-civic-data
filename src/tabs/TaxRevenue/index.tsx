@@ -194,7 +194,7 @@ const PERCENTILE_LABELS: Record<typeof PERCENTILE_KEYS[number], string> = {
 }
 const PERCENTILE_COLORS: Record<typeof PERCENTILE_KEYS[number], string> = {
   p20: C.brick,
-  p40: C.ochre,
+  p40: C.muted,
   p60: C.river,
   p80: C.hill,
   p95: C.riverDeep,
@@ -750,7 +750,7 @@ const TaxRevenue: React.FC = () => {
 
       {/* Page header */}
       <header className="page-paper rounded-md px-8 pt-8 pb-7 mb-8">
-        <span className="smallcaps" style={{ color: C.brick }}>Tax &amp; Revenue</span>
+        <span className="smallcaps" style={{ color: C.muted }}>Tax &amp; Revenue</span>
         <h1
           className="serif font-medium leading-none mt-2 mb-4"
           style={{ fontSize: 'clamp(36px, 5vw, 64px)', letterSpacing: '-0.02em', color: C.ink }}
