@@ -612,6 +612,10 @@ export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfiles
             </div>
           </Section>
 
+          <p className="serif italic text-[12px] pt-6 mt-8" style={{ color: C.muted, borderTop: `1px solid ${C.rule}` }}>
+            Sources: City of Cincinnati Open Data Portal (data.cincinnati-oh.gov) — 311 Service Requests, Cincinnati Police crime incidents, property conditions; U.S. Census Bureau American Community Survey 5-year estimates; Hamilton County Auditor parcel data; SORTA/Metro transit GTFS feeds; Cincinnati Health Department; Ohio Department of Health life expectancy estimates. Data currency varies by dataset; see individual section notes.
+          </p>
+
         </article>
       </div>
     </div>

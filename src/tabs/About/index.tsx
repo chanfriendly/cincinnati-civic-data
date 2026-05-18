@@ -23,7 +23,7 @@ const About: React.FC = () => {
               onClick={() => setActiveView(v.id)}
               className="px-5 py-3 text-[13px] font-medium transition-colors"
               style={{
-                borderBottom: activeView === v.id ? `2px solid ${C.brick}` : '2px solid transparent',
+                borderBottom: activeView === v.id ? `2px solid ${C.river}` : '2px solid transparent',
                 color: activeView === v.id ? C.ink : C.muted,
                 background: 'transparent',
                 fontFamily: '"Public Sans", sans-serif',
