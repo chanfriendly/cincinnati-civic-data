@@ -1,10 +1,7 @@
 import React from 'react'
 import { useLanguage } from '../../context/LanguageContext'
-import type { TabId } from '../../types'
 
-interface HeaderProps {
-  onTabChange: (tab: TabId) => void
-}
+interface HeaderProps {}
 
 const CivicSeal: React.FC = () => (
   <svg width="36" height="36" viewBox="0 0 34 34" aria-hidden="true">
@@ -17,7 +14,7 @@ const CivicSeal: React.FC = () => (
   </svg>
 )
 
-const Header: React.FC<HeaderProps> = ({ onTabChange }) => {
+const Header: React.FC<HeaderProps> = () => {
   const { language, setLanguage } = useLanguage()
 
   return (

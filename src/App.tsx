@@ -81,7 +81,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-limestone">
-      <Header onTabChange={setActiveTab} />
+      <Header />
       <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
       <main className="flex-1 fade-up">
         {renderTabContent()}
