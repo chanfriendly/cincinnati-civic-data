@@ -10,6 +10,7 @@ import {
 } from '../../utils/api';
 import type { OHGOIncident, OHGOCamera, OHGOConstruction } from '../../types';
 import { DataCard, EmptyState, DataAttribution, CivicOrgsPanel, CivicCalendar } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 import { stripNeighborhoodName } from '../../utils/api';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -585,8 +586,8 @@ export default function AddressLookup({ onTabChange }: AddressLookupProps = {}) 
           [clat + offset, clng + offset],
           {
             radius: 5,
-            fillColor: '#C8861A',
-            color: '#1A4A6B',
+            fillColor: C.ochre,
+            color: C.riverDeep,
             weight: 1,
             opacity: 0.7,
             fillOpacity: 0.6,
@@ -790,8 +791,8 @@ TONE
   return (
     <div className="space-y-6">
       {/* Address Search */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+      <div className="rounded-md shadow-sm p-6" style={{ background: C.paper }}>
+        <label className="block text-sm font-medium mb-2" style={{ color: C.ink }}>
           {t('addressLookup.searchLabel', 'Enter Cincinnati Address')}
         </label>
         <div className="relative">
@@ -801,10 +802,11 @@ TONE
             onChange={(e) => handleSearchChange(e.target.value)}
             placeholder={t('addressLookup.placeholder', 'Enter a Cincinnati street address…')}
             autoComplete="off"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4A6B] focus:border-transparent text-base"
+            className="w-full px-4 py-3 rounded-md text-base focus:outline-none focus:ring-2 focus:ring-offset-1"
+            style={{ border: `1px solid ${C.rule}` }}
           />
           {suggestions.length > 0 && (
-            <ul className="absolute z-10 top-full left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg mt-1 overflow-hidden">
+            <ul className="absolute z-10 top-full left-0 right-0 rounded-md shadow-lg mt-1 overflow-hidden" style={{ background: C.paper, border: `1px solid ${C.rule}` }}>
               {suggestions.map((feature, idx) => (
                 <li key={idx}>
                   <button
@@ -813,10 +815,11 @@ TONE
                       e.preventDefault();
                       handleAddressSelect(feature);
                     }}
-                    className="w-full text-left px-4 py-2.5 hover:bg-gray-50 text-sm border-b border-gray-100 last:border-0"
+                    className="w-full text-left px-4 py-2.5 text-sm last:border-0"
+                    style={{ borderBottom: `1px solid ${C.rule}` }}
                   >
                     <span className="font-medium">{feature.place_name.split(',')[0]}</span>
-                    <span className="text-gray-500 ml-1 text-xs">
+                    <span className="ml-1 text-xs" style={{ color: C.muted }}>
                       {feature.place_name.split(',').slice(1).join(',').trim()}
                     </span>
                   </button>
@@ -825,16 +828,16 @@ TONE
             </ul>
           )}
         </div>
-        <p className="text-xs text-gray-400 mt-1.5">Type at least 3 characters to search — results are limited to Cincinnati addresses.</p>
+        <p className="text-xs mt-1.5" style={{ color: C.muted }}>Type at least 3 characters to search — results are limited to Cincinnati addresses.</p>
       </div>
 
       {/* ── Empty state: mission statement + preview ─────────────────────────── */}
       {!selectedAddress && (
         <div className="space-y-4">
           {/* Mission statement */}
-          <div className="bg-[#1A4A6B] text-white rounded-xl p-6">
+          <div className="rounded-md p-6" style={{ background: C.riverDeep, color: '#fff' }}>
             <p className="text-base font-semibold mb-2">What you'll find for any Cincinnati address</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-1.5 text-sm text-blue-100">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-1.5 text-sm" style={{ color: 'rgba(255,255,255,0.85)' }}>
               {[
                 '🏘️ Zoning & property record',
                 '🚨 Crime incidents (last 12 mo.)',
@@ -849,7 +852,7 @@ TONE
                 <span key={item} className="flex items-center gap-1.5">{item}</span>
               ))}
             </div>
-            <p className="text-xs text-blue-200 mt-4">
+            <p className="text-xs mt-4" style={{ color: 'rgba(255,255,255,0.65)' }}>
               Data sourced from Cincinnati Open Data, CAGIS, FEMA, Census ACS, and SORTA — updated daily.
             </p>
           </div>
@@ -858,17 +861,17 @@ TONE
           <div className="relative">
             {/* "Example data" watermark banner */}
             <div className="flex items-center gap-3 mb-3">
-              <div className="flex-1 h-px bg-gray-200" />
-              <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 px-2">
+              <div className="flex-1 h-px" style={{ background: C.rule }} />
+              <span className="text-xs font-semibold uppercase tracking-widest px-2" style={{ color: C.muted }}>
                 Example · search your address to see real results
               </span>
-              <div className="flex-1 h-px bg-gray-200" />
+              <div className="flex-1 h-px" style={{ background: C.rule }} />
             </div>
 
             <div className="opacity-60 pointer-events-none select-none space-y-3">
               {/* At a Glance bar preview */}
-              <div className="bg-white rounded-lg shadow-sm px-5 py-4">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">At a Glance · 4247 Edwards Rd, Hyde Park</p>
+              <div className="rounded-md shadow-sm px-5 py-4" style={{ background: C.paper }}>
+                <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: C.muted }}>At a Glance · 4247 Edwards Rd, Hyde Park</p>
                 <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                   {[
                     { emoji: '🏘️', label: 'Zoning',   value: 'R-1A' },
@@ -878,10 +881,10 @@ TONE
                     { emoji: '🚌', label: 'Transit',  value: '11 stops' },
                     { emoji: '🏫', label: 'Schools',  value: '3 nearby' },
                   ].map(({ emoji, label, value }) => (
-                    <div key={label} className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+                    <div key={label} className="flex flex-col items-center rounded-md px-2 py-2.5 text-center" style={{ background: C.limestone }}>
                       <span className="text-base mb-0.5">{emoji}</span>
-                      <span className="text-[10px] text-gray-400 uppercase tracking-wide">{label}</span>
-                      <span className="text-xs font-bold text-[#1A4A6B] mt-0.5">{value}</span>
+                      <span className="text-[10px] uppercase tracking-wide" style={{ color: C.muted }}>{label}</span>
+                      <span className="text-xs font-bold mt-0.5" style={{ color: C.riverDeep }}>{value}</span>
                     </div>
                   ))}
                 </div>
@@ -889,24 +892,24 @@ TONE
 
               {/* Sample data cards row */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="bg-white rounded-lg shadow-sm p-4">
-                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Property Record</p>
+                <div className="rounded-md shadow-sm p-4" style={{ background: C.paper }}>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: C.muted }}>Property Record</p>
                   <div className="space-y-1.5">
-                    <div className="flex justify-between text-sm"><span className="text-gray-500">Zoning</span><span className="font-medium">R-1A Single Family</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-gray-500">Neighborhood</span><span className="font-medium">Hyde Park</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-gray-500">Historic</span><span className="font-medium text-amber-700">Hyde Park Historic Dist.</span></div>
+                    <div className="flex justify-between text-sm"><span style={{ color: C.muted }}>Zoning</span><span className="font-medium">R-1A Single Family</span></div>
+                    <div className="flex justify-between text-sm"><span style={{ color: C.muted }}>Neighborhood</span><span className="font-medium">Hyde Park</span></div>
+                    <div className="flex justify-between text-sm"><span style={{ color: C.muted }}>Historic</span><span className="font-medium" style={{ color: C.ochre }}>Hyde Park Historic Dist.</span></div>
                   </div>
                 </div>
-                <div className="bg-white rounded-lg shadow-sm p-4">
-                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Lead Safety</p>
-                  <div className="bg-green-50 rounded p-2 text-center">
-                    <p className="text-green-700 font-semibold text-sm">Low Risk</p>
-                    <p className="text-xs text-gray-500 mt-1">84% copper lines in this neighborhood</p>
+                <div className="rounded-md shadow-sm p-4" style={{ background: C.paper }}>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: C.muted }}>Lead Safety</p>
+                  <div className="rounded p-2 text-center" style={{ background: C.hillLight }}>
+                    <p className="font-semibold text-sm" style={{ color: C.hill }}>Low Risk</p>
+                    <p className="text-xs mt-1" style={{ color: C.muted }}>84% copper lines in this neighborhood</p>
                   </div>
                 </div>
-                <div className="bg-white rounded-lg shadow-sm p-4">
-                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">AI Summary</p>
-                  <p className="text-xs text-gray-500 italic leading-relaxed">
+                <div className="rounded-md shadow-sm p-4" style={{ background: C.paper }}>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: C.muted }}>AI Summary</p>
+                  <p className="text-xs italic leading-relaxed" style={{ color: C.muted }}>
                     "This address is in the Hyde Park Historic District with low flood risk, 4 reported incidents nearby in the past year, and 11 bus stops within walking distance…"
                   </p>
                 </div>
@@ -918,15 +921,16 @@ TONE
 
       {/* Map container — always in DOM so mapContainer ref is always set.
           Hidden when no address selected. Same pattern as ChoroplethMap fix. */}
-      <div className={selectedAddress ? 'bg-white rounded-lg shadow-sm p-6' : 'hidden'}>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className={selectedAddress ? 'rounded-md shadow-sm p-6' : 'hidden'} style={selectedAddress ? { background: C.paper } : {}}>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: C.ink }}>
           {t('addressLookup.mapLabel', 'Location & Nearby Crime')}
         </h3>
         <div
           ref={mapContainer}
-          className="h-64 rounded-lg border border-gray-200"
+          className="h-64 rounded-md"
+          style={{ border: `1px solid ${C.rule}` }}
         />
-        <p className="text-xs text-gray-600 mt-2">
+        <p className="text-xs mt-2" style={{ color: C.muted }}>
           {t(
             'addressLookup.crimeDisclaimer',
             'Crime locations shown at approximate block level for privacy.'
@@ -937,92 +941,93 @@ TONE
       {selectedAddress && (
         <>
           {/* ── Quick Status Bar ─────────────────────────────────────────────── */}
-          <div className="bg-white rounded-lg shadow-sm px-5 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">At a Glance</p>
+          <div className="rounded-md shadow-sm px-5 py-4" style={{ background: C.paper }}>
+            <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: C.muted }}>At a Glance</p>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
               {/* Zoning */}
-              <div className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+              <div className="flex flex-col items-center rounded-md px-2 py-2.5 text-center" style={{ background: C.limestone }}>
                 <span className="text-base mb-0.5">🏙</span>
-                <span className="text-[10px] text-gray-400 uppercase tracking-wide">Zoning</span>
+                <span className="text-[10px] uppercase tracking-wide" style={{ color: C.muted }}>Zoning</span>
                 {zoningStatus === 'loading' ? (
-                  <span className="h-4 w-10 bg-gray-200 animate-pulse rounded mt-0.5" />
+                  <span className="h-4 w-10 animate-pulse rounded mt-0.5" style={{ background: C.rule }} />
                 ) : (
-                  <span className="text-xs font-bold text-[#1A4A6B] mt-0.5 truncate max-w-full">
+                  <span className="text-xs font-bold mt-0.5 truncate max-w-full" style={{ color: C.riverDeep }}>
                     {zoning[0] ? String(zoning[0].ZONING ?? 'See card') : 'Outside'}
                   </span>
                 )}
               </div>
               {/* Flood Zone */}
-              <div className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+              <div className="flex flex-col items-center rounded-md px-2 py-2.5 text-center" style={{ background: C.limestone }}>
                 <span className="text-base mb-0.5">🌊</span>
-                <span className="text-[10px] text-gray-400 uppercase tracking-wide">Flood</span>
+                <span className="text-[10px] uppercase tracking-wide" style={{ color: C.muted }}>Flood</span>
                 {floodStatus === 'loading' ? (
-                  <span className="h-4 w-10 bg-gray-200 animate-pulse rounded mt-0.5" />
+                  <span className="h-4 w-10 animate-pulse rounded mt-0.5" style={{ background: C.rule }} />
                 ) : (() => {
                   const zone = floodZone[0] ? String(floodZone[0].FLD_ZONE ?? 'X') : 'X';
                   const isHigh = ['AE','A','AO','AH','VE','V'].includes(zone);
                   return (
-                    <span className={`text-xs font-bold mt-0.5 ${isHigh ? 'text-orange-600' : 'text-green-600'}`}>
+                    <span className="text-xs font-bold mt-0.5" style={{ color: isHigh ? C.brick : C.hill }}>
                       Zone {zone}
                     </span>
                   );
                 })()}
               </div>
               {/* Crime */}
-              <div className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+              <div className="flex flex-col items-center rounded-md px-2 py-2.5 text-center" style={{ background: C.limestone }}>
                 <span className="text-base mb-0.5">🚨</span>
-                <span className="text-[10px] text-gray-400 uppercase tracking-wide">Crime</span>
+                <span className="text-[10px] uppercase tracking-wide" style={{ color: C.muted }}>Crime</span>
                 {crimeLoading ? (
-                  <span className="h-4 w-8 bg-gray-200 animate-pulse rounded mt-0.5" />
+                  <span className="h-4 w-8 animate-pulse rounded mt-0.5" style={{ background: C.rule }} />
                 ) : (
-                  <span className={`text-xs font-bold mt-0.5 ${mergedCrime.length > 10 ? 'text-orange-600' : mergedCrime.length > 0 ? 'text-yellow-600' : 'text-green-600'}`}>
+                  <span className="text-xs font-bold mt-0.5" style={{ color: mergedCrime.length > 10 ? C.brick : mergedCrime.length > 0 ? C.ochre : C.hill }}>
                     {mergedCrime.length} nearby
                   </span>
                 )}
               </div>
               {/* Transit */}
-              <div className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+              <div className="flex flex-col items-center rounded-md px-2 py-2.5 text-center" style={{ background: C.limestone }}>
                 <span className="text-base mb-0.5">🚌</span>
-                <span className="text-[10px] text-gray-400 uppercase tracking-wide">Stops</span>
+                <span className="text-[10px] uppercase tracking-wide" style={{ color: C.muted }}>Stops</span>
                 {loadingTransit ? (
-                  <span className="h-4 w-8 bg-gray-200 animate-pulse rounded mt-0.5" />
+                  <span className="h-4 w-8 animate-pulse rounded mt-0.5" style={{ background: C.rule }} />
                 ) : (
-                  <span className="text-xs font-bold text-[#1A4A6B] mt-0.5">{transitStops.length} stops</span>
+                  <span className="text-xs font-bold mt-0.5" style={{ color: C.riverDeep }}>{transitStops.length} stops</span>
                 )}
               </div>
               {/* Schools */}
-              <div className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+              <div className="flex flex-col items-center rounded-md px-2 py-2.5 text-center" style={{ background: C.limestone }}>
                 <span className="text-base mb-0.5">🏫</span>
-                <span className="text-[10px] text-gray-400 uppercase tracking-wide">Schools</span>
+                <span className="text-[10px] uppercase tracking-wide" style={{ color: C.muted }}>Schools</span>
                 {loadingSchools ? (
-                  <span className="h-4 w-8 bg-gray-200 animate-pulse rounded mt-0.5" />
+                  <span className="h-4 w-8 animate-pulse rounded mt-0.5" style={{ background: C.rule }} />
                 ) : (
-                  <span className="text-xs font-bold text-[#1A4A6B] mt-0.5">{nearbySchools.length} nearby</span>
+                  <span className="text-xs font-bold mt-0.5" style={{ color: C.riverDeep }}>{nearbySchools.length} nearby</span>
                 )}
               </div>
               {/* Parks */}
-              <div className="flex flex-col items-center bg-gray-50 rounded-lg px-2 py-2.5 text-center">
+              <div className="flex flex-col items-center rounded-md px-2 py-2.5 text-center" style={{ background: C.limestone }}>
                 <span className="text-base mb-0.5">🌳</span>
-                <span className="text-[10px] text-gray-400 uppercase tracking-wide">Parks</span>
+                <span className="text-[10px] uppercase tracking-wide" style={{ color: C.muted }}>Parks</span>
                 {parksStatus === 'loading' ? (
-                  <span className="h-4 w-8 bg-gray-200 animate-pulse rounded mt-0.5" />
+                  <span className="h-4 w-8 animate-pulse rounded mt-0.5" style={{ background: C.rule }} />
                 ) : (
-                  <span className="text-xs font-bold text-[#1A4A6B] mt-0.5">{nearbyParks.length} nearby</span>
+                  <span className="text-xs font-bold mt-0.5" style={{ color: C.riverDeep }}>{nearbyParks.length} nearby</span>
                 )}
               </div>
             </div>
           </div>
 
           {/* ── Plain English Summary ─────────────────────────────────────────── */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="rounded-md shadow-sm p-6" style={{ background: C.paper }}>
             <div className="flex justify-between items-center mb-3">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold" style={{ color: C.ink }}>
                 {t('addressLookup.aiSummary', 'Plain English Summary')}
               </h3>
               <button
                 onClick={handleAiSummary}
                 disabled={loadingAi}
-                className="px-4 py-2 bg-[#1A4A6B] text-white rounded-lg hover:bg-[#143850] disabled:opacity-50 text-sm"
+                className="px-4 py-2 rounded-md disabled:opacity-50 text-sm text-white"
+                style={{ background: C.riverDeep }}
               >
                 {loadingAi
                   ? t('addressLookup.generating', 'Generating...')
@@ -1032,9 +1037,9 @@ TONE
             {aiSummary ? (
               <div className="prose prose-sm max-w-none">{renderMarkdown(aiSummary)}</div>
             ) : aiError ? (
-              <p className="text-sm text-red-600">{aiError}</p>
+              <p className="text-sm" style={{ color: C.brick }}>{aiError}</p>
             ) : (
-              <p className="text-sm text-gray-500 italic">
+              <p className="text-sm italic" style={{ color: C.muted }}>
                 {t('addressLookup.aiHint', 'Click "Explain This Record" to get a plain-language summary of all data found for this address.')}
               </p>
             )}
@@ -1042,20 +1047,21 @@ TONE
 
           {/* ── Section: Property Record ──────────────────────────────────────── */}
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Property Record</span>
-            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: C.muted }}>Property Record</span>
+            <div className="flex-1 h-px" style={{ background: C.rule }} />
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="rounded-md shadow-sm p-6" style={{ background: C.paper }}>
             {/* Tab switcher */}
-            <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-5 self-start w-fit">
+            <div className="flex gap-1 rounded-md p-1 mb-5 self-start w-fit" style={{ background: C.limestone }}>
               {(['overview', 'violations', 'abatements'] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setPropertyTab(tab)}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition-colors ${
-                    propertyTab === tab ? 'bg-white text-[#1A4A6B] shadow-sm' : 'text-gray-500 hover:text-gray-800'
-                  }`}
+                  className="px-3 py-1.5 rounded-md text-xs font-medium capitalize transition-colors"
+                  style={propertyTab === tab
+                    ? { background: C.paper, color: C.riverDeep, boxShadow: '0 1px 2px rgba(0,0,0,0.08)' }
+                    : { color: C.muted }}
                 >
                   {tab === 'violations' ? 'Inspections' : tab === 'abatements' ? 'Abatements & Blight' : 'Overview'}
                 </button>
@@ -1066,53 +1072,53 @@ TONE
             {propertyTab === 'overview' && (
               <>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
-                    <div className={`text-2xl font-bold ${inspections.loading ? 'text-gray-300' : inspections.data?.length ? 'text-[#C8861A]' : 'text-gray-400'}`}>
+                  <div className="rounded-md p-3 text-center" style={{ background: C.limestone }}>
+                    <div className="text-2xl font-bold" style={{ color: inspections.loading ? C.rule : inspections.data?.length ? C.ochre : C.muted }}>
                       {inspections.loading ? '—' : inspections.data?.length ?? 0}
                     </div>
-                    <div className="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">Inspections</div>
+                    <div className="text-[10px] mt-0.5 uppercase tracking-wide" style={{ color: C.muted }}>Inspections</div>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
-                    <div className={`text-2xl font-bold ${inspections.loading ? 'text-gray-300' : violations.length > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                  <div className="rounded-md p-3 text-center" style={{ background: C.limestone }}>
+                    <div className="text-2xl font-bold" style={{ color: inspections.loading ? C.rule : violations.length > 0 ? C.brick : C.hill }}>
                       {inspections.loading ? '—' : violations.length}
                     </div>
-                    <div className="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">Violations</div>
+                    <div className="text-[10px] mt-0.5 uppercase tracking-wide" style={{ color: C.muted }}>Violations</div>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
-                    <div className={`text-2xl font-bold ${taxAbatements.loading ? 'text-gray-300' : taxAbatements.data?.length ? 'text-[#1A4A6B]' : 'text-gray-400'}`}>
+                  <div className="rounded-md p-3 text-center" style={{ background: C.limestone }}>
+                    <div className="text-2xl font-bold" style={{ color: taxAbatements.loading ? C.rule : taxAbatements.data?.length ? C.riverDeep : C.muted }}>
                       {taxAbatements.loading ? '—' : taxAbatements.data?.length ?? 0}
                     </div>
-                    <div className="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">Abatements</div>
+                    <div className="text-[10px] mt-0.5 uppercase tracking-wide" style={{ color: C.muted }}>Abatements</div>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
-                    <div className={`text-2xl font-bold ${blight.loading ? 'text-gray-300' : blight.data?.length ? 'text-red-600' : 'text-green-600'}`}>
+                  <div className="rounded-md p-3 text-center" style={{ background: C.limestone }}>
+                    <div className="text-2xl font-bold" style={{ color: blight.loading ? C.rule : blight.data?.length ? C.brick : C.hill }}>
                       {blight.loading ? '—' : blight.data?.length ?? 0}
                     </div>
-                    <div className="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">Blight Flags</div>
+                    <div className="text-[10px] mt-0.5 uppercase tracking-wide" style={{ color: C.muted }}>Blight Flags</div>
                   </div>
                 </div>
                 {violations.length > 0 && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2 text-xs text-yellow-800">
-                    ⚠ {violations.length} inspection violation{violations.length > 1 ? 's' : ''} found — see the Inspections tab for details.
+                  <div className="rounded-md px-3 py-2 text-xs" style={{ background: C.brickLight, border: `1px solid ${C.brick}`, color: C.brick }}>
+                    {violations.length} inspection violation{violations.length > 1 ? 's' : ''} found — see the Inspections tab for details.
                   </div>
                 )}
                 {blight.data && blight.data.length > 0 && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-800 mt-2">
-                    🏚 {blight.data.length} blight flag{blight.data.length > 1 ? 's' : ''} nearby — see Abatements & Blight tab.
+                  <div className="rounded-md px-3 py-2 text-xs mt-2" style={{ background: C.brickLight, border: `1px solid ${C.brick}`, color: C.brick }}>
+                    {blight.data.length} blight flag{blight.data.length > 1 ? 's' : ''} nearby — see Abatements & Blight tab.
                   </div>
                 )}
                 {!inspections.loading && !taxAbatements.loading && !blight.loading &&
                   !inspections.data?.length && !taxAbatements.data?.length && !blight.data?.length && (
-                  <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                    ✓ No inspections, abatements, or blight records found for this address.
+                  <p className="text-sm rounded-md px-3 py-2" style={{ color: C.hill, background: C.hillLight, border: `1px solid ${C.hill}` }}>
+                    No inspections, abatements, or blight records found for this address.
                   </p>
                 )}
 
                 {/* Contextual orgs — surface when property issues are found */}
                 {!inspections.loading && !blight.loading &&
                   (violations.length > 0 || (blight.data && blight.data.length > 0)) && (
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Organizations that can help</p>
+                  <div className="mt-4 pt-4" style={{ borderTop: `1px solid ${C.rule}` }}>
+                    <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.muted }}>Organizations that can help</p>
                     <CivicOrgsPanel
                       compact
                       categories={['housing-eviction']}
@@ -1126,22 +1132,26 @@ TONE
             {/* Inspections tab */}
             {propertyTab === 'violations' && (
               <>
-                <p className="text-xs text-gray-500 italic mb-3">
+                <p className="text-xs italic mb-3" style={{ color: C.muted }}>
                   Building and code enforcement inspection records within 200m.
                 </p>
                 {inspections.loading ? (
-                  <p className="text-sm text-gray-400">Loading…</p>
+                  <p className="text-sm" style={{ color: C.muted }}>Loading…</p>
                 ) : inspections.data && inspections.data.length > 0 ? (
                   <div className="space-y-3">
                     {inspections.data.slice(0, 10).map((inspection: any, idx: number) => {
                       const status = inspection.data_status ?? '';
                       const isFailed = /fail|viol|notice/i.test(status);
                       return (
-                        <div key={idx} className={`border-b border-gray-200 pb-2 last:border-b-0 ${isFailed ? 'bg-yellow-50 px-2 py-1 rounded' : ''}`}>
-                          <div className={`text-sm font-medium ${isFailed ? 'text-red-900' : 'text-gray-900'}`}>
+                        <div key={idx} className="pb-2 last:border-b-0"
+                          style={{
+                            borderBottom: `1px solid ${C.rule}`,
+                            ...(isFailed ? { background: C.brickLight, padding: '4px 8px', borderRadius: 4 } : {})
+                          }}>
+                          <div className="text-sm font-medium" style={{ color: isFailed ? C.brick : C.ink }}>
                             {inspection.comp_type_desc || 'Unknown'}
                           </div>
-                          <div className="text-xs text-gray-600">{formatDate(inspection.entered_date)} — {status}</div>
+                          <div className="text-xs" style={{ color: C.muted }}>{formatDate(inspection.entered_date)} — {status}</div>
                         </div>
                       );
                     })}
@@ -1156,39 +1166,39 @@ TONE
             {/* Abatements & Blight tab */}
             {propertyTab === 'abatements' && (
               <>
-                <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Tax Abatements</div>
+                <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: C.muted }}>Tax Abatements</div>
                 {taxAbatements.loading ? (
-                  <p className="text-sm text-gray-400">Loading…</p>
+                  <p className="text-sm" style={{ color: C.muted }}>Loading…</p>
                 ) : taxAbatements.data && taxAbatements.data.length > 0 ? (
                   <div className="space-y-2 mb-5">
                     {taxAbatements.data.slice(0, 8).map((ab: any, idx: number) => (
-                      <div key={idx} className="border-b border-gray-100 pb-2 last:border-b-0">
-                        <div className="text-sm font-medium text-gray-900">{ab.type || 'Unknown'}</div>
-                        <div className="text-xs text-gray-500">Neighborhood: {ab.neighborhood}</div>
+                      <div key={idx} className="pb-2 last:border-b-0" style={{ borderBottom: `1px solid ${C.rule}` }}>
+                        <div className="text-sm font-medium" style={{ color: C.ink }}>{ab.type || 'Unknown'}</div>
+                        <div className="text-xs" style={{ color: C.muted }}>Neighborhood: {ab.neighborhood}</div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 mb-5">No tax abatements found nearby.</p>
+                  <p className="text-sm mb-5" style={{ color: C.muted }}>No tax abatements found nearby.</p>
                 )}
-                <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Blight & Property Maintenance</div>
-                <p className="text-xs text-gray-500 italic mb-3">
+                <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: C.muted }}>Blight & Property Maintenance</div>
+                <p className="text-xs italic mb-3" style={{ color: C.muted }}>
                   Properties flagged under Cincinnati's PLAP program — vacant buildings, overgrown lots, structural hazards.
                 </p>
                 {blight.loading ? (
-                  <p className="text-sm text-gray-400">Loading…</p>
+                  <p className="text-sm" style={{ color: C.muted }}>Loading…</p>
                 ) : blight.data && blight.data.length > 0 ? (
                   <div className="space-y-2">
-                    <div className="text-lg font-bold text-[#C8861A]">{blight.data.length}</div>
-                    <div className="text-sm text-gray-600">blight records found nearby</div>
+                    <div className="text-lg font-bold" style={{ color: C.ochre }}>{blight.data.length}</div>
+                    <div className="text-sm" style={{ color: C.muted }}>blight records found nearby</div>
                     {blight.data.slice(0, 5).map((record: any, idx: number) => (
-                      <div key={idx} className="text-xs text-gray-600 border-t pt-2">
+                      <div key={idx} className="text-xs pt-2" style={{ color: C.muted, borderTop: `1px solid ${C.rule}` }}>
                         {record.sr_sub_type} — {formatDate(record.sr_recd_date)}
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500">No blight records found nearby.</p>
+                  <p className="text-sm" style={{ color: C.muted }}>No blight records found nearby.</p>
                 )}
                 <DataAttribution source="Tax Abatements · PLAP Blight" uid="tkp7-yf64" />
               </>
@@ -1197,8 +1207,8 @@ TONE
 
           {/* ── Section: Safety & Environment ────────────────────────────────── */}
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Safety &amp; Environment</span>
-            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: C.muted }}>Safety &amp; Environment</span>
+            <div className="flex-1 h-px" style={{ background: C.rule }} />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -1212,37 +1222,37 @@ TONE
               {mergedCrime.length > 0 ? (
                 <>
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className={`text-3xl font-bold ${mergedCrime.length > 15 ? 'text-red-600' : mergedCrime.length > 5 ? 'text-yellow-600' : 'text-gray-700'}`}>
+                    <span className="text-3xl font-bold" style={{ color: mergedCrime.length > 15 ? C.brick : mergedCrime.length > 5 ? C.ochre : C.ink }}>
                       {mergedCrime.length}
                     </span>
-                    <span className="text-sm text-gray-500">incidents in the past year</span>
+                    <span className="text-sm" style={{ color: C.muted }}>incidents in the past year</span>
                   </div>
                   {crimeByCategory.length > 0 && (
                     <div className="mb-4 space-y-1.5">
                       {crimeByCategory.map(([cat, count]) => (
                         <div key={cat}>
                           <div className="flex justify-between text-xs mb-0.5">
-                            <span className="text-gray-700 truncate max-w-[80%]">{cat}</span>
-                            <span className="text-gray-400 font-medium ml-1">{count}</span>
+                            <span className="truncate max-w-[80%]" style={{ color: C.ink }}>{cat}</span>
+                            <span className="font-medium ml-1" style={{ color: C.muted }}>{count}</span>
                           </div>
-                          <div className="h-1.5 bg-gray-100 rounded-full">
+                          <div className="h-1.5 rounded-full" style={{ background: C.limestone }}>
                             <div
-                              className="h-1.5 rounded-full bg-[#C8861A]"
-                              style={{ width: `${(count / crimeByCategory[0][1]) * 100}%` }}
+                              className="h-1.5 rounded-full"
+                              style={{ width: `${(count / crimeByCategory[0][1]) * 100}%`, background: C.ochre }}
                             />
                           </div>
                         </div>
                       ))}
                     </div>
                   )}
-                  <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Recent incidents</div>
+                  <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: C.muted }}>Recent incidents</div>
                   <div className="space-y-2">
                     {mergedCrime.slice(0, 5).map((crime: any, idx: number) => (
-                      <div key={idx} className="border-b border-gray-100 pb-1.5 last:border-0">
-                        <div className="text-xs font-medium text-gray-900">
+                      <div key={idx} className="pb-1.5 last:border-0" style={{ borderBottom: `1px solid ${C.rule}` }}>
+                        <div className="text-xs font-medium" style={{ color: C.ink }}>
                           {crime.stars_category || crime.offense_type || crime.offense || 'Unknown'}
                         </div>
-                        <div className="text-[10px] text-gray-400">{formatDate(crime.date_reported || crime.datereported)}</div>
+                        <div className="text-[10px]" style={{ color: C.muted }}>{formatDate(crime.date_reported || crime.datereported)}</div>
                       </div>
                     ))}
                   </div>
@@ -1254,15 +1264,16 @@ TONE
               {onTabChange && selectedAddress?.neighborhood && (
                 <button
                   onClick={() => onTabChange('neighborhoods')}
-                  className="mt-3 text-xs text-[#1A4A6B] font-medium hover:underline flex items-center gap-1"
+                  className="mt-3 text-xs font-medium hover:underline flex items-center gap-1"
+                  style={{ color: C.river }}
                 >
                   See full crime trends for {selectedAddress.neighborhood} →
                 </button>
               )}
               {/* Contextual orgs for high crime areas */}
               {!crimeLoading && mergedCrime.length > 10 && (
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Community resources</p>
+                <div className="mt-4 pt-4" style={{ borderTop: `1px solid ${C.rule}` }}>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.muted }}>Community resources</p>
                   <CivicOrgsPanel
                     compact
                     categories={['police-accountability']}
@@ -1288,17 +1299,17 @@ TONE
                       const isHighRisk = highRiskZones.includes(zone);
                       return (
                         <div key={i} className="flex items-start gap-3">
-                          <span className={`mt-0.5 px-2 py-0.5 rounded text-sm font-bold shrink-0 ${isHighRisk ? 'bg-orange-600 text-white' : 'bg-green-600 text-white'}`}>
+                          <span className="mt-0.5 px-2 py-0.5 rounded-md text-sm font-bold shrink-0 text-white" style={{ background: isHighRisk ? C.brick : C.hill }}>
                             Zone {zone}
                           </span>
                           <div>
-                            <p className="text-sm text-gray-700">
+                            <p className="text-sm" style={{ color: C.ink }}>
                               {isHighRisk
                                 ? 'Special Flood Hazard Area — at least a 1% annual chance of flooding. Flood insurance is required for federally-backed mortgages.'
                                 : 'Minimal flood hazard — outside the special flood hazard area.'}
                             </p>
                             {String(f.ZONE_SUBTY ?? '') && (
-                              <p className="text-xs text-gray-500 mt-1">{String(f.ZONE_SUBTY)}</p>
+                              <p className="text-xs mt-1" style={{ color: C.muted }}>{String(f.ZONE_SUBTY)}</p>
                             )}
                           </div>
                         </div>
@@ -1307,10 +1318,10 @@ TONE
 
                     {/* Mill Creek infrastructure context — shown for high-risk properties */}
                     {isAnyHighRisk && (
-                      <div className="pt-2 border-t border-gray-100 space-y-3">
-                        <div className="rounded-lg bg-blue-50 border border-blue-100 p-3">
-                          <p className="text-xs font-semibold text-blue-800 mb-1.5">Cincinnati Flood Infrastructure</p>
-                          <p className="text-xs text-blue-700 leading-relaxed">
+                      <div className="pt-2 space-y-3" style={{ borderTop: `1px solid ${C.rule}` }}>
+                        <div className="rounded-md p-3" style={{ background: C.riverLight, border: `1px solid ${C.river}` }}>
+                          <p className="text-xs font-semibold mb-1.5" style={{ color: C.riverDeep }}>Cincinnati Flood Infrastructure</p>
+                          <p className="text-xs leading-relaxed" style={{ color: C.river }}>
                             Most of Cincinnati&apos;s flood risk comes from the <strong>Mill Creek watershed</strong>, a 30-mile
                             corridor running from Butler County through Norwood, Westwood, and Lower Price Hill before
                             joining the Ohio River. MSDGC operates the <strong>Mill Creek Barrier</strong> — a movable flood
@@ -1319,34 +1330,35 @@ TONE
                             communities north of I-74) are outside the protected zone.
                           </p>
                         </div>
-                        <div className="rounded-lg bg-orange-50 border border-orange-100 p-3">
-                          <p className="text-xs font-semibold text-orange-800 mb-2">What to do if you&apos;re in a flood zone</p>
+                        <div className="rounded-md p-3" style={{ background: C.brickLight, border: `1px solid ${C.brick}` }}>
+                          <p className="text-xs font-semibold mb-2" style={{ color: C.brick }}>What to do if you&apos;re in a flood zone</p>
                           <div className="space-y-2">
                             <div className="flex items-start gap-2">
-                              <span className="text-orange-500 font-bold text-xs mt-0.5 shrink-0">1.</span>
-                              <p className="text-xs text-orange-700">
+                              <span className="font-bold text-xs mt-0.5 shrink-0" style={{ color: C.brick }}>1.</span>
+                              <p className="text-xs" style={{ color: C.brick }}>
                                 <strong>Get flood insurance.</strong> Your homeowner&apos;s policy does not cover flooding.
                                 Purchase through the National Flood Insurance Program (NFIP) — federally-backed mortgages
                                 (FHA, VA, Fannie Mae) require it in SFHA zones.
                               </p>
                             </div>
                             <div className="flex items-start gap-2">
-                              <span className="text-orange-500 font-bold text-xs mt-0.5 shrink-0">2.</span>
-                              <p className="text-xs text-orange-700">
+                              <span className="font-bold text-xs mt-0.5 shrink-0" style={{ color: C.brick }}>2.</span>
+                              <p className="text-xs" style={{ color: C.brick }}>
                                 <strong>Check your elevation certificate.</strong> If your structure is elevated above
                                 the base flood elevation, your NFIP premium can be significantly lower. Contact Hamilton
                                 County or your insurance agent for records.
                               </p>
                             </div>
                             <div className="flex items-start gap-2">
-                              <span className="text-orange-500 font-bold text-xs mt-0.5 shrink-0">3.</span>
-                              <p className="text-xs text-orange-700">
+                              <span className="font-bold text-xs mt-0.5 shrink-0" style={{ color: C.brick }}>3.</span>
+                              <p className="text-xs" style={{ color: C.brick }}>
                                 <strong>Think you&apos;re mismapped?</strong> You can apply for a{' '}
                                 <a
                                   href="https://hazards.fema.gov/femaportal/onlinelomc/signin"
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="underline text-orange-800"
+                                  className="underline"
+                                  style={{ color: C.riverDeep }}
                                 >
                                   Letter of Map Amendment (LOMA)
                                 </a>{' '}
@@ -1360,7 +1372,7 @@ TONE
 
                     {/* Low-risk note */}
                     {!isAnyHighRisk && (
-                      <p className="text-xs text-gray-500 pt-1">
+                      <p className="text-xs pt-1" style={{ color: C.muted }}>
                         Zone X properties can still flood from local drainage issues — 25% of NFIP claims come
                         from outside high-risk zones. Flood insurance is available and affordable for lower-risk
                         properties through the{' '}
@@ -1374,10 +1386,10 @@ TONE
               })() : floodStatus === 'done' ? (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-sm font-bold bg-green-600 text-white">Zone X</span>
-                    <p className="text-sm text-gray-700">Minimal flood hazard area.</p>
+                    <span className="px-2 py-0.5 rounded-md text-sm font-bold text-white" style={{ background: C.hill }}>Zone X</span>
+                    <p className="text-sm" style={{ color: C.ink }}>Minimal flood hazard area.</p>
                   </div>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs" style={{ color: C.muted }}>
                     Zone X properties can still flood from local drainage issues — 25% of NFIP claims come
                     from outside high-risk zones. Flood insurance is available and affordable for lower-risk
                     properties through the{' '}
@@ -1397,12 +1409,15 @@ TONE
               {(() => {
                 const { name, total, lead, unknown, galvanized, replaced, asOf } = leadRecord;
                 const riskLines = lead + galvanized;
-                const riskColor =
-                  leadRiskLevel === 'high'     ? 'text-red-600'    :
-                  leadRiskLevel === 'moderate' ? 'text-orange-600' : 'text-green-600';
-                const riskBg =
-                  leadRiskLevel === 'high'     ? 'bg-red-50 border-red-200'    :
-                  leadRiskLevel === 'moderate' ? 'bg-orange-50 border-orange-200' : 'bg-green-50 border-green-200';
+                const riskTokenColor =
+                  leadRiskLevel === 'high'     ? C.brick  :
+                  leadRiskLevel === 'moderate' ? C.ochre  : C.hill;
+                const riskTokenBg =
+                  leadRiskLevel === 'high'     ? C.brickLight :
+                  leadRiskLevel === 'moderate' ? C.limestone  : C.hillLight;
+                const riskTokenBorder =
+                  leadRiskLevel === 'high'     ? C.brick  :
+                  leadRiskLevel === 'moderate' ? C.ochre  : C.hill;
                 const riskLabel =
                   leadRiskLevel === 'high'     ? 'Elevated Risk' :
                   leadRiskLevel === 'moderate' ? 'Moderate Risk' : 'Lower Risk';
@@ -1410,12 +1425,12 @@ TONE
                 return (
                   <div className="space-y-4">
                     {/* Summary banner */}
-                    <div className={`rounded-lg border px-4 py-3 ${riskBg}`}>
+                    <div className="rounded-md px-4 py-3" style={{ background: riskTokenBg, border: `1px solid ${riskTokenBorder}` }}>
                       <div className="flex items-baseline gap-2 mb-1">
-                        <span className={`text-2xl font-bold ${riskColor}`}>{riskLabel}</span>
-                        <span className="text-xs text-gray-500">{name}</span>
+                        <span className="text-2xl font-bold" style={{ color: riskTokenColor }}>{riskLabel}</span>
+                        <span className="text-xs" style={{ color: C.muted }}>{name}</span>
                       </div>
-                      <p className={`text-xs leading-relaxed ${leadRiskLevel === 'high' ? 'text-red-800' : leadRiskLevel === 'moderate' ? 'text-orange-800' : 'text-green-800'}`}>
+                      <p className="text-xs leading-relaxed" style={{ color: riskTokenColor }}>
                         {leadRiskLevel === 'high'
                           ? `${riskLines} of ${total} service lines in ${name} are lead or galvanized — materials that can leach lead into drinking water. GCWW's free replacement program covers the service line to your home; contact them to find out when your neighborhood is scheduled.`
                           : leadRiskLevel === 'moderate'
@@ -1427,22 +1442,22 @@ TONE
                     {/* Breakdown */}
                     <div className="grid grid-cols-4 gap-2 text-center">
                       {[
-                        { label: 'Total', value: total, color: 'text-gray-700' },
-                        { label: 'Lead/Galv.', value: riskLines, color: riskLines > 0 ? 'text-red-600' : 'text-gray-400' },
-                        { label: 'Unknown', value: unknown, color: unknown > 0 ? 'text-orange-600' : 'text-gray-400' },
-                        { label: 'Replaced', value: replaced, color: replaced > 0 ? 'text-green-600' : 'text-gray-400' },
+                        { label: 'Total', value: total, color: C.ink },
+                        { label: 'Lead/Galv.', value: riskLines, color: riskLines > 0 ? C.brick : C.muted },
+                        { label: 'Unknown', value: unknown, color: unknown > 0 ? C.ochre : C.muted },
+                        { label: 'Replaced', value: replaced, color: replaced > 0 ? C.hill : C.muted },
                       ].map(({ label, value, color }) => (
-                        <div key={label} className="bg-gray-50 rounded-lg py-2">
-                          <div className={`text-lg font-bold ${color}`}>{value}</div>
-                          <div className="text-[10px] text-gray-400 uppercase tracking-wide">{label}</div>
+                        <div key={label} className="rounded-md py-2" style={{ background: C.limestone }}>
+                          <div className="text-lg font-bold" style={{ color }}>{value}</div>
+                          <div className="text-[10px] uppercase tracking-wide" style={{ color: C.muted }}>{label}</div>
                         </div>
                       ))}
                     </div>
 
                     {leadRiskLevel !== 'low' && (
-                      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 space-y-2">
-                        <p className="text-xs font-semibold text-blue-800">What you can do now</p>
-                        <ul className="text-xs text-blue-700 space-y-1.5 list-none">
+                      <div className="rounded-md p-3 space-y-2" style={{ background: C.riverLight, border: `1px solid ${C.river}` }}>
+                        <p className="text-xs font-semibold" style={{ color: C.riverDeep }}>What you can do now</p>
+                        <ul className="text-xs space-y-1.5 list-none" style={{ color: C.river }}>
                           <li>→ <strong>Get your water tested first</strong> — it's free and immediate. GCWW offers <a href="https://la.mygcww.org/lead/" target="_blank" rel="noopener noreferrer" className="underline">free lead test kits</a>. This tells you what's actually in your tap water regardless of service line status.</li>
                           <li>→ <strong>Contact GCWW at (513) 591-7700</strong> to find out when your neighborhood is scheduled for the replacement program and to make sure your address is on their list. You can't request immediate replacement — the program works neighborhood by neighborhood.</li>
                           <li>→ <strong>Use an NSF-certified lead filter</strong> (pitcher or faucet-mount) on drinking taps in the meantime — especially if children or pregnant residents are in the home.</li>
@@ -1452,8 +1467,8 @@ TONE
                     )}
 
                     {/* Contextual orgs */}
-                    <div className="pt-2 border-t border-gray-100">
-                      <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Contact these programs directly</p>
+                    <div className="pt-2" style={{ borderTop: `1px solid ${C.rule}` }}>
+                      <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: C.muted }}>Contact these programs directly</p>
                       <CivicOrgsPanel
                         compact
                         categories={['environmental-health']}
@@ -1469,8 +1484,8 @@ TONE
 
           {/* ── Section: Location Context ─────────────────────────────────────── */}
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Location Context</span>
-            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: C.muted }}>Location Context</span>
+            <div className="flex-1 h-px" style={{ background: C.rule }} />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -1488,11 +1503,11 @@ TONE
                     const zoneType = String(z.ZONE_TYPE ?? '');
                     return (
                       <div key={i} className="flex items-start gap-3">
-                        <span className="mt-0.5 px-2 py-0.5 rounded text-sm font-bold bg-[#1A4A6B] text-white shrink-0">{code}</span>
+                        <span className="mt-0.5 px-2 py-0.5 rounded-md text-sm font-bold text-white shrink-0" style={{ background: C.riverDeep }}>{code}</span>
                         <div>
-                          {desc && <p className="text-sm text-gray-700">{desc}</p>}
-                          {zoneType && <p className="text-xs text-gray-500">{zoneType}</p>}
-                          <p className="text-xs text-gray-500 mt-1">Affects what can be built, renovated, or operated at this address.</p>
+                          {desc && <p className="text-sm" style={{ color: C.ink }}>{desc}</p>}
+                          {zoneType && <p className="text-xs" style={{ color: C.muted }}>{zoneType}</p>}
+                          <p className="text-xs mt-1" style={{ color: C.muted }}>Affects what can be built, renovated, or operated at this address.</p>
                         </div>
                       </div>
                     );
@@ -1518,13 +1533,13 @@ TONE
                     const cls = String(h.DIST_CLASS ?? h.CLASS ?? h.TYPE ?? '');
                     return (
                       <div key={i} className="flex items-start gap-2">
-                        <span className="text-[#C8861A] text-lg shrink-0">🏛</span>
+                        <span className="text-lg shrink-0" style={{ color: C.ochre }}>🏛</span>
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{name}</p>
+                          <p className="text-sm font-semibold" style={{ color: C.ink }}>{name}</p>
                           {(cls || year) && (
-                            <p className="text-xs text-gray-500">{[cls, year ? `Designated ${year}` : ''].filter(Boolean).join(' · ')}</p>
+                            <p className="text-xs" style={{ color: C.muted }}>{[cls, year ? `Designated ${year}` : ''].filter(Boolean).join(' · ')}</p>
                           )}
-                          <p className="text-xs text-gray-500 mt-1">Renovation and exterior work may require Historic Preservation approval.</p>
+                          <p className="text-xs mt-1" style={{ color: C.muted }}>Renovation and exterior work may require Historic Preservation approval.</p>
                         </div>
                       </div>
                     );
@@ -1539,13 +1554,13 @@ TONE
 
           {/* ── Section: Amenities & Access ───────────────────────────────────── */}
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Amenities &amp; Access</span>
-            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: C.muted }}>Amenities &amp; Access</span>
+            <div className="flex-1 h-px" style={{ background: C.rule }} />
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="rounded-md shadow-sm p-6" style={{ background: C.paper }}>
             {/* Tab switcher */}
-            <div className="flex flex-wrap gap-1 bg-gray-100 rounded-lg p-1 mb-5 self-start w-fit">
+            <div className="flex flex-wrap gap-1 rounded-md p-1 mb-5 self-start w-fit" style={{ background: C.limestone }}>
               {(['parks', 'schools', 'transit', 'healthcare'] as const).map((tab) => {
                 const counts = {
                   parks:      nearbyParks.length,
@@ -1565,16 +1580,18 @@ TONE
                   <button
                     key={tab}
                     onClick={() => setAmenitiesTab(tab)}
-                    className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition-colors flex items-center gap-1.5 ${
-                      amenitiesTab === tab ? 'bg-white text-[#1A4A6B] shadow-sm' : 'text-gray-500 hover:text-gray-800'
-                    }`}
+                    className="px-3 py-1.5 rounded-md text-xs font-medium capitalize transition-colors flex items-center gap-1.5"
+                    style={amenitiesTab === tab
+                      ? { background: C.paper, color: C.riverDeep, boxShadow: '0 1px 2px rgba(0,0,0,0.08)' }
+                      : { color: C.muted }}
                   >
                     {icons[tab]}
                     {labels[tab]}
                     {!loading[tab] && (
-                      <span className={`text-[10px] rounded-full px-1.5 py-0.5 font-bold ${
-                        amenitiesTab === tab ? 'bg-[#1A4A6B] text-white' : 'bg-gray-200 text-gray-600'
-                      }`}>
+                      <span className="text-[10px] rounded-full px-1.5 py-0.5 font-bold"
+                        style={amenitiesTab === tab
+                          ? { background: C.riverDeep, color: '#fff' }
+                          : { background: C.rule, color: C.muted }}>
                         {counts[tab]}
                       </span>
                     )}
@@ -1587,7 +1604,7 @@ TONE
             {amenitiesTab === 'parks' && (
               <>
                 {parksStatus === 'loading' ? (
-                  <p className="text-sm text-gray-400">Loading parks…</p>
+                  <p className="text-sm" style={{ color: C.muted }}>Loading parks…</p>
                 ) : nearbyParks.length > 0 ? (
                   <div className="space-y-2">
                     {nearbyParks.slice(0, 6).map((p, i) => {
@@ -1595,12 +1612,12 @@ TONE
                       const acres = p.PARK_SIZE_ACRES != null ? `${Number(p.PARK_SIZE_ACRES).toFixed(1)} ac` : '';
                       const designation = String(p.PARK_DESIGNATION ?? '');
                       return (
-                        <div key={i} className="flex items-center justify-between border-b border-gray-100 pb-1.5 last:border-0">
+                        <div key={i} className="flex items-center justify-between pb-1.5 last:border-0" style={{ borderBottom: `1px solid ${C.rule}` }}>
                           <div>
-                            <p className="text-sm font-medium text-gray-900">{name}</p>
-                            {designation && <p className="text-xs text-gray-500">{designation}</p>}
+                            <p className="text-sm font-medium" style={{ color: C.ink }}>{name}</p>
+                            {designation && <p className="text-xs" style={{ color: C.muted }}>{designation}</p>}
                           </div>
-                          {acres && <span className="text-xs text-[#1A4A6B] font-medium shrink-0 ml-2">{acres}</span>}
+                          {acres && <span className="text-xs font-medium shrink-0 ml-2" style={{ color: C.riverDeep }}>{acres}</span>}
                         </div>
                       );
                     })}
@@ -1616,33 +1633,33 @@ TONE
             {amenitiesTab === 'schools' && (
               <>
                 {loadingSchools ? (
-                  <p className="text-sm text-gray-400">Loading schools…</p>
+                  <p className="text-sm" style={{ color: C.muted }}>Loading schools…</p>
                 ) : nearbySchools.length > 0 ? (
                   <div className="space-y-3">
                     {nearbySchools.slice(0, 8).map((school, idx) => {
                       const typeLC = school.type.toLowerCase();
-                      const badgeClass =
-                        typeLC.includes('elementary') ? 'bg-green-100 text-green-800' :
-                        typeLC.includes('middle')     ? 'bg-blue-100 text-blue-800'   :
-                        typeLC.includes('high')       ? 'bg-purple-100 text-purple-800' :
-                                                        'bg-gray-100 text-gray-700';
+                      const badgeStyle: React.CSSProperties =
+                        typeLC.includes('elementary') ? { background: C.hillLight, color: C.hill } :
+                        typeLC.includes('middle')     ? { background: C.riverLight, color: C.riverDeep } :
+                        typeLC.includes('high')       ? { background: C.brickLight, color: C.brick } :
+                                                        { background: C.limestone, color: C.muted };
                       const isPublic = school.fund?.toLowerCase() === 'public';
                       return (
-                        <div key={idx} className="border-b border-gray-100 pb-2 last:border-0">
+                        <div key={idx} className="pb-2 last:border-0" style={{ borderBottom: `1px solid ${C.rule}` }}>
                           <div className="flex items-start justify-between gap-2">
-                            <p className="text-sm font-medium text-gray-900 leading-tight">{school.name}</p>
-                            <span className="text-xs text-gray-400 shrink-0 mt-0.5">{school.distance.toFixed(2)} mi</span>
+                            <p className="text-sm font-medium leading-tight" style={{ color: C.ink }}>{school.name}</p>
+                            <span className="text-xs shrink-0 mt-0.5" style={{ color: C.muted }}>{school.distance.toFixed(2)} mi</span>
                           </div>
                           <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                             {school.type && (
-                              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${badgeClass}`}>{school.type}</span>
+                              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md" style={badgeStyle}>{school.type}</span>
                             )}
-                            {school.grade && <span className="text-[10px] text-gray-500">Grades {school.grade}</span>}
-                            <span className={`text-[10px] font-medium ${isPublic ? 'text-[#1A4A6B]' : 'text-gray-500'}`}>
+                            {school.grade && <span className="text-[10px]" style={{ color: C.muted }}>Grades {school.grade}</span>}
+                            <span className="text-[10px] font-medium" style={{ color: isPublic ? C.riverDeep : C.muted }}>
                               {isPublic ? '● Public' : '○ Private'}
                             </span>
                           </div>
-                          {school.district && <p className="text-[10px] text-gray-400 mt-0.5 truncate">{school.district}</p>}
+                          {school.district && <p className="text-[10px] mt-0.5 truncate" style={{ color: C.muted }}>{school.district}</p>}
                         </div>
                       );
                     })}
@@ -1658,13 +1675,13 @@ TONE
             {amenitiesTab === 'transit' && (
               <>
                 {loadingTransit ? (
-                  <p className="text-sm text-gray-400">Loading transit stops…</p>
+                  <p className="text-sm" style={{ color: C.muted }}>Loading transit stops…</p>
                 ) : transitStops.length > 0 ? (
                   <div className="space-y-3">
                     {transitStops.map((stop, idx) => (
-                      <div key={idx} className="border-b border-gray-200 pb-2 last:border-b-0">
-                        <div className="text-sm font-medium text-gray-900">{stop.stop_name}</div>
-                        <div className="text-xs text-gray-600">
+                      <div key={idx} className="pb-2 last:border-b-0" style={{ borderBottom: `1px solid ${C.rule}` }}>
+                        <div className="text-sm font-medium" style={{ color: C.ink }}>{stop.stop_name}</div>
+                        <div className="text-xs" style={{ color: C.muted }}>
                           {stop.distance.toFixed(2)} mi{stop.routes.length > 0 ? ` · Routes: ${stop.routes.join(', ')}` : ''}
                         </div>
                       </div>
@@ -1712,20 +1729,20 @@ TONE
               return (
                 <>
                   {loadingHealthcare ? (
-                    <p className="text-sm text-gray-400">Loading healthcare facilities…</p>
+                    <p className="text-sm" style={{ color: C.muted }}>Loading healthcare facilities…</p>
                   ) : nearbyHealthcare.length > 0 ? (
                     <div className="space-y-4">
                       {/* FQHC highlight banner */}
                       {fqhcs.length > 0 && (
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                          <p className="text-xs font-semibold text-green-800 mb-1">
-                            🏅 Federally Qualified Health Centers nearby ({fqhcs.length})
+                        <div className="rounded-md p-3" style={{ background: C.hillLight, border: `1px solid ${C.hill}` }}>
+                          <p className="text-xs font-semibold mb-1" style={{ color: C.hill }}>
+                            Federally Qualified Health Centers nearby ({fqhcs.length})
                           </p>
-                          <p className="text-[10px] text-green-700">
+                          <p className="text-[10px]" style={{ color: C.hill }}>
                             FQHCs provide sliding-scale care regardless of ability to pay or insurance status.
                           </p>
                           {fqhcs.slice(0, 3).map((f, i) => (
-                            <div key={i} className="mt-1.5 text-xs text-green-900 font-medium">
+                            <div key={i} className="mt-1.5 text-xs font-medium" style={{ color: C.river }}>
                               {f.name} · {f.distance.toFixed(2)} mi
                             </div>
                           ))}
@@ -1734,35 +1751,35 @@ TONE
 
                       {grouped.map(({ type, facilities }) => (
                         <div key={type}>
-                          <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1.5">
+                          <div className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: C.muted }}>
                             {TYPE_ICONS[type]} {TYPE_LABELS[type] ?? type} ({facilities.length})
                           </div>
                           <div className="space-y-2">
                             {facilities.slice(0, 6).map((f, idx) => (
-                              <div key={idx} className="border-b border-gray-100 pb-2 last:border-b-0">
+                              <div key={idx} className="pb-2 last:border-b-0" style={{ borderBottom: `1px solid ${C.rule}` }}>
                                 <div className="flex items-start justify-between gap-2">
                                   <div className="flex-1 min-w-0">
-                                    <div className="text-sm font-medium text-gray-900 flex items-center gap-1">
+                                    <div className="text-sm font-medium flex items-center gap-1" style={{ color: C.ink }}>
                                       {f.name}
                                       {f.fqhc && (
-                                        <span className="text-[9px] bg-green-100 text-green-700 font-bold px-1 py-0.5 rounded">FQHC</span>
+                                        <span className="text-[9px] font-bold px-1 py-0.5 rounded-md" style={{ background: C.hillLight, color: C.hill }}>FQHC</span>
                                       )}
                                     </div>
                                     {f.address && (
-                                      <div className="text-[11px] text-gray-500 truncate">{f.address}</div>
+                                      <div className="text-[11px] truncate" style={{ color: C.muted }}>{f.address}</div>
                                     )}
                                     {f.phone && (
-                                      <a href={`tel:${f.phone}`} className="text-[11px] text-[#1A4A6B] hover:underline">
+                                      <a href={`tel:${f.phone}`} className="text-[11px] hover:underline" style={{ color: C.river }}>
                                         {f.phone}
                                       </a>
                                     )}
                                   </div>
-                                  <div className="text-xs text-gray-500 shrink-0">{f.distance.toFixed(2)} mi</div>
+                                  <div className="text-xs shrink-0" style={{ color: C.muted }}>{f.distance.toFixed(2)} mi</div>
                                 </div>
                               </div>
                             ))}
                             {facilities.length > 6 && (
-                              <p className="text-[10px] text-gray-400 italic">
+                              <p className="text-[10px] italic" style={{ color: C.muted }}>
                                 + {facilities.length - 6} more within 1 mile
                               </p>
                             )}
@@ -1781,8 +1798,8 @@ TONE
 
           {/* ── Section: Your Representatives ─────────────────────────────────── */}
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Politics &amp; Government</span>
-            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: C.muted }}>Politics &amp; Government</span>
+            <div className="flex-1 h-px" style={{ background: C.rule }} />
           </div>
 
           {/* Voting Precinct */}
@@ -1792,16 +1809,16 @@ TONE
             error={precinctStatus === 'error' ? 'Could not load precinct data' : null}
           >
             {precinctStatus === 'done' && !votingPrecinct && (
-              <p className="text-sm text-gray-500 italic">No precinct found for this address. Verify the address is within Cincinnati city limits.</p>
+              <p className="text-sm italic" style={{ color: C.muted }}>No precinct found for this address. Verify the address is within Cincinnati city limits.</p>
             )}
             {votingPrecinct && (
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <span className="text-2xl shrink-0">🗳️</span>
                   <div>
-                    <div className="text-sm font-semibold text-gray-900">{votingPrecinct.precinct}</div>
+                    <div className="text-sm font-semibold" style={{ color: C.ink }}>{votingPrecinct.precinct}</div>
                     {votingPrecinct.prcName && votingPrecinct.prcName !== votingPrecinct.precinct && (
-                      <div className="text-xs text-gray-500 mt-0.5">{votingPrecinct.prcName}</div>
+                      <div className="text-xs mt-0.5" style={{ color: C.muted }}>{votingPrecinct.prcName}</div>
                     )}
                   </div>
                 </div>
@@ -1809,22 +1826,23 @@ TONE
                   <div className="flex items-start gap-3">
                     <span className="text-lg shrink-0">📍</span>
                     <div>
-                      <div className="text-xs font-semibold text-gray-700 uppercase tracking-widest mb-0.5">Polling Place</div>
-                      <div className="text-sm text-gray-900">{votingPrecinct.location}</div>
+                      <div className="text-xs font-semibold uppercase tracking-widest mb-0.5" style={{ color: C.muted }}>Polling Place</div>
+                      <div className="text-sm" style={{ color: C.ink }}>{votingPrecinct.location}</div>
                       {votingPrecinct.address && (
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs" style={{ color: C.muted }}>
                           {votingPrecinct.address}{votingPrecinct.city ? `, ${votingPrecinct.city}` : ''}{votingPrecinct.zip ? ` ${votingPrecinct.zip}` : ''}
                         </div>
                       )}
                     </div>
                   </div>
                 )}
-                <div className="pt-2 border-t border-gray-100 flex flex-wrap gap-3 text-xs">
+                <div className="pt-2 flex flex-wrap gap-3 text-xs" style={{ borderTop: `1px solid ${C.rule}` }}>
                   <a
                     href="https://voterlookup.ohiosos.gov/voterlookup.aspx"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#1A4A6B] hover:underline"
+                    className="hover:underline"
+                    style={{ color: C.river }}
                   >
                     Verify registration →
                   </a>
@@ -1832,37 +1850,39 @@ TONE
                     href="https://www.votehamiltoncountyohio.gov/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#1A4A6B] hover:underline"
+                    className="hover:underline"
+                    style={{ color: C.river }}
                   >
                     Hamilton County Board of Elections →
                   </a>
                 </div>
               </div>
             )}
-            <div className="mt-3 pt-3 border-t border-gray-100">
+            <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${C.rule}` }}>
               <DataAttribution source="Hamilton County CAGIS · Voting Precincts" url="https://cagis.hamilton-co.org/" />
             </div>
           </DataCard>
 
           {/* ── Section: Civic Action Windows ─────────────────────────────────── */}
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Civic Action Windows</span>
-            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: C.muted }}>Civic Action Windows</span>
+            <div className="flex-1 h-px" style={{ background: C.rule }} />
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="rounded-md shadow-sm p-6" style={{ background: C.paper }}>
             <div className="flex items-baseline justify-between mb-1">
-              <h3 className="text-lg font-semibold text-gray-900">Upcoming Public Meetings</h3>
+              <h3 className="text-lg font-semibold" style={{ color: C.ink }}>Upcoming Public Meetings</h3>
               <a
                 href="https://cincinnatioh.legistar.com/Calendar.aspx"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-[#1A4A6B] hover:underline shrink-0 ml-3"
+                className="text-xs hover:underline shrink-0 ml-3"
+                style={{ color: C.river }}
               >
                 Full calendar →
               </a>
             </div>
-            <p className="text-xs text-gray-500 mb-4">
+            <p className="text-xs mb-4" style={{ color: C.muted }}>
               These are the meetings where Cincinnati residents can speak directly to the people making decisions
               about your neighborhood — zoning, development, policing, housing, and budget.
             </p>
@@ -1871,10 +1891,10 @@ TONE
 
           {/* ── Section: Traffic & Infrastructure ────────────────────────────── */}
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Traffic &amp; Infrastructure</span>
-            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: C.muted }}>Traffic &amp; Infrastructure</span>
+            <div className="flex-1 h-px" style={{ background: C.rule }} />
           </div>
-          <p className="text-xs text-gray-500 -mt-3">
+          <p className="text-xs -mt-3" style={{ color: C.muted }}>
             Coverage note: OHGO data comes from the Ohio Dept. of Transportation and covers state-managed roads only — interstates (I-71, I-75, I-74) and state routes. Incidents on Cincinnati city streets are not included.
           </p>
 
@@ -1886,25 +1906,29 @@ TONE
               error={ohgoStatus === 'error' ? 'OHGO traffic data unavailable' : null}
             >
               {!ohgoEnabled ? (
-                <div className="text-xs text-gray-500 space-y-1">
-                  <p className="font-medium text-gray-700">Enable live traffic data</p>
-                  <p>Register for a free API key at <span className="text-[#1A4A6B] font-mono">ohgo.com</span>, then add <span className="font-mono">VITE_OHGO_API_KEY=your_key</span> to <span className="font-mono">.env.local</span>.</p>
+                <div className="text-xs space-y-1" style={{ color: C.muted }}>
+                  <p className="font-medium" style={{ color: C.ink }}>Enable live traffic data</p>
+                  <p>Register for a free API key at <span className="font-mono" style={{ color: C.riverDeep }}>ohgo.com</span>, then add <span className="font-mono">VITE_OHGO_API_KEY=your_key</span> to <span className="font-mono">.env.local</span>.</p>
                 </div>
               ) : ohgoStatus === 'done' && ohgoIncidents.length > 0 ? (
                 <div className="space-y-2">
                   {ohgoIncidents.slice(0, 6).map((inc) => {
                     const isBlock = /clos|block/i.test(inc.roadStatus);
                     return (
-                      <div key={inc.id} className={`border-b border-gray-100 pb-2 last:border-0 ${isBlock ? 'bg-orange-50 px-2 py-1 rounded' : ''}`}>
-                        <div className={`text-sm font-medium ${isBlock ? 'text-orange-900' : 'text-gray-900'}`}>
+                      <div key={inc.id} className="pb-2 last:border-0"
+                        style={{
+                          borderBottom: `1px solid ${C.rule}`,
+                          ...(isBlock ? { background: C.brickLight, padding: '4px 8px', borderRadius: 4 } : {})
+                        }}>
+                        <div className="text-sm font-medium" style={{ color: isBlock ? C.brick : C.ink }}>
                           {inc.category || 'Incident'}{inc.routeName ? ` — ${inc.routeName}` : ''}
                         </div>
-                        <div className="text-xs text-gray-600">{inc.location}</div>
+                        <div className="text-xs" style={{ color: C.muted }}>{inc.location}</div>
                         {inc.description && inc.description !== inc.location && (
-                          <div className="text-xs text-gray-500 italic">{inc.description}</div>
+                          <div className="text-xs italic" style={{ color: C.muted }}>{inc.description}</div>
                         )}
                         {isBlock && (
-                          <span className="inline-block mt-1 text-xs bg-orange-600 text-white px-1.5 py-0.5 rounded">Road affected</span>
+                          <span className="inline-block mt-1 text-xs text-white px-1.5 py-0.5 rounded-md" style={{ background: C.brick }}>Road affected</span>
                         )}
                       </div>
                     );
@@ -1922,18 +1946,18 @@ TONE
               error={null}
             >
               {!ohgoEnabled ? (
-                <p className="text-xs text-gray-500">Requires OHGO API key (see Active Traffic Incidents card).</p>
+                <p className="text-xs" style={{ color: C.muted }}>Requires OHGO API key (see Active Traffic Incidents card).</p>
               ) : ohgoStatus === 'done' && ohgoConstruction.length > 0 ? (
                 <div className="space-y-2">
                   {ohgoConstruction.slice(0, 5).map((c) => (
-                    <div key={c.id} className="border-b border-gray-100 pb-2 last:border-0">
+                    <div key={c.id} className="pb-2 last:border-0" style={{ borderBottom: `1px solid ${C.rule}` }}>
                       <div className="flex items-center gap-2">
-                        <span className="text-yellow-600 text-sm shrink-0">🚧</span>
+                        <span className="text-sm shrink-0" style={{ color: C.ochre }}>🚧</span>
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{c.routeName || 'Work Zone'}</p>
-                          <p className="text-xs text-gray-600">{c.location}</p>
+                          <p className="text-sm font-medium" style={{ color: C.ink }}>{c.routeName || 'Work Zone'}</p>
+                          <p className="text-xs" style={{ color: C.muted }}>{c.location}</p>
                           {c.description && c.description !== c.location && (
-                            <p className="text-xs text-gray-500">{c.description}</p>
+                            <p className="text-xs" style={{ color: C.muted }}>{c.description}</p>
                           )}
                         </div>
                       </div>
@@ -1952,14 +1976,14 @@ TONE
               error={null}
             >
               {!ohgoEnabled ? (
-                <p className="text-xs text-gray-500">Requires OHGO API key (see Active Traffic Incidents card).</p>
+                <p className="text-xs" style={{ color: C.muted }}>Requires OHGO API key (see Active Traffic Incidents card).</p>
               ) : ohgoStatus === 'done' && ohgoCameras.length > 0 ? (
                 <div className="space-y-3">
                   {ohgoCameras.slice(0, 3).map((cam) => {
                     const view = cam.views[0];
                     return (
                       <div key={cam.id}>
-                        <p className="text-sm font-medium text-gray-900 mb-1">
+                        <p className="text-sm font-medium mb-1" style={{ color: C.ink }}>
                           {cam.location}{view?.direction ? ` — ${view.direction}` : ''}
                         </p>
                         {view?.smallUrl && view.smallUrl !== 'undefined' ? (
@@ -1967,12 +1991,13 @@ TONE
                             <img
                               src={view.smallUrl}
                               alt={`Traffic camera: ${cam.location}`}
-                              className="w-full rounded border border-gray-200 hover:opacity-90 transition-opacity"
+                              className="w-full rounded-md hover:opacity-90 transition-opacity"
+                              style={{ border: `1px solid ${C.rule}` }}
                               loading="lazy"
                             />
                           </a>
                         ) : (
-                          <p className="text-xs text-gray-500 italic">No snapshot available</p>
+                          <p className="text-xs italic" style={{ color: C.muted }}>No snapshot available</p>
                         )}
                       </div>
                     );
@@ -1988,6 +2013,11 @@ TONE
 
         </>
       )}
+
+      {/* ── Sources footnote ─────────────────────────────────────────────────── */}
+      <p className="serif italic text-[12px] pt-6" style={{ color: C.muted, borderTop: `1px solid ${C.rule}` }}>
+        Sources: Mapbox Geocoding API; CAGIS / Hamilton County ArcGIS; FEMA National Flood Hazard Layer (NFHL); Cincinnati Open Data — Crime STARS (7aqy-xrv9), Building Inspections (ivda-umw7), Tax Abatements (tkp7-yf64), PLAP Blight (pk9w-99n6); GCWW Lead Service Lines (public/data/lead_service_lines.json); SORTA bus stops (GTFS static); OpenStreetMap healthcare facilities; Hamilton County CAGIS — Voting Precincts (layer 44); OHGO — Ohio Dept. of Transportation (state-managed roads only).
+      </p>
     </div>
   );
 }

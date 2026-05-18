@@ -82,7 +82,7 @@ const Section: React.FC<SectionProps> = ({ id, Icon, iconStyle, heading, subhead
 // ─── Reusable components ──────────────────────────────────────────────────────
 
 const CAVEAT_STYLES = {
-  info: { bg: C.riverLight, border: '#bfd2d4', text: C.riverDeep, dot: C.river },
+  info: { bg: C.riverLight, border: C.rule,    text: C.riverDeep, dot: C.river },
   warn: { bg: C.limestone,  border: C.rule,    text: C.ink,       dot: C.ochre },
   gap:  { bg: C.brickLight, border: '#e6c5b2', text: C.brick,     dot: C.brick },
 }

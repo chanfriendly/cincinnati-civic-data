@@ -942,6 +942,10 @@ export default function PoliceAccountability() {
           </DataCard>
         </div>
       )}
+
+      <p className="serif italic text-[12px] pt-6" style={{ color: C.muted, borderTop: `1px solid ${C.rule}` }}>
+        Sources: Cincinnati Police Department — Traffic Stops (data.cincinnati-oh.gov, ktgf-4sjh); Use of Force (748b-sht4); Officer-Involved Shootings (r6q4-muts). Traffic stop race data are self-reported or officer-observed at time of stop.
+      </p>
     </div>
   );
 }

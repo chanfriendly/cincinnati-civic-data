@@ -772,7 +772,7 @@ const Roadmap: React.FC = () => {
     </div>
 
     {/* Why this exists */}
-    <div className="mb-8 rounded-md p-6" style={{ background: C.riverDeep, color: '#fbf8f3' }}>
+    <div className="mb-8 rounded-md p-6" style={{ background: C.riverDeep, color: C.paper }}>
       <h2 className="text-base font-bold mb-3">Why we built this</h2>
       <p className="text-sm leading-relaxed mb-4" style={{ color: C.riverLight }}>
         Cincinnati&apos;s public data is largely open — but it&apos;s scattered across dozens of portals,

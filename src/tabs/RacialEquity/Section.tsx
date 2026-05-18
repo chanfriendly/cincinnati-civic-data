@@ -28,6 +28,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 import { fetchNeighborhoodRacialEquityStats, stripNeighborhoodName } from '../../utils/api';
 import type { NeighborhoodRacialEquityStats } from '../../types';
 import { DataCard } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 
 // ── Race group config ─────────────────────────────────────────────────────────
 
@@ -39,10 +40,10 @@ interface RaceGroup {
 }
 
 const RACE_GROUPS: RaceGroup[] = [
-  { key: 'Black',    label: 'Black or African American', shortLabel: 'Black',    color: '#1A4A6B' },
-  { key: 'WhiteNH',  label: 'White (non-Hispanic)',      shortLabel: 'White NH', color: '#2E7D5A' },
-  { key: 'Asian',    label: 'Asian',                     shortLabel: 'Asian',    color: '#8B5CF6' },
-  { key: 'Hispanic', label: 'Hispanic or Latino',        shortLabel: 'Hispanic', color: '#D97706' },
+  { key: 'Black',    label: 'Black or African American', shortLabel: 'Black',    color: C.riverDeep },
+  { key: 'WhiteNH',  label: 'White (non-Hispanic)',      shortLabel: 'White NH', color: C.hill },
+  { key: 'Asian',    label: 'Asian',                     shortLabel: 'Asian',    color: C.river },
+  { key: 'Hispanic', label: 'Hispanic or Latino',        shortLabel: 'Hispanic', color: C.muted },
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -103,15 +104,15 @@ function MetricComparisonChart({
   if (chartData.length === 0) {
     return (
       <div className="mb-4">
-        <p className="text-sm font-medium text-gray-700 mb-1">{title}</p>
-        <p className="text-xs text-gray-400 italic">Insufficient data for this neighborhood</p>
+        <p className="text-sm font-medium mb-1" style={{ color: C.ink }}>{title}</p>
+        <p className="text-xs italic" style={{ color: C.muted }}>Insufficient data for this neighborhood</p>
       </div>
     );
   }
 
   return (
     <div className="mb-5">
-      <p className="text-sm font-medium text-gray-700 mb-2">{title}</p>
+      <p className="text-sm font-medium mb-2" style={{ color: C.ink }}>{title}</p>
       <ResponsiveContainer width="100%" height={chartData.length * 36 + 20}>
         <BarChart
           data={chartData}
@@ -141,7 +142,7 @@ function MetricComparisonChart({
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-      {note && <p className="text-xs text-gray-400 mt-1">{note}</p>}
+      {note && <p className="text-xs mt-1" style={{ color: C.muted }}>{note}</p>}
     </div>
   );
 }
@@ -152,20 +153,20 @@ function PopulationComposition({ stats }: { stats: NeighborhoodRacialEquityStats
   if (!total) return null;
 
   const groups = [
-    { label: 'Black', pop: stats.popBlack, color: '#1A4A6B' },
-    { label: 'White NH', pop: stats.popWhiteNH, color: '#2E7D5A' },
-    { label: 'Hispanic', pop: stats.popHispanic, color: '#D97706' },
-    { label: 'Asian', pop: stats.popAsian, color: '#8B5CF6' },
+    { label: 'Black', pop: stats.popBlack, color: C.riverDeep },
+    { label: 'White NH', pop: stats.popWhiteNH, color: C.hill },
+    { label: 'Hispanic', pop: stats.popHispanic, color: C.muted },
+    { label: 'Asian', pop: stats.popAsian, color: C.river },
   ].filter(g => g.pop && g.pop > 0);
 
   const other = total - groups.reduce((s, g) => s + (g.pop ?? 0), 0);
 
   return (
     <div className="mb-4">
-      <p className="text-xs text-gray-500 mb-1.5">
+      <p className="text-xs mb-1.5" style={{ color: C.muted }}>
         Population: {total.toLocaleString()} residents
       </p>
-      <div className="flex h-4 rounded-full overflow-hidden w-full">
+      <div className="flex h-4 rounded-md overflow-hidden w-full">
         {groups.map(g => (
           <div
             key={g.label}
@@ -175,21 +176,21 @@ function PopulationComposition({ stats }: { stats: NeighborhoodRacialEquityStats
         ))}
         {other > 0 && (
           <div
-            style={{ width: `${(other / total) * 100}%`, backgroundColor: '#D1D5DB' }}
+            style={{ width: `${(other / total) * 100}%`, backgroundColor: C.rule }}
             title={`Other / multiracial: ${other.toLocaleString()}`}
           />
         )}
       </div>
       <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1.5">
         {groups.map(g => (
-          <span key={g.label} className="text-xs text-gray-600 flex items-center gap-1">
+          <span key={g.label} className="text-xs flex items-center gap-1" style={{ color: C.muted }}>
             <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ backgroundColor: g.color }} />
             {g.label} {fmtPct(((g.pop ?? 0) / total) * 100)}
           </span>
         ))}
         {other > 0 && (
-          <span className="text-xs text-gray-600 flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-sm inline-block bg-gray-300" />
+          <span className="text-xs flex items-center gap-1" style={{ color: C.muted }}>
+            <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ backgroundColor: C.rule }} />
             Other {fmtPct((other / total) * 100)}
           </span>
         )}
@@ -230,10 +231,10 @@ export default function RacialEquitySection({ neighborhood }: RacialEquitySectio
   if (notBuilt) {
     return (
       <DataCard title="Racial Equity" loading={false} error={null}>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-900 space-y-2">
+        <div className="rounded-md p-4 text-sm space-y-2" style={{ background: C.brickLight, border: `1px solid #e6c5b2`, color: C.ink }}>
           <p className="font-semibold">⚙️ Racial equity data not yet generated</p>
           <p>Run the build script to generate race-disaggregated ACS statistics:</p>
-          <pre className="bg-amber-100 rounded p-2 text-xs font-mono overflow-x-auto">
+          <pre className="rounded-md p-2 text-xs font-mono overflow-x-auto" style={{ background: C.limestone }}>
             python3 scripts/build_racial_equity.py
           </pre>
           <p>
@@ -250,7 +251,7 @@ export default function RacialEquitySection({ neighborhood }: RacialEquitySectio
     return (
       <DataCard title="Racial Equity" loading={false} error={null}
         attribution={{ datasetName: 'U.S. Census ACS 5-Year 2022', lastUpdated: null }}>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm" style={{ color: C.muted }}>
           No racial equity data found for {neighborhood}.
         </p>
       </DataCard>
@@ -293,7 +294,7 @@ export default function RacialEquitySection({ neighborhood }: RacialEquitySectio
         <div className="space-y-2">
 
           {/* Context note */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-xs text-blue-900 mb-4">
+          <div className="rounded-md px-3 py-2 text-xs mb-4" style={{ background: C.riverLight, border: `1px solid ${C.rule}`, color: C.riverDeep }}>
             <strong>Source:</strong> U.S. Census Bureau ACS 5-Year 2022. Race groups follow Census B03002
             categories. "White NH" = White alone, not Hispanic or Latino. Median income values are
             population-weighted averages of tract-level medians — an approximation disclosed for transparency.
@@ -306,10 +307,10 @@ export default function RacialEquitySection({ neighborhood }: RacialEquitySectio
 
           {/* Key disparities callout */}
           {(incomeGap || homeGap) && (
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4 space-y-1.5">
-              <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Key disparities</p>
-              {incomeGap && <p className="text-sm text-gray-700">{incomeGap}</p>}
-              {homeGap && <p className="text-sm text-gray-700">{homeGap}</p>}
+            <div className="rounded-md p-3 mb-4 space-y-1.5" style={{ background: C.limestone, border: `1px solid ${C.rule}` }}>
+              <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: C.ink }}>Key disparities</p>
+              {incomeGap && <p className="text-sm" style={{ color: C.ink }}>{incomeGap}</p>}
+              {homeGap && <p className="text-sm" style={{ color: C.ink }}>{homeGap}</p>}
             </div>
           )}
 
@@ -340,13 +341,14 @@ export default function RacialEquitySection({ neighborhood }: RacialEquitySectio
           />
 
           {/* Urban League citation */}
-          <div className="mt-4 pt-3 border-t border-gray-100 text-xs text-gray-500">
+          <div className="mt-4 pt-3 text-xs" style={{ borderTop: `1px solid ${C.rule}`, color: C.muted }}>
             For broader context on Cincinnati's racial equity landscape, see the{' '}
             <a
               href="https://ulgswo.org/state-of-black-cincinnati"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline text-[#1A4A6B]"
+              className="underline"
+              style={{ color: C.riverDeep }}
             >
               Urban League's State of Black Cincinnati (2024)
             </a>.

@@ -56,7 +56,7 @@ const PHASE_SYNTHESIS: Record<'active' | 'vulnerable' | 'gentrifying' | 'stable'
     action:
       'Connect with housing and community development organizations before pressure accelerates. Building a stabilization strategy now — community land trusts, tenant organizing, zoning engagement — is far more effective than reacting after displacement begins.',
     orgCategories: ['housing-eviction', 'economic-development'],
-    bgColor: 'rgba(200, 134, 26, 0.12)', borderColor: C.ochre, textColor: C.ochre,
+    bgColor: 'rgba(100,95,85,0.12)', borderColor: C.muted, textColor: C.muted,
   },
   gentrifying: {
     headline: 'Development pressure is arriving — resident protection is the question',
@@ -181,8 +181,8 @@ function inferOrgType(name: string): OrgType {
 
 const ORG_TYPE_STYLE: Record<OrgType, { bg: string; color: string; border: string }> = {
   'Corporate':      { bg: C.brickLight,  color: C.brick,  border: '#e6c5b2' },
-  'Land Trust':     { bg: C.hillLight,   color: C.hill,   border: '#cfd9b2' },
-  'Nonprofit / Gov':{ bg: C.riverLight,  color: C.riverDeep, border: '#bfd2d4' },
+  'Land Trust':     { bg: C.hillLight,   color: C.hill,   border: C.hill },
+  'Nonprofit / Gov':{ bg: C.riverLight,  color: C.riverDeep, border: C.rule },
 }
 
 // ─── Phase helpers ─────────────────────────────────────────────────────────────
@@ -199,7 +199,7 @@ function getPhase(vulnerability: number | null, pressure: number | null): Displa
 
 const PHASE_CONFIG: Record<DisplacementPhase, { label: string; textColor: string; bgColor: string; borderColor: string; dotColor: string }> = {
   active:       { label: 'Active Displacement Zone', textColor: C.brick,      bgColor: C.brickLight,                    borderColor: C.brick, dotColor: C.brick      },
-  vulnerable:   { label: 'Vulnerable / At Risk',     textColor: C.ochre,      bgColor: 'rgba(200, 134, 26, 0.12)',       borderColor: C.ochre, dotColor: C.ochre      },
+  vulnerable:   { label: 'Vulnerable / At Risk',     textColor: C.muted,      bgColor: 'rgba(100,95,85,0.12)',           borderColor: C.muted, dotColor: C.muted      },
   gentrifying:  { label: 'Development Pressure',     textColor: C.hill,       bgColor: C.hillLight,                     borderColor: C.hill,  dotColor: C.hill       },
   stable:       { label: 'Stable',                   textColor: C.river,      bgColor: C.riverLight,                    borderColor: C.river, dotColor: C.river      },
   insufficient: { label: 'Insufficient Data',        textColor: C.muted,      bgColor: C.limestone,                     borderColor: C.rule,  dotColor: C.muted      },
@@ -207,7 +207,7 @@ const PHASE_CONFIG: Record<DisplacementPhase, { label: string; textColor: string
 
 const PHASE_DOT_SVG: Record<DisplacementPhase, string> = {
   active:       C.brick,
-  vulnerable:   C.ochre,
+  vulnerable:   C.muted,
   gentrifying:  C.hill,
   stable:       C.river,
   insufficient: C.muted,
@@ -284,13 +284,13 @@ const QuadrantPlot: React.FC<{ record: DisplacementRecord }> = ({ record }) => {
       <text x={PAD.left + 6} y={PAD.top + 14} fontSize={9} fill={C.brick} fontWeight="600">Active</text>
       <text x={PAD.left + 6} y={PAD.top + 24} fontSize={9} fill={C.brick} fontWeight="600">Displacement</text>
 
-      <text x={midX + 6} y={PAD.top + 14} fontSize={9} fill={C.ochre} fontWeight="600">Development</text>
-      <text x={midX + 6} y={PAD.top + 24} fontSize={9} fill={C.ochre} fontWeight="600">Pressure</text>
+      <text x={midX + 6} y={PAD.top + 14} fontSize={9} fill={C.hill} fontWeight="600">Development</text>
+      <text x={midX + 6} y={PAD.top + 24} fontSize={9} fill={C.hill} fontWeight="600">Pressure</text>
 
       <text x={PAD.left + 6} y={midY + plotH / 2 - 10} fontSize={9} fill={C.river} fontWeight="600">Stable</text>
 
-      <text x={midX + 6} y={midY + plotH / 2 - 10} fontSize={9} fill={C.ochre} fontWeight="600">Vulnerable</text>
-      <text x={midX + 6} y={midY + plotH / 2} fontSize={9} fill={C.ochre} fontWeight="600">/ At Risk</text>
+      <text x={midX + 6} y={midY + plotH / 2 - 10} fontSize={9} fill={C.muted} fontWeight="600">Vulnerable</text>
+      <text x={midX + 6} y={midY + plotH / 2} fontSize={9} fill={C.muted} fontWeight="600">/ At Risk</text>
 
       {/* Axes */}
       <line x1={PAD.left} y1={PAD.top + plotH} x2={PAD.left + plotW} y2={PAD.top + plotH} stroke={C.muted} strokeWidth={1.5} />
@@ -412,7 +412,7 @@ const CityScatterChart: React.FC<{
             <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', display: 'block' }}>
 
               {/* Quadrant fills */}
-              <rect x={PAD.left}  y={PAD.top}  width={plotW/2} height={plotH/2} fill={C.ochre} opacity={0.06} />
+              <rect x={PAD.left}  y={PAD.top}  width={plotW/2} height={plotH/2} fill={C.muted} opacity={0.06} />
               <rect x={midX}      y={PAD.top}  width={plotW/2} height={plotH/2} fill={C.brick} opacity={0.07} />
               <rect x={PAD.left}  y={midY}     width={plotW/2} height={plotH/2} fill={C.river} opacity={0.05} />
               <rect x={midX}      y={midY}     width={plotW/2} height={plotH/2} fill={C.hill}  opacity={0.05} />
@@ -423,8 +423,8 @@ const CityScatterChart: React.FC<{
               <rect x={PAD.left}   y={PAD.top}          width={plotW}       height={plotH}     fill="none" stroke={C.rule} strokeWidth={1} />
 
               {/* Quadrant labels — centered in each quadrant */}
-              <text x={qLabelX.left}  y={qLabelY.top}      fontSize={10} fontWeight="700" fill={C.ochre} textAnchor="middle" style={{ fontFamily: FONT, letterSpacing: '0.08em' }}>VULNERABLE</text>
-              <text x={qLabelX.left}  y={qLabelY.top + 15} fontSize={9}  fill={C.ochre} textAnchor="middle" style={{ fontFamily: SERIF, fontStyle: 'italic' }}>waiting for pressure</text>
+              <text x={qLabelX.left}  y={qLabelY.top}      fontSize={10} fontWeight="700" fill={C.muted} textAnchor="middle" style={{ fontFamily: FONT, letterSpacing: '0.08em' }}>VULNERABLE</text>
+              <text x={qLabelX.left}  y={qLabelY.top + 15} fontSize={9}  fill={C.muted} textAnchor="middle" style={{ fontFamily: SERIF, fontStyle: 'italic' }}>waiting for pressure</text>
 
               <text x={qLabelX.right} y={qLabelY.top}      fontSize={10} fontWeight="700" fill={C.brick} textAnchor="middle" style={{ fontFamily: FONT, letterSpacing: '0.08em' }}>ACTIVE RISK</text>
               <text x={qLabelX.right} y={qLabelY.top + 15} fontSize={9}  fill={C.brick} textAnchor="middle" style={{ fontFamily: SERIF, fontStyle: 'italic' }}>vulnerable + pressure</text>
@@ -507,7 +507,7 @@ const CityScatterChart: React.FC<{
                 <div key={rec.name} className="flex items-start gap-3 cursor-pointer group"
                   onClick={() => onSelect(rec.name === selected ? null : rec.name)}>
                   <span className="serif font-medium flex-shrink-0"
-                    style={{ color: rec.phase === 'active' ? C.brick : C.ochre, fontSize: 14, minWidth: 22, lineHeight: 1.3 }}>
+                    style={{ color: rec.phase === 'active' ? C.brick : C.muted, fontSize: 14, minWidth: 22, lineHeight: 1.3 }}>
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <div className="flex-1 min-w-0">
@@ -559,7 +559,7 @@ const MethodologyNote: React.FC = () => {
       </button>
 
       {open && (
-        <div className="mt-3 rounded-lg p-4 max-w-3xl" style={{ background: 'rgba(200, 134, 26, 0.08)', border: `1px solid ${C.ochre}` }}>
+        <div className="mt-3 rounded-md p-4 max-w-3xl" style={{ background: 'rgba(200, 134, 26, 0.08)', border: `1px solid ${C.ochre}` }}>
           <div className="space-y-4 text-xs" style={{ color: C.ink }}>
             <p className="text-sm leading-relaxed">
               Inspired by the{' '}
@@ -1052,21 +1052,21 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
   function rentBurdenStyle(val: number | null): React.CSSProperties {
     if (val === null) return { color: C.muted }
     if (val >= 50) return { color: C.brick, fontWeight: 600 }
-    if (val >= 35) return { color: C.ochre, fontWeight: 500 }
+    if (val >= 35) return { color: C.ink, fontWeight: 500 }
     return { color: C.ink }
   }
 
   function incomeStyle(val: number | null): React.CSSProperties {
     if (val === null) return { color: C.muted }
     if (val < 30000) return { color: C.brick, fontWeight: 600 }
-    if (val < 50000) return { color: C.ochre, fontWeight: 500 }
+    if (val < 50000) return { color: C.ink, fontWeight: 500 }
     return { color: C.ink }
   }
 
   function permitYoYStyle(val: number | null): React.CSSProperties {
     if (val === null) return { color: C.muted }
     if (val > 50) return { color: C.brick, fontWeight: 600 }
-    if (val > 20) return { color: C.ochre, fontWeight: 500 }
+    if (val > 20) return { color: C.ink, fontWeight: 500 }
     if (val < 0) return { color: C.hill }
     return { color: C.ink }
   }
@@ -1132,7 +1132,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
           <div className="flex flex-wrap gap-3 mb-5">
             {([
               { phase: 'active'      as const, label: 'At active risk',       color: C.brick },
-              { phase: 'vulnerable'  as const, label: 'Vulnerable',            color: C.ochre },
+              { phase: 'vulnerable'  as const, label: 'Vulnerable',            color: C.muted },
               { phase: 'gentrifying' as const, label: 'Development pressure',  color: C.hill  },
               { phase: 'stable'      as const, label: 'Stable',                color: C.river },
             ]).map(({ phase, label, color }) => (
@@ -1238,7 +1238,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                     const syn = PHASE_SYNTHESIS[selectedRecord.phase]
                     return (
                       <div
-                        className="rounded-lg px-4 py-3 space-y-2"
+                        className="rounded-md px-4 py-3 space-y-2"
                         style={{ background: syn.bgColor, border: `1px solid ${syn.borderColor}` }}
                       >
                         <p className="text-sm font-semibold" style={{ color: syn.textColor }}>{syn.headline}</p>
@@ -1404,7 +1404,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                     {!loadingDetail && crossRefRows.length > 0 && (
                       <>
                         <div
-                          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg mb-3 text-sm font-semibold"
+                          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md mb-3 text-sm font-semibold"
                           style={
                             violationCount > 0
                               ? { background: C.brickLight, color: C.brick, border: `1px solid ${C.brick}` }
@@ -1472,7 +1472,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                     ) : (
                       <>
                         <div
-                          className="rounded-lg px-3 py-2 mb-3 text-sm font-semibold inline-flex gap-2 items-center"
+                          className="rounded-md px-3 py-2 mb-3 text-sm font-semibold inline-flex gap-2 items-center"
                           style={{ background: C.brickLight, color: C.brick, border: `1px solid ${C.brick}` }}
                         >
                           <span>⚠</span>
@@ -1517,7 +1517,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                     ) : (
                       <>
                         <div
-                          className="rounded-lg px-3 py-2 mb-3 text-sm font-semibold inline-flex gap-2 items-center"
+                          className="rounded-md px-3 py-2 mb-3 text-sm font-semibold inline-flex gap-2 items-center"
                           style={{ background: C.riverLight, color: C.riverDeep, border: `1px solid ${C.river}` }}
                         >
                           <span>${(craForNeighborhood.reduce((s, r) => s + (parseFloat(r.est_program_total_value || '0') || 0), 0) / 1_000_000).toFixed(2)}M in city subsidies approved</span>
@@ -1684,6 +1684,11 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
         </div>
         )
       })()}
+
+      {/* Sources footnote */}
+      <p className="serif italic text-[12px] pt-6 mt-4" style={{ color: C.muted, borderTop: `1px solid ${C.rule}` }}>
+        Sources: Cincinnati Open Data — Building Permits (uhjb-xac9), Tax Abatements (tkp7-yf64), PLAP — Problem Landlord List (pk9w-99n6), Neighborhood Boundaries (CAGIS); U.S. Census Bureau, ACS 5-Year Estimates (income, rent, demographics); HUD Subsidized Households (public/data/hud_affordable_housing.json); Connected Communities Zoning Reform Tracker data (City of Cincinnati Planning Dept.).
+      </p>
 
       </>}
 

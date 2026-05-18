@@ -61,7 +61,7 @@ function riskStyle(leadOrUnknown: number, total: number): React.CSSProperties {
   const rate = leadOrUnknown / total;
   if (rate > 0.5) return { color: C.brick, background: C.brickLight, border: `1px solid ${C.brick}` };
   if (rate > 0.25) return { color: C.ochre, background: 'rgba(200,134,26,0.1)', border: `1px solid ${C.ochre}` };
-  if (rate > 0.1) return { color: '#8a6e3e', background: 'rgba(200,134,26,0.07)', border: `1px solid ${C.ochre}` };
+  if (rate > 0.1) return { color: C.muted, background: C.limestone, border: `1px solid ${C.rule}` };
   return { color: C.hill, background: C.hillLight, border: `1px solid ${C.hill}` };
 }
 
@@ -199,7 +199,7 @@ function InventoryCard({ neighborhood }: { neighborhood: string }) {
             python3 scripts/build_lead.py
           </pre>
           <p>
-            Once generated, <code className="text-xs bg-amber-100 px-1 rounded">public/data/lead_service_lines.json</code> will
+            Once generated, <code className="text-xs px-1 rounded-md" style={{ background: C.limestone }}>public/data/lead_service_lines.json</code> will
             populate this section with lead/unknown/copper counts for all 52 neighborhoods.
           </p>
           <p>
@@ -264,7 +264,7 @@ function InventoryCard({ neighborhood }: { neighborhood: string }) {
             label="Galvanized steel"
             value={stats.galvanized}
             barWidth={stats.total ? (stats.galvanized / stats.total) * 100 : 0}
-            barColor="#8a6e3e"
+            barColor={C.muted}
             note="Corrosion concern; often co-located with lead connections"
           />
           <StatRow
@@ -593,7 +593,7 @@ function CityWideComparisonCard() {
                       fill={
                         entry.pct > 50 ? C.brick
                         : entry.pct > 25 ? C.ochre
-                        : entry.pct > 10 ? '#8a6e3e'
+                        : entry.pct > 10 ? C.muted
                         : C.hill
                       }
                     />
@@ -922,6 +922,10 @@ export default function LeadSafety() {
 
       {/* Data gaps */}
       <DataGapsCard />
+
+      <p className="serif italic text-[12px] pt-6" style={{ color: C.muted, borderTop: `1px solid ${C.rule}` }}>
+        Sources: Greater Cincinnati Water Works Neighborhood Stats (la.mygcww.org); Cincinnati Open Data — GCWW Lead Service Line Replacements (b4xq-u3su); GCWW Service Line Map (ArcGIS).
+      </p>
     </div>
   );
 }

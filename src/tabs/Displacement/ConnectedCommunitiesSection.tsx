@@ -81,11 +81,11 @@ interface ChangeBarProps {
 function ChangeBar({ label, baseline, reform }: ChangeBarProps) {
   const pct = baseline > 0 ? ((reform - baseline) / baseline) * 100 : null;
   const color =
-    pct === null ? '#9ca3af'
-    : pct > 20  ? '#16a34a'
-    : pct > 0   ? '#65a30d'
-    : pct < -20 ? '#dc2626'
-    : '#f97316';
+    pct === null ? C.muted
+    : pct > 20  ? C.hill
+    : pct > 0   ? C.hill
+    : pct < -20 ? C.brick
+    : C.ochre;
 
   return (
     <div className="flex items-center gap-3 py-1.5">
@@ -260,14 +260,14 @@ export default function ConnectedCommunitiesSection() {
         <div className="mb-10">
           <div className="flex items-baseline gap-3 mb-2">
             <span className="serif font-medium" style={{ fontSize: 28, color: C.ochre, lineHeight: 1 }}>03</span>
-            <span className="smallcaps" style={{ color: '#6b5f55', fontSize: 11, letterSpacing: '0.1em' }}>Connected Communities</span>
+            <span className="smallcaps" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.1em' }}>Connected Communities</span>
           </div>
-          <h2 className="serif font-medium leading-tight mb-3" style={{ fontSize: 30, letterSpacing: '-0.015em', color: '#1a1410', maxWidth: 700 }}>
+          <h2 className="serif font-medium leading-tight mb-3" style={{ fontSize: 30, letterSpacing: '-0.015em', color: C.ink, maxWidth: 700 }}>
             Cincinnati's zoning reform added{' '}
-            <span style={{ color: '#2f5d62' }}>{cityTotals.reformTotal.toLocaleString()} structural permits</span>{' '}
+            <span style={{ color: C.river }}>{cityTotals.reformTotal.toLocaleString()} structural permits</span>{' '}
             in Year 1. None of them require affordable units.
           </h2>
-          <p className="serif mb-6" style={{ fontSize: 16, lineHeight: 1.65, color: '#6b5f55', maxWidth: 680 }}>
+          <p className="serif mb-6" style={{ fontSize: 16, lineHeight: 1.65, color: C.muted, maxWidth: 680 }}>
             The Connected Communities ordinance allows denser housing across most of the city without
             triggering affordable-housing requirements. The intent is supply. The risk for vulnerable
             neighborhoods is that supply arrives without protection for current residents. The
@@ -279,30 +279,30 @@ export default function ConnectedCommunitiesSection() {
             {topThree.map(nbhd => {
               const isUp = (nbhd.pct ?? 0) >= 0
               const statusLabel = isUp ? 'Growing' : 'Declining'
-              const statusBg   = isUp ? '#ecefdf' : '#f5e8e1'
-              const statusColor= isUp ? '#5a7a3e' : '#b34728'
-              const statusBorder=isUp ? '#cfd9b2' : '#e6c5b2'
+              const statusBg   = isUp ? C.hillLight : C.brickLight
+              const statusColor= isUp ? C.hill : C.brick
+              const statusBorder=isUp ? C.hill : C.brick
               return (
                 <div
                   key={nbhd.name}
                   className="page-paper rounded-md p-4"
-                  style={{ border: '1px solid #e4ddd2' }}
+                  style={{ border: `1px solid ${C.rule}` }}
                 >
                   <span
                     className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mb-3"
                     style={{ background: statusBg, color: statusColor, border: `1px solid ${statusBorder}` }}
                   >{statusLabel}</span>
-                  <div className="font-semibold leading-snug mb-1" style={{ fontSize: 16, color: '#1a1410' }}>{nbhd.name}</div>
+                  <div className="font-semibold leading-snug mb-1" style={{ fontSize: 16, color: C.ink }}>{nbhd.name}</div>
                   <div className="flex gap-5 mt-2">
                     <div>
-                      <div className="font-bold" style={{ fontSize: 22, color: '#1a1410', lineHeight: 1 }}>{nbhd.reform.toLocaleString()}</div>
-                      <div style={{ fontSize: 11, color: '#6b5f55' }}>reform-year permits</div>
+                      <div className="font-bold" style={{ fontSize: 22, color: C.ink, lineHeight: 1 }}>{nbhd.reform.toLocaleString()}</div>
+                      <div style={{ fontSize: 11, color: C.muted }}>reform-year permits</div>
                     </div>
                     <div>
                       <div className="font-bold" style={{ fontSize: 22, color: statusColor, lineHeight: 1 }}>
                         {nbhd.pct !== null ? `${nbhd.pct > 0 ? '+' : ''}${nbhd.pct.toFixed(0)}%` : '—'}
                       </div>
-                      <div style={{ fontSize: 11, color: '#6b5f55' }}>vs. prior year</div>
+                      <div style={{ fontSize: 11, color: C.muted }}>vs. prior year</div>
                     </div>
                   </div>
                 </div>
@@ -365,8 +365,8 @@ export default function ConnectedCommunitiesSection() {
                   className="text-sm font-semibold mb-0.5"
                   style={{
                     color: overallPct === null ? C.muted
-                      : overallPct > 0 ? '#16a34a'
-                      : '#dc2626'
+                      : overallPct > 0 ? C.hill
+                      : C.brick
                   }}
                 >
                   {overallPct !== null
@@ -390,8 +390,8 @@ export default function ConnectedCommunitiesSection() {
                   className="text-sm font-semibold mb-0.5"
                   style={{
                     color: residentialPct === null ? C.muted
-                      : residentialPct > 0 ? '#16a34a'
-                      : '#dc2626'
+                      : residentialPct > 0 ? C.hill
+                      : C.brick
                   }}
                 >
                   {residentialPct !== null
@@ -467,11 +467,11 @@ export default function ConnectedCommunitiesSection() {
                       <Cell
                         key={entry.name}
                         fill={
-                          entry.pct === null ? '#9ca3af'
-                          : entry.pct > 20   ? '#16a34a'
-                          : entry.pct > 0    ? '#65a30d'
-                          : entry.pct < -20  ? '#dc2626'
-                          : '#f97316'
+                          entry.pct === null ? C.muted
+                          : entry.pct > 20   ? C.hill
+                          : entry.pct > 0    ? C.hill
+                          : entry.pct < -20  ? C.brick
+                          : C.ochre
                         }
                       />
                     ))}
@@ -479,10 +479,10 @@ export default function ConnectedCommunitiesSection() {
                 </BarChart>
               </ResponsiveContainer>
               <div className="flex gap-4 mt-3 justify-center flex-wrap" style={{ color: C.muted, fontSize: 12 }}>
-                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block bg-[#16a34a]" /> +20%+ growth</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block bg-[#65a30d]" /> 0–20% growth</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block bg-[#f97316]" /> 0–20% decline</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block bg-[#dc2626]" /> 20%+ decline</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block" style={{ background: C.hill }} /> +20%+ growth</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block" style={{ background: C.hill }} /> 0–20% growth</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block" style={{ background: C.ochre }} /> 0–20% decline</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block" style={{ background: C.brick }} /> 20%+ decline</span>
               </div>
             </>
           ) : (
@@ -522,7 +522,7 @@ export default function ConnectedCommunitiesSection() {
                           <div>Reform Year 1: <strong>{d.reform.toLocaleString()}</strong></div>
                           <div>Baseline: <strong>{d.baseline.toLocaleString()}</strong></div>
                           {d.pct !== null && (
-                            <div className={d.pct >= 0 ? 'text-green-600' : 'text-red-600'}>
+                            <div style={{ color: d.pct >= 0 ? C.hill : C.brick }}>
                               Change: {d.pct > 0 ? '+' : ''}{d.pct.toFixed(1)}%
                             </div>
                           )}
@@ -535,9 +535,7 @@ export default function ConnectedCommunitiesSection() {
                     {typeComparison.map(entry => (
                       <Cell
                         key={entry.type}
-                        fill={
-                          (entry.pct ?? 0) >= 0 ? C.river : '#dc2626'
-                        }
+                        fill={(entry.pct ?? 0) >= 0 ? C.river : C.brick}
                       />
                     ))}
                   </Bar>
@@ -546,7 +544,7 @@ export default function ConnectedCommunitiesSection() {
               <div className="flex gap-4 mt-2 justify-center" style={{ color: C.muted, fontSize: 12 }}>
                 <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block" style={{ background: C.rule }} /> Baseline year</span>
                 <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block" style={{ background: C.river }} /> Reform Year 1 (increase)</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block bg-[#dc2626]" /> Reform Year 1 (decrease)</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm inline-block" style={{ background: C.brick }} /> Reform Year 1 (decrease)</span>
               </div>
               <p className="mt-3" style={{ color: C.muted, fontSize: 12 }}>
                 Cincinnati's permit data classifies by trade/structural category, not by residential vs. commercial use.

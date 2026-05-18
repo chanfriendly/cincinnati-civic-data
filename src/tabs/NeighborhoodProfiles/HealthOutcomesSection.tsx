@@ -174,7 +174,7 @@ export default function HealthOutcomesSection({ neighborhood }: Props) {
       empty={!loading && !error && !selected}
     >
       {!selected && !loading && (
-        <p className="text-sm italic" style={{ color: '#6b5f55' }}>
+        <p className="text-sm italic" style={{ color: C.muted }}>
           No health outcome data available for {neighborhood}. CDC PLACES covers most, but not all, Cincinnati neighborhoods.
         </p>
       )}
@@ -183,12 +183,12 @@ export default function HealthOutcomesSection({ neighborhood }: Props) {
         <>
           {/* Header row */}
           <div className="flex items-center gap-3 mb-4">
-            <div className="rounded-lg px-3 py-2 text-center" style={{ background: '#e6efef' }}>
-              <div className="text-xl font-bold" style={{ color: '#2f5d62' }}>{selected.tractCount}</div>
-              <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: '#2f5d62' }}>Census Tracts</div>
+            <div className="rounded-md px-3 py-2 text-center" style={{ background: C.riverLight }}>
+              <div className="text-xl font-bold" style={{ color: C.river }}>{selected.tractCount}</div>
+              <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: C.river }}>Census Tracts</div>
             </div>
-            <div className="text-xs" style={{ color: '#6b5f55' }}>
-              <p>Data from <span className="font-medium" style={{ color: '#1a1410' }}>{selected.dataYear}</span>. Values are percentages of adults in each category.</p>
+            <div className="text-xs" style={{ color: C.muted }}>
+              <p>Data from <span className="font-medium" style={{ color: C.ink }}>{selected.dataYear}</span>. Values are percentages of adults in each category.</p>
               <p className="mt-0.5">The vertical bar (|) on each row marks the Cincinnati-wide average.</p>
             </div>
           </div>
@@ -196,7 +196,7 @@ export default function HealthOutcomesSection({ neighborhood }: Props) {
           {/* Metric groups */}
           {METRIC_GROUPS.map((group) => (
             <div key={group.label} className="mb-5">
-              <div className="text-[10px] font-bold uppercase tracking-widest mb-2 pb-1" style={{ color: '#6b5f55', borderBottom: '1px solid #e4ddd2' }}>
+              <div className="text-[10px] font-bold uppercase tracking-widest mb-2 pb-1" style={{ color: C.muted, borderBottom: `1px solid ${C.rule}` }}>
                 {group.label}
               </div>
               <div className="space-y-3">
@@ -213,11 +213,11 @@ export default function HealthOutcomesSection({ neighborhood }: Props) {
                     <div key={metricKey}>
                       <div className="flex items-baseline justify-between">
                         <div>
-                          <span className="text-sm font-medium" style={{ color: '#1a1410' }}>{cfg.label}</span>
-                          <span className="text-[10px] ml-1.5" style={{ color: '#6b5f55' }}>{cfg.description}</span>
+                          <span className="text-sm font-medium" style={{ color: C.ink }}>{cfg.label}</span>
+                          <span className="text-[10px] ml-1.5" style={{ color: C.muted }}>{cfg.description}</span>
                         </div>
                         <div className="flex items-center gap-2 shrink-0 ml-2">
-                          <span className="text-sm font-bold" style={{ color: '#1a1410' }}>{val.toFixed(1)}{cfg.unit}</span>
+                          <span className="text-sm font-bold" style={{ color: C.ink }}>{val.toFixed(1)}{cfg.unit}</span>
                           {rating && (
                             <span
                               className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full"
@@ -230,7 +230,7 @@ export default function HealthOutcomesSection({ neighborhood }: Props) {
                       </div>
                       <MiniBar value={val} cityAvg={avg} lowerIsBetter={cfg.lowerIsBetter} />
                       {avg !== null && (
-                        <div className="text-[9px] mt-0.5" style={{ color: '#6b5f55' }}>
+                        <div className="text-[9px] mt-0.5" style={{ color: C.muted }}>
                           City avg: {avg.toFixed(1)}%
                         </div>
                       )}
@@ -242,7 +242,7 @@ export default function HealthOutcomesSection({ neighborhood }: Props) {
           ))}
 
           {/* Disclosure */}
-          <div className="rounded-lg p-3 mt-2 text-[11px]" style={{ background: '#f5e8e1', border: '1px solid #e6c5b2', color: '#b34728' }}>
+          <div className="rounded-md p-3 mt-2 text-[11px]" style={{ background: C.brickLight, border: `1px solid ${C.brick}`, color: C.brick }}>
             <p className="font-semibold mb-0.5">Methodology note</p>
             <p>
               CDC PLACES data is collected at the census tract level and aggregated here to Cincinnati SNA neighborhoods
@@ -253,7 +253,7 @@ export default function HealthOutcomesSection({ neighborhood }: Props) {
         </>
       )}
 
-      <div className="mt-4 pt-3 border-t" style={{ borderColor: '#e4ddd2' }}>
+      <div className="mt-4 pt-3 border-t" style={{ borderColor: C.rule }}>
         <DataAttribution
           source={`CDC PLACES: Local Data for Better Health · Hamilton County, OH · ${selected?.dataYear ?? 'N/A'}`}
           url="https://www.cdc.gov/places/"

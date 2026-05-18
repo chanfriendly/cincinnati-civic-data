@@ -263,7 +263,7 @@ const PercentilesSection: React.FC<{ data: PercentileData | null }> = ({ data })
               +{p20Change.toFixed(1)}% nominal over {latest.year - earliest.year} years — roughly tracking (or behind) inflation.
             </p>
           </div>
-          <div className="rounded-md p-4" style={{ background: C.riverLight, border: `1px solid #bfd2d4` }}>
+          <div className="rounded-md p-4" style={{ background: C.riverLight, border: `1px solid ${C.rule}` }}>
             <p className="smallcaps mb-1" style={{ color: C.riverDeep }}>Top 5% threshold — nominal change</p>
             <p className="serif font-medium text-[18px]" style={{ color: C.ink }}>
               {fmtUSD(earliest.p95 ?? 0)} → {fmtUSD(latest.p95 ?? 0)}
@@ -801,7 +801,7 @@ const TaxRevenue: React.FC = () => {
         >
           What this page <em>doesn't</em> show
         </h2>
-        <ul className="text-[13px] space-y-2.5 leading-relaxed list-disc pl-5" style={{ color: '#c9bfb3' }}>
+        <ul className="text-[13px] space-y-2.5 leading-relaxed list-disc pl-5" style={{ color: C.rule }}>
           <li>Federal taxes. Including federal incidence (which is progressive) would change the overall picture significantly.</li>
           <li>Property-tax burden for individual Cincinnati neighborhoods — rates vary by school district and jurisdiction inside city limits.</li>
           <li>The effect of tax abatements on what residential and commercial property owners actually pay. Cincinnati's abatement data is in the Displacement tab but not yet joined to this view.</li>
@@ -814,6 +814,10 @@ const TaxRevenue: React.FC = () => {
       <p className="text-[11px] mb-8 leading-relaxed" style={{ color: C.muted }}>
         For the full list of data vintages, modeling assumptions, and known gaps across the site,
         see the <strong style={{ color: C.ink }}>About &amp; Limitations</strong> tab.
+      </p>
+
+      <p className="serif italic text-[12px] pt-6" style={{ color: C.muted, borderTop: `1px solid ${C.rule}` }}>
+        Sources: U.S. Census Bureau, American Community Survey 5-Year Estimates, Table B19080 (2012–2023); ITEP <em>Who Pays?</em> 7th edition, Ohio state &amp; local incidence (Oct 2024) — statewide model applied as Cincinnati proxy, disclosed as modeled; City of Cincinnati Finance Dept. — Municipal Income Tax Rate History; Cincinnati Open Data — General Fund Revenue (a9hy-bv25); City Vendor Payments (qmwc-pyt8, FY 2014–present, vendor/procurement only).
       </p>
     </div>
   )

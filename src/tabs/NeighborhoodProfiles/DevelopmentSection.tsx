@@ -17,6 +17,7 @@ import {
 import { useSODA } from '../../hooks/useSODA';
 import { formatCurrency } from '../../utils/api';
 import { DataCard, DataAttribution, EmptyState } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 
 interface Props {
   nbhSoQL: string;      // UPPER CASE — used for permits and blight datasets
@@ -90,34 +91,34 @@ export default function DevelopmentSection({ nbhSoQL, neighborhood }: Props) {
     >
       {/* KPI row */}
       <div className="grid grid-cols-3 gap-3 mb-5">
-        <div className="p-4 rounded" style={{ background: '#e6efef' }}>
-          <div className="text-2xl font-bold" style={{ color: '#2f5d62' }}>{totalPermits.toLocaleString()}</div>
-          <div className="text-xs font-semibold mt-1" style={{ color: '#2f5d62' }}>Building Permits</div>
-          <div className="text-xs mt-0.5" style={{ color: '#6b5f55' }}>structural only, excl. trade permits</div>
+        <div className="p-4 rounded-md" style={{ background: C.riverLight }}>
+          <div className="text-2xl font-bold" style={{ color: C.river }}>{totalPermits.toLocaleString()}</div>
+          <div className="text-xs font-semibold mt-1" style={{ color: C.river }}>Building Permits</div>
+          <div className="text-xs mt-0.5" style={{ color: C.muted }}>structural only, excl. trade permits</div>
         </div>
-        <div className="p-4 rounded" style={{ background: '#ecefdf' }}>
-          <div className="text-2xl font-bold" style={{ color: '#5a7a3e' }}>
+        <div className="p-4 rounded-md" style={{ background: C.hillLight }}>
+          <div className="text-2xl font-bold" style={{ color: C.hill }}>
             {abatementTotal > 0
               ? formatCurrency(abatementTotal)
               : activeAbatements > 0
               ? `${activeAbatements} active`
               : '—'}
           </div>
-          <div className="text-xs font-semibold mt-1" style={{ color: '#5a7a3e' }}>Tax Abatement Value</div>
-          <div className="text-xs mt-0.5" style={{ color: '#6b5f55' }}>
+          <div className="text-xs font-semibold mt-1" style={{ color: C.hill }}>Tax Abatement Value</div>
+          <div className="text-xs mt-0.5" style={{ color: C.muted }}>
             {activeAbatements} active abatement{activeAbatements !== 1 ? 's' : ''}
           </div>
         </div>
-        <div className="p-4 rounded" style={{ background: '#f5e8e1' }}>
-          <div className="text-2xl font-bold" style={{ color: '#c8861a' }}>{totalBlight.toLocaleString()}</div>
-          <div className="text-xs font-semibold mt-1" style={{ color: '#c8861a' }}>Blight Records</div>
-          <div className="text-xs mt-0.5" style={{ color: '#6b5f55' }}>active PLAP complaints</div>
+        <div className="p-4 rounded-md" style={{ background: C.brickLight }}>
+          <div className="text-2xl font-bold" style={{ color: C.ochre }}>{totalBlight.toLocaleString()}</div>
+          <div className="text-xs font-semibold mt-1" style={{ color: C.ochre }}>Blight Records</div>
+          <div className="text-xs mt-0.5" style={{ color: C.muted }}>active PLAP complaints</div>
         </div>
       </div>
 
       {/* Demolition alert */}
       {demolitionCount > 0 && (
-        <div className="rounded-lg p-3 mb-5 flex items-start gap-2 text-sm" style={{ background: '#f5e8e1', border: '1px solid #e6c5b2', color: '#b34728' }}>
+        <div className="rounded-md p-3 mb-5 flex items-start gap-2 text-sm" style={{ background: C.brickLight, border: '1px solid #e6c5b2', color: C.brick }}>
           <span className="text-base mt-0.5 shrink-0">⚠</span>
           <span>
             <strong>
@@ -131,7 +132,7 @@ export default function DevelopmentSection({ nbhSoQL, neighborhood }: Props) {
       {/* Permits by type chart — demolitions highlighted in red */}
       {permitsByType.length > 0 ? (
         <>
-          <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: '#6b5f55' }}>
+          <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: C.muted }}>
             Permits by type
           </div>
           <ResponsiveContainer width="100%" height={220}>
@@ -151,7 +152,7 @@ export default function DevelopmentSection({ nbhSoQL, neighborhood }: Props) {
                 {permitsByType.slice(0, 8).map((entry) => (
                   <Cell
                     key={entry.type}
-                    fill={entry.type.toLowerCase().includes('demolition') ? '#DC2626' : '#C8861A'}
+                    fill={entry.type.toLowerCase().includes('demolition') ? C.brick : C.ochre}
                   />
                 ))}
               </Bar>
@@ -162,7 +163,7 @@ export default function DevelopmentSection({ nbhSoQL, neighborhood }: Props) {
         <EmptyState message="No permits found" />
       )}
 
-      <div className="mt-4 pt-3 flex flex-wrap gap-4" style={{ borderTop: '1px solid #e4ddd2' }}>
+      <div className="mt-4 pt-3 flex flex-wrap gap-4" style={{ borderTop: `1px solid ${C.rule}` }}>
         <DataAttribution source="Building Permits" uid="uhjb-xac9" />
         <DataAttribution source="Tax Abatements" uid="tkp7-yf64" />
         <DataAttribution source="PLAP Blight" uid="pk9w-99n6" />

@@ -30,6 +30,7 @@ import {
 } from '../../utils/api';
 import type { NeighborhoodRacialEquityStats, NeighborhoodHMDAStats } from '../../types';
 import { DataCard } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -50,10 +51,10 @@ interface GroupData {
 }
 
 const GROUP_CONFIG: Pick<GroupData, 'key' | 'shortLabel' | 'color'>[] = [
-  { key: 'black',    shortLabel: 'Black',    color: '#2f5d62' },
-  { key: 'white',    shortLabel: 'White NH', color: '#2E7D5A' },
-  { key: 'asian',    shortLabel: 'Asian',    color: '#8B5CF6' },
-  { key: 'hispanic', shortLabel: 'Hispanic', color: '#D97706' },
+  { key: 'black',    shortLabel: 'Black',    color: C.riverDeep },
+  { key: 'white',    shortLabel: 'White NH', color: C.hill },
+  { key: 'asian',    shortLabel: 'Asian',    color: C.river },
+  { key: 'hispanic', shortLabel: 'Hispanic', color: C.muted },
 ];
 
 // ── Data assembly ─────────────────────────────────────────────────────────────
@@ -155,15 +156,15 @@ function GapView({ groups }: { groups: GroupData[] }) {
 
   return (
     <div className="space-y-5">
-      <p className="text-xs" style={{ color: '#6b5f55' }}>
-        All gaps shown relative to{' '}<span className="font-medium" style={{ color: '#1a1410' }}>{WHITE_NH_FULL}</span>{' '}
+      <p className="text-xs" style={{ color: C.muted }}>
+        All gaps shown relative to{' '}<span className="font-medium" style={{ color: C.ink }}>{WHITE_NH_FULL}</span>{' '}
         residents (center line = 0).{' '}
         <span className="inline-flex items-center gap-1">
-          <span className="w-3 h-2.5 rounded-sm inline-block bg-red-400 opacity-80" />
+          <span className="w-3 h-2.5 rounded-sm inline-block opacity-80" style={{ background: C.brick }} />
           worse than White NH
         </span>{' · '}
         <span className="inline-flex items-center gap-1">
-          <span className="w-3 h-2.5 rounded-sm inline-block bg-blue-400 opacity-80" />
+          <span className="w-3 h-2.5 rounded-sm inline-block opacity-80" style={{ background: C.river }} />
           better than White NH
         </span>
       </p>
@@ -177,11 +178,11 @@ function GapView({ groups }: { groups: GroupData[] }) {
         if (chartData.length === 0) return null;
 
         return (
-          <div key={m.key} className="rounded-lg p-3" style={{ background: '#f6f1ea' }}>
+          <div key={m.key} className="rounded-md p-3" style={{ background: C.limestone }}>
             <div className="flex items-baseline justify-between mb-1">
-              <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#1a1410' }}>{m.label}</span>
+              <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: C.ink }}>{m.label}</span>
               {whiteVal != null && (
-                <span className="text-xs" style={{ color: '#6b5f55' }}>{m.fmtRef(white)}</span>
+                <span className="text-xs" style={{ color: C.muted }}>{m.fmtRef(white)}</span>
               )}
             </div>
             <ResponsiveContainer width="100%" height={chartData.length * 30 + 20}>
@@ -192,12 +193,12 @@ function GapView({ groups }: { groups: GroupData[] }) {
                   formatter={(v: number) => [m.fmtGap(v), 'Gap from White NH']}
                   contentStyle={{ fontSize: '12px' }}
                 />
-                <ReferenceLine x={0} stroke="#9CA3AF" strokeWidth={1.5} />
+                <ReferenceLine x={0} stroke={C.muted} strokeWidth={1.5} />
                 <Bar dataKey="gap" radius={[2, 2, 2, 2]}
                      label={{ position: 'right', fontSize: 11, formatter: (v: number) => m.fmtGap(v) }}>
                   {chartData.map((d, i) => {
                     const isGood = m.betterPositive ? d.gap >= 0 : d.gap <= 0;
-                    return <Cell key={i} fill={isGood ? d.color : '#EF4444'} opacity={0.8} />;
+                    return <Cell key={i} fill={isGood ? d.color : C.brick} opacity={0.8} />;
                   })}
                 </Bar>
               </BarChart>
@@ -225,7 +226,7 @@ function ProfileGrid({ groups, hmdaSource }: { groups: GroupData[]; hmdaSource: 
 
   return (
     <div>
-      <p className="text-xs mb-3" style={{ color: '#6b5f55' }}>
+      <p className="text-xs mb-3" style={{ color: C.muted }}>
         Scan across a row to compare groups on one metric.
         Scan down a column to see a group's full economic profile.
         All gaps are relative to <span className="font-medium">{WHITE_NH_FULL}</span> residents.
@@ -240,7 +241,7 @@ function ProfileGrid({ groups, hmdaSource }: { groups: GroupData[]; hmdaSource: 
               {g.shortLabel}
             </div>
             {g.popPct != null && (
-              <div className="text-xs text-gray-400 mt-1">{g.popPct}% of pop.</div>
+              <div className="text-xs mt-1" style={{ color: C.muted }}>{g.popPct}% of pop.</div>
             )}
           </div>
         ))}
@@ -254,8 +255,8 @@ function ProfileGrid({ groups, hmdaSource }: { groups: GroupData[]; hmdaSource: 
             <div key={row.label} className="grid gap-1.5 items-center" style={{ gridTemplateColumns: '110px repeat(4, 1fr)' }}>
               {/* Row label */}
               <div className="pr-2">
-                <div className="text-xs font-semibold leading-tight" style={{ color: '#1a1410' }}>{row.label}</div>
-                <div className="text-xs" style={{ color: '#6b5f55' }}>{row.note}</div>
+                <div className="text-xs font-semibold leading-tight" style={{ color: C.ink }}>{row.label}</div>
+                <div className="text-xs" style={{ color: C.muted }}>{row.note}</div>
               </div>
               {/* Cells */}
               {groups.map(g => {
@@ -264,22 +265,22 @@ function ProfileGrid({ groups, hmdaSource }: { groups: GroupData[]; hmdaSource: 
                 const gap = val != null && whiteVal != null ? +(val - whiteVal).toFixed(1) : null;
                 const relPct = val != null ? Math.round((val / row.max) * 100) : 0;
                 const isGood = gap == null ? null : row.higherBetter ? gap >= 0 : gap <= 0;
-                const borderColor = isWhite ? '#e4ddd2' : isGood ? g.color + '66' : '#e6c5b2';
+                const borderColor = isWhite ? C.rule : isGood ? g.color + '66' : '#e6c5b2';
 
                 return (
-                  <div key={g.key} className="rounded-lg p-2 text-center"
-                       style={{ background: isWhite ? '#f6f1ea' : isGood === true ? g.color + '18' : isGood === false ? '#f5e8e1' : '#f6f1ea', border: `1px solid ${borderColor}` }}>
-                    <div className="text-sm font-bold" style={{ color: isWhite ? '#1a1410' : g.color }}>
+                  <div key={g.key} className="rounded-md p-2 text-center"
+                       style={{ background: isWhite ? C.limestone : isGood === true ? g.color + '18' : isGood === false ? C.brickLight : C.limestone, border: `1px solid ${borderColor}` }}>
+                    <div className="text-sm font-bold" style={{ color: isWhite ? C.ink : g.color }}>
                       {row.fmt(val)}
                     </div>
                     {!isWhite && gap != null && (
-                      <div className="text-xs mt-0.5" style={{ color: isGood ? '#5a7a3e' : '#b34728' }}>
+                      <div className="text-xs mt-0.5" style={{ color: isGood ? C.hill : C.brick }}>
                         {row.gapFmt(gap)}
                       </div>
                     )}
-                    {isWhite && <div className="text-xs mt-0.5" style={{ color: '#6b5f55' }}>baseline</div>}
+                    {isWhite && <div className="text-xs mt-0.5" style={{ color: C.muted }}>baseline</div>}
                     {/* Mini bar */}
-                    <div className="h-1 rounded mt-1.5 overflow-hidden" style={{ background: '#e4ddd2' }}>
+                    <div className="h-1 rounded mt-1.5 overflow-hidden" style={{ background: C.rule }}>
                       <div className="h-full rounded" style={{ width: `${relPct}%`, background: g.color, opacity: 0.7 }} />
                     </div>
                   </div>
@@ -291,7 +292,7 @@ function ProfileGrid({ groups, hmdaSource }: { groups: GroupData[]; hmdaSource: 
       </div>
 
       {hmdaSource === 'county_fallback' && (
-        <p className="text-xs rounded p-2 mt-3" style={{ color: '#c8861a', background: '#f5e8e1', border: '1px solid #e6c5b2' }}>
+        <p className="text-xs rounded-md p-2 mt-3" style={{ color: C.ochre, background: C.brickLight, border: '1px solid #e6c5b2' }}>
           ⚠ Mortgage data shows Hamilton County averages — insufficient tract-level data for this neighborhood.
         </p>
       )}
@@ -316,8 +317,8 @@ function ChainBar({ groups, getValue, fmt, max }: {
         const pct = val != null ? Math.round((val / max) * 100) : 0;
         return (
           <div key={g.key} className="flex items-center gap-2">
-            <div className="text-xs text-gray-500 flex-shrink-0" style={{ width: 56, textAlign: 'right' }}>{g.shortLabel}</div>
-            <div className="flex-1 h-3 rounded overflow-hidden" style={{ background: '#f6f1ea' }}>
+            <div className="text-xs flex-shrink-0" style={{ width: 56, textAlign: 'right', color: C.muted }}>{g.shortLabel}</div>
+            <div className="flex-1 h-3 rounded overflow-hidden" style={{ background: C.limestone }}>
               <div className="h-full rounded" style={{ width: `${pct}%`, background: g.color, opacity: 0.85 }} />
             </div>
             <div className="text-xs font-semibold flex-shrink-0" style={{ width: 38, color: g.color }}>{fmt(val)}</div>
@@ -342,8 +343,8 @@ function OpportunityChain({ groups }: { groups: GroupData[] }) {
   return (
     <div>
       {/* Headline */}
-      <div className="bg-gray-900 text-white rounded-xl p-4 mb-5">
-        <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Key finding</div>
+      <div className="rounded-md p-4 mb-5" style={{ background: C.ink, color: C.paper }}>
+        <div className="text-xs uppercase tracking-wide mb-1" style={{ color: C.muted }}>Key finding</div>
         <p className="text-sm font-medium leading-snug">
           {incomeGap != null
             ? <>Black residents earn <span className="text-yellow-300 font-bold">{incomeGap}¢ per $1</span> earned by {WHITE_NH_FULL} residents</>
@@ -360,12 +361,12 @@ function OpportunityChain({ groups }: { groups: GroupData[] }) {
       <div className="grid grid-cols-3 gap-0 items-stretch">
 
         {/* Stage 1: Income */}
-        <div className="rounded-l-xl p-4" style={{ border: '1px solid #e4ddd2' }}>
-          <div className="text-xs uppercase tracking-wide mb-1" style={{ color: '#6b5f55' }}>Stage 1</div>
-          <div className="text-sm font-bold mb-3" style={{ color: '#1a1410' }}>Income</div>
+        <div className="rounded-l-md p-4" style={{ border: `1px solid ${C.rule}` }}>
+          <div className="text-xs uppercase tracking-wide mb-1" style={{ color: C.muted }}>Stage 1</div>
+          <div className="text-sm font-bold mb-3" style={{ color: C.ink }}>Income</div>
           <ChainBar groups={groups} getValue={g => g.income} fmt={fmtIncome} max={130000} />
-          <div className="mt-3 pt-3" style={{ borderTop: '1px solid #e4ddd2' }}>
-            <div className="text-xs mb-1.5" style={{ color: '#6b5f55' }}>Poverty rate</div>
+          <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${C.rule}` }}>
+            <div className="text-xs mb-1.5" style={{ color: C.muted }}>Poverty rate</div>
             <ChainBar groups={groups} getValue={g => g.poverty} fmt={fmtPct} max={70} />
           </div>
         </div>
@@ -373,30 +374,30 @@ function OpportunityChain({ groups }: { groups: GroupData[] }) {
         {/* Arrow + Stage 2 label */}
         <div className="flex items-stretch">
           <div className="flex items-center justify-center w-4 flex-shrink-0">
-            <div className="text-gray-300 text-xs">▶</div>
+            <div className="text-xs" style={{ color: C.rule }}>▶</div>
           </div>
-          <div className="flex-1 p-4" style={{ borderTop: '1px solid #e4ddd2', borderBottom: '1px solid #e4ddd2' }}>
-            <div className="text-xs uppercase tracking-wide mb-1" style={{ color: '#6b5f55' }}>Stage 2</div>
-            <div className="text-sm font-bold mb-3" style={{ color: '#1a1410' }}>Home Equity</div>
+          <div className="flex-1 p-4" style={{ borderTop: `1px solid ${C.rule}`, borderBottom: `1px solid ${C.rule}` }}>
+            <div className="text-xs uppercase tracking-wide mb-1" style={{ color: C.muted }}>Stage 2</div>
+            <div className="text-sm font-bold mb-3" style={{ color: C.ink }}>Home Equity</div>
             <ChainBar groups={groups} getValue={g => g.homeownership} fmt={fmtPct} max={90} />
-            <p className="text-xs mt-3" style={{ color: '#6b5f55' }}>
+            <p className="text-xs mt-3" style={{ color: C.muted }}>
               Homeownership is the primary wealth-building vehicle for most families.
             </p>
           </div>
           <div className="flex items-center justify-center w-4 flex-shrink-0">
-            <div className="text-gray-300 text-xs">▶</div>
+            <div className="text-xs" style={{ color: C.rule }}>▶</div>
           </div>
         </div>
 
         {/* Stage 3: Mortgage */}
-        <div className="rounded-r-xl p-4" style={{ border: '1px solid #e4ddd2' }}>
-          <div className="text-xs uppercase tracking-wide mb-1" style={{ color: '#6b5f55' }}>Stage 3</div>
-          <div className="text-sm font-bold mb-3" style={{ color: '#1a1410' }}>Credit Access</div>
+        <div className="rounded-r-md p-4" style={{ border: `1px solid ${C.rule}` }}>
+          <div className="text-xs uppercase tracking-wide mb-1" style={{ color: C.muted }}>Stage 3</div>
+          <div className="text-sm font-bold mb-3" style={{ color: C.ink }}>Credit Access</div>
           {black.mortgageApproval != null
             ? <ChainBar groups={groups} getValue={g => g.mortgageApproval} fmt={fmtPct} max={100} />
-            : <p className="text-xs italic" style={{ color: '#6b5f55' }}>Run build_hmda.py to populate mortgage data.</p>
+            : <p className="text-xs italic" style={{ color: C.muted }}>Run build_hmda.py to populate mortgage data.</p>
           }
-          <p className="text-xs mt-3" style={{ color: '#6b5f55' }}>Approval rates from CFPB HMDA 2022, all loan types.</p>
+          <p className="text-xs mt-3" style={{ color: C.muted }}>Approval rates from CFPB HMDA 2022, all loan types.</p>
         </div>
 
       </div>
@@ -408,10 +409,10 @@ function OpportunityChain({ groups }: { groups: GroupData[] }) {
           { label: 'Homeownership gap', value: hoGap != null ? `${hoGap > 0 ? '+' : ''}${hoGap}pp` : '—', note: 'White NH minus Black' },
           { label: 'Mortgage gap', value: mortGap != null ? `${mortGap.toFixed(1)}pp` : '—', note: 'White NH approval lead' },
         ].map(stat => (
-          <div key={stat.label} className="rounded-lg p-3 text-center" style={{ background: '#f5e8e1', border: '1px solid #e6c5b2' }}>
-            <div className="text-lg font-bold" style={{ color: '#2f5d62' }}>{stat.value}</div>
-            <div className="text-xs mt-0.5" style={{ color: '#6b5f55' }}>{stat.label}</div>
-            <div className="text-xs" style={{ color: '#6b5f55' }}>{stat.note}</div>
+          <div key={stat.label} className="rounded-md p-3 text-center" style={{ background: C.brickLight, border: '1px solid #e6c5b2' }}>
+            <div className="text-lg font-bold" style={{ color: C.river }}>{stat.value}</div>
+            <div className="text-xs mt-0.5" style={{ color: C.muted }}>{stat.label}</div>
+            <div className="text-xs" style={{ color: C.muted }}>{stat.note}</div>
           </div>
         ))}
       </div>
@@ -475,11 +476,11 @@ export default function UnifiedEquitySection({ neighborhood }: UnifiedEquitySect
   if (acsNotBuilt) {
     return (
       <DataCard title="Racial Equity & Mortgage Lending" loading={false} error={null}>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-900 space-y-2">
+        <div className="rounded-md p-4 text-sm space-y-2" style={{ background: C.brickLight, border: `1px solid #e6c5b2`, color: C.ink }}>
           <p className="font-semibold">⚙️ Equity data not yet generated</p>
-          <pre className="bg-amber-100 rounded p-2 text-xs font-mono overflow-x-auto">python3 scripts/build_racial_equity.py</pre>
+          <pre className="rounded-md p-2 text-xs font-mono overflow-x-auto" style={{ background: C.limestone }}>python3 scripts/build_racial_equity.py</pre>
           <p>Then optionally generate mortgage lending data:</p>
-          <pre className="bg-amber-100 rounded p-2 text-xs font-mono overflow-x-auto">python3 scripts/build_hmda.py</pre>
+          <pre className="rounded-md p-2 text-xs font-mono overflow-x-auto" style={{ background: C.limestone }}>python3 scripts/build_hmda.py</pre>
         </div>
       </DataCard>
     );
@@ -488,7 +489,7 @@ export default function UnifiedEquitySection({ neighborhood }: UnifiedEquitySect
   if (!loading && !error && acsData === null) {
     return (
       <DataCard title="Racial Equity & Mortgage Lending" loading={false} error={null}>
-        <p className="text-sm text-gray-500">No equity data found for {neighborhood}.</p>
+        <p className="text-sm" style={{ color: C.muted }}>No equity data found for {neighborhood}.</p>
       </DataCard>
     );
   }
@@ -511,26 +512,26 @@ export default function UnifiedEquitySection({ neighborhood }: UnifiedEquitySect
               <button
                 key={v.id}
                 onClick={() => setView(v.id)}
-                className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
+                className="px-3 py-1.5 text-xs font-medium rounded-md transition-colors"
                 style={{
-                  background: view === v.id ? '#2f5d62' : '#f6f1ea',
-                  color: view === v.id ? '#fbf8f3' : '#1a1410',
+                  background: view === v.id ? C.river : C.limestone,
+                  color: view === v.id ? C.paper : C.ink,
                 }}
               >
                 {v.label}
               </button>
             ))}
           </div>
-          <p className="text-xs mb-4 italic" style={{ color: '#6b5f55' }}>{activeView.desc}</p>
+          <p className="text-xs mb-4 italic" style={{ color: C.muted }}>{activeView.desc}</p>
 
           {/* Population composition pill bar */}
           <div className="mb-4">
             {acsData?.totalPop != null && (
-              <div className="text-xs mb-1" style={{ color: '#6b5f55' }}>
+              <div className="text-xs mb-1" style={{ color: C.muted }}>
                 Population · {acsData.totalPop.toLocaleString()} residents
               </div>
             )}
-            <div className="flex h-3.5 rounded overflow-hidden w-full" style={{ background: '#f6f1ea' }}>
+            <div className="flex h-3.5 rounded-md overflow-hidden w-full" style={{ background: C.limestone }}>
               {groups.filter(g => g.popPct != null && g.popPct > 0).map(g => (
                 <div key={g.key} style={{ width: `${g.popPct}%`, background: g.color }}
                      title={`${g.shortLabel} ${g.popPct}%`} />
@@ -538,7 +539,7 @@ export default function UnifiedEquitySection({ neighborhood }: UnifiedEquitySect
             </div>
             <div className="flex gap-3 mt-1 flex-wrap">
               {groups.filter(g => g.popPct != null && g.popPct > 0.5).map(g => (
-                <span key={g.key} className="text-xs" style={{ color: '#6b5f55' }}>
+                <span key={g.key} className="text-xs" style={{ color: C.muted }}>
                   <span style={{ color: g.color }}>■</span> {g.shortLabel} {g.popPct}%
                 </span>
               ))}
@@ -551,13 +552,13 @@ export default function UnifiedEquitySection({ neighborhood }: UnifiedEquitySect
           {view === 'chain' && <OpportunityChain groups={groups} />}
 
           {/* Shared methodology note */}
-          <div className="mt-5 pt-4 text-xs space-y-1" style={{ borderTop: '1px solid #e4ddd2', color: '#6b5f55' }}>
+          <div className="mt-5 pt-4 text-xs space-y-1" style={{ borderTop: `1px solid ${C.rule}`, color: C.muted }}>
             <p>
               Race groups follow Census B03002 categories.{' '}
               <strong>{WHITE_NH_FULL}</strong> = White alone, not Hispanic or Latino —
               the primary comparison group consistent with Urban League{' '}
               <a href="https://ulgswo.org/state-of-black-cincinnati" target="_blank" rel="noopener noreferrer"
-                 className="underline" style={{ color: '#2f5d62' }}>State of Black Cincinnati (2024)</a> framing.
+                 className="underline" style={{ color: C.river }}>State of Black Cincinnati (2024)</a> framing.
             </p>
             <p>
               Income is a population-weighted average of tract-level medians (an approximation).

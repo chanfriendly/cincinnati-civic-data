@@ -16,6 +16,7 @@ import {
 } from 'recharts';
 import { useSODA } from '../../hooks/useSODA';
 import { DataCard, DataAttribution, EmptyState } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 
 interface Props {
   nbhSoQL: string;
@@ -49,10 +50,10 @@ function HBarList({ items, color }: { items: { type: string; count: number }[]; 
       {items.map(({ type, count }) => (
         <div key={type}>
           <div className="flex justify-between text-xs mb-1">
-            <span className="font-medium truncate max-w-[75%]" style={{ color: '#1a1410' }}>{type}</span>
-            <span className="font-semibold ml-2 shrink-0" style={{ color: '#6b5f55' }}>{count.toLocaleString()}</span>
+            <span className="font-medium truncate max-w-[75%]" style={{ color: C.ink }}>{type}</span>
+            <span className="font-semibold ml-2 shrink-0" style={{ color: C.muted }}>{count.toLocaleString()}</span>
           </div>
-          <div className="h-1.5 rounded-full" style={{ background: '#f6f1ea' }}>
+          <div className="h-1.5 rounded-full" style={{ background: C.limestone }}>
             <div
               className="h-1.5 rounded-full transition-all duration-300"
               style={{ width: `${(count / max) * 100}%`, backgroundColor: color }}
@@ -149,24 +150,24 @@ export default function PublicSafetySection({ nbhSoQL, startDate, endDate }: Pro
     >
       {/* Shared KPI row */}
       <div className="grid grid-cols-3 gap-3 mb-5">
-        <div className="p-3 rounded" style={{ background: '#e6efef' }}>
-          <div className="text-2xl font-bold" style={{ color: '#2f5d62' }}>{totalCrime.toLocaleString()}</div>
-          <div className="text-xs font-semibold mt-1" style={{ color: '#2f5d62' }}>CPD Incidents</div>
+        <div className="p-3 rounded-md" style={{ background: C.riverLight }}>
+          <div className="text-2xl font-bold" style={{ color: C.river }}>{totalCrime.toLocaleString()}</div>
+          <div className="text-xs font-semibold mt-1" style={{ color: C.river }}>CPD Incidents</div>
         </div>
-        <div className="p-3 rounded" style={{ background: '#f5e8e1' }}>
-          <div className="text-2xl font-bold" style={{ color: '#c8861a' }}>{totalEms.toLocaleString()}</div>
-          <div className="text-xs font-semibold mt-1" style={{ color: '#c8861a' }}>CFD Dispatches</div>
+        <div className="p-3 rounded-md" style={{ background: C.brickLight }}>
+          <div className="text-2xl font-bold" style={{ color: C.ochre }}>{totalEms.toLocaleString()}</div>
+          <div className="text-xs font-semibold mt-1" style={{ color: C.ochre }}>CFD Dispatches</div>
         </div>
-        <div className="p-3 rounded" style={{ background: '#f6f1ea' }}>
-          <div className="text-2xl font-bold" style={{ color: '#1a1410' }}>
+        <div className="p-3 rounded-md" style={{ background: C.limestone }}>
+          <div className="text-2xl font-bold" style={{ color: C.ink }}>
             {(totalCrime + totalEms).toLocaleString()}
           </div>
-          <div className="text-xs font-semibold mt-1" style={{ color: '#6b5f55' }}>Total Incidents</div>
+          <div className="text-xs font-semibold mt-1" style={{ color: C.muted }}>Total Incidents</div>
         </div>
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 mb-5" style={{ borderBottom: '1px solid #e4ddd2' }}>
+      <div className="flex gap-1 mb-5" style={{ borderBottom: `1px solid ${C.rule}` }}>
         {TABS.map(tab => (
           <button
             key={tab.id}
@@ -174,8 +175,8 @@ export default function PublicSafetySection({ nbhSoQL, startDate, endDate }: Pro
             className="px-3 py-2 text-xs font-semibold rounded-t border-b-2 -mb-px transition-colors"
             style={
               activeTab === tab.id
-                ? { color: '#2f5d62', borderColor: '#2f5d62', background: '#e6efef' }
-                : { color: '#6b5f55', borderColor: 'transparent', background: 'transparent' }
+                ? { color: C.river, borderColor: C.river, background: C.riverLight }
+                : { color: C.muted, borderColor: 'transparent', background: 'transparent' }
             }
           >
             {tab.label}
@@ -186,30 +187,30 @@ export default function PublicSafetySection({ nbhSoQL, startDate, endDate }: Pro
       {/* Overview — side-by-side CPD vs CFD */}
       {activeTab === 'overview' && (
         <div className="grid grid-cols-2 gap-5">
-          <div className="rounded-lg p-4" style={{ border: '1px solid #e4ddd2' }}>
-            <div className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: '#2f5d62' }}>
+          <div className="rounded-md p-4" style={{ border: `1px solid ${C.rule}` }}>
+            <div className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: C.river }}>
               Cincinnati Police
             </div>
-            <div className="text-2xl font-bold mb-0.5" style={{ color: '#2f5d62' }}>
+            <div className="text-2xl font-bold mb-0.5" style={{ color: C.river }}>
               {totalCrime.toLocaleString()}
             </div>
-            <div className="text-xs mb-4" style={{ color: '#6b5f55' }}>top 5 offense categories</div>
+            <div className="text-xs mb-4" style={{ color: C.muted }}>top 5 offense categories</div>
             {crimeByType.length > 0
-              ? <HBarList items={crimeByType.slice(0, 5)} color="#2f5d62" />
-              : <p className="text-xs italic" style={{ color: '#6b5f55' }}>No records found</p>
+              ? <HBarList items={crimeByType.slice(0, 5)} color={C.river} />
+              : <p className="text-xs italic" style={{ color: C.muted }}>No records found</p>
             }
           </div>
-          <div className="rounded-lg p-4" style={{ border: '1px solid #e4ddd2' }}>
-            <div className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: '#b34728' }}>
+          <div className="rounded-md p-4" style={{ border: `1px solid ${C.rule}` }}>
+            <div className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: C.brick }}>
               Cincinnati Fire / EMS
             </div>
-            <div className="text-2xl font-bold mb-0.5" style={{ color: '#b34728' }}>
+            <div className="text-2xl font-bold mb-0.5" style={{ color: C.brick }}>
               {totalEms.toLocaleString()}
             </div>
-            <div className="text-xs mb-4" style={{ color: '#6b5f55' }}>top 5 dispatch types</div>
+            <div className="text-xs mb-4" style={{ color: C.muted }}>top 5 dispatch types</div>
             {fireEmsByType.length > 0
-              ? <HBarList items={fireEmsByType.slice(0, 5)} color="#b34728" />
-              : <p className="text-xs italic" style={{ color: '#6b5f55' }}>No records found</p>
+              ? <HBarList items={fireEmsByType.slice(0, 5)} color={C.brick} />
+              : <p className="text-xs italic" style={{ color: C.muted }}>No records found</p>
             }
           </div>
         </div>
@@ -219,17 +220,17 @@ export default function PublicSafetySection({ nbhSoQL, startDate, endDate }: Pro
       {activeTab === 'crime' && (
         crimeByType.length > 0 ? (
           <>
-            <p className="text-xs italic mb-3" style={{ color: '#6b5f55' }}>
+            <p className="text-xs italic mb-3" style={{ color: C.muted }}>
               Incidents reported to Cincinnati Police Department, broken down by offense category.
               Sourced from the PDI legacy dataset and the current STARS system.
             </p>
-            <div className="text-2xl font-bold mb-1" style={{ color: '#c8861a' }}>
+            <div className="text-2xl font-bold mb-1" style={{ color: C.ochre }}>
               {totalCrime.toLocaleString()}
             </div>
-            <div className="text-sm mb-4" style={{ color: '#6b5f55' }}>
+            <div className="text-sm mb-4" style={{ color: C.muted }}>
               total incidents ({startDate} to {endDate})
               {totalCrime > 2000 && (
-                <span className="ml-1 text-xs" style={{ color: '#6b5f55' }}>(chart shows sample of 2,000)</span>
+                <span className="ml-1 text-xs" style={{ color: C.muted }}>(chart shows sample of 2,000)</span>
               )}
             </div>
             <ResponsiveContainer width="100%" height={300}>
@@ -245,7 +246,7 @@ export default function PublicSafetySection({ nbhSoQL, startDate, endDate }: Pro
                 />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="count" fill="#2f5d62" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="count" fill={C.river} radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </>
@@ -256,17 +257,17 @@ export default function PublicSafetySection({ nbhSoQL, startDate, endDate }: Pro
       {activeTab === 'ems' && (
         fireEmsByType.length > 0 ? (
           <>
-            <p className="text-xs italic mb-3" style={{ color: '#6b5f55' }}>
+            <p className="text-xs italic mb-3" style={{ color: C.muted }}>
               All incidents dispatched to Cincinnati Fire Department — including fires, medical
               emergencies, and rescue calls — within the selected date range.
             </p>
-            <div className="text-2xl font-bold mb-1" style={{ color: '#2f5d62' }}>
+            <div className="text-2xl font-bold mb-1" style={{ color: C.river }}>
               {totalEms.toLocaleString()}
             </div>
-            <div className="text-sm mb-4" style={{ color: '#6b5f55' }}>
+            <div className="text-sm mb-4" style={{ color: C.muted }}>
               total dispatches
               {totalEms > 500 && (
-                <span className="ml-1 text-xs" style={{ color: '#6b5f55' }}>(chart shows sample of 500)</span>
+                <span className="ml-1 text-xs" style={{ color: C.muted }}>(chart shows sample of 500)</span>
               )}
             </div>
             <ResponsiveContainer width="100%" height={340}>
@@ -283,14 +284,14 @@ export default function PublicSafetySection({ nbhSoQL, startDate, endDate }: Pro
                 />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="count" fill="#b34728" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="count" fill={C.brick} radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </>
         ) : <EmptyState message="No incidents found" />
       )}
 
-      <div className="mt-4 pt-3 flex flex-wrap gap-4" style={{ borderTop: '1px solid #e4ddd2' }}>
+      <div className="mt-4 pt-3 flex flex-wrap gap-4" style={{ borderTop: `1px solid ${C.rule}` }}>
         <DataAttribution source="PDI Crime Incidents + STARS" uid="k59e-2pvf" />
         <DataAttribution source="Fire & EMS Incidents" uid="vnsz-a3wp" />
       </div>

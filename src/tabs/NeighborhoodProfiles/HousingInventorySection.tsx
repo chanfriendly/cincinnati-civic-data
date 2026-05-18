@@ -70,7 +70,7 @@ function programColor(code: string): string {
 function ExpiryAlert({ properties }: { properties: NeighborhoodHUDStats['expiringProperties'] }) {
   if (!properties.length) return null;
   return (
-    <div className="rounded-md p-3 mb-4 text-sm" style={{ background: C.brickLight, border: `1px solid #e6c5b2`, color: C.brick }}>
+    <div className="rounded-md p-3 mb-4 text-sm" style={{ background: C.brickLight, border: `1px solid ${C.brick}`, color: C.brick }}>
       <div className="flex items-start gap-2">
         <span className="text-base mt-0.5 shrink-0">⚠</span>
         <div>
@@ -80,7 +80,7 @@ function ExpiryAlert({ properties }: { properties: NeighborhoodHUDStats['expirin
           </strong>
           <ul className="mt-1 space-y-1">
             {properties.map((p, i) => (
-              <li key={i} className="text-xs" style={{ color: '#b34728' }}>
+              <li key={i} className="text-xs" style={{ color: C.brick }}>
                 <span className="font-medium">{p.name}</span>
                 {p.address ? ` · ${p.address}` : ''} —{' '}
                 {p.units} unit{p.units !== 1 ? 's' : ''}, contract ends{' '}
@@ -88,7 +88,7 @@ function ExpiryAlert({ properties }: { properties: NeighborhoodHUDStats['expirin
               </li>
             ))}
           </ul>
-          <p className="text-xs mt-1.5" style={{ color: '#b34728' }}>
+          <p className="text-xs mt-1.5" style={{ color: C.brick }}>
             When subsidies expire without renewal, units may convert to market-rate,
             displacing low-income residents.
           </p>
@@ -143,10 +143,10 @@ export default function HousingInventorySection({ neighborhood }: Props) {
     >
       {/* Build notice — shown when JSON hasn't been populated yet */}
       {buildNotice && (
-        <div className="rounded-lg p-4 text-sm" style={{ background: '#f6f1ea', border: '1px solid #e4ddd2', color: '#6b5f55' }}>
-          <p className="font-medium mb-1" style={{ color: '#1a1410' }}>Data not yet generated</p>
+        <div className="rounded-md p-4 text-sm" style={{ background: C.limestone, border: `1px solid ${C.rule}`, color: C.muted }}>
+          <p className="font-medium mb-1" style={{ color: C.ink }}>Data not yet generated</p>
           <p>
-            Run <code className="rounded text-xs px-1" style={{ background: '#e4ddd2' }}>python3 scripts/build_hud.py</code>{' '}
+            Run <code className="rounded text-xs px-1" style={{ background: C.rule }}>python3 scripts/build_hud.py</code>{' '}
             to populate the HUD subsidized housing inventory.
           </p>
         </div>
@@ -156,21 +156,21 @@ export default function HousingInventorySection({ neighborhood }: Props) {
         <>
           {/* KPI row */}
           <div className="grid grid-cols-2 gap-3 mb-5">
-            <div className="p-4 rounded-lg" style={{ background: '#e6efef' }}>
-              <div className="text-2xl font-bold" style={{ color: '#2f5d62' }}>
+            <div className="p-4 rounded-md" style={{ background: C.riverLight }}>
+              <div className="text-2xl font-bold" style={{ color: C.river }}>
                 {stats.totalAssistedUnits.toLocaleString()}
               </div>
-              <div className="text-xs font-semibold mt-1" style={{ color: '#2f5d62' }}>Assisted Units</div>
-              <div className="text-xs mt-0.5" style={{ color: '#6b5f55' }}>HUD-subsidized</div>
+              <div className="text-xs font-semibold mt-1" style={{ color: C.river }}>Assisted Units</div>
+              <div className="text-xs mt-0.5" style={{ color: C.muted }}>HUD-subsidized</div>
             </div>
-            <div className="p-4 rounded-lg" style={{ background: '#f6f1ea' }}>
-              <div className="text-2xl font-bold" style={{ color: '#1a1410' }}>
+            <div className="p-4 rounded-md" style={{ background: C.limestone }}>
+              <div className="text-2xl font-bold" style={{ color: C.ink }}>
                 {stats.propertyCount}
               </div>
-              <div className="text-xs font-semibold mt-1" style={{ color: '#6b5f55' }}>
+              <div className="text-xs font-semibold mt-1" style={{ color: C.muted }}>
                 Propert{stats.propertyCount !== 1 ? 'ies' : 'y'}
               </div>
-              <div className="text-xs mt-0.5" style={{ color: '#6b5f55' }}>
+              <div className="text-xs mt-0.5" style={{ color: C.muted }}>
                 as of {stats.asOf}
               </div>
             </div>
@@ -182,7 +182,7 @@ export default function HousingInventorySection({ neighborhood }: Props) {
           {/* Program breakdown */}
           {programEntries.length > 0 && (
             <>
-              <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: '#6b5f55' }}>
+              <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: C.muted }}>
                 Units by program type
               </div>
               <div className="space-y-3">
@@ -191,19 +191,19 @@ export default function HousingInventorySection({ neighborhood }: Props) {
                   return (
                     <div key={program}>
                       <div className="flex justify-between text-xs mb-0.5">
-                        <span className="font-medium truncate max-w-[75%]" title={description || undefined} style={{ color: '#1a1410' }}>
+                        <span className="font-medium truncate max-w-[75%]" title={description || undefined} style={{ color: C.ink }}>
                           {label}
                         </span>
-                        <span className="font-semibold ml-2 shrink-0" style={{ color: '#6b5f55' }}>
+                        <span className="font-semibold ml-2 shrink-0" style={{ color: C.muted }}>
                           {units.toLocaleString()} unit{units !== 1 ? 's' : ''}
                         </span>
                       </div>
                       {description && (
-                        <p className="text-[10px] mb-1 truncate" title={description} style={{ color: '#6b5f55' }}>
+                        <p className="text-[10px] mb-1 truncate" title={description} style={{ color: C.muted }}>
                           {description}
                         </p>
                       )}
-                      <div className="h-2 rounded-full" style={{ background: '#f6f1ea' }}>
+                      <div className="h-2 rounded-full" style={{ background: C.limestone }}>
                         <div
                           className="h-2 rounded-full transition-all duration-300"
                           style={{
@@ -219,14 +219,14 @@ export default function HousingInventorySection({ neighborhood }: Props) {
             </>
           )}
 
-          <p className="text-xs mt-4" style={{ color: '#6b5f55' }}>
+          <p className="text-xs mt-4" style={{ color: C.muted }}>
             HUD Multifamily Properties — Assisted · Properties mapped to neighborhoods by
             coordinates. Contract expiry data may be incomplete for some programs.
           </p>
         </>
       )}
 
-      <div className="mt-4 pt-3 border-t" style={{ borderColor: '#e4ddd2' }}>
+      <div className="mt-4 pt-3 border-t" style={{ borderColor: C.rule }}>
         <DataAttribution
           source="HUD Multifamily Properties – Assisted"
           uid="hud-multifamily-assisted"

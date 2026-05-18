@@ -28,6 +28,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Refere
 import { fetchNeighborhoodHMDAStats, stripNeighborhoodName } from '../../utils/api';
 import type { NeighborhoodHMDAStats, HMDARaceStats } from '../../types';
 import { DataCard } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 
 // ── Race group config ─────────────────────────────────────────────────────────
 
@@ -39,10 +40,10 @@ interface RaceGroup {
 }
 
 const RACE_GROUPS: RaceGroup[] = [
-  { key: 'black',    label: 'Black or African American', shortLabel: 'Black',    color: '#1A4A6B' },
-  { key: 'white',    label: 'White (non-Hispanic)',      shortLabel: 'White NH', color: '#2E7D5A' },
-  { key: 'asian',    label: 'Asian',                     shortLabel: 'Asian',    color: '#8B5CF6' },
-  { key: 'hispanic', label: 'Hispanic or Latino',        shortLabel: 'Hispanic', color: '#D97706' },
+  { key: 'black',    label: 'Black or African American', shortLabel: 'Black',    color: C.riverDeep },
+  { key: 'white',    label: 'White (non-Hispanic)',      shortLabel: 'White NH', color: C.hill },
+  { key: 'asian',    label: 'Asian',                     shortLabel: 'Asian',    color: C.river },
+  { key: 'hispanic', label: 'Hispanic or Latino',        shortLabel: 'Hispanic', color: C.muted },
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -113,7 +114,7 @@ function ApprovalRateChart({
 
   if (chartData.length === 0) {
     return (
-      <p className="text-xs text-gray-400 italic">
+      <p className="text-xs italic" style={{ color: C.muted }}>
         Insufficient application volume for rate calculation (min. 10 applications required).
       </p>
     );
@@ -156,9 +157,9 @@ function ApprovalRateChart({
           {refRate != null && (
             <ReferenceLine
               x={refRate}
-              stroke="#6B7280"
+              stroke={C.muted}
               strokeDasharray="4 2"
-              label={{ value: 'County avg', position: 'top', fontSize: 9, fill: '#6B7280' }}
+              label={{ value: 'County avg', position: 'top', fontSize: 9, fill: C.muted }}
             />
           )}
           <Bar dataKey="value" radius={[0, 3, 3, 0]} label={{ position: 'right', fontSize: 11, formatter: (v: number) => fmtPct(v) }}>
@@ -183,10 +184,10 @@ function ApplicationVolumeTable({ stats }: { stats: NeighborhoodHMDAStats }) {
 
   return (
     <div className="mt-3">
-      <p className="text-xs font-medium text-gray-600 mb-1.5">Application Volume (2022)</p>
+      <p className="text-xs font-medium mb-1.5" style={{ color: C.muted }}>Application Volume (2022)</p>
       <table className="w-full text-xs border-collapse">
         <thead>
-          <tr className="text-gray-500 border-b border-gray-100">
+          <tr style={{ color: C.muted, borderBottom: `1px solid ${C.rule}` }}>
             <th className="text-left py-1 pr-2">Group</th>
             <th className="text-right py-1 px-2">Approved</th>
             <th className="text-right py-1 px-2">Denied</th>
@@ -195,7 +196,7 @@ function ApplicationVolumeTable({ stats }: { stats: NeighborhoodHMDAStats }) {
         </thead>
         <tbody>
           {rows.map(r => (
-            <tr key={r.key} className="border-b border-gray-50">
+            <tr key={r.key} style={{ borderBottom: `1px solid ${C.limestone}` }}>
               <td className="py-1 pr-2 flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-sm inline-block flex-shrink-0" style={{ backgroundColor: r.color }} />
                 {r.shortLabel}
@@ -245,10 +246,10 @@ export default function MortgageLendingSection({ neighborhood }: MortgageLending
   if (notBuilt) {
     return (
       <DataCard title="Mortgage Lending" loading={false} error={null}>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-900 space-y-2">
+        <div className="rounded-md p-4 text-sm space-y-2" style={{ background: C.brickLight, border: `1px solid #e6c5b2`, color: C.ink }}>
           <p className="font-semibold">⚙️ Mortgage lending data not yet generated</p>
           <p>Run the build script to generate HMDA race-disaggregated mortgage statistics:</p>
-          <pre className="bg-amber-100 rounded p-2 text-xs font-mono overflow-x-auto">
+          <pre className="rounded-md p-2 text-xs font-mono overflow-x-auto" style={{ background: C.limestone }}>
             python3 scripts/build_hmda.py
           </pre>
           <p>
@@ -266,7 +267,7 @@ export default function MortgageLendingSection({ neighborhood }: MortgageLending
     return (
       <DataCard title="Mortgage Lending" loading={false} error={null}
         attribution={{ datasetName: 'CFPB HMDA LAR 2022', lastUpdated: null }}>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm" style={{ color: C.muted }}>
           No mortgage lending data found for {neighborhood}. This neighborhood may have
           too few census tracts or insufficient application volume.
         </p>
@@ -302,7 +303,7 @@ export default function MortgageLendingSection({ neighborhood }: MortgageLending
         <div className="space-y-2">
 
           {/* Context note */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-xs text-blue-900 mb-3">
+          <div className="rounded-md px-3 py-2 text-xs mb-3" style={{ background: C.riverLight, border: `1px solid ${C.rule}`, color: C.riverDeep }}>
             <strong>Source:</strong> CFPB Home Mortgage Disclosure Act (HMDA) LAR 2022.
             Counts include all mortgage applications (purchase, refinance, and home improvement)
             due to CFPB API filter constraints — home-purchase-only isolation is not possible
@@ -310,7 +311,7 @@ export default function MortgageLendingSection({ neighborhood }: MortgageLending
             (separate from race) shown alongside race groups for context.
             Rates suppressed when fewer than 10 applications in this area.
             {isFallback && (
-              <span className="block mt-1 font-medium text-amber-800">
+              <span className="block mt-1 font-medium" style={{ color: C.ochre }}>
                 ⚠️ No census tracts matched this neighborhood — showing Hamilton County rates as a reference.
               </span>
             )}
@@ -318,17 +319,17 @@ export default function MortgageLendingSection({ neighborhood }: MortgageLending
 
           {/* Key disparity callout */}
           {(approvalGap || blackNote || whiteNote) && (
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-3 space-y-1.5">
-              <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Key disparities</p>
-              {approvalGap && <p className="text-sm text-gray-700">{approvalGap}</p>}
-              {blackNote && <p className="text-sm text-gray-600 text-xs">{blackNote}</p>}
-              {whiteNote && <p className="text-sm text-gray-600 text-xs">{whiteNote}</p>}
+            <div className="rounded-md p-3 mb-3 space-y-1.5" style={{ background: C.limestone, border: `1px solid ${C.rule}` }}>
+              <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: C.ink }}>Key disparities</p>
+              {approvalGap && <p className="text-sm" style={{ color: C.ink }}>{approvalGap}</p>}
+              {blackNote && <p className="text-xs" style={{ color: C.muted }}>{blackNote}</p>}
+              {whiteNote && <p className="text-xs" style={{ color: C.muted }}>{whiteNote}</p>}
             </div>
           )}
 
           {/* County benchmark (if available) */}
           {countyStats && (
-            <div className="text-xs text-gray-500 flex gap-4 mb-1">
+            <div className="text-xs flex gap-4 mb-1" style={{ color: C.muted }}>
               <span>
                 Hamilton Co. White NH: <strong>{fmtPct(countyStats.white.approvalRate)}</strong>
               </span>
@@ -339,7 +340,7 @@ export default function MortgageLendingSection({ neighborhood }: MortgageLending
           )}
 
           {/* Approval rate chart */}
-          <p className="text-sm font-medium text-gray-700 mb-1">Approval Rate by Race/Ethnicity</p>
+          <p className="text-sm font-medium mb-1" style={{ color: C.ink }}>Approval Rate by Race/Ethnicity</p>
           <ApprovalRateChart
             stats={stats}
             countyWhiteRate={stats.countyWhiteApprovalRate}
@@ -354,19 +355,20 @@ export default function MortgageLendingSection({ neighborhood }: MortgageLending
             const t = stats[g.key].total;
             return t != null && t > 0 && t < 30;
           }) && (
-            <p className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1.5 mt-1">
+            <p className="text-[11px] rounded-md px-2 py-1.5 mt-1" style={{ color: C.ochre, background: C.brickLight, border: `1px solid #e6c5b2` }}>
               ⚠ One or more groups have fewer than 30 applications. Approval rates based on small samples are statistically volatile — a single decision can shift the rate by several percentage points.
             </p>
           )}
 
           {/* CFPB citation */}
-          <div className="mt-4 pt-3 border-t border-gray-100 text-xs text-gray-500">
+          <div className="mt-4 pt-3 text-xs" style={{ borderTop: `1px solid ${C.rule}`, color: C.muted }}>
             Data via the{' '}
             <a
               href="https://ffiec.cfpb.gov/data-browser/"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline text-[#1A4A6B]"
+              className="underline"
+              style={{ color: C.riverDeep }}
             >
               CFPB HMDA Data Browser
             </a>
@@ -375,7 +377,8 @@ export default function MortgageLendingSection({ neighborhood }: MortgageLending
               href="https://ulgswo.org/state-of-black-cincinnati"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline text-[#1A4A6B]"
+              className="underline"
+              style={{ color: C.riverDeep }}
             >
               Urban League's State of Black Cincinnati (2024)
             </a>

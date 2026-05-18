@@ -103,7 +103,7 @@ export default function LifeExpectancySection({ neighborhood }: Props) {
                   className="text-sm font-semibold px-2 py-1 rounded-full border"
                   style={
                     diffFromAvg >= 2
-                      ? { background: C.hillLight, color: C.hill, borderColor: '#cfd9b2' }
+                      ? { background: C.hillLight, color: C.hill, borderColor: C.hill }
                       : diffFromAvg <= -2
                       ? { background: C.brickLight, color: C.brick, borderColor: '#e6c5b2' }
                       : { background: C.limestone, color: C.muted, borderColor: C.rule }

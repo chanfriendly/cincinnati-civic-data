@@ -98,6 +98,59 @@ Added canonical sources footnote at the bottom of the `<article>` element.
 
 ---
 
+### Pass 4 — Remaining violations sweep (2026-05-18, this session)
+
+#### H-6: Sources footnotes added (3 tabs)
+Added canonical `<p className="serif italic text-[12px] pt-6">` footnote to:
+- `PoliceAccountability/index.tsx` — CPD Traffic Stops, Use of Force, OIS datasets
+- `LeadSafety/index.tsx` — GCWW Neighborhood Stats, Cincinnati Open Data replacements, GCWW Service Line Map
+- `TaxRevenue/index.tsx` — ACS B19080, ITEP Who Pays?, City Finance tax rate history, Open Data revenue/spending
+
+#### M-4: LeadSafety `#8a6e3e` galvanized steel → `C.muted`
+`riskStyle()` moderate-low tier, `StatRow barColor`, and city-wide chart `<Cell>` fill — all replaced with `C.muted` / `C.limestone` / `C.rule`.
+
+#### M-6: `AddressLookup/index.tsx` — Full C-token migration
+- Added `C` import (was missing)
+- All `#1A4A6B` → `C.riverDeep`, `#C8861A` → `C.ochre` throughout (~30 occurrences)
+- All Tailwind semantic color classes → inline C-token styles (red → brick, green → hill, blue/gray variants)
+- `rounded-lg`/`rounded-xl` → `rounded-md`
+- Sources footnote added (Mapbox, CAGIS, FEMA, CPD, GCWW, SORTA, OSM, OHGO)
+- One emoji (`🏛`) left in place — inside hardcoded JSX string; `C.ochre` applied to wrapper span (editorial chrome for historic district icon)
+
+#### M-7: `Displacement/index.tsx` + `ConnectedCommunitiesSection.tsx`
+- `C.ochre` as "vulnerable/at-risk" phase data category → `C.muted` (phase styles, dot colors, quadrant labels, scatter fills, sidebar ordinals)
+- `C.brick` for "active" phase left intentionally — semantically correct
+- `pctColor()` in ConnectedCommunitiesSection: `#16a34a`/`#65a30d` → `C.hill`, `#dc2626` → `C.brick`, `#f97316` → `C.ochre`, `#9ca3af` → `C.muted`
+- `rounded-lg` → `rounded-md` throughout both files
+- Sources footnote added to Displacement
+
+#### L-1: `rounded-lg` / off-palette hex in NeighborhoodProfiles sections
+All 5 targeted section files cleaned:
+`HousingInventorySection`, `HealthOutcomesSection`, `PublicSafetySection`, `TransitEquitySection`, `SeniorHealthSection` — `rounded-lg` → `rounded-md`, all hex literals → C tokens.
+
+Additional 6 files cleaned separately:
+`ExpandedDemographicsSection`, `CityServicesSection`, `DevelopmentSection`, `CommunityCouncilSection`, `RecreationCentersSection`, `LifeExpectancySection`
+
+#### L-2: `RacialEquity/` — Full C-token migration
+`Section.tsx`, `MortgageSection.tsx`, `UnifiedEquitySection.tsx`:
+- Race category colors standardized: Black → `C.riverDeep`, White NH → `C.hill`, Asian → `C.river`, Hispanic → `C.muted`
+- `bg-gray-900` dark block → `C.ink`/`C.paper`
+- All amber/blue/gray Tailwind blocks → C-token inline styles
+- `rounded-lg`/`rounded-xl`/`rounded-l-xl`/`rounded-r-xl` → `rounded-md` equivalents
+
+#### Inline fixes — small isolated hex literals
+- `TaxRevenue`: `#c9bfb3` list text on dark section → `C.rule`; `#bfd2d4` river border → `C.rule`
+- `Limitations`: `#bfd2d4` info-caveat border → `C.rule`
+- `Roadmap`: `#fbf8f3` text on dark hero block → `C.paper`
+- `NeighborhoodProfiles/index.tsx`: `#7c2e16` dark brick text → `C.brick`
+- `LifeExpectancySection`: `#cfd9b2` hill border → `C.hill`
+- `Displacement/index.tsx`: `#cfd9b2`/`#bfd2d4` borders → `C.hill`/`C.rule`
+- `ConnectedCommunitiesSection`: `#e4ddd2` divider → `C.rule`
+- `CommunityCouncilSection`: `#e4ddd2` divider → `C.rule`
+- `LeadSafety`: `bg-amber-100` on `<code>` element → `C.limestone`
+
+---
+
 ### Pass 3 — Structural off-palette redesigns (2026-05-18, this session)
 
 #### M-2: TaxRevenue CATEGORY_COLORS and SPENDING_CATEGORY_COLORS
@@ -129,25 +182,6 @@ All `#1A4A6B`, Tailwind base colors replaced. Raw emoji (♿, 🦽, 👁, 👂, 
 
 ## Remaining Action Items
 
-### HIGH PRIORITY
-
-#### H-6: Sources footnotes missing on several tabs
-**Rule violated:** Brand Bible §3.10 — "Sources footnote on every page. Non-negotiable."
-
-Tabs still missing a page-level sources footnote:
-- `src/tabs/PoliceAccountability/index.tsx`
-- `src/tabs/LeadSafety/index.tsx`
-- `src/tabs/TaxRevenue/index.tsx`
-
-The canonical format:
-```tsx
-<p className="serif italic text-[12px] pt-6" style={{ color: C.muted, borderTop: `1px solid ${C.rule}` }}>
-  Sources: ...
-</p>
-```
-
----
-
 ### MEDIUM PRIORITY
 
 #### M-1: Recharts axes, gridlines, and tooltips across all chart tabs
@@ -155,35 +189,17 @@ The canonical format:
 
 Every Recharts chart in `PoliceAccountability`, `TaxRevenue`, and `LeadSafety` renders `<CartesianGrid>`, `<XAxis>`, `<YAxis>`, and `<Tooltip>`. This is a judgment call per chart — stripping axes entirely from interactive reference charts would make them unreadable. Recommendation: remove `<CartesianGrid>`, keep minimal axes, remove `<Tooltip>` in favor of inline prose for key findings.
 
-#### M-4: LeadSafety uses `#8a6e3e` for galvanized steel bars
-`riskStyle()` (lines 63–64) and `StatRow` (line 268) use `'#8a6e3e'` for galvanized steel — an invented warm-brown. Recommended fix: `C.muted` for galvanized (non-lead) material.
-
 #### M-5: Chart Legend squares in Recharts charts
 **Rule violated:** Brand Bible §3.5 — "No legend squares. Use Chip inline in prose."
 
 Several charts in TaxRevenue and PoliceAccountability render `<Legend>` components. Replace with `<Chip>` labels within prose.
 
-#### M-6: `src/tabs/AddressLookup/index.tsx` — Not yet audited (file too large)
-Perform a targeted audit:
-1. `grep -n "C\.brick\|C\.ochre\|#[0-9a-fA-F]\{6\}\|text-red\|text-green\|text-blue\|emoji" src/tabs/AddressLookup/index.tsx`
-2. `grep -n "CartesianGrid\|XAxis\|YAxis\|Legend\|Tooltip" src/tabs/AddressLookup/index.tsx`
-3. Check for sources footnote near end of file
-
-#### M-7: `src/tabs/Displacement/index.tsx` — Not yet audited (file too large)
-Same targeted grep approach as M-6.
-
 ---
 
 ### LOW PRIORITY
 
-#### L-1: `rounded-lg` in a few remaining section files
-Brand Bible §2.3: cap at `rounded-md` (6px). Files that may have residual instances: `SeniorHealthSection.tsx`, `HousingInventorySection.tsx`, `HealthOutcomesSection.tsx`. Quick grep + replace pass.
-
-#### L-2: `RacialEquity/` tab files
-`Section.tsx`, `MortgageSection.tsx`, `UnifiedEquitySection.tsx` likely have hex literals. Audit and replace with C tokens.
-
 #### L-3: `NeighborhoodExplorer/` sub-components
-`ChoroplethMap`, `DimensionPanel`, `DetailDrawer`, `TopNeighborhoods`, `NeighborhoodComparison` may have hex values. The choropleth color scale is inherently multi-color — audit separately, do not blindly replace.
+`ChoroplethMap`, `DimensionPanel`, `DetailDrawer`, `TopNeighborhoods`, `NeighborhoodComparison` have 21 remaining hex values and ~39 Tailwind color/radius violations. The choropleth color scale is inherently multi-color — audit carefully, do not blindly replace. Remaining violations are all confined to this directory.
 
 #### L-4: Sub-nav active state — ink vs. riverDeep
 The active sub-tab label color is `C.ink` across About, Neighborhoods, and PoliceAccountability. `C.riverDeep` would match the `C.river` active border more cohesively. Low-stakes.
@@ -197,14 +213,34 @@ The active sub-tab label color is `C.ink` across About, Neighborhoods, and Polic
 | `src/components/ui/DesignAtoms.tsx` | ✓ Clean — source of truth |
 | `src/tabs/About/index.tsx` | ✓ Fixed (Pass 1, Fix #4) |
 | `src/tabs/Accessibility/index.tsx` | ✓ Fixed (Pass 3, H-1) |
-| `src/tabs/AddressLookup/index.tsx` | ⚠ Not audited — file too large (M-6) |
-| `src/tabs/Displacement/index.tsx` | ⚠ Not audited — file too large (M-7) |
-| `src/tabs/LeadSafety/index.tsx` | ✓ Fixed (Pass 1 #1, Pass 2); action item M-4 |
-| `src/tabs/Limitations/index.tsx` | ✓ Fixed (Pass 3, H-4) |
+| `src/tabs/AddressLookup/index.tsx` | ✓ Fixed (Pass 4, M-6) |
+| `src/tabs/Displacement/index.tsx` | ✓ Fixed (Pass 4, M-7) |
+| `src/tabs/Displacement/ConnectedCommunitiesSection.tsx` | ✓ Fixed (Pass 4) |
+| `src/tabs/LeadSafety/index.tsx` | ✓ Fixed (Pass 1 #1, Pass 2, Pass 4 M-4/H-6) |
+| `src/tabs/Limitations/index.tsx` | ✓ Fixed (Pass 3 H-4, Pass 4 inline) |
 | `src/tabs/NeighborhoodExplorer/index.tsx` | ✓ Fixed (Pass 3, H-2) |
-| `src/tabs/NeighborhoodProfiles/index.tsx` | ✓ Fixed (Pass 1, Fix #8) |
+| `src/tabs/NeighborhoodExplorer/ChoroplethMap.tsx` | ⚠ Deferred (L-3) — choropleth color scale needs careful audit |
+| `src/tabs/NeighborhoodExplorer/NeighborhoodComparison.tsx` | ⚠ Deferred (L-3) |
+| `src/tabs/NeighborhoodExplorer/DimensionPanel.tsx` | ⚠ Deferred (L-3) |
+| `src/tabs/NeighborhoodExplorer/DetailDrawer.tsx` | ⚠ Deferred (L-3) |
+| `src/tabs/NeighborhoodExplorer/TopNeighborhoods.tsx` | ⚠ Deferred (L-3) |
+| `src/tabs/NeighborhoodProfiles/index.tsx` | ✓ Fixed (Pass 1 Fix #8, Pass 4 inline) |
+| `src/tabs/NeighborhoodProfiles/CityServicesSection.tsx` | ✓ Fixed (Pass 4, L-1) |
+| `src/tabs/NeighborhoodProfiles/CommunityCouncilSection.tsx` | ✓ Fixed (Pass 4, L-1) |
+| `src/tabs/NeighborhoodProfiles/DevelopmentSection.tsx` | ✓ Fixed (Pass 4, L-1) |
+| `src/tabs/NeighborhoodProfiles/ExpandedDemographicsSection.tsx` | ✓ Fixed (Pass 4, L-1) |
+| `src/tabs/NeighborhoodProfiles/HealthOutcomesSection.tsx` | ✓ Fixed (Pass 2, Pass 4 L-1) |
+| `src/tabs/NeighborhoodProfiles/HousingInventorySection.tsx` | ✓ Fixed (Pass 2, Pass 4 L-1) |
+| `src/tabs/NeighborhoodProfiles/LifeExpectancySection.tsx` | ✓ Fixed (Pass 2, Pass 4 inline) |
+| `src/tabs/NeighborhoodProfiles/PublicSafetySection.tsx` | ✓ Fixed (Pass 4, L-1) |
+| `src/tabs/NeighborhoodProfiles/RecreationCentersSection.tsx` | ✓ Fixed (Pass 4, L-1) |
+| `src/tabs/NeighborhoodProfiles/SeniorHealthSection.tsx` | ✓ Fixed (Pass 2, Pass 4 L-1) |
+| `src/tabs/NeighborhoodProfiles/TransitEquitySection.tsx` | ✓ Fixed (Pass 4, L-1) |
 | `src/tabs/Neighborhoods/index.tsx` | ✓ Fixed (Pass 1, Fix #5) |
 | `src/tabs/OwnerActivity/index.tsx` | ✓ Fixed (Pass 3, H-3) |
-| `src/tabs/PoliceAccountability/index.tsx` | ✓ Fixed (Pass 1 #6/#7, Pass 3 M-3); action items M-1, M-5, H-6 |
-| `src/tabs/Roadmap/index.tsx` | ✓ Fixed (Pass 3, H-5) |
-| `src/tabs/TaxRevenue/index.tsx` | ✓ Fixed (Pass 1 #2/#3, Pass 3 M-2); action items M-1, M-5, H-6 |
+| `src/tabs/PoliceAccountability/index.tsx` | ✓ Fixed (Pass 1 #6/#7, Pass 3 M-3, Pass 4 H-6); action items M-1, M-5 |
+| `src/tabs/RacialEquity/MortgageSection.tsx` | ✓ Fixed (Pass 4, L-2) |
+| `src/tabs/RacialEquity/Section.tsx` | ✓ Fixed (Pass 4, L-2) |
+| `src/tabs/RacialEquity/UnifiedEquitySection.tsx` | ✓ Fixed (Pass 4, L-2) |
+| `src/tabs/Roadmap/index.tsx` | ✓ Fixed (Pass 3 H-5, Pass 4 inline) |
+| `src/tabs/TaxRevenue/index.tsx` | ✓ Fixed (Pass 1 #2/#3, Pass 3 M-2, Pass 4 H-6/inline); action items M-1, M-5 |

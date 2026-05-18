@@ -550,7 +550,7 @@ export default function NeighborhoodProfiles({ onViewMap }: NeighborhoodProfiles
                     {activeViolations.size > 0 && (
                       <div
                         className="rounded-md px-4 py-3 mb-4 text-[13px]"
-                        style={{ background: C.brickLight, color: '#7c2e16' }}
+                        style={{ background: C.brickLight, color: C.brick }}
                       >
                         <strong>{activeViolations.size}</strong> facilit{activeViolations.size === 1 ? 'y' : 'ies'} with active violations in this period.
                       </div>
