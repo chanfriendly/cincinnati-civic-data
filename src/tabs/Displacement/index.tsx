@@ -163,6 +163,28 @@ interface CRALeaderboardEntry {
   neighborhoods: string
 }
 
+type OrgType = 'Corporate' | 'Land Trust' | 'Nonprofit / Gov'
+
+function inferOrgType(name: string): OrgType {
+  const u = name.toUpperCase()
+  if (u.includes('LAND TRUST') || u.includes('CLT')) return 'Land Trust'
+  if (
+    u.includes(' LLC') || u.includes(',LLC') ||
+    u.includes(' INC') || u.includes(',INC') ||
+    u.includes(' CORP') || u.includes(',CORP') ||
+    u.includes('HOLDINGS') || u.includes('PARTNERS') ||
+    u.includes('CAPITAL') || u.includes('PROPERTIES') ||
+    u.includes('INVESTMENTS') || u.includes('VENTURES')
+  ) return 'Corporate'
+  return 'Nonprofit / Gov'
+}
+
+const ORG_TYPE_STYLE: Record<OrgType, { bg: string; color: string; border: string }> = {
+  'Corporate':      { bg: C.brickLight,  color: C.brick,  border: '#e6c5b2' },
+  'Land Trust':     { bg: C.hillLight,   color: C.hill,   border: '#cfd9b2' },
+  'Nonprofit / Gov':{ bg: C.riverLight,  color: C.riverDeep, border: '#bfd2d4' },
+}
+
 // ─── Phase helpers ─────────────────────────────────────────────────────────────
 
 function getPhase(vulnerability: number | null, pressure: number | null): DisplacementPhase {
@@ -451,7 +473,7 @@ const CityScatterChart: React.FC<{
                       strokeWidth={isSelected ? 2 : 0} />
                     {shouldLabel && (
                       <text x={lx} y={ly} fontSize={9} textAnchor={anchor}
-                        fill={color} fontWeight="500"
+                        fill={C.ink} fontWeight="500"
                         style={{ fontFamily: FONT, pointerEvents: 'none' }}>
                         {rec.name}
                       </text>
@@ -468,7 +490,7 @@ const CityScatterChart: React.FC<{
                   y={toY(hoveredRecord.vulnerability) - 9}
                   fontSize={9}
                   textAnchor={hoveredRecord.pressure > 50 ? 'end' : 'start'}
-                  fill={PHASE_CONFIG[hoveredRecord.phase].dotColor}
+                  fill={C.ink}
                   fontWeight="500"
                   style={{ fontFamily: FONT, pointerEvents: 'none' }}>
                   {hoveredRecord.name}
@@ -1591,64 +1613,77 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
       )}
 
       {/* CRA Developer Leaderboard */}
-      {!isLoading && craLeaderboard.length > 0 && (
-        <div className="mt-10">
-          <div className="mb-4">
-            <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: C.muted }}>Developer Accountability</div>
-            <div className="serif mb-2" style={{ fontSize: 22, fontWeight: 500, color: C.ink }}>Who's Getting the Money?</div>
-            <p className="text-sm mt-1 max-w-3xl" style={{ color: C.muted }}>
-              Developers ranked by total city subsidy value received city-wide — tax abatements, TIF grants, LEED credits, and below-market land sales.
-              Only developers with reported dollar values are shown. Source: Cincinnati Commercial CRA Abatements dataset.
-            </p>
+      {!isLoading && craLeaderboard.length > 0 && (() => {
+        const topTotal = craLeaderboard[0]?.total ?? 0
+        const fmtM = (v: number) =>
+          v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(1)}M` : `$${Math.round(v / 1000)}K`
+        return (
+        <div className="mt-12 pt-8" style={{ borderTop: `1px solid ${C.rule}` }}>
+          {/* Editorial header */}
+          <div className="flex items-baseline gap-3 mb-2">
+            <span className="serif font-medium" style={{ fontSize: 28, color: C.ochre, lineHeight: 1 }}>02</span>
+            <span className="smallcaps" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.1em' }}>Who's Getting the Money</span>
           </div>
+          <h2 className="serif font-medium leading-tight mb-3" style={{ fontSize: 30, letterSpacing: '-0.015em', color: C.ink, maxWidth: 700 }}>
+            The top developer received{' '}
+            <span style={{ color: C.brick }}>{fmtM(topTotal)}</span>{' '}
+            in city subsidies — and not all of them build affordable units.
+          </h2>
+          <p className="serif mb-6" style={{ fontSize: 16, lineHeight: 1.65, color: C.muted, maxWidth: 680 }}>
+            Developers ranked by total city subsidy value received — tax abatements, TIF grants, LEED
+            credits, and below-market land sales approved by city council. Corporate entities, nonprofits,
+            and land trusts use these subsidies very differently. The strategies inside these numbers differ.
+          </p>
+
+          {/* Table */}
           <div className="page-paper rounded-md overflow-hidden" style={{ border: `1px solid ${C.rule}` }}>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: C.limestone, borderBottom: `1px solid ${C.rule}` }}>
-                    <th className="text-left py-3 px-4 font-semibold" style={{ color: C.muted }}>Rank</th>
-                    <th className="text-left py-3 px-4 font-semibold" style={{ color: C.muted }}>Developer / Organization</th>
-                    <th className="text-right py-3 px-4 font-semibold" style={{ color: C.muted }}>Total Subsidy</th>
-                    <th className="text-center py-3 px-4 font-semibold" style={{ color: C.muted }}>Projects</th>
-                    <th className="text-left py-3 px-4 font-semibold hidden md:table-cell" style={{ color: C.muted }}>Neighborhoods</th>
+                  <tr style={{ borderBottom: `1px solid ${C.rule}` }}>
+                    <th className="text-left py-3 px-5" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.08em', fontWeight: 600, textTransform: 'uppercase' }}>Developer</th>
+                    <th className="text-left py-3 px-4" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.08em', fontWeight: 600, textTransform: 'uppercase' }}>Type</th>
+                    <th className="text-left py-3 px-4 hidden md:table-cell" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.08em', fontWeight: 600, textTransform: 'uppercase' }}>Neighborhoods</th>
+                    <th className="text-right py-3 px-4" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.08em', fontWeight: 600, textTransform: 'uppercase' }}>Projects</th>
+                    <th className="text-right py-3 px-5" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.08em', fontWeight: 600, textTransform: 'uppercase' }}>Total Subsidy</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {craLeaderboard.map((entry, i) => (
-                    <tr key={entry.name} style={{ borderBottom: `1px solid ${C.rule}`, background: i % 2 === 0 ? C.paper : C.limestone }}>
-                      <td className="py-2.5 px-4 font-medium" style={{ color: C.muted }}>#{i + 1}</td>
-                      <td className="py-2.5 px-4 font-semibold" style={{ color: C.ink }}>{entry.name}</td>
-                      <td className="py-2.5 px-4 text-right">
-                        <span
-                          className="font-bold"
-                          style={{
-                            color: entry.total >= 1_000_000 ? C.brick
-                              : entry.total >= 500_000 ? C.ochre
-                              : C.ink
-                          }}
-                        >
-                          ${entry.total >= 1_000_000
-                            ? `${(entry.total / 1_000_000).toFixed(2)}M`
-                            : `${Math.round(entry.total / 1000)}K`}
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-4 text-center" style={{ color: C.ink }}>{entry.projectCount}</td>
-                      <td className="py-2.5 px-4 text-xs hidden md:table-cell max-w-xs truncate" style={{ color: C.muted }} title={entry.neighborhoods}>
-                        {entry.neighborhoods || '—'}
-                      </td>
-                    </tr>
-                  ))}
+                  {craLeaderboard.map((entry) => {
+                    const orgType = inferOrgType(entry.name)
+                    const ts = ORG_TYPE_STYLE[orgType]
+                    const isHigh = entry.total >= 1_000_000
+                    return (
+                      <tr key={entry.name} style={{ borderBottom: `1px solid ${C.rule}` }}>
+                        <td className="py-3 px-5 font-semibold" style={{ color: C.ink }}>{entry.name}</td>
+                        <td className="py-3 px-4">
+                          <span
+                            className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+                            style={{ background: ts.bg, color: ts.color, border: `1px solid ${ts.border}` }}
+                          >{orgType}</span>
+                        </td>
+                        <td className="py-3 px-4 hidden md:table-cell text-xs max-w-xs truncate" style={{ color: C.muted }} title={entry.neighborhoods}>
+                          {entry.neighborhoods || '—'}
+                        </td>
+                        <td className="py-3 px-4 text-right" style={{ color: C.muted }}>{entry.projectCount}</td>
+                        <td className="py-3 px-5 text-right font-bold" style={{ color: isHigh ? C.brick : C.ink }}>
+                          {fmtM(entry.total)}
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
-            <div className="px-4 py-3" style={{ background: C.limestone, borderTop: `1px solid ${C.rule}` }}>
+            <div className="px-5 py-3" style={{ borderTop: `1px solid ${C.rule}` }}>
               <p className="text-xs" style={{ color: C.muted }}>
                 Source: Cincinnati Open Data — Commercial CRA Abatements (m76i-p5p9). Values are estimated program totals as reported at time of city council approval. Showing top 25 by reported subsidy value.
               </p>
             </div>
           </div>
         </div>
-      )}
+        )
+      })()}
 
       </>}
 

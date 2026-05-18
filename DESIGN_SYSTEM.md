@@ -3,6 +3,8 @@
 > The authoritative reference for visual design decisions.
 > Generated May 2026. Inspired by https://github.com/google-labs-code/design.md.
 > **Update this file when you change any token, component, or pattern.**
+>
+> For editorial voice, visualization philosophy, and the "why" behind these decisions, read `BRAND_BIBLE.md` first.
 
 ---
 

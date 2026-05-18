@@ -14,6 +14,7 @@ A React/TypeScript web application that aggregates public civic data for Cincinn
 
 - **Changelog (failures + decisions):** `CHANGELOG.md` — **read this first every session**
 - Progress log: `PROGRESS.md` — narrative session history; read after CHANGELOG
+- **Brand Bible:** `BRAND_BIBLE.md` — editorial voice, color semantics, visualization philosophy, and things to actively avoid. **Read before adding any new visualization or section.**
 - **Design system:** `DESIGN_SYSTEM.md` — color tokens, typography, components, migration checklist. Read before touching any tab's visuals.
 - All API calls: `src/utils/api.ts` — the heart of the app
 - TypeScript interfaces: `src/types/index.ts`
@@ -256,7 +257,7 @@ OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...
 
 34. ✅ **Neighborhoods tab — Map & Compare rework** — `src/tabs/Neighborhoods/index.tsx` sub-nav migrated to design system pattern (brick underline, C tokens). `src/tabs/NeighborhoodProfiles/index.tsx` gained Print Brief (`window.print()`) and Download Data (CSV export via Blob) buttons.
 
-35. ✅ **Housing Justice tab rework** — `src/tabs/Displacement/index.tsx` migrated to C tokens throughout: editorial serif headline, 4 phase-count stat cards (clickable filters), `MiniBar` uses inline style instead of Tailwind gradient classes, detail panel uses `smallcaps` section headers, "What you can do" section has phase-colored border.
+35. ✅ **Housing Justice tab rework** — `src/tabs/Displacement/index.tsx` migrated to C tokens throughout: editorial serif headline, 4 phase-count stat cards (clickable filters), detail panel uses `smallcaps` section headers, "What you can do" section has phase-colored border. **Scatter chart:** Replaced ranked list with `CityScatterChart` — all 52 neighborhoods as dots on X=pressure/Y=vulnerability axes, colored by phase, quadrant fills + dashed medians, labeled notable neighborhoods, hover for unlabeled names. At-risk sidebar shows top 8 active/vulnerable neighborhoods. Container is CSS grid `1fr 300px` (no maxWidth on SVG). Quadrant labels centered via `textAnchor="middle"`. Methodology collapsed behind "i Methodology" pill button. Phase legend removed (redundant with quadrant labels).
 
 36. ✅ **Lead Safety tab rework** — `src/tabs/LeadSafety/index.tsx` fully migrated: `riskStyle()`/`materialRisk()` return CSS objects (no Tailwind color classes), `UrgencyBanner` redesigned as editorial page-paper card with serif headline and limestone stat callouts, all cards use C tokens throughout.
 

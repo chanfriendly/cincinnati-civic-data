@@ -6,11 +6,11 @@
 
 ## Current Status
 
-**Phase:** Phase 7 — Public Health & Community Assets (UC Nursing use case)  
-**Last updated:** 2026-04-28  
-**Active focus:** Healthcare facilities, CDC PLACES health outcomes, community councils, voting precincts  
+**Phase:** Phase 8 — Design System Polish & UX Consistency  
+**Last updated:** 2026-05-17  
+**Active focus:** Complete — all Phase 8 tasks (32–36) done. Housing Justice scatter chart polished (Sessions 34–35).  
 **Live site:** https://cincinnati-civic-data.vercel.app  
-**TypeScript:** ✅ `tsc --noEmit` passing clean (0 errors) as of Session 29
+**TypeScript:** ✅ `tsc --noEmit` passing clean (0 errors) as of Session 35
 
 ---
 

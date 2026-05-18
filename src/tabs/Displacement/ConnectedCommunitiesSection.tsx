@@ -250,9 +250,70 @@ export default function ConnectedCommunitiesSection() {
     { id: 'byType',          label: 'By Permit Type' },
   ];
 
+  // ── Top 3 neighborhoods for editorial cards ────────────────────────────────────
+  const topThree = neighborhoodComparison.slice(0, 3)
+
   return (
+    <div>
+      {/* ── Editorial header ────────────────────────────────────────────────────── */}
+      {!loading && neighborhoodComparison.length > 0 && (
+        <div className="mb-10">
+          <div className="flex items-baseline gap-3 mb-2">
+            <span className="serif font-medium" style={{ fontSize: 28, color: C.ochre, lineHeight: 1 }}>03</span>
+            <span className="smallcaps" style={{ color: '#6b5f55', fontSize: 11, letterSpacing: '0.1em' }}>Connected Communities</span>
+          </div>
+          <h2 className="serif font-medium leading-tight mb-3" style={{ fontSize: 30, letterSpacing: '-0.015em', color: '#1a1410', maxWidth: 700 }}>
+            Cincinnati's zoning reform added{' '}
+            <span style={{ color: '#2f5d62' }}>{cityTotals.reformTotal.toLocaleString()} structural permits</span>{' '}
+            in Year 1. None of them require affordable units.
+          </h2>
+          <p className="serif mb-6" style={{ fontSize: 16, lineHeight: 1.65, color: '#6b5f55', maxWidth: 680 }}>
+            The Connected Communities ordinance allows denser housing across most of the city without
+            triggering affordable-housing requirements. The intent is supply. The risk for vulnerable
+            neighborhoods is that supply arrives without protection for current residents. The
+            neighborhoods with the most permit activity are shown below.
+          </p>
+
+          {/* Top 3 neighborhood cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+            {topThree.map(nbhd => {
+              const isUp = (nbhd.pct ?? 0) >= 0
+              const statusLabel = isUp ? 'Growing' : 'Declining'
+              const statusBg   = isUp ? '#ecefdf' : '#f5e8e1'
+              const statusColor= isUp ? '#5a7a3e' : '#b34728'
+              const statusBorder=isUp ? '#cfd9b2' : '#e6c5b2'
+              return (
+                <div
+                  key={nbhd.name}
+                  className="page-paper rounded-md p-4"
+                  style={{ border: '1px solid #e4ddd2' }}
+                >
+                  <span
+                    className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mb-3"
+                    style={{ background: statusBg, color: statusColor, border: `1px solid ${statusBorder}` }}
+                  >{statusLabel}</span>
+                  <div className="font-semibold leading-snug mb-1" style={{ fontSize: 16, color: '#1a1410' }}>{nbhd.name}</div>
+                  <div className="flex gap-5 mt-2">
+                    <div>
+                      <div className="font-bold" style={{ fontSize: 22, color: '#1a1410', lineHeight: 1 }}>{nbhd.reform.toLocaleString()}</div>
+                      <div style={{ fontSize: 11, color: '#6b5f55' }}>reform-year permits</div>
+                    </div>
+                    <div>
+                      <div className="font-bold" style={{ fontSize: 22, color: statusColor, lineHeight: 1 }}>
+                        {nbhd.pct !== null ? `${nbhd.pct > 0 ? '+' : ''}${nbhd.pct.toFixed(0)}%` : '—'}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#6b5f55' }}>vs. prior year</div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
     <DataCard
-      title="Connected Communities Zoning Reform"
+      title="Connected Communities — Detailed Tracker"
       loading={loading}
       error={error}
       empty={false}
@@ -503,5 +564,6 @@ export default function ConnectedCommunitiesSection() {
         <DataAttribution source="Building Permits" uid="uhjb-xac9" />
       </div>
     </DataCard>
+    </div>
   );
 }
