@@ -19,6 +19,7 @@ import { useState, useEffect } from 'react';
 import { fetchNeighborhoodHUDStats, stripNeighborhoodName } from '../../utils/api';
 import type { NeighborhoodHUDStats } from '../../types';
 import { DataCard, DataAttribution } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 
 interface Props {
   neighborhood: string; // Display name, e.g. "Over-the-Rhine"
@@ -55,13 +56,13 @@ function hudProgramLabel(code: string): { label: string; description: string } {
 // fuzzy checks like "section 8" and "public housing" actually fire.
 function programColor(code: string): string {
   const p = hudProgramLabel(code).label.toLowerCase();
-  if (p.includes('public housing')) return '#2f5d62';
-  if (p.includes('section 8'))      return '#C8861A';
-  if (p.includes('lihtc') || p.includes('tax credit')) return '#16a34a';
-  if (p.includes('202') || p.includes('elderly'))      return '#7c3aed';
-  if (p.includes('811') || p.includes('disab'))        return '#0e7490';
-  if (p.includes('rad'))            return '#be185d'; // RAD conversions — pink/rose
-  return '#6b7280';
+  if (p.includes('public housing')) return C.river;
+  if (p.includes('section 8'))      return C.ochre;
+  if (p.includes('lihtc') || p.includes('tax credit')) return C.hill;
+  if (p.includes('202') || p.includes('elderly'))      return C.riverDeep;
+  if (p.includes('811') || p.includes('disab'))        return C.brick;
+  if (p.includes('rad'))            return C.hillLight;
+  return C.muted;
 }
 
 // ── Sub-component: expiry alert ───────────────────────────────────────────────
@@ -69,7 +70,7 @@ function programColor(code: string): string {
 function ExpiryAlert({ properties }: { properties: NeighborhoodHUDStats['expiringProperties'] }) {
   if (!properties.length) return null;
   return (
-    <div className="rounded-lg p-3 mb-4 text-sm" style={{ background: '#f5e8e1', border: '1px solid #e6c5b2', color: '#b34728' }}>
+    <div className="rounded-md p-3 mb-4 text-sm" style={{ background: C.brickLight, border: `1px solid #e6c5b2`, color: C.brick }}>
       <div className="flex items-start gap-2">
         <span className="text-base mt-0.5 shrink-0">⚠</span>
         <div>

@@ -29,6 +29,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { stripNeighborhoodName } from '../../utils/api';
 import { DataCard, DataAttribution } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 
 interface Props {
   neighborhood: string;
@@ -173,9 +174,9 @@ function ratingColor(
   lowerIsBetter: boolean,
 ): { bg: string; text: string; label: string } {
   const diff = lowerIsBetter ? avg - value : value - avg;
-  if (diff > 3)  return { bg: '#dcfce7', text: '#15803d', label: 'Better than avg' };
-  if (diff < -3) return { bg: '#fee2e2', text: '#b91c1c', label: 'Worse than avg' };
-  return            { bg: '#f3f4f6', text: '#374151', label: 'Near avg' };
+  if (diff > 3)  return { bg: C.hillLight,  text: C.hill,  label: 'Better than avg' };
+  if (diff < -3) return { bg: C.brickLight, text: C.brick, label: 'Worse than avg' };
+  return            { bg: C.limestone,    text: C.ink,   label: 'Near avg' };
 }
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
@@ -227,7 +228,7 @@ function MetricRow({
           )}
         </div>
       </div>
-      <div className="relative h-2 rounded-full overflow-visible mt-1" style={{ background: '#f6f1ea' }}>
+      <div className="relative h-2 rounded-full overflow-visible mt-1" style={{ background: C.limestone }}>
         <div
           className="absolute left-0 top-0 h-2 rounded-full"
           style={{
@@ -235,15 +236,15 @@ function MetricRow({
             backgroundColor:
               avg !== null
                 ? lowerIsBetter
-                  ? value > avg + 3 ? '#fca5a5' : value < avg - 3 ? '#86efac' : '#93c5fd'
-                  : value < avg - 3 ? '#fca5a5' : value > avg + 3 ? '#86efac' : '#93c5fd'
-                : '#93c5fd',
+                  ? value > avg + 3 ? C.brick : value < avg - 3 ? C.hill : C.river
+                  : value < avg - 3 ? C.brick : value > avg + 3 ? C.hill : C.river
+                : C.river,
           }}
         />
         {avgWidth !== null && (
           <div
-            className="absolute top-[-2px] w-0.5 h-3 bg-gray-500 rounded-full"
-            style={{ left: `${avgWidth}%` }}
+            className="absolute top-[-2px] w-0.5 h-3 rounded-full"
+            style={{ left: `${avgWidth}%`, background: C.muted }}
             title={`City avg: ${avg?.toFixed(1)}%`}
           />
         )}
@@ -572,32 +573,33 @@ export default function SeniorHealthSection({ neighborhood }: Props) {
           {selectedScore !== null && (
             <div>
               <SectionHeader label="Senior Vulnerability Score" />
-              <div className="rounded-lg p-4" style={{ background: '#f6f1ea' }}>
+              <div className="rounded-md p-4" style={{ background: C.limestone }}>
                 <div className="flex items-center gap-4 mb-3">
                   <div className="text-center">
                     <div
-                      className="text-3xl font-bold"
+                      className="serif font-medium leading-none tnum"
                       style={{
+                        fontSize: 36,
                         color:
-                          selectedScore >= 70 ? '#b91c1c' :
-                          selectedScore >= 50 ? '#d97706' :
-                          '#15803d',
+                          selectedScore >= 70 ? C.brick :
+                          selectedScore >= 50 ? C.ochre :
+                          C.hill,
                       }}
                     >
                       {selectedScore}
                     </div>
-                    <div className="text-[10px] uppercase tracking-wide" style={{ color: '#6b5f55' }}>/ 100</div>
+                    <div className="text-[10px] uppercase tracking-wide" style={{ color: C.muted }}>/ 100</div>
                   </div>
                   <div className="flex-1">
-                    <div className="h-3 rounded-full overflow-hidden" style={{ background: '#e4ddd2' }}>
+                    <div className="h-2 rounded-full overflow-hidden" style={{ background: C.rule }}>
                       <div
-                        className="h-3 rounded-full transition-all"
+                        className="h-2 rounded-full transition-all"
                         style={{
                           width: `${selectedScore}%`,
                           backgroundColor:
-                            selectedScore >= 70 ? '#ef4444' :
-                            selectedScore >= 50 ? '#f59e0b' :
-                            '#22c55e',
+                            selectedScore >= 70 ? C.brick :
+                            selectedScore >= 50 ? C.ochre :
+                            C.hill,
                         }}
                       />
                     </div>

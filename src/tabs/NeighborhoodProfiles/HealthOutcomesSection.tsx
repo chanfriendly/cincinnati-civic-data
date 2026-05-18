@@ -19,6 +19,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { stripNeighborhoodName } from '../../utils/api';
 import { DataCard, DataAttribution } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 
 interface Props {
   neighborhood: string; // Display name, e.g. "Avondale"
@@ -94,9 +95,9 @@ function ratingColor(
     ? cityAvg - value  // positive means neighborhood is better
     : value - cityAvg; // positive means neighborhood is better
 
-  if (diff > 3)  return { bg: '#dcfce7', text: '#15803d', label: 'Better than avg' };
-  if (diff < -3) return { bg: '#fee2e2', text: '#b91c1c', label: 'Worse than avg'  };
-  return           { bg: '#f3f4f6', text: '#374151', label: 'Near city average'  };
+  if (diff > 3)  return { bg: C.hillLight,  text: C.hill,  label: 'Better than avg' };
+  if (diff < -3) return { bg: C.brickLight, text: C.brick, label: 'Worse than avg'  };
+  return           { bg: C.limestone,    text: C.ink,   label: 'Near city average'  };
 }
 
 // Horizontal mini-bar component
@@ -105,22 +106,22 @@ function MiniBar({ value, cityAvg, lowerIsBetter }: { value: number; cityAvg: nu
   const barWidth = Math.min(value, 100);
   const avgWidth = cityAvg !== null ? Math.min(cityAvg, 100) : null;
   return (
-    <div className="relative h-2 rounded-full overflow-visible mt-1" style={{ background: '#f6f1ea' }}>
+    <div className="relative h-2 rounded-full overflow-visible mt-1" style={{ background: C.limestone }}>
       <div
         className="absolute left-0 top-0 h-2 rounded-full"
         style={{
           width: `${barWidth}%`,
           backgroundColor: cityAvg !== null
             ? (lowerIsBetter
-                ? (value > cityAvg + 3 ? '#fca5a5' : value < cityAvg - 3 ? '#86efac' : '#93c5fd')
-                : (value < cityAvg - 3 ? '#fca5a5' : value > cityAvg + 3 ? '#86efac' : '#93c5fd'))
-            : '#93c5fd',
+                ? (value > cityAvg + 3 ? C.brick : value < cityAvg - 3 ? C.hill : C.river)
+                : (value < cityAvg - 3 ? C.brick : value > cityAvg + 3 ? C.hill : C.river))
+            : C.river,
         }}
       />
       {avgWidth !== null && (
         <div
-          className="absolute top-[-2px] w-0.5 h-3 bg-gray-500 rounded-full"
-          style={{ left: `${avgWidth}%` }}
+          className="absolute top-[-2px] w-0.5 h-3 rounded-full"
+          style={{ left: `${avgWidth}%`, background: C.muted }}
           title={`City average: ${cityAvg?.toFixed(1)}%`}
         />
       )}

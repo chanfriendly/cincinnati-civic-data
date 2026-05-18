@@ -13,6 +13,7 @@
 import { useMemo } from 'react';
 import { useSODA } from '../../hooks/useSODA';
 import { DataCard, DataAttribution, EmptyState } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 
 interface Props {
   nbhSoQL: string;
@@ -163,7 +164,7 @@ export default function CityServicesSection({ nbhSoQL, startDate, endDate }: Pro
               <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#6b5f55' }}>
                 Top request types
               </div>
-              <HBarList items={requests311ByType.slice(0, 6)} color="#6366F1" />
+              <HBarList items={requests311ByType.slice(0, 6)} color={C.river} />
             </>
           ) : (
             <EmptyState message="No service requests found" />

@@ -729,7 +729,7 @@ function AddressSearchCard() {
           </div>
         ) : (
           <div className="space-y-3">
-            <p className="text-xs text-gray-500">
+            <p className="text-[11px]" style={{ color: C.muted }}>
               {results.length} result{results.length !== 1 ? 's' : ''} from the GCWW replacement program
             </p>
             {results.map((r, i) => {

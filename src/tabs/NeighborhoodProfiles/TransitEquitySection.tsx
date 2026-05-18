@@ -20,6 +20,7 @@ import {
 } from 'recharts';
 import { stripNeighborhoodName } from '../../utils/api';
 import { DataCard, DataAttribution } from '../../components/ui';
+import { C } from '../../components/ui/DesignAtoms';
 
 interface Props {
   neighborhood: string; // Display name, e.g. "Over-the-Rhine"
@@ -40,7 +41,7 @@ function equityLabel(
   medianStops: number,
   medianIncomeAll: number
 ): { label: string; color: string; description: string } {
-  if (medianIncome === null) return { label: 'Incomplete data', color: '#6b7280', description: '' };
+  if (medianIncome === null) return { label: 'Incomplete data', color: C.muted, description: '' };
 
   const highTransit = stopCount >= medianStops;
   const highIncome  = medianIncome >= medianIncomeAll;
@@ -48,7 +49,7 @@ function equityLabel(
   if (highTransit && !highIncome) {
     return {
       label: 'Transit-rich, lower-income',
-      color: '#16a34a',
+      color: C.hill,
       description:
         'This neighborhood has above-median transit access despite below-median income — a positive equity signal.',
     };
@@ -56,7 +57,7 @@ function equityLabel(
   if (!highTransit && !highIncome) {
     return {
       label: 'Transit gap — lower-income',
-      color: '#dc2626',
+      color: C.brick,
       description:
         'Below-median transit access AND below-median income. Residents here may have limited transportation options without a car.',
     };
@@ -64,7 +65,7 @@ function equityLabel(
   if (highTransit && highIncome) {
     return {
       label: 'Transit-rich, higher-income',
-      color: '#2f5d62',
+      color: C.river,
       description:
         'Above-median transit access in a higher-income area. Well-served neighborhood.',
     };
@@ -72,7 +73,7 @@ function equityLabel(
   // !highTransit && highIncome
   return {
     label: 'Car-dependent, higher-income',
-    color: '#C8861A',
+    color: C.ochre,
     description:
       'Below-median transit access, but higher income may make car ownership more accessible for residents.',
   };
@@ -83,11 +84,11 @@ function CustomTooltip({ active, payload }: any) {
   if (!active || !payload?.[0]) return null;
   const d: TransitEquityRecord = payload[0].payload;
   return (
-    <div className="rounded-lg p-2.5 text-xs" style={{ background: '#fbf8f3', border: '1px solid #e4ddd2' }}>
-      <p className="font-semibold mb-0.5" style={{ color: '#1a1410' }}>{d.name}</p>
-      <p style={{ color: '#6b5f55' }}>{d.stopCount} stops within 0.4 mi</p>
+    <div className="rounded-md p-2.5 text-xs" style={{ background: C.paper, border: `1px solid ${C.rule}` }}>
+      <p className="font-semibold mb-0.5" style={{ color: C.ink }}>{d.name}</p>
+      <p style={{ color: C.muted }}>{d.stopCount} stops within 0.4 mi</p>
       {d.medianIncome !== null && (
-        <p style={{ color: '#6b5f55' }}>Median income: ${d.medianIncome.toLocaleString()}</p>
+        <p style={{ color: C.muted }}>Median income: ${d.medianIncome.toLocaleString()}</p>
       )}
     </div>
   );
@@ -216,14 +217,14 @@ export default function TransitEquitySection({ neighborhood }: Props) {
           <div className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: '#6b5f55' }}>
             All neighborhoods — transit access vs. income
           </div>
-          <p className="text-[10px] mb-3" style={{ color: '#6b5f55' }}>
+          <p className="text-[10px] mb-3" style={{ color: C.muted }}>
             Each dot is one of Cincinnati's 50 neighborhoods.
-            {selected && ' Your neighborhood is highlighted in amber.'}
+            {selected && ' Your neighborhood is highlighted.'}
             Reference lines show city medians.
           </p>
           <ResponsiveContainer width="100%" height={240}>
             <ScatterChart margin={{ top: 8, right: 12, bottom: 24, left: 8 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke={C.rule} />
               <XAxis
                 dataKey="medianIncome"
                 type="number"
@@ -231,26 +232,26 @@ export default function TransitEquitySection({ neighborhood }: Props) {
                 domain={['auto', 'auto']}
                 tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
                 tick={{ fontSize: 10 }}
-                label={{ value: 'Median Household Income', position: 'insideBottom', offset: -14, fontSize: 10, fill: '#9ca3af' }}
+                label={{ value: 'Median Household Income', position: 'insideBottom', offset: -14, fontSize: 10, fill: C.muted }}
               />
               <YAxis
                 dataKey="stopCount"
                 type="number"
                 name="Bus Stops"
                 tick={{ fontSize: 10 }}
-                label={{ value: 'Bus stops (0.4 mi)', angle: -90, position: 'insideLeft', offset: 10, fontSize: 10, fill: '#9ca3af' }}
+                label={{ value: 'Bus stops (0.4 mi)', angle: -90, position: 'insideLeft', offset: 10, fontSize: 10, fill: C.muted }}
               />
               <Tooltip content={<CustomTooltip />} />
               {/* Median reference lines */}
-              <ReferenceLine x={medianIncomeAll} stroke="#d1d5db" strokeDasharray="4 4" />
-              <ReferenceLine y={medianStops} stroke="#d1d5db" strokeDasharray="4 4" />
+              <ReferenceLine x={medianIncomeAll} stroke={C.rule} strokeDasharray="4 4" />
+              <ReferenceLine y={medianStops} stroke={C.rule} strokeDasharray="4 4" />
               <Scatter data={scatterData} isAnimationActive={false}>
                 {scatterData.map((entry, index) => {
                   const isSelected = stripNeighborhoodName(entry.name) === key;
                   return (
                     <Cell
                       key={index}
-                      fill={isSelected ? '#c8861a' : '#a8c8c8'}
+                      fill={isSelected ? C.ochre : C.riverLight}
                       stroke={isSelected ? '#92400e' : '#2f5d62'}
                       strokeWidth={isSelected ? 2 : 1}
                       r={isSelected ? 7 : 4}
