@@ -13,3 +13,9 @@ Thumbs.db
 worker/.wrangler/
 .vercel
 dist-test/
+
+# Vite build artifacts (regenerated on every dev server start)
+vite.config.ts.timestamp-*.mjs
+
+# Intermediate script outputs (downloaded CSVs, cached API responses)
+scripts/data/

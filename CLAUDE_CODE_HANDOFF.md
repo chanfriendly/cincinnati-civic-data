@@ -1,9 +1,12 @@
 # Cincinnati Civic Platform — Claude Code Handoff
 
-**Last updated:** March 2026
+> ⚠️ **STALE DOCUMENT — Last updated March 2026.** The app has gone through two major phases of work since this was written (Phases 7–8). Tab structure, component paths, and feature status below may be inaccurate.
+> **For current state:** read `PROGRESS.md` (session-by-session log) and `CLAUDE.md` (authoritative architecture reference).
+
+**Last updated:** March 2026 (stale — see note above)
 **Stack:** Vite + React 18 + TypeScript + Tailwind CSS + Leaflet + Recharts
 **Dev server:** `npm run dev` → http://localhost:5173
-**Deploy target:** Cloudflare Pages + Workers (see `worker/api-proxy.js`)
+**Deploy target:** Vercel (primary); Cloudflare Worker in `worker/` is optional/dormant
 
 ---
 

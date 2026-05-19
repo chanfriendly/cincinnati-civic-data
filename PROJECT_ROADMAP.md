@@ -31,8 +31,8 @@ Make Cincinnati's public data accessible, honest, and useful to the people who n
 | Neighborhood Profiles | ✅ Mostly working | Per-neighborhood Census data, dynamic dropdown, 311 live |
 | Police Accountability | ✅ Working | Charts + AI Q&A; crime map removed per platform principles |
 | Neighborhood Explorer | ✅ Mostly working | EJ dimension added; parks pre-computed (49 neighborhoods) |
-| Displacement (Housing Justice) | ⚠️ Partial | Pressure index live; eviction/LLC data seeking partner |
-| Owner Watch | ✅ Working | Permit + CRA search live |
+| Displacement (Housing Justice) | ✅ Working | Pressure scatter chart, zoning reform tracker, permit trends live |
+| Owner Watch | 🔄 Built, not in nav | Component complete (`src/tabs/OwnerActivity/`); not yet wired to TabNav |
 | Lead Safety | ✅ Working | GCWW replacement program data (71 neighborhoods, 1,142 lead lines) |
 | Accessibility | ✅ Working | 47 neighborhoods with disability data |
 | Roadmap | ✅ Working | Reflects completed work and live platform principles |

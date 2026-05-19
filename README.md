@@ -15,16 +15,18 @@ The platform serves community organizers, researchers, residents, journalists, a
 
 ## Tab-by-Tab Overview
 
-| Tab | Status | Purpose | Primary Data Sources |
-|-----|--------|---------|----------------------|
-| **Address Lookup** | ✅ Working | Search any Cincinnati address to see nearby crime, zoning, flood zone, historic district, parks, transit stops, schools, and live traffic — plus an AI-generated summary | Socrata (crime, inspections, abatements, blight), Hamilton County CAGIS (zoning/parks/historic), FEMA NFHL (flood), OHGO (traffic), SORTA (transit), static schools JSON, OpenRouter AI |
-| **Neighborhood Profiles** | ✅ Working | Select a neighborhood to view crime trends, 311 service requests, building permits, property inspections, blight, Census demographics, racial equity metrics, mortgage lending by race, affordable housing inventory, transit equity, and food safety | Socrata (crime, permits, inspections, blight, 311, fire/EMS, food safety), U.S. Census ACS, CFPB HMDA (2022), HUD, SORTA GTFS |
-| **Police Accountability** | ✅ Working | Explore CPD traffic stops, pedestrian stops, use-of-force incidents, and officer-involved shootings — broken down by race, district, and year — with an AI Q&A interface | Socrata (CPD datasets), OpenRouter AI |
-| **Neighborhood Explorer** | ✅ Working | Choropleth map ranking all 52 Cincinnati neighborhoods across 9 scored dimensions (affordability, income, safety, transit, investment, blight, parks, flood risk, food access, air quality) with a side-by-side comparison tool | Socrata, Census ACS, CAGIS, FEMA NFHL, SORTA GTFS, USDA FARA, EPA AirToxScreen |
-| **Displacement Risk** | ✅ Working | Track displacement pressure, zoning reform activity (Connected Communities), permit trends, and demolitions across neighborhoods | Socrata (permits, abatements, PLAP, demolitions), Census ACS |
-| **Lead Safety** | ✅ Working | Neighborhood-level lead service line inventory, risk ratings, address lookup, and resident guidance | Cincinnati Health Dept. lead service line data |
-| **Owner Activity** | 🔄 Stub | Landlord/developer search — not yet implemented | — |
-| **Roadmap** | ✅ Working | Public roadmap of planned features and known limitations | Static |
+| # | Tab | Status | Purpose | Primary Data Sources |
+|---|-----|--------|---------|----------------------|
+| 01 | **Address Lookup** | ✅ Working | Search any Cincinnati address to see nearby crime, zoning, flood zone, historic district, parks, transit stops, schools, and live traffic — plus an AI-generated summary | Socrata (crime, inspections, abatements, blight), Hamilton County CAGIS (zoning/parks/historic), FEMA NFHL (flood), OHGO (traffic), SORTA (transit), static schools JSON, OpenRouter AI |
+| 02 | **Neighborhoods** | ✅ Working | Two sub-views via internal nav: **Profiles** (per-neighborhood crime, 311, permits, Census demographics, racial equity, affordable housing, health outcomes, transit equity) and **Map & Compare** (choropleth map ranking all 52 neighborhoods across 9 scored dimensions with a side-by-side comparison tool) | Socrata, U.S. Census ACS, CFPB HMDA, HUD, CAGIS, FEMA NFHL, SORTA GTFS, CDC PLACES, USDA FARA, EPA AirToxScreen |
+| 03 | **Housing Justice** | ✅ Working | Displacement pressure phases across all 52 neighborhoods (scatter chart), zoning reform tracker (Connected Communities YoY), permit trend analysis | Socrata (permits, abatements, PLAP, demolitions), Census ACS |
+| 04 | **Lead Safety** | ✅ Working | Neighborhood-level lead service line inventory, risk ratings, address lookup, and resident guidance | Cincinnati Health Dept. lead service line data |
+| 05 | **Police** | ✅ Working | Explore CPD traffic stops, pedestrian stops, use-of-force incidents, and officer-involved shootings — broken down by race, district, and year — with an AI Q&A interface | Socrata (CPD datasets), OpenRouter AI |
+| 06 | **Explorer** | ✅ Working | Disability prevalence, paratransit coverage, and infrastructure accessibility by neighborhood | Census ACS (disability), SORTA GTFS (paratransit) |
+| 07 | **Tax & Revenue** | ✅ Working | Municipal income tax rate history, ACS household income percentiles (2012–2023), ITEP Ohio modeled tax burden by income group, City general fund revenue and vendor spend by category | Census ACS, ITEP Who Pays?, Socrata (city finance datasets) |
+| 08 | **Methodology & Limits** | ✅ Working | Two sub-views: **Limitations** (boundary ambiguity, data vintages, AI disclosures, known gaps, contribution form) and **Roadmap** (public feature roadmap) | Static |
+
+> **Note on sub-navigation:** Tabs 02 and 08 contain internal sub-navs — clicking the top-level tab opens the default sub-view. The sub-nav pills appear below the main tab bar.
 
 ---
 
@@ -168,14 +170,27 @@ Several data sources are expensive to query at runtime and are instead pre-compu
 | File | Source | Script | Notes |
 |------|--------|--------|-------|
 | `public/data/neighborhood_acs.json` | U.S. Census ACS 2022 | Requires `CENSUS_API_KEY` | 226 Hamilton County tracts, population-weighted to neighborhoods |
+| `public/data/neighborhood_demographics.json` | Census ACS | `scripts/build_demographics.py` | Age, language, education, household type, broadband by neighborhood |
+| `public/data/neighborhood_disability.json` | Census ACS | `scripts/build_disability.py` | Disability prevalence by type, per neighborhood |
+| `public/data/neighborhood_racial_equity.json` | Census ACS + CFPB HMDA | `scripts/build_racial_equity.py` | Income/poverty/homeownership by race + mortgage approval rates |
 | `public/data/neighborhood_hmda.json` | CFPB HMDA 2022 | `scripts/build_hmda.py` | Mortgage approval rates by race, per neighborhood |
+| `public/data/neighborhood_health_outcomes.json` | CDC PLACES | `scripts/build_health_outcomes.py` | 24 health measures (diabetes, obesity, hypertension, sleep, disability, etc.) per neighborhood |
+| `public/data/neighborhood_life_expectancy.json` | CDC USALEEP | `scripts/build_life_expectancy.py` | Life expectancy at birth by neighborhood |
 | `public/data/hud_affordable_housing.json` | HUD Subsidized Housing | `scripts/build_hud.py` | 28 neighborhoods, 114 properties, 8,191 assisted units |
-| `public/data/neighborhood_ejscreen.json` | EPA AirToxScreen 2019 | — | Pre-built; EJScreen API has been offline since Feb 2025 |
+| `public/data/neighborhood_ejscreen.json` | EPA AirToxScreen 2019 | `scripts/build_ejscreen.py` | Pre-built; EJScreen API has been offline since Feb 2025 |
 | `public/data/cagis_neighborhood_parks.json` | Hamilton County CAGIS | `scripts/build_parks.py` | 49 neighborhoods; replaces 52 live CAGIS calls at load time |
 | `public/data/neighborhood_transit_equity.json` | SORTA GTFS + Census ACS | — | 50 neighborhoods; stop count + income for transit equity scatter chart |
 | `public/data/sorta_stops.json` | SORTA GTFS | `scripts/convert-gtfs.js` | 3,743 bus stops; see note below |
 | `public/data/schools.json` | Hamilton County CAGIS layer 32 | — | 309 schools; used for Address Lookup "Nearby Schools" card |
-| `public/data/lead_service_lines.json` | Cincinnati Health Dept. | — | Lead service line inventory by neighborhood |
+| `public/data/healthcare_facilities.json` | OpenStreetMap Overpass | `scripts/build_healthcare_facilities.py` | 458 facilities; used for Address Lookup "Nearby Healthcare" card |
+| `public/data/lead_service_lines.json` | Cincinnati Health Dept. | `scripts/build_lead.py` | Lead service line inventory by neighborhood |
+| `public/data/community_councils.json` | Manually curated | — | 52 neighborhood council entries |
+| `public/data/recreation_centers.json` | OSM Nominatim | — | 24 Cincinnati Recreation Commission centers |
+| `public/data/cincinnati_income_percentiles.json` | Census ACS B19080 | `scripts/build_income_percentiles.py` | Household income percentiles (p20–p95) for Cincinnati, 2012–2023 |
+| `public/data/cincinnati_tax_rate_history.json` | City Finance Dept. | — | Municipal income tax rate history (verified rates only) |
+| `public/data/itep_ohio_incidence.json` | ITEP Who Pays? 7th ed. | — | Ohio state+local effective tax burden by income group (modeled) |
+| `public/data/cincinnati_council.json` | Manually curated | — | Cincinnati City Council member data |
+| `public/data/cincinnati_orgs.json` | Manually curated | — | Civic organization directory |
 
 ### Updating SORTA transit data
 

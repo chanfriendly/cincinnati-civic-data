@@ -30,15 +30,16 @@ review — a printed publication that happens to be on the web. Numbers
 appear inside sentences, not inside cards. Charts illustrate a claim,
 not the other way around.
 
-Pages we have so far:
+Live tabs (as of May 2026):
 
-1. **Address** — single-address lookup (zoning, inspections, voting precinct, transit, schools).
-2. **Neighborhoods** — long-form neighborhood profile (Avondale as the test subject).
-3. **Displacement** — citywide map of risk phases + landlord concentrations.
-4. **Lead Safety** — service-line composition by neighborhood + replacement trend.
-5. **Police** — traffic stops, use of force, OIS, with sub-tabs.
-6. **Accessibility** — disability prevalence + paratransit coverage.
-7. **Tax & Revenue** — effective tax rate by income, revenue/spend breakdowns.
+1. **Address Lookup** — single-address lookup (zoning, inspections, voting precinct, transit, schools, AI summary).
+2. **Neighborhoods** — two sub-views: Profiles (per-neighborhood deep-dive) and Map & Compare (choropleth + scoring across all 52 neighborhoods).
+3. **Housing Justice** — citywide displacement pressure scatter chart + zoning reform tracker (Connected Communities).
+4. **Lead Safety** — service-line inventory by neighborhood, risk ratings, address lookup.
+5. **Police** — traffic stops, use of force, OIS, with sub-tabs and AI Q&A.
+6. **Explorer** — disability prevalence and paratransit coverage by neighborhood.
+7. **Tax & Revenue** — income tax rate history, household income percentiles, modeled tax burden, city revenue/spend.
+8. **Methodology & Limits** — two sub-views: Limitations (methodology, disclosures, contribution form) and Roadmap.
 
 Keep the count to roughly this. We want **fewer, deeper** screens, not
 a navigation tree.

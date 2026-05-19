@@ -491,6 +491,7 @@ When migrating an existing tab to the design system, work through this list:
 | `tailwind.config.ts` | Tailwind theme extension — color tokens as utility classes |
 | `src/tabs/PoliceAccountability/index.tsx` | **Reference tab** — fully migrated, canonical patterns |
 | `src/tabs/TaxRevenue/index.tsx` | **Reference tab** — canonical "Measured vs Modeled" disclosure |
+| `src/tabs/LeadSafety/index.tsx` | **Reference tab** — newest full migration (Session 36); canonical `riskStyle()`/`materialRisk()` CSS-object pattern, `UrgencyBanner` editorial card |
 
 ---
 

@@ -59,17 +59,18 @@ These guide every feature decision. When evaluating new work, run it through the
 
 ### The Tabs
 
-| Tab | Path | Status | Description |
-|-----|------|--------|-------------|
-| Address Lookup | `src/tabs/AddressLookup/` | Working | Geocode an address; show crime, zoning, flood zone, parks, transit, live traffic, AI summary |
-| Neighborhood Profiles | `src/tabs/NeighborhoodProfiles/` | Partial | Pick a neighborhood; show crime trends, permits, inspections, blight, survey, income |
-| Police Accountability | `src/tabs/PoliceAccountability/` | Working | CPD traffic/pedestrian stops, use-of-force, OIS — charts by race/district + AI Q&A |
-| Neighborhood Explorer | `src/tabs/NeighborhoodExplorer/` | Mostly working | Choropleth map ranking all 52 neighborhoods across 9 scored dimensions |
-| Displacement | `src/tabs/Displacement/` | Partial | Zoning Reform Tracker live; wider displacement features in progress |
-| Owner Activity | `src/tabs/OwnerActivity/` | Working | Advocate/organizer view: address-first lookup → permit-filer portfolio pivot |
-| Tax & Revenue | `src/tabs/TaxRevenue/` | Working | Cincinnati income-tax rate history, ACS household-income percentiles, ITEP Ohio modeled tax burden, City general fund revenue by source. Uses **Measured vs Modeled** badges to distinguish primary-source facts from modeled estimates |
-| Limitations | `src/tabs/Limitations/` | Working | Public methodology + limitations page: neighborhood boundary ambiguity (SNA vs Community Council), data vintages, AI disclosures, known gaps. Cross-linked from every tab that surfaces modeled or imputed data |
-| Roadmap | `src/tabs/Roadmap/` | Working | Static public roadmap |
+| # | Nav Label | Tab ID | Path | Status | Description |
+|---|-----------|--------|------|--------|-------------|
+| 01 | Address Lookup | `address` | `src/tabs/AddressLookup/` | ✅ Working | Geocode an address; show crime, zoning, flood zone, parks, transit, live traffic, AI summary |
+| 02 | Neighborhoods | `neighborhoods` | `src/tabs/Neighborhoods/` | ✅ Working | Container with internal sub-nav: **Profiles** (per-neighborhood data) and **Map & Compare** (choropleth + scoring via `src/tabs/NeighborhoodExplorer/`) |
+| 03 | Housing Justice | `displacement` | `src/tabs/Displacement/` | ✅ Working | Displacement pressure scatter chart, zoning reform tracker (Connected Communities YoY), permit trends |
+| 04 | Lead Safety | `lead` | `src/tabs/LeadSafety/` | ✅ Working | Neighborhood lead service line inventory, risk ratings, address lookup, resident guidance |
+| 05 | Police | `police` | `src/tabs/PoliceAccountability/` | ✅ Working | CPD traffic/pedestrian stops, use-of-force, OIS — charts by race/district + AI Q&A |
+| 06 | Explorer | `accessibility` | `src/tabs/Accessibility/` | ✅ Working | Disability prevalence, paratransit coverage, and infrastructure accessibility by neighborhood |
+| 07 | Tax & Revenue | `tax` | `src/tabs/TaxRevenue/` | ✅ Working | Municipal income tax rate history, ACS household income percentiles, ITEP Ohio modeled tax burden, City general fund revenue and vendor spend. Uses **Measured vs Modeled** badges |
+| 08 | Methodology & Limits | `about` | `src/tabs/About/` | ✅ Working | Container with internal sub-nav: **Limitations** (`src/tabs/Limitations/`) and **Roadmap** (`src/tabs/Roadmap/`) |
+
+> **Not yet in nav (built but unconnected):** `src/tabs/OwnerActivity/` — 855-line production-ready tab for address/owner/LLC research. Activate by adding to `TabNav.tsx` + `App.tsx`.
 
 ### Key Files
 
@@ -225,6 +226,12 @@ OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...
 | `VITE_OHGO_API_KEY` | `.env.local` | Ohio ODOT traffic API |
 | `OPENROUTER_API_KEY` | `.env.local` (non-VITE) | Injected server-side — NEVER in browser bundle |
 | `CENSUS_API_KEY` | `.env.local` (non-VITE) | Injected server-side — only needed to regenerate `neighborhood_acs.json` |
+
+## Vercel Routing
+
+`vercel.json` routes all `/api/:path*` requests to the single serverless function at `api/proxy.js`, which dispatches internally by pathname prefix (`/api/openrouter/*`, `/api/census/*`, `/api/ohgo/*`). This is intentional — there is only one function. If you ever add a second serverless function (e.g. `api/webhooks.js`), add its specific route **before** the wildcard rewrite or it will be swallowed by `api/proxy.js`.
+
+The `worker/` directory contains a complete **Cloudflare Worker** alternative to `api/proxy.js`. It is not currently deployed. See `worker/README.md` for setup instructions if you ever want to migrate to Cloudflare for cost or latency reasons.
 
 ## Recommended Next Steps (Priority Order)
 
