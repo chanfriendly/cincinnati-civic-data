@@ -865,7 +865,7 @@ export default function NeighborhoodExplorer() {
         </div>
 
         {isLoading && (
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs mt-2" style={{ color: C.muted }}>
             {t('explorer.loading', 'Loading data from multiple sources...')}
           </p>
         )}
@@ -910,13 +910,13 @@ export default function NeighborhoodExplorer() {
           {/* Map — fixed height so TopNeighborhoods always has space below */}
           <div className="h-[500px]">
             {!anyDimensionEnabled ? (
-              <div className="w-full h-full bg-white rounded-lg shadow-md flex items-center justify-center">
+              <div className="w-full h-full rounded-md shadow-md flex items-center justify-center" style={{ background: C.paper }}>
                 <div className="text-center max-w-sm">
                   <div className="text-5xl mb-4">📍</div>
-                  <p className="text-gray-600 mb-2">
+                  <p className="mb-2" style={{ color: C.ink }}>
                     {t('explorer.noEnabled', 'No dimensions enabled')}
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm" style={{ color: C.muted }}>
                     {t('explorer.enableToStart', 'Enable at least one dimension in the left panel to see neighborhood scores and the map.')}
                   </p>
                 </div>
@@ -958,12 +958,12 @@ export default function NeighborhoodExplorer() {
 
       {/* Desktop detail panel (hidden on mobile) */}
       {selectedScore && (
-        <div className="hidden lg:block fixed right-6 bottom-6 w-96 bg-white rounded-lg shadow-lg p-6 max-h-96 overflow-y-auto">
+        <div className="hidden lg:block fixed right-6 bottom-6 w-96 rounded-md shadow-lg p-6 max-h-96 overflow-y-auto" style={{ background: C.paper }}>
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold" style={{ color: C.riverDeep }}>{selectedScore.name}</h3>
             <button
               onClick={() => setSelectedNeighborhood(null)}
-              className="text-gray-400 hover:text-gray-600"
+              style={{ color: C.muted }}
             >
               ✕
             </button>

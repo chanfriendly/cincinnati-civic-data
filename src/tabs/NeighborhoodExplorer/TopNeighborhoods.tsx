@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { callClaude } from '../../utils/api';
 import type { NeighborhoodScore, Dimension } from '../../types';
+import { C } from '../../components/ui/DesignAtoms';
 
 interface TopNeighborhoodsProps {
   scores: NeighborhoodScore[];
@@ -110,11 +111,11 @@ export default function TopNeighborhoods({
 
   if (!anyDimensionEnabled) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-bold text-civic-blue mb-4">
+      <div className="rounded-md shadow-md p-6">
+        <h3 className="text-lg font-bold mb-4" style={{ color: C.riverDeep }}>
           {t('explorer.topNeighborhoods.title', 'Top Neighborhoods')}
         </h3>
-        <p className="text-gray-600 text-sm">
+        <p className="text-sm" style={{ color: C.muted }}>
           {t('explorer.topNeighborhoods.enableDimensions', 'Enable at least one dimension to see results')}
         </p>
       </div>
@@ -122,8 +123,8 @@ export default function TopNeighborhoods({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-bold text-civic-blue mb-4">
+    <div className="rounded-md shadow-md p-6">
+      <h3 className="text-lg font-bold mb-4" style={{ color: C.riverDeep }}>
         {t('explorer.topNeighborhoods.title', 'Top Neighborhoods')}
       </h3>
 
@@ -132,37 +133,38 @@ export default function TopNeighborhoods({
           <button
             key={score.name}
             onClick={() => onSelect(score.name)}
-            className={`w-full text-left p-3 rounded-lg border-2 transition ${
+            className="w-full text-left p-3 rounded-md border-2 transition"
+            style={
               selectedNeighborhood === score.name
-                ? 'border-civic-amber bg-yellow-50'
-                : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
-            }`}
+                ? { borderColor: C.ochre, background: C.limestone }
+                : { borderColor: C.rule, background: C.paper }
+            }
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1">
-                <div className="font-semibold text-civic-blue">
+                <div className="font-semibold" style={{ color: C.riverDeep }}>
                   {idx + 1}. {score.name}
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div className="w-full rounded-full h-2 mt-2" style={{ background: C.rule }}>
                   <div
-                    className="bg-civic-blue rounded-full h-2 transition"
-                    style={{ width: `${score.compositeScore}%` }}
+                    className="rounded-full h-2 transition"
+                    style={{ width: `${score.compositeScore}%`, background: C.riverDeep }}
                   />
                 </div>
                 {descriptions.has(score.name) && descriptions.get(score.name) && (
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-xs mt-1" style={{ color: C.muted }}>
                     {descriptions.get(score.name)}
                   </p>
                 )}
                 {loadingDescriptions.has(score.name) && (
-                  <p className="text-xs text-gray-400 italic mt-1">Loading...</p>
+                  <p className="text-xs italic mt-1" style={{ color: C.muted }}>Loading...</p>
                 )}
               </div>
               <div className="text-right">
-                <span className="text-lg font-bold text-civic-blue">
+                <span className="text-lg font-bold" style={{ color: C.riverDeep }}>
                   {score.compositeScore}
                 </span>
-                <span className="text-xs text-gray-500">/100</span>
+                <span className="text-xs" style={{ color: C.muted }}>/100</span>
               </div>
             </div>
           </button>

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { NeighborhoodScore, Dimension } from '../../types';
+import { C } from '../../components/ui/DesignAtoms';
 
 interface DetailDrawerProps {
   score: NeighborhoodScore | null;
@@ -62,12 +63,12 @@ export default function DetailDrawer({
         className="absolute inset-0 bg-black bg-opacity-50"
         onClick={onClose}
       />
-      <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-lg shadow-lg max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-civic-blue">{score.name}</h2>
+      <div className="absolute bottom-0 left-0 right-0 rounded-t-md shadow-lg max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 p-4 flex justify-between items-center" style={{ borderBottom: `1px solid ${C.rule}` }}>
+          <h2 className="text-2xl font-bold" style={{ color: C.riverDeep }}>{score.name}</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            style={{ color: C.muted }}
           >
             ✕
           </button>
@@ -75,12 +76,12 @@ export default function DetailDrawer({
 
         <div className="p-6 space-y-6">
           {/* Composite Score */}
-          <div className="bg-gradient-to-r from-civic-blue to-civic-blue-light p-6 rounded-lg text-white">
-            <p className="text-sm opacity-90 mb-2">
+          <div className="p-6 rounded-md" style={{ background: C.riverDeep }}>
+            <p className="text-sm mb-2" style={{ color: C.paper, opacity: 0.9 }}>
               {t('explorer.drawer.compositeScore', 'Composite Score')}
             </p>
-            <div className="text-5xl font-bold">{score.compositeScore}</div>
-            <p className="text-xs opacity-75 mt-2">
+            <div className="text-5xl font-bold" style={{ color: C.paper }}>{score.compositeScore}</div>
+            <p className="text-xs mt-2" style={{ color: C.paper, opacity: 0.75 }}>
               {t('explorer.drawer.outOf', 'out of 100')}
             </p>
           </div>
@@ -88,7 +89,7 @@ export default function DetailDrawer({
           {/* Dimension Scores */}
           {enabledDims.length > 0 ? (
             <div>
-              <h3 className="text-lg font-bold text-civic-blue mb-4">
+              <h3 className="text-lg font-bold mb-4" style={{ color: C.riverDeep }}>
                 {t('explorer.drawer.dimensionBreakdown', 'Dimension Breakdown')}
               </h3>
               <div className="space-y-4">
@@ -134,36 +135,36 @@ export default function DetailDrawer({
                   }
 
                   return (
-                    <div key={dim.id} className="border-l-4 border-civic-blue pl-4">
+                    <div key={dim.id} className="pl-4" style={{ borderLeft: `4px solid ${C.riverDeep}` }}>
                       <div className="flex justify-between mb-2">
-                        <h4 className="font-semibold text-civic-gray-dark">
+                        <h4 className="font-semibold" style={{ color: C.ink }}>
                           {t(dim.labelKey)}
                         </h4>
                         {dimScore !== null ? (
-                          <span className="text-xl font-bold text-civic-blue">
+                          <span className="text-xl font-bold" style={{ color: C.riverDeep }}>
                             {dimScore}
                           </span>
                         ) : (
-                          <span className="text-sm text-orange-600 font-semibold">
+                          <span className="text-sm font-semibold" style={{ color: C.brick }}>
                             {t('explorer.drawer.insufficientData', 'Insufficient Data')}
                           </span>
                         )}
                       </div>
 
                       {dimScore !== null && (
-                        <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                        <div className="w-full rounded-full h-2 mb-2" style={{ background: C.rule }}>
                           <div
-                            className="bg-civic-blue rounded-full h-2"
-                            style={{ width: `${dimScore}%` }}
+                            className="rounded-full h-2"
+                            style={{ width: `${dimScore}%`, background: C.riverDeep }}
                           />
                         </div>
                       )}
 
-                      <p className="text-xs text-gray-600">
+                      <p className="text-xs" style={{ color: C.muted }}>
                         <span className="font-mono">{rawValue}</span>
                         {unit && <span className="ml-1">{unit}</span>}
                       </p>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs mt-1" style={{ color: C.muted, opacity: 0.7 }}>
                         {t('explorer.drawer.source', 'Source')}: {getSourceAttribution(dim.id)}
                       </p>
                     </div>
@@ -172,7 +173,7 @@ export default function DetailDrawer({
               </div>
             </div>
           ) : (
-            <p className="text-gray-600 text-sm">
+            <p className="text-sm" style={{ color: C.muted }}>
               {t('explorer.drawer.noDimensions', 'No dimensions enabled')}
             </p>
           )}
@@ -181,8 +182,8 @@ export default function DetailDrawer({
           {(score.rawMetrics.rentBurdenRate ||
             score.rawMetrics.medianHouseholdIncome ||
             score.rawMetrics.medianGrossRent) && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-xs text-blue-900">
+            <div className="rounded-md p-4" style={{ background: C.riverLight, border: `1px solid ${C.rule}` }}>
+              <p className="text-xs" style={{ color: C.riverDeep }}>
                 <strong>{t('explorer.drawer.censusNote', 'Census Data Note')}:</strong>{' '}
                 {t(
                   'explorer.drawer.censusAlignmentNote',

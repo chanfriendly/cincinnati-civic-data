@@ -44,7 +44,7 @@ const Neighborhoods: React.FC = () => {
               className="px-5 py-3 text-[13px] font-medium transition-colors"
               style={{
                 borderBottom: activeView === v.id ? `2px solid ${C.river}` : '2px solid transparent',
-                color: activeView === v.id ? C.ink : C.muted,
+                color: activeView === v.id ? C.riverDeep : C.muted,
                 background: 'transparent',
                 fontFamily: '"Public Sans", sans-serif',
                 marginBottom: -1,

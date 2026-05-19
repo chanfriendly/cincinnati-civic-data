@@ -8,7 +8,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { DataCard, EmptyState, DataAttribution } from '../../components/ui';
 import { C } from '../../components/ui/DesignAtoms';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
 
 type SubSection = 'traffic' | 'force' | 'ois' | 'question';
@@ -25,7 +25,6 @@ const RACE_COLORS: Record<string, string> = {
 };
 
 const axisProps = { stroke: C.muted, fontSize: 11 };
-const gridProps = { strokeDasharray: '3 3' as const, stroke: C.rule };
 const tooltipStyle = { fontSize: 12, borderColor: C.rule, borderRadius: 6 };
 
 const DISCLAIMER = 'This data is published by the City of Cincinnati for public accountability purposes. Patterns in the data do not establish intent or cause.';
@@ -168,12 +167,6 @@ export default function PoliceAccountability() {
     $order: 'year ASC',
   });
 
-  const firearmsSubjects = useSODA('dxac-g4wm', {
-    $select: 'subject_race,count(*) as count',
-    $group: 'subject_race',
-    $order: 'count DESC',
-  });
-
   const oisByYear = useMemo(() => (oisQuery.data || [])
     .map((item: any) => ({ year: item.year || 'Unknown', count: parseInt(item.count || 0) }))
     .sort((a: any, b: any) => a.year.localeCompare(b.year)),
@@ -208,11 +201,6 @@ export default function PoliceAccountability() {
     if (!firearmsIncidentsByYear.length) return null;
     return [...firearmsIncidentsByYear].sort((a: any, b: any) => b.year.localeCompare(a.year))[0];
   }, [firearmsIncidentsByYear]);
-
-  const firearmsSubjectsByRace = useMemo(() => (firearmsSubjects.data || []).map((item: any) => ({
-    race: (item.subject_race || 'UNKNOWN').toUpperCase(),
-    count: parseInt(item.count || '0', 10),
-  })), [firearmsSubjects.data]);
 
   // ── AI Q&A ──────────────────────────────────────────────────────────────────
   const handleAiQuestion = useCallback(async () => {
@@ -363,7 +351,7 @@ export default function PoliceAccountability() {
               className="px-5 py-3 text-[13px] font-medium transition-colors"
               style={{
                 borderBottom: activeSection === tab.id ? `2px solid ${C.river}` : '2px solid transparent',
-                color: activeSection === tab.id ? C.ink : C.muted,
+                color: activeSection === tab.id ? C.riverDeep : C.muted,
                 background: 'transparent',
                 fontFamily: '"Public Sans", sans-serif',
                 marginBottom: -1,
@@ -416,7 +404,6 @@ export default function PoliceAccountability() {
             {trafficByRaceData.length > 0 && (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={trafficByRaceData} margin={{ bottom: 60, left: 10 }}>
-                  <CartesianGrid {...gridProps} vertical={false} />
                   <XAxis
                     dataKey="race"
                     angle={-35}
@@ -541,7 +528,6 @@ export default function PoliceAccountability() {
             {forceByType.length > 0 && (
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={forceByType} margin={{ bottom: 80, left: 10 }}>
-                  <CartesianGrid {...gridProps} vertical={false} />
                   <XAxis dataKey="type" {...axisProps} angle={-35} textAnchor="end" interval={0}
                     tick={{ fontSize: 11, fill: C.muted }}
                     tickFormatter={(v: string) => v.length > 22 ? v.slice(0, 20) + '…' : v} />
@@ -564,7 +550,6 @@ export default function PoliceAccountability() {
             {forceByNeighborhood.length > 0 && (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={forceByNeighborhood}>
-                  <CartesianGrid {...gridProps} />
                   <XAxis dataKey="neighborhood" {...axisProps} angle={-45} textAnchor="end" height={80}
                     tick={{ fontSize: 11, fill: C.muted }} />
                   <YAxis {...axisProps} />
@@ -595,7 +580,6 @@ export default function PoliceAccountability() {
             {forceSubjectsByRace.length > 0 ? (
               <ResponsiveContainer width="100%" height={forceSubjectsByRace.length * 36 + 20}>
                 <BarChart data={forceSubjectsByRace} layout="vertical" margin={{ left: 8, right: 20, top: 4, bottom: 4 }}>
-                  <CartesianGrid {...gridProps} horizontal={false} />
                   <XAxis type="number" {...axisProps} tickFormatter={(v: number) => v.toLocaleString()} />
                   <YAxis type="category" dataKey="race" width={175} tick={{ fontSize: 11, fill: C.muted }} />
                   <Tooltip formatter={(v: number) => v.toLocaleString()} contentStyle={tooltipStyle} />
@@ -713,35 +697,6 @@ export default function PoliceAccountability() {
             </div>
           </div>
 
-          {/* Subjects by race — labeled rows; 5 total subjects, chart would be misleading */}
-          <DataCard
-            title="Firearm Discharge — Subjects by Race (2021–2024)"
-            loading={firearmsSubjects.loading}
-            error={firearmsSubjects.error}
-            empty={firearmsSubjectsByRace.length === 0}
-          >
-            <p className="text-[12px] italic mb-3" style={{ color: C.muted }}>
-              Race of subjects involved in all recorded firearm discharge incidents.
-              5 subjects total across the dataset — a bar chart would overstate precision.
-            </p>
-            {firearmsSubjectsByRace.length > 0 && (
-              <div className="divide-y" style={{ borderTop: `1px solid ${C.rule}` }}>
-                {firearmsSubjectsByRace.map((entry: any) => (
-                  <div key={entry.race} className="flex items-center justify-between py-2.5">
-                    <span className="text-[13px]" style={{ color: C.ink }}>{entry.race}</span>
-                    <span
-                      className="serif font-medium tnum"
-                      style={{ fontSize: 28, color: RACE_COLORS[entry.race] || C.muted }}
-                    >
-                      {entry.count}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-            <DataAttribution source="Police Firearm Discharge – Subjects" uid="dxac-g4wm" />
-          </DataCard>
-
           {/* ── Legacy OIS (2001–2019) ─────────────────────────────────────────── */}
           <div className="page-paper rounded-md p-6">
             <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: C.muted }}>
@@ -813,7 +768,6 @@ export default function PoliceAccountability() {
                 </p>
                 <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={oisByYear} margin={{ bottom: 10, left: 0, right: 10 }}>
-                    <CartesianGrid {...gridProps} />
                     <XAxis dataKey="year" {...axisProps} />
                     <YAxis {...axisProps} allowDecimals={false} width={28} />
                     <Tooltip contentStyle={tooltipStyle} />

@@ -22,6 +22,7 @@ export const C = {
   paper:       '#fbf8f3',
   limestone:   '#f6f1ea',
   ochre:       '#c8861a',
+  brickBorder: '#e6c5b2',  // warm tint for brick-adjacent borders (warn Tag, EditorialCallout)
 } as const
 
 // ── Chip — inline data number inside prose ────────────────────────────────────
@@ -113,9 +114,9 @@ interface TagProps { children: React.ReactNode; tone?: TagTone }
 export const Tag: React.FC<TagProps> = ({ children, tone = 'neutral' }) => {
   const styles: Record<TagTone, React.CSSProperties> = {
     neutral: { background: C.limestone, color: C.ink,       border: `1px solid ${C.rule}` },
-    warn:    { background: C.brickLight, color: '#7c2e16',  border: '1px solid #e6c5b2' },
+    warn:    { background: C.brickLight, color: '#7c2e16',  border: `1px solid ${C.brickBorder}` },
     good:    { background: C.hillLight,  color: '#3d5527',  border: '1px solid #cfd9b2' },
-    info:    { background: C.riverLight, color: C.riverDeep, border: `1px solid #bfd2d4` },
+    info:    { background: C.riverLight, color: C.riverDeep, border: `1px solid ${C.rule}` },
   }
   return (
     <span

@@ -56,7 +56,7 @@ const PHASE_SYNTHESIS: Record<'active' | 'vulnerable' | 'gentrifying' | 'stable'
     action:
       'Connect with housing and community development organizations before pressure accelerates. Building a stabilization strategy now — community land trusts, tenant organizing, zoning engagement — is far more effective than reacting after displacement begins.',
     orgCategories: ['housing-eviction', 'economic-development'],
-    bgColor: 'rgba(100,95,85,0.12)', borderColor: C.muted, textColor: C.muted,
+    bgColor: 'rgba(200,134,26,0.09)', borderColor: C.ochre, textColor: C.ochre,
   },
   gentrifying: {
     headline: 'Development pressure is arriving — resident protection is the question',
@@ -144,6 +144,7 @@ interface CRARow {
   community_council_neighborhood?: string
   est_program_total_value?: string
   program_type?: string
+  project_type?: string
   approved_by_city_council?: string
 }
 
@@ -156,11 +157,49 @@ interface DemolitionRow {
   neighborhood?: string
 }
 
+type CRAUseType = 'Residential' | 'Mixed Use' | 'Commercial' | 'Other'
+
 interface CRALeaderboardEntry {
   name: string
   total: number
   projectCount: number
   neighborhoods: string
+  useType: CRAUseType         // dominant project use category
+  sinceYear: number | null    // earliest city council approval year (1900 = unknown, filtered)
+  isAffordableHousing: boolean  // federally-constrained affordable program (HOME, CDBG, etc.)
+}
+
+// Program types that are federally constrained to affordable housing purposes
+const AFFORDABLE_PROGRAM_TYPES = new Set([
+  'HOME', 'CDBG GRANT', 'CDBG', 'HOME GRANT', 'HOME LOAN',
+])
+
+// Normalize project_type field (case-inconsistent in the data) to a display category
+function normalizeUseType(types: Set<string>): CRAUseType {
+  const norm = (s: string) => s.toUpperCase().trim()
+  const all = [...types].map(norm)
+  const hasResidential = all.some(t => t.includes('RESIDENTIAL') || t === 'HOUSING')
+  const hasCommercial  = all.some(t =>
+    t.includes('OFFICE') || t.includes('RETAIL') || t.includes('INDUSTRIAL') ||
+    t.includes('HOTEL') || t.includes('COMMERCIAL')
+  )
+  const hasMixed = all.some(t => t.includes('MIXED'))
+  if (hasMixed || (hasResidential && hasCommercial)) return 'Mixed Use'
+  if (hasResidential) return 'Residential'
+  if (hasCommercial)  return 'Commercial'
+  return 'Other'
+}
+
+// Plain-English glossary for the most common CRA program types
+const PROGRAM_TYPE_GLOSSARY: Record<string, string> = {
+  'CRA':                'Community Reinvestment Area — state-designated zone granting multi-year property tax abatements to encourage private investment.',
+  'LEED CRA':           'CRA abatement awarded to buildings certified under LEED green-building standards. Same tax benefit, requires environmental certification.',
+  'OTHER CITY LOAN':    'Direct below-market-rate loan from the City of Cincinnati, typically for development or building rehabilitation.',
+  'JCTC':               'Job Creation Tax Credit — tax incentive tied to a company creating a minimum number of new jobs. Always commercial.',
+  'HOME':               'HOME Investment Partnerships — federal HUD grant passed through the city. By law, all units must be affordable to low- and moderate-income households.',
+  'BELOW MARKET RATE SALE': "City sells land it owns below appraised value. Affordability requirements depend on the buyer's proposal — not automatic.",
+  'PROJECT TIF':        'Tax Increment Financing — future property-tax growth from the site funds public infrastructure costs instead of going to the general fund.',
+  'CDBG GRANT':         'Community Development Block Grant — federal HUD funds for housing rehab, economic development, or public facilities in low-income areas.',
 }
 
 type OrgType = 'Corporate' | 'Land Trust' | 'Nonprofit / Gov'
@@ -199,7 +238,7 @@ function getPhase(vulnerability: number | null, pressure: number | null): Displa
 
 const PHASE_CONFIG: Record<DisplacementPhase, { label: string; textColor: string; bgColor: string; borderColor: string; dotColor: string }> = {
   active:       { label: 'Active Displacement Zone', textColor: C.brick,      bgColor: C.brickLight,                    borderColor: C.brick, dotColor: C.brick      },
-  vulnerable:   { label: 'Vulnerable / At Risk',     textColor: C.muted,      bgColor: 'rgba(100,95,85,0.12)',           borderColor: C.muted, dotColor: C.muted      },
+  vulnerable:   { label: 'Vulnerable / At Risk',     textColor: C.ochre,      bgColor: 'rgba(200,134,26,0.09)',          borderColor: C.ochre, dotColor: C.ochre      },
   gentrifying:  { label: 'Development Pressure',     textColor: C.hill,       bgColor: C.hillLight,                     borderColor: C.hill,  dotColor: C.hill       },
   stable:       { label: 'Stable',                   textColor: C.river,      bgColor: C.riverLight,                    borderColor: C.river, dotColor: C.river      },
   insufficient: { label: 'Insufficient Data',        textColor: C.muted,      bgColor: C.limestone,                     borderColor: C.rule,  dotColor: C.muted      },
@@ -207,7 +246,7 @@ const PHASE_CONFIG: Record<DisplacementPhase, { label: string; textColor: string
 
 const PHASE_DOT_SVG: Record<DisplacementPhase, string> = {
   active:       C.brick,
-  vulnerable:   C.muted,
+  vulnerable:   C.ochre,
   gentrifying:  C.hill,
   stable:       C.river,
   insufficient: C.muted,
@@ -338,10 +377,16 @@ const QuadrantPlot: React.FC<{ record: DisplacementRecord }> = ({ record }) => {
 
 // ─── City-wide Scatter Chart ──────────────────────────────────────────────────
 
+// Curated label set — one anchor per quadrant + key civic context neighborhoods.
+// Kept small to avoid overlap; hover reveals any unlabeled neighborhood name.
 const LABEL_NEIGHBORHOODS = new Set([
-  'Over-the-Rhine', 'West End', 'Walnut Hills', 'Avondale',
-  'Hyde Park', 'Mt. Lookout', 'Northside', 'Madisonville',
-  'East Price Hill', 'Lower Price Hill',
+  'Over-the-Rhine',  // active risk — canonical gentrification example
+  'Walnut Hills',    // active risk — East side displacement story
+  'Avondale',        // vulnerable — high renter burden, historic disinvestment
+  'East Price Hill', // vulnerable — extreme rent burden
+  'Hyde Park',       // gentrifying/stable — low vuln, high pressure contrast
+  'Northside',       // stable — anchor for lower-left quadrant
+  'Madisonville',    // center — mixed, useful midpoint reference
 ])
 
 const CityScatterChart: React.FC<{
@@ -412,7 +457,7 @@ const CityScatterChart: React.FC<{
             <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', display: 'block' }}>
 
               {/* Quadrant fills */}
-              <rect x={PAD.left}  y={PAD.top}  width={plotW/2} height={plotH/2} fill={C.muted} opacity={0.06} />
+              <rect x={PAD.left}  y={PAD.top}  width={plotW/2} height={plotH/2} fill={C.ochre} opacity={0.07} />
               <rect x={midX}      y={PAD.top}  width={plotW/2} height={plotH/2} fill={C.brick} opacity={0.07} />
               <rect x={PAD.left}  y={midY}     width={plotW/2} height={plotH/2} fill={C.river} opacity={0.05} />
               <rect x={midX}      y={midY}     width={plotW/2} height={plotH/2} fill={C.hill}  opacity={0.05} />
@@ -423,8 +468,8 @@ const CityScatterChart: React.FC<{
               <rect x={PAD.left}   y={PAD.top}          width={plotW}       height={plotH}     fill="none" stroke={C.rule} strokeWidth={1} />
 
               {/* Quadrant labels — centered in each quadrant */}
-              <text x={qLabelX.left}  y={qLabelY.top}      fontSize={10} fontWeight="700" fill={C.muted} textAnchor="middle" style={{ fontFamily: FONT, letterSpacing: '0.08em' }}>VULNERABLE</text>
-              <text x={qLabelX.left}  y={qLabelY.top + 15} fontSize={9}  fill={C.muted} textAnchor="middle" style={{ fontFamily: SERIF, fontStyle: 'italic' }}>waiting for pressure</text>
+              <text x={qLabelX.left}  y={qLabelY.top}      fontSize={10} fontWeight="700" fill={C.ochre} textAnchor="middle" style={{ fontFamily: FONT, letterSpacing: '0.08em' }}>VULNERABLE</text>
+              <text x={qLabelX.left}  y={qLabelY.top + 15} fontSize={9}  fill={C.ochre} textAnchor="middle" style={{ fontFamily: SERIF, fontStyle: 'italic' }}>waiting for pressure</text>
 
               <text x={qLabelX.right} y={qLabelY.top}      fontSize={10} fontWeight="700" fill={C.brick} textAnchor="middle" style={{ fontFamily: FONT, letterSpacing: '0.08em' }}>ACTIVE RISK</text>
               <text x={qLabelX.right} y={qLabelY.top + 15} fontSize={9}  fill={C.brick} textAnchor="middle" style={{ fontFamily: SERIF, fontStyle: 'italic' }}>vulnerable + pressure</text>
@@ -507,7 +552,7 @@ const CityScatterChart: React.FC<{
                 <div key={rec.name} className="flex items-start gap-3 cursor-pointer group"
                   onClick={() => onSelect(rec.name === selected ? null : rec.name)}>
                   <span className="serif font-medium flex-shrink-0"
-                    style={{ color: rec.phase === 'active' ? C.brick : C.muted, fontSize: 14, minWidth: 22, lineHeight: 1.3 }}>
+                    style={{ color: rec.phase === 'active' ? C.brick : C.ochre, fontSize: 14, minWidth: 22, lineHeight: 1.3 }}>
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <div className="flex-1 min-w-0">
@@ -647,6 +692,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
   // ── UI state ────────────────────────────────────────────────────────────────
   const [selected, setSelected] = useState<string | null>(null)
   const [filter, setFilter] = useState<FilterPhase>('all')
+  const [glossaryOpen, setGlossaryOpen] = useState(false)
 
   // ── Detail data for selected neighborhood ───────────────────────────────────
   const [detailAbatements, setDetailAbatements] = useState<AbatementDetail[]>([])
@@ -762,7 +808,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
   useEffect(() => {
     setLoadingCRA(true)
     fetchSODA<CRARow>('m76i-p5p9', {
-      $select: 'organization_legal_name,project_name,community_council_neighborhood,est_program_total_value,program_type,approved_by_city_council',
+      $select: 'organization_legal_name,project_name,community_council_neighborhood,est_program_total_value,program_type,project_type,approved_by_city_council',
       $limit: 1000,
     })
       .then(r => setCraAllData(r.data))
@@ -873,25 +919,46 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
   // ─── CRA leaderboard (city-wide) ─────────────────────────────────────────────
   const craLeaderboard = useMemo((): CRALeaderboardEntry[] => {
     if (!craAllData) return []
-    const byDev = new Map<string, { total: number; projects: Set<string>; neighborhoods: Set<string> }>()
+    const byDev = new Map<string, {
+      total: number; projects: Set<string>; neighborhoods: Set<string>
+      programTypes: Set<string>; projectTypes: Set<string>; approvalYears: number[]
+    }>()
     for (const r of craAllData) {
       if (!r.organization_legal_name) continue
       const dev = r.organization_legal_name.trim()
       if (!dev) continue
-      if (!byDev.has(dev)) byDev.set(dev, { total: 0, projects: new Set(), neighborhoods: new Set() })
+      if (!byDev.has(dev)) byDev.set(dev, {
+        total: 0, projects: new Set(), neighborhoods: new Set(),
+        programTypes: new Set(), projectTypes: new Set(), approvalYears: [],
+      })
       const entry = byDev.get(dev)!
       entry.total += parseFloat(r.est_program_total_value || '0') || 0
       if (r.project_name) entry.projects.add(r.project_name)
       const nbhd = r.community_council_neighborhood
       if (nbhd && nbhd !== 'N/A') entry.neighborhoods.add(nbhd)
+      if (r.program_type && r.program_type !== 'N/A') entry.programTypes.add(r.program_type.trim())
+      if (r.project_type && r.project_type !== 'N/A') entry.projectTypes.add(r.project_type.trim())
+      if (r.approved_by_city_council) {
+        const yr = new Date(r.approved_by_city_council).getFullYear()
+        if (yr > 1900) entry.approvalYears.push(yr)
+      }
     }
     return [...byDev.entries()]
-      .map(([name, data]) => ({
-        name,
-        total: data.total,
-        projectCount: data.projects.size,
-        neighborhoods: [...data.neighborhoods].sort().join(', '),
-      }))
+      .map(([name, data]) => {
+        const orgType = inferOrgType(name)
+        const isAffordableHousing =
+          [...data.programTypes].some(pt => AFFORDABLE_PROGRAM_TYPES.has(pt.toUpperCase())) &&
+          orgType === 'Nonprofit / Gov'
+        return {
+          name,
+          total: data.total,
+          projectCount: data.projects.size,
+          neighborhoods: [...data.neighborhoods].sort().join(', '),
+          useType: normalizeUseType(data.projectTypes),
+          sinceYear: data.approvalYears.length > 0 ? Math.min(...data.approvalYears) : null,
+          isAffordableHousing,
+        }
+      })
       .filter(r => r.total > 0)
       .sort((a, b) => b.total - a.total)
       .slice(0, 25)
@@ -1132,7 +1199,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
           <div className="flex flex-wrap gap-3 mb-5">
             {([
               { phase: 'active'      as const, label: 'At active risk',       color: C.brick },
-              { phase: 'vulnerable'  as const, label: 'Vulnerable',            color: C.muted },
+              { phase: 'vulnerable'  as const, label: 'Vulnerable',            color: C.ochre },
               { phase: 'gentrifying' as const, label: 'Development pressure',  color: C.hill  },
               { phase: 'stable'      as const, label: 'Stable',                color: C.river },
             ]).map(({ phase, label, color }) => (
@@ -1629,11 +1696,42 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
             <span style={{ color: C.brick }}>{fmtM(topTotal)}</span>{' '}
             in city subsidies — and not all of them build affordable units.
           </h2>
-          <p className="serif mb-6" style={{ fontSize: 16, lineHeight: 1.65, color: C.muted, maxWidth: 680 }}>
+          <p className="serif mb-4" style={{ fontSize: 16, lineHeight: 1.65, color: C.muted, maxWidth: 680 }}>
             Developers ranked by total city subsidy value received — tax abatements, TIF grants, LEED
             credits, and below-market land sales approved by city council. Corporate entities, nonprofits,
             and land trusts use these subsidies very differently. The strategies inside these numbers differ.
           </p>
+
+          {/* Collapsible glossary */}
+          <div className="mb-5">
+            <button
+              onClick={() => setGlossaryOpen(o => !o)}
+              className="text-[11px] flex items-center gap-1.5 rounded-sm px-2.5 py-1 transition"
+              style={{
+                border: `1px solid ${C.ochre}`,
+                color: glossaryOpen ? C.paper : C.ochre,
+                background: glossaryOpen ? C.ochre : 'transparent',
+              }}
+            >
+              <span style={{ fontSize: 10 }}>ⓘ</span> What do these subsidy types mean?
+            </button>
+            {glossaryOpen && (
+              <div className="mt-2 rounded-md p-4" style={{ background: C.limestone, border: `1px solid ${C.rule}` }}>
+                <div className="grid gap-x-6 gap-y-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+                  {Object.entries(PROGRAM_TYPE_GLOSSARY).map(([term, def]) => (
+                    <div key={term}>
+                      <span className="text-[11px] font-bold" style={{ color: C.ink }}>{term}</span>
+                      <p className="text-[11px] mt-0.5 leading-snug" style={{ color: C.muted }}>{def}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] mt-3 italic" style={{ color: C.muted }}>
+                  <strong>Civic pathway — Below Market Rate Sales:</strong> City-owned land sold below appraised value goes through the Port of Greater Cincinnati Development Authority. Community land trusts and nonprofits can submit competing bids.{' '}
+                  <a href="https://www.cincinnatiport.org/" target="_blank" rel="noopener noreferrer" style={{ color: C.river }}>cincinnatiport.org →</a>
+                </p>
+              </div>
+            )}
+          </div>
 
           {/* Table */}
           <div className="page-paper rounded-md overflow-hidden" style={{ border: `1px solid ${C.rule}` }}>
@@ -1642,8 +1740,10 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                 <thead>
                   <tr style={{ borderBottom: `1px solid ${C.rule}` }}>
                     <th className="text-left py-3 px-5" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.08em', fontWeight: 600, textTransform: 'uppercase' }}>Developer</th>
-                    <th className="text-left py-3 px-4" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.08em', fontWeight: 600, textTransform: 'uppercase' }}>Type</th>
+                    <th className="text-left py-3 px-4" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.08em', fontWeight: 600, textTransform: 'uppercase' }}>Org Type</th>
+                    <th className="text-left py-3 px-4" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.08em', fontWeight: 600, textTransform: 'uppercase' }}>Use</th>
                     <th className="text-left py-3 px-4 hidden md:table-cell" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.08em', fontWeight: 600, textTransform: 'uppercase' }}>Neighborhoods</th>
+                    <th className="text-right py-3 px-4 hidden sm:table-cell" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.08em', fontWeight: 600, textTransform: 'uppercase' }}>Est.</th>
                     <th className="text-right py-3 px-4" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.08em', fontWeight: 600, textTransform: 'uppercase' }}>Projects</th>
                     <th className="text-right py-3 px-5" style={{ color: C.muted, fontSize: 11, letterSpacing: '0.08em', fontWeight: 600, textTransform: 'uppercase' }}>Total Subsidy</th>
                   </tr>
@@ -1653,17 +1753,41 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
                     const orgType = inferOrgType(entry.name)
                     const ts = ORG_TYPE_STYLE[orgType]
                     const isHigh = entry.total >= 1_000_000
+
+                    // Use type badge style
+                    const useStyle: React.CSSProperties =
+                      entry.useType === 'Residential' ? { background: C.hillLight,  color: '#3d5527', border: `1px solid ${C.hill}` } :
+                      entry.useType === 'Mixed Use'   ? { background: C.riverLight, color: C.riverDeep, border: `1px solid ${C.rule}` } :
+                      entry.useType === 'Commercial'  ? { background: C.limestone,  color: C.muted, border: `1px solid ${C.rule}` } :
+                                                        { background: C.limestone,  color: C.muted, border: `1px solid ${C.rule}` }
+
                     return (
                       <tr key={entry.name} style={{ borderBottom: `1px solid ${C.rule}` }}>
-                        <td className="py-3 px-5 font-semibold" style={{ color: C.ink }}>{entry.name}</td>
+                        <td className="py-3 px-5">
+                          <span className="font-semibold block leading-tight" style={{ color: C.ink }}>{entry.name}</span>
+                          {entry.isAffordableHousing && (
+                            <span className="inline-flex items-center gap-1 mt-0.5 text-[10px] font-medium"
+                              style={{ color: C.hill }}>
+                              ✓ affordable housing program
+                            </span>
+                          )}
+                        </td>
                         <td className="py-3 px-4">
                           <span
                             className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
                             style={{ background: ts.bg, color: ts.color, border: `1px solid ${ts.border}` }}
                           >{orgType}</span>
                         </td>
+                        <td className="py-3 px-4">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium" style={useStyle}>
+                            {entry.useType}
+                          </span>
+                        </td>
                         <td className="py-3 px-4 hidden md:table-cell text-xs max-w-xs truncate" style={{ color: C.muted }} title={entry.neighborhoods}>
                           {entry.neighborhoods || '—'}
+                        </td>
+                        <td className="py-3 px-4 text-right hidden sm:table-cell text-xs" style={{ color: C.muted }}>
+                          {entry.sinceYear ?? '—'}
                         </td>
                         <td className="py-3 px-4 text-right" style={{ color: C.muted }}>{entry.projectCount}</td>
                         <td className="py-3 px-5 text-right font-bold" style={{ color: isHigh ? C.brick : C.ink }}>
@@ -1677,7 +1801,7 @@ const DisplacementTab: React.FC<DisplacementTabProps> = ({ onTabChange }) => {
             </div>
             <div className="px-5 py-3" style={{ borderTop: `1px solid ${C.rule}` }}>
               <p className="text-xs" style={{ color: C.muted }}>
-                Source: Cincinnati Open Data — Commercial CRA Abatements (m76i-p5p9). Values are estimated program totals as reported at time of city council approval. Showing top 25 by reported subsidy value.
+                Source: Cincinnati Open Data — Commercial CRA Abatements (m76i-p5p9). Values are estimated program totals as reported at time of city council approval. "Est." shows earliest recorded city council approval year. "✓ affordable housing program" flags organizations whose subsidies include HOME or CDBG funds, which are federally required to benefit low- and moderate-income households. Showing top 25 by reported subsidy value.
               </p>
             </div>
           </div>

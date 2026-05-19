@@ -24,7 +24,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis,
-  CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell,
+  Tooltip, ResponsiveContainer, Cell,
 } from 'recharts'
 import {
   fetchCityRevenue, classifyRevenue, type CityRevenueRow, type RevenueCategory,
@@ -99,7 +99,7 @@ const ModeledTag: React.FC = () => (
 
 const EditorialCallout: React.FC<{ tone?: 'info' | 'warn'; title: string; children: React.ReactNode }> = ({ tone = 'info', title, children }) => {
   const bg    = tone === 'warn' ? C.brickLight : C.riverLight
-  const border = tone === 'warn' ? '#e6c5b2' : '#bfd2d4'
+  const border = tone === 'warn' ? C.brick : C.rule
   const titleColor = tone === 'warn' ? C.brick : C.riverDeep
   return (
     <div className="rounded-md p-4" style={{ background: bg, border: `1px solid ${border}` }}>
@@ -112,7 +112,6 @@ const EditorialCallout: React.FC<{ tone?: 'info' | 'warn'; title: string; childr
 // ─── Editorial chart axis/grid defaults ──────────────────────────────────────
 
 const axisProps = { stroke: C.muted, fontSize: 11 }
-const gridProps = { strokeDasharray: '3 3' as const, stroke: C.rule }
 
 // ─── Section 1: Cincinnati income tax rate history ────────────────────────────
 
@@ -224,10 +223,18 @@ const PercentilesSection: React.FC<{ data: PercentileData | null }> = ({ data })
         a household earning over <strong>{fmtUSD(latest.p95 ?? 0)}</strong> was in the top 5%.
       </Lede>
 
-      <div className="w-full mt-6" style={{ height: 300 }}>
+      {/* Inline series key — Brand Bible §3.5: no Recharts Legend squares */}
+      <div className="flex flex-wrap gap-x-5 gap-y-1 mb-3 text-[11px]" style={{ color: C.muted }}>
+        {PERCENTILE_KEYS.map(k => (
+          <span key={k} className="inline-flex items-center gap-1.5">
+            <span style={{ display: 'inline-block', width: 20, height: 2, borderRadius: 1, background: PERCENTILE_COLORS[k], flexShrink: 0 }} />
+            {PERCENTILE_LABELS[k]}
+          </span>
+        ))}
+      </div>
+      <div className="w-full" style={{ height: 300 }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 5, right: 16, left: 0, bottom: 5 }}>
-            <CartesianGrid {...gridProps} />
             <XAxis dataKey="year" {...axisProps} />
             <YAxis {...axisProps} tickFormatter={fmtUSDShort} />
             <Tooltip
@@ -235,7 +242,6 @@ const PercentilesSection: React.FC<{ data: PercentileData | null }> = ({ data })
               labelFormatter={(l) => `ACS 5-year ending ${l}`}
               contentStyle={{ fontSize: 12, borderColor: C.rule, borderRadius: 6 }}
             />
-            <Legend wrapperStyle={{ fontSize: 11 }} />
             {PERCENTILE_KEYS.map(k => (
               <Line
                 key={k}
@@ -323,7 +329,6 @@ const ITEPSection: React.FC<{ itep: ITEPData | null; latestPercentiles: Percenti
       <div className="w-full mt-6" style={{ height: 300 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} margin={{ top: 16, right: 16, left: 0, bottom: 40 }}>
-            <CartesianGrid {...gridProps} />
             <XAxis dataKey="name" {...axisProps} angle={-20} textAnchor="end" height={60} interval={0} />
             <YAxis {...axisProps} tickFormatter={(v) => `${v}%`} domain={[0, 15]} />
             <Tooltip
@@ -559,14 +564,21 @@ const RevenueSection: React.FC = () => {
             </EditorialCallout>
           </div>
 
-          <div className="w-full mt-5" style={{ height: 340 }}>
+          {/* Inline series key — Brand Bible §3.5: no Recharts Legend squares */}
+          <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3 text-[11px]" style={{ color: C.muted }}>
+            {CATEGORY_ORDER.map(cat => (
+              <span key={cat} className="inline-flex items-center gap-1.5">
+                <span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 2, background: CATEGORY_COLORS[cat], flexShrink: 0 }} />
+                {cat}
+              </span>
+            ))}
+          </div>
+          <div className="w-full" style={{ height: 340 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 10, right: 16, left: 0, bottom: 5 }}>
-                <CartesianGrid {...gridProps} />
                 <XAxis dataKey="year" {...axisProps} />
                 <YAxis {...axisProps} tickFormatter={fmtUSDShort} />
                 <Tooltip formatter={(v: number) => fmtUSD(v)} contentStyle={{ fontSize: 12, borderColor: C.rule, borderRadius: 6 }} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
                 {CATEGORY_ORDER.map(cat => (
                   <Bar key={cat} dataKey={cat} stackId="revenue" fill={CATEGORY_COLORS[cat]} name={cat} />
                 ))}
@@ -671,14 +683,21 @@ const SpendingSection: React.FC = () => {
 
       {!loading && !error && chartData.length > 0 && (
         <>
-          <div className="w-full mt-5" style={{ height: 360 }}>
+          {/* Inline series key — Brand Bible §3.5: no Recharts Legend squares */}
+          <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3 text-[11px]" style={{ color: C.muted }}>
+            {SPENDING_CATEGORY_ORDER.map(cat => (
+              <span key={cat} className="inline-flex items-center gap-1.5">
+                <span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 2, background: SPENDING_CATEGORY_COLORS[cat], flexShrink: 0 }} />
+                {cat}
+              </span>
+            ))}
+          </div>
+          <div className="w-full" style={{ height: 360 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 10, right: 16, left: 0, bottom: 5 }}>
-                <CartesianGrid {...gridProps} />
                 <XAxis dataKey="year" {...axisProps} />
                 <YAxis {...axisProps} tickFormatter={fmtUSDShort} />
                 <Tooltip formatter={(v: number) => fmtUSD(v)} contentStyle={{ fontSize: 12, borderColor: C.rule, borderRadius: 6 }} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
                 {SPENDING_CATEGORY_ORDER.map(cat => (
                   <Bar key={cat} dataKey={cat} stackId="spending" fill={SPENDING_CATEGORY_COLORS[cat]} name={cat} />
                 ))}

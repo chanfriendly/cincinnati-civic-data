@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { NeighborhoodScore } from '../../types';
+import { C } from '../../components/ui/DesignAtoms';
 
 // Inline GeoJSON types (avoids @types/geojson dependency)
 type GeoJSONFeature = { type: 'Feature'; properties: Record<string, unknown>; geometry: { type: string; coordinates: number[][][] | number[][][][] } };
@@ -21,7 +22,7 @@ interface ChoroplethMapProps {
 export default function ChoroplethMap({
   geojson,
   scores,
-  colorblindMode,
+  colorblindMode: _colorblindMode,
   onNeighborhoodClick,
   selectedNeighborhood,
   anyDimensionEnabled,
@@ -59,25 +60,14 @@ export default function ChoroplethMap({
     // Score map
     const scoreMap = new Map(scores.map((s) => [s.name.toUpperCase(), s]));
 
-    // Color scale
+    // Color scale — river-based 5-stop gradient (single scheme for all modes)
     function getColor(score: number | null): string {
-      if (score === null || !anyDimensionEnabled) return '#CCCCCC';
-
-      if (colorblindMode) {
-        // Orange scale for colorblind
-        if (score < 20) return '#FFF3E0';
-        if (score < 40) return '#FFE0B2';
-        if (score < 60) return '#FFCC80';
-        if (score < 80) return '#FFB74D';
-        return '#E65100';
-      } else {
-        // Blue scale
-        if (score < 20) return '#E8F4F8';
-        if (score < 40) return '#A8D8E8';
-        if (score < 60) return '#6CA9C8';
-        if (score < 80) return '#2C6A9A';
-        return '#1A4A6B';
-      }
+      if (score === null || !anyDimensionEnabled) return C.rule;
+      if (score < 20) return C.limestone;
+      if (score < 40) return C.riverLight;
+      if (score < 60) return '#6CA9C8'; // midpoint — no exact token
+      if (score < 80) return C.river;
+      return C.riverDeep;
     }
 
     geojsonLayer.current = L.geoJSON(geojson, {
@@ -90,7 +80,7 @@ export default function ChoroplethMap({
           fillColor: color,
           weight: selectedNeighborhood?.toUpperCase() === neighName ? 3 : 1,
           opacity: 1,
-          color: selectedNeighborhood?.toUpperCase() === neighName ? '#C8861A' : '#999',
+          color: selectedNeighborhood?.toUpperCase() === neighName ? C.ochre : C.muted,
           dashArray: '',
           fillOpacity: 0.7,
         };
@@ -134,7 +124,7 @@ export default function ChoroplethMap({
         map.current.removeLayer(geojsonLayer.current);
       }
     };
-  }, [geojson, scores, colorblindMode, selectedNeighborhood, anyDimensionEnabled, onNeighborhoodClick]);
+  }, [geojson, scores, selectedNeighborhood, anyDimensionEnabled, onNeighborhoodClick]);
 
   // IMPORTANT: the map container div MUST always be in the DOM so that
   // mapContainer.current is set and Leaflet can initialize. If we conditionally
@@ -145,16 +135,16 @@ export default function ChoroplethMap({
     <div className="relative w-full h-full" style={{ minHeight: '500px' }}>
       <div
         ref={mapContainer}
-        className="w-full h-full rounded-lg overflow-hidden border border-gray-300"
-        style={{ minHeight: '500px' }}
+        className="w-full h-full rounded-md overflow-hidden"
+        style={{ minHeight: '500px', border: `1px solid ${C.rule}` }}
       />
       {(isLoading || !geojson) && (
-        <div className="absolute inset-0 bg-gray-100 rounded-lg flex items-center justify-center">
+        <div className="absolute inset-0 rounded-md flex items-center justify-center" style={{ background: C.limestone }}>
           <div className="text-center">
             <div className="animate-pulse mb-4">
-              <div className="w-12 h-12 bg-civic-blue rounded-full mx-auto"></div>
+              <div className="w-12 h-12 rounded-full mx-auto" style={{ background: C.river }}></div>
             </div>
-            <p className="text-gray-600">
+            <p style={{ color: C.muted }}>
               {!geojson ? 'Loading neighborhood map...' : 'Initializing map...'}
             </p>
           </div>

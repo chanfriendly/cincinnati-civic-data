@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { Dimension, DimensionId } from '../../types';
+import { C } from '../../components/ui/DesignAtoms';
 
 interface DimensionPanelProps {
   dimensions: Dimension[];
@@ -23,9 +24,8 @@ export default function DimensionPanel({
           <button
             key={star}
             onClick={() => onWeightChange(dimId, star)}
-            className={`text-lg transition ${
-              star <= weight ? 'text-civic-amber' : 'text-gray-300'
-            }`}
+            className="text-lg transition"
+            style={{ color: star <= weight ? C.ochre : C.rule }}
             title={`Weight: ${star}`}
           >
             ★
@@ -36,14 +36,14 @@ export default function DimensionPanel({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 h-full overflow-y-auto">
-      <h2 className="text-2xl font-bold text-civic-blue mb-6">
+    <div className="bg-white rounded-md shadow-md p-6 h-full overflow-y-auto">
+      <h2 className="text-2xl font-bold mb-6" style={{ color: C.riverDeep }}>
         {t('explorer.dimensionPanel.title', 'Dimensions')}
       </h2>
 
       <div className="space-y-6">
         {dimensions.map((dim) => (
-          <div key={dim.id} className="border-b border-gray-200 pb-4 last:border-b-0">
+          <div key={dim.id} className="pb-4 last:border-b-0" style={{ borderBottom: `1px solid ${C.rule}` }}>
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 {!dim.available ? (
@@ -51,9 +51,9 @@ export default function DimensionPanel({
                     <input
                       type="checkbox"
                       disabled
-                      className="w-5 h-5 text-civic-blue rounded"
+                      className="w-5 h-5 rounded"
                     />
-                    <span className="text-gray-400 flex items-center gap-1">
+                    <span className="flex items-center gap-1" style={{ color: C.muted }}>
                       {t(dim.labelKey)}
                       <span title={t('explorer.dimensionPanel.noData', 'No data available')}>🔒</span>
                     </span>
@@ -64,14 +64,14 @@ export default function DimensionPanel({
                       type="checkbox"
                       checked={dim.enabled}
                       onChange={() => onToggle(dim.id)}
-                      className="w-5 h-5 text-civic-blue rounded cursor-pointer"
+                      className="w-5 h-5 rounded cursor-pointer"
                     />
-                    <span className="font-semibold text-civic-blue">
+                    <span className="font-semibold" style={{ color: C.riverDeep }}>
                       {t(dim.labelKey)}
                     </span>
                   </label>
                 )}
-                <p className="text-sm text-gray-600 mt-1 ml-8">
+                <p className="text-sm mt-1 ml-8" style={{ color: C.muted }}>
                   {t(dim.descriptionKey)}
                 </p>
               </div>
@@ -81,10 +81,10 @@ export default function DimensionPanel({
               <div className="mt-3 ml-8 space-y-3">
                 {dim.methodology && (
                   <details className="group">
-                    <summary className="text-xs text-civic-blue cursor-pointer select-none hover:underline">
+                    <summary className="text-xs cursor-pointer select-none hover:underline" style={{ color: C.riverDeep }}>
                       How is this scored? ▸
                     </summary>
-                    <p className="mt-1 text-xs text-gray-500 leading-relaxed">
+                    <p className="mt-1 text-xs leading-relaxed" style={{ color: C.muted }}>
                       {dim.methodology}
                     </p>
                   </details>
@@ -113,7 +113,7 @@ export default function DimensionPanel({
                 )}
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs font-semibold mb-2" style={{ color: C.ink }}>
                     {t('explorer.dimensionPanel.weight', 'Weight')}
                   </label>
                   {renderStars(dim.weight, dim.id)}

@@ -10,10 +10,11 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  Tooltip, Legend, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis,
+  Tooltip, ResponsiveContainer,
 } from 'recharts';
 import type { NeighborhoodScore, Dimension } from '../../types';
+import { C } from '../../components/ui/DesignAtoms';
 
 // ── Formatting helpers ────────────────────────────────────────────────────────
 
@@ -51,8 +52,8 @@ function getRaw(score: NeighborhoodScore, dimId: string): number | undefined {
   }
 }
 
-const COLOR_A = '#1A4A6B'; // navy
-const COLOR_B = '#C8861A'; // amber
+const COLOR_A = C.riverDeep; // navy
+const COLOR_B = C.ochre;    // amber (editorial UI accent for second series)
 
 // ── Comparison Chart ──────────────────────────────────────────────────────────
 
@@ -118,9 +119,9 @@ export default function NeighborhoodComparison({ scores, dimensions }: Props) {
     : 'tie';
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-5">
-      <h2 className="text-lg font-bold text-gray-900 mb-1">Compare Neighborhoods</h2>
-      <p className="text-xs text-gray-500 mb-4">
+    <div className="rounded-md shadow-md p-5">
+      <h2 className="text-lg font-bold mb-1" style={{ color: C.ink }}>Compare Neighborhoods</h2>
+      <p className="text-xs mb-4" style={{ color: C.muted }}>
         Select two neighborhoods to compare their Explorer dimension scores side-by-side.
         Only enabled dimensions are shown.
       </p>
@@ -128,13 +129,14 @@ export default function NeighborhoodComparison({ scores, dimensions }: Props) {
       {/* Selectors */}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <div className="flex-1">
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1A4A6B] mb-1">
+          <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: C.riverDeep }}>
             Neighborhood A
           </label>
           <select
             value={nameA}
             onChange={(e) => setNameA(e.target.value)}
-            className="w-full text-sm border border-[#1A4A6B] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#1A4A6B] focus:outline-none"
+            className="w-full text-sm px-3 py-2 rounded-md focus:ring-2 focus:outline-none"
+            style={{ border: `1px solid ${C.riverDeep}` }}
           >
             <option value="">Select…</option>
             {sortedNames.filter((n) => n !== nameB).map((n) => (
@@ -144,17 +146,18 @@ export default function NeighborhoodComparison({ scores, dimensions }: Props) {
         </div>
 
         <div className="flex items-center justify-center">
-          <span className="text-sm font-bold text-gray-400 pb-1">vs</span>
+          <span className="text-sm font-bold pb-1" style={{ color: C.muted }}>vs</span>
         </div>
 
         <div className="flex-1">
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-[#C8861A] mb-1">
+          <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: C.ochre }}>
             Neighborhood B
           </label>
           <select
             value={nameB}
             onChange={(e) => setNameB(e.target.value)}
-            className="w-full text-sm border border-[#C8861A] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#C8861A] focus:outline-none"
+            className="w-full text-sm px-3 py-2 rounded-md focus:ring-2 focus:outline-none"
+            style={{ border: `1px solid ${C.ochre}` }}
           >
             <option value="">Select…</option>
             {sortedNames.filter((n) => n !== nameA).map((n) => (
@@ -166,14 +169,14 @@ export default function NeighborhoodComparison({ scores, dimensions }: Props) {
 
       {/* Prompt when nothing selected yet */}
       {!scoreA && !scoreB && (
-        <div className="text-center text-gray-400 text-sm py-8">
+        <div className="text-center text-sm py-8" style={{ color: C.muted }}>
           Choose two neighborhoods above to see how they compare.
         </div>
       )}
 
       {/* No dimensions enabled */}
       {scoreA && scoreB && activeDims.length === 0 && (
-        <div className="text-center text-gray-400 text-sm py-8">
+        <div className="text-center text-sm py-8" style={{ color: C.muted }}>
           Enable at least one dimension in the left panel to compare neighborhoods.
         </div>
       )}
@@ -182,29 +185,44 @@ export default function NeighborhoodComparison({ scores, dimensions }: Props) {
       {scoreA && scoreB && activeDims.length > 0 && (
         <>
           {/* Overall winner banner */}
-          <div className={`rounded-lg p-3 mb-5 text-sm flex items-center gap-3 ${
-            overallWinner === 'A' ? 'bg-[#1A4A6B]/10 border border-[#1A4A6B]/30' :
-            overallWinner === 'B' ? 'bg-[#C8861A]/10 border border-[#C8861A]/30' :
-                                    'bg-gray-50 border border-gray-200'
-          }`}>
+          <div
+            className="rounded-md p-3 mb-5 text-sm flex items-center gap-3"
+            style={
+              overallWinner === 'A' ? { background: C.riverLight, border: `1px solid ${C.rule}` } :
+              overallWinner === 'B' ? { background: C.limestone, border: `1px solid ${C.rule}` } :
+                                      { background: C.paper, border: `1px solid ${C.rule}` }
+            }
+          >
             <span className="text-2xl">
               {overallWinner === 'A' ? '🏆' : overallWinner === 'B' ? '🏆' : '🤝'}
             </span>
             <div>
               {overallWinner === 'tie' ? (
-                <p className="font-semibold text-gray-700">Tie — identical composite score</p>
+                <p className="font-semibold" style={{ color: C.ink }}>Tie — identical composite score</p>
               ) : (
                 <>
                   <p className="font-semibold" style={{ color: overallWinner === 'A' ? COLOR_A : COLOR_B }}>
                     {overallWinner === 'A' ? nameA : nameB} scores higher overall
                   </p>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs mt-0.5" style={{ color: C.muted }}>
                     Composite: {nameA} {compositeA?.toFixed(0)}/100 · {nameB} {compositeB?.toFixed(0)}/100
                     {' '}· Dimension wins: {nameA} {aWins} – {nameB} {bWins}
                   </p>
                 </>
               )}
             </div>
+          </div>
+
+          {/* Inline series key — Brand Bible §3.5: no Recharts Legend squares */}
+          <div className="flex gap-5 mb-2 text-[11px]" style={{ color: C.muted }}>
+            <span className="inline-flex items-center gap-1.5">
+              <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: 2, background: COLOR_A, flexShrink: 0 }} />
+              {nameA || 'Neighborhood A'}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: 2, background: COLOR_B, flexShrink: 0 }} />
+              {nameB || 'Neighborhood B'}
+            </span>
           </div>
 
           {/* Bar chart */}
@@ -216,13 +234,12 @@ export default function NeighborhoodComparison({ scores, dimensions }: Props) {
               barCategoryGap="30%"
               barGap={3}
             >
-              <CartesianGrid strokeDasharray="3 3" horizontal={false} />
               <XAxis
                 type="number"
                 domain={[0, 100]}
                 tick={{ fontSize: 10 }}
                 tickFormatter={(v) => `${v}`}
-                label={{ value: 'Score (0–100)', position: 'insideBottom', offset: -4, fontSize: 10, fill: '#9ca3af' }}
+                label={{ value: 'Score (0–100)', position: 'insideBottom', offset: -4, fontSize: 10, fill: C.muted }}
               />
               <YAxis
                 dataKey="label"
@@ -234,10 +251,6 @@ export default function NeighborhoodComparison({ scores, dimensions }: Props) {
                 formatter={(value: number, name: string) => [`${value}/100`, name]}
                 contentStyle={{ fontSize: 12 }}
               />
-              <Legend
-                wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
-                formatter={(value) => <span style={{ color: value === nameA ? COLOR_A : COLOR_B }}>{value}</span>}
-              />
               <Bar dataKey={nameA} fill={COLOR_A} radius={[0, 3, 3, 0]} maxBarSize={18} />
               <Bar dataKey={nameB} fill={COLOR_B} radius={[0, 3, 3, 0]} maxBarSize={18} />
             </BarChart>
@@ -245,53 +258,53 @@ export default function NeighborhoodComparison({ scores, dimensions }: Props) {
 
           {/* Detail table */}
           <div className="mt-5">
-            <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
+            <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: C.muted }}>
               Dimension Detail
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-1.5 pr-3 text-gray-500 font-semibold">Dimension</th>
+                  <tr style={{ borderBottom: `1px solid ${C.rule}` }}>
+                    <th className="text-left py-1.5 pr-3 font-semibold" style={{ color: C.muted }}>Dimension</th>
                     <th className="text-right py-1.5 px-2 font-semibold" style={{ color: COLOR_A }}>
                       {nameA}
                     </th>
                     <th className="text-right py-1.5 px-2 font-semibold" style={{ color: COLOR_B }}>
                       {nameB}
                     </th>
-                    <th className="text-center py-1.5 pl-2 text-gray-500 font-semibold">Edge</th>
+                    <th className="text-center py-1.5 pl-2 font-semibold" style={{ color: C.muted }}>Edge</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody>
                   {chartData.map((row) => {
                     const w = winner(row);
                     const scoreAVal = row[nameA] as number | null;
                     const scoreBVal = row[nameB] as number | null;
                     return (
-                      <tr key={row.dim} className="hover:bg-gray-50">
-                        <td className="py-2 pr-3 text-gray-700 font-medium">{row.label}</td>
+                      <tr key={row.dim} style={{ borderTop: `1px solid ${C.rule}` }}>
+                        <td className="py-2 pr-3 font-medium" style={{ color: C.ink }}>{row.label}</td>
                         <td className="py-2 px-2 text-right">
-                          <span className={`font-semibold ${w === 'A' ? 'text-[#1A4A6B]' : 'text-gray-500'}`}>
+                          <span className="font-semibold" style={{ color: w === 'A' ? COLOR_A : C.muted }}>
                             {scoreAVal !== null ? `${scoreAVal}/100` : '—'}
                           </span>
                           <br />
-                          <span className="text-gray-400">{formatRaw(row.dim, row.rawA)}</span>
+                          <span style={{ color: C.muted }}>{formatRaw(row.dim, row.rawA)}</span>
                         </td>
                         <td className="py-2 px-2 text-right">
-                          <span className={`font-semibold ${w === 'B' ? 'text-[#C8861A]' : 'text-gray-500'}`}>
+                          <span className="font-semibold" style={{ color: w === 'B' ? COLOR_B : C.muted }}>
                             {scoreBVal !== null ? `${scoreBVal}/100` : '—'}
                           </span>
                           <br />
-                          <span className="text-gray-400">{formatRaw(row.dim, row.rawB)}</span>
+                          <span style={{ color: C.muted }}>{formatRaw(row.dim, row.rawB)}</span>
                         </td>
                         <td className="py-2 pl-2 text-center">
                           {w === 'tie' ? (
-                            <span className="text-gray-400">—</span>
+                            <span style={{ color: C.muted }}>—</span>
                           ) : (
                             <span
-                              className="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded"
+                              className="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded-sm"
                               style={{
-                                backgroundColor: w === 'A' ? `${COLOR_A}20` : `${COLOR_B}20`,
+                                backgroundColor: w === 'A' ? C.riverLight : C.limestone,
                                 color: w === 'A' ? COLOR_A : COLOR_B,
                               }}
                             >
@@ -307,7 +320,7 @@ export default function NeighborhoodComparison({ scores, dimensions }: Props) {
             </div>
           </div>
 
-          <p className="text-[10px] text-gray-400 mt-4">
+          <p className="text-[10px] mt-4" style={{ color: C.muted }}>
             Scores are min-max normalized (0–100) across all Cincinnati neighborhoods.
             Higher is always better in this view. Enable or adjust dimensions in the left panel to change the comparison.
           </p>
