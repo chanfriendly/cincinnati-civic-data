@@ -1,0 +1,103 @@
+name: Refresh Static Data
+
+on:
+  schedule:
+    - cron: '0 6 1 * *'  # 1st of every month at 6am UTC
+  workflow_dispatch:       # manual trigger from GitHub Actions UI
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run build scripts
+        env:
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+        run: |
+          set +e  # continue past individual script failures
+
+          echo "=== build_demographics.py ==="
+          python scripts/build_demographics.py
+          echo "Exit: $?"
+
+          echo "=== build_disability.py ==="
+          python scripts/build_disability.py
+          echo "Exit: $?"
+
+          echo "=== build_health_outcomes.py ==="
+          python scripts/build_health_outcomes.py
+          echo "Exit: $?"
+
+          echo "=== build_hmda.py ==="
+          python scripts/build_hmda.py
+          echo "Exit: $?"
+
+          echo "=== build_hud.py ==="
+          python scripts/build_hud.py
+          echo "Exit: $?"
+
+          echo "=== build_income_percentiles.py ==="
+          python scripts/build_income_percentiles.py
+          echo "Exit: $?"
+
+          echo "=== build_lead.py ==="
+          python scripts/build_lead.py
+          echo "Exit: $?"
+
+          echo "=== build_life_expectancy.py ==="
+          python scripts/build_life_expectancy.py
+          echo "Exit: $?"
+
+          echo "=== build_parks.py ==="
+          python scripts/build_parks.py
+          echo "Exit: $?"
+
+          echo "=== build_racial_equity.py ==="
+          python scripts/build_racial_equity.py
+          echo "Exit: $?"
+
+      # Only opens a PR if public/data/*.json files actually changed.
+      # If nothing changed (sources haven't published new data), this step is a no-op.
+      - name: Open PR if data changed
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: data/auto-refresh-${{ github.run_number }}
+          title: 'data: automated monthly refresh'
+          body: |
+            Automated monthly data refresh. Re-ran all eligible build scripts against latest upstream sources.
+
+            **Scripts run:**
+            | Script | Output file | Source |
+            |--------|-------------|--------|
+            | `build_demographics.py` | `neighborhood_demographics.json` | Census ACS |
+            | `build_disability.py` | `neighborhood_disability.json` | Census ACS |
+            | `build_health_outcomes.py` | `neighborhood_health_outcomes.json` | CDC PLACES |
+            | `build_hmda.py` | `neighborhood_hmda.json` | CFPB HMDA |
+            | `build_hud.py` | `hud_affordable_housing.json` | HUD |
+            | `build_income_percentiles.py` | `cincinnati_income_percentiles.json` | Census ACS |
+            | `build_lead.py` | `lead_service_lines.json` | Cincinnati Open Data |
+            | `build_life_expectancy.py` | `neighborhood_life_expectancy.json` | CDC USALEEP |
+            | `build_parks.py` | `cagis_neighborhood_parks.json` | CAGIS |
+            | `build_racial_equity.py` | `neighborhood_racial_equity.json` | Census ACS + HMDA |
+
+            **Intentionally skipped:**
+            - `build_ejscreen.py` — EJScreen API offline since Feb 2025
+            - `build_healthcare_facilities.py` — OSM Overpass unreliable from CI
+
+            Review the diff before merging. Merging triggers a Vercel redeploy automatically.
+          commit-message: 'data: automated monthly refresh'
+          labels: 'data-refresh'
+          add-paths: 'public/data/*.json'

@@ -1352,3 +1352,17 @@ The code tries 4 CAGIS URLs with 8-second timeouts. If all fail, scoring still w
 
 ### Build fails on TypeScript errors
 Run `npm run build` locally before pushing. TypeScript errors block the Vercel deploy.
+
+---
+
+## Session — 2026-05-19
+
+### Automated data refresh workflow
+
+Added `.github/workflows/refresh-data.yml` — a GitHub Actions scheduled workflow that runs on the 1st of every month (6am UTC) plus manual trigger. Re-runs all 10 eligible Python build scripts, and if any `public/data/*.json` files changed opens a PR against `main` for review before deploy. Merging triggers a Vercel redeploy automatically.
+
+**Skipped intentionally:** `build_ejscreen.py` (EJScreen offline since Feb 2025) and `build_healthcare_facilities.py` (OSM Overpass unreliable from CI).
+
+**One-time setup needed:** Add `CENSUS_API_KEY` as a GitHub Actions repository secret (Settings → Secrets and variables → Actions). Same key as `.env.local`.
+
+Updated `CLAUDE.md` with a new "Data Maintenance & Automated Refresh" section documenting the workflow, the script/output mapping, and the manual vs. automated split.

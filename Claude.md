@@ -142,6 +142,42 @@ public/data/neighborhood_acs.json  226 Hamilton County Census tracts (ACS 2022, 
 |--------|---------|------|-------|
 | First Street Foundation | Property-level flood probability over 30 years | API key | Deferred — paid API. `https://firststreet.org/` |
 
+## Data Maintenance & Automated Refresh
+
+Static JSON files in `public/data/` are rebuilt from upstream sources by Python scripts in `scripts/`. They do **not** update on their own — a GitHub Actions workflow handles scheduled refreshes.
+
+### Automation
+
+**Workflow:** `.github/workflows/refresh-data.yml`
+- Runs on the **1st of every month at 6am UTC**, plus a manual trigger in the GitHub Actions UI
+- Installs `requests`, sets `CENSUS_API_KEY` from the `CENSUS_API_KEY` repo secret
+- Re-runs all eligible build scripts; if any `public/data/*.json` files changed, **opens a PR** (does not push directly to `main`)
+- Merging the PR triggers a Vercel redeploy automatically
+- If nothing changed (upstream hasn't published new data yet), no PR is created — the run is a no-op
+
+### One-time setup required
+
+Add `CENSUS_API_KEY` as a repository secret in GitHub → Settings → Secrets and variables → Actions. The key is the same one used locally in `.env.local`.
+
+### What's automated vs. manual
+
+| Script | Output | Automated | Notes |
+|--------|--------|-----------|-------|
+| `build_demographics.py` | `neighborhood_demographics.json` | ✅ Monthly | Census ACS |
+| `build_disability.py` | `neighborhood_disability.json` | ✅ Monthly | Census ACS |
+| `build_health_outcomes.py` | `neighborhood_health_outcomes.json` | ✅ Monthly | CDC PLACES |
+| `build_hmda.py` | `neighborhood_hmda.json` | ✅ Monthly | CFPB HMDA |
+| `build_hud.py` | `hud_affordable_housing.json` | ✅ Monthly | HUD |
+| `build_income_percentiles.py` | `cincinnati_income_percentiles.json` | ✅ Monthly | Census ACS |
+| `build_lead.py` | `lead_service_lines.json` | ✅ Monthly | Cincinnati Open Data |
+| `build_life_expectancy.py` | `neighborhood_life_expectancy.json` | ✅ Monthly | CDC USALEEP |
+| `build_parks.py` | `cagis_neighborhood_parks.json` | ✅ Monthly | CAGIS |
+| `build_racial_equity.py` | `neighborhood_racial_equity.json` | ✅ Monthly | Census ACS + HMDA |
+| `build_ejscreen.py` | `neighborhood_ejscreen.json` | ❌ Skipped | EJScreen offline since Feb 2025 |
+| `build_healthcare_facilities.py` | `healthcare_facilities.json` | ❌ Skipped | OSM Overpass unreliable from CI |
+
+**Note on cadence:** Most source data (ACS, CDC PLACES, HMDA) releases annually with a ~1-year lag. Monthly runs are mostly no-ops 11 months of the year — that's expected and harmless.
+
 ## Critical Patterns — Do Not Break
 
 ### SODA Query Encoding
