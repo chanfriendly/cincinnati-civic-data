@@ -72,7 +72,7 @@ const Section: React.FC<SectionProps> = ({ id, Icon, iconStyle, heading, subhead
   <section id={id} className="mb-10 scroll-mt-40">
     <div className="flex items-center gap-3 mb-2">
       <span className="p-2 rounded-md" style={iconStyle}><Icon /></span>
-      <h2 className="text-lg font-bold" style={{ color: C.ink }}>{heading}</h2>
+      <h2 className="serif" style={{ fontSize: 18, fontWeight: 500, color: C.ink }}>{heading}</h2>
     </div>
     {subheading && <p className="text-sm mb-4 ml-11" style={{ color: C.muted }}>{subheading}</p>}
     <div className="ml-11">{children}</div>
@@ -158,7 +158,7 @@ const Limitations: React.FC = () => {
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-2" style={{ color: C.ink }}>About, Methodology &amp; Known Limitations</h1>
+        <h1 className="serif mb-2" style={{ fontSize: 28, fontWeight: 500, color: C.ink, letterSpacing: '-0.01em' }}>About, Methodology &amp; Known Limitations</h1>
         <p className="max-w-3xl leading-relaxed" style={{ color: C.muted }}>
           Every civic data tool makes choices about which data to trust, how to aggregate it, and how to
           present it. Those choices are never neutral. This page documents what we know, what we don&rsquo;t,
@@ -168,7 +168,7 @@ const Limitations: React.FC = () => {
 
       {/* What this site is / isn't */}
       <div className="mb-10 rounded-md p-6" style={{ background: C.riverDeep, color: C.paper }}>
-        <h2 className="text-base font-bold mb-4">What this is &mdash; and what it isn&rsquo;t</h2>
+        <h2 className="serif mb-4" style={{ fontSize: 17, fontWeight: 500 }}>What this is &mdash; and what it isn&rsquo;t</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
           <div>
             <p className="font-semibold mb-2">This site is</p>
@@ -193,7 +193,7 @@ const Limitations: React.FC = () => {
 
       {/* Jump links */}
       <nav aria-label="Sections on this page" className="mb-10 rounded-md p-4" style={{ background: C.limestone, border: `1px solid ${C.rule}` }}>
-        <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: C.muted }}>On this page</p>
+        <p className="smallcaps mb-2" style={{ color: C.muted }}>On this page</p>
         <div className="flex flex-wrap gap-2 text-xs">
           {[
             ['boundaries', 'Neighborhood boundaries'],

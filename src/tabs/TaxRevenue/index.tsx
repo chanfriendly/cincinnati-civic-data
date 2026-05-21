@@ -115,7 +115,10 @@ const axisProps = { stroke: C.muted, fontSize: 11 }
 
 // ─── Section 1: Cincinnati income tax rate history ────────────────────────────
 
-const RateHistorySection: React.FC<{ data: TaxRateHistory | null }> = ({ data }) => {
+const RateHistorySection: React.FC<{
+  data: TaxRateHistory | null
+  latestPercentiles: PercentileData['years'][number] | null
+}> = ({ data, latestPercentiles }) => {
   if (!data) return null
 
   const current = data.history.find(h => h.effective_to === null) || data.history[0]
@@ -168,6 +171,54 @@ const RateHistorySection: React.FC<{ data: TaxRateHistory | null }> = ({ data })
           <p>{current.source_note}</p>
         </EditorialCallout>
       </div>
+
+      {latestPercentiles && (() => {
+        const pctRows: Array<{ label: string; income: number | null }> = [
+          { label: `20th pct (lowest 20%)`,    income: latestPercentiles.p20 },
+          { label: `40th pct`,                 income: latestPercentiles.p40 },
+          { label: `60th pct (median-ish)`,    income: latestPercentiles.p60 },
+          { label: `80th pct`,                 income: latestPercentiles.p80 },
+          { label: `95th pct (top 5%)`,        income: latestPercentiles.p95 },
+        ].filter(r => r.income != null)
+        return (
+          <div className="mt-6">
+            <p className="smallcaps mb-3" style={{ color: C.muted }}>
+              What {current.rate_pct}% actually costs — by income level ({latestPercentiles.year})
+            </p>
+            <div className="overflow-x-auto rounded-md" style={{ border: `1px solid ${C.rule}` }}>
+              <table className="w-full text-[13px]">
+                <thead style={{ background: C.limestone }}>
+                  <tr>
+                    <th className="text-left px-3 py-2 font-semibold" style={{ color: C.ink }}>Threshold</th>
+                    <th className="text-left px-3 py-2 font-semibold" style={{ color: C.ink }}>Household income</th>
+                    <th className="text-right px-3 py-2 font-semibold" style={{ color: C.ink }}>Annual city tax</th>
+                    <th className="text-right px-3 py-2 font-semibold" style={{ color: C.ink }}>Monthly</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pctRows.map((r, i) => {
+                    const annual  = Math.round((r.income ?? 0) * current.rate_pct / 100)
+                    const monthly = Math.round(annual / 12)
+                    return (
+                      <tr key={r.label} style={{ borderTop: i > 0 ? `1px solid ${C.rule}` : undefined }}>
+                        <td className="px-3 py-2" style={{ color: C.muted }}>{r.label}</td>
+                        <td className="px-3 py-2 tnum font-medium" style={{ color: C.ink }}>{fmtUSD(r.income ?? 0)}</td>
+                        <td className="px-3 py-2 text-right tnum" style={{ color: C.ink }}>{fmtUSD(annual)}</td>
+                        <td className="px-3 py-2 text-right tnum" style={{ color: C.muted }}>{fmtUSD(monthly)}/mo</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-[11px] mt-2 leading-relaxed" style={{ color: C.muted }}>
+              City income tax only — state income tax, sales tax, and property tax not included.
+              Thresholds from ACS 5-year estimates. The rate is identical at every income level;
+              the dollar amount is not.
+            </p>
+          </div>
+        )
+      })()}
 
       <p className="text-[11px] mt-4 leading-relaxed" style={{ color: C.muted }}>
         <strong style={{ color: C.ink }}>On earlier rate history:</strong> {data.source.note}
@@ -370,6 +421,43 @@ const ITEPSection: React.FC<{ itep: ITEPData | null; latestPercentiles: Percenti
           </p>
         </div>
       )}
+
+      {/* Ohio EITC offset */}
+      <div className="mt-5 rounded-md p-4" style={{ background: C.hillLight, border: `1px solid #cfd9b2` }}>
+        <p className="smallcaps mb-2" style={{ color: C.hill }}>Ohio EITC — partial offset for working families</p>
+        <p className="text-[13px] leading-relaxed mb-4" style={{ color: C.ink }}>
+          Ohio's Earned Income Tax Credit equals <strong>10% of the federal EITC</strong> and has been
+          fully refundable since 2023, meaning qualifying households receive it even if they owe no
+          state income tax. It partially offsets the regressive pattern shown above — but doesn't
+          close the gap. Not all low-income households qualify; eligibility depends on earned income,
+          filing status, and number of qualifying children.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-3">
+          {([
+            { label: 'No children',     federal: 632,  ohio: 63  },
+            { label: '1 child',         federal: 3995, ohio: 400 },
+            { label: '2 children',      federal: 6604, ohio: 660 },
+            { label: '3+ children',     federal: 7430, ohio: 743 },
+          ] as const).map(({ label, federal, ohio }) => (
+            <div key={label} className="rounded-md p-3" style={{ background: C.paper, border: `1px solid ${C.rule}` }}>
+              <p className="text-[12px] font-semibold mb-1.5" style={{ color: C.ink }}>{label}</p>
+              <p className="text-[11px]" style={{ color: C.muted }}>Federal max: {fmtUSD(federal)}</p>
+              <p className="text-[13px] font-semibold mt-1" style={{ color: C.hill }}>
+                Ohio max: {fmtUSD(ohio)}
+              </p>
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] leading-relaxed" style={{ color: C.muted }}>
+          2023 tax year amounts. The 4th ITEP caveat above explicitly notes that EITC refunds
+          are not reflected in the 12.7% lowest-quintile rate — the post-EITC burden is lower
+          than shown.{' '}
+          <a href="https://tax.ohio.gov/individual/credits/earned-income-credit"
+            target="_blank" rel="noopener noreferrer" style={{ color: C.river }}>
+            Ohio EITC eligibility →
+          </a>
+        </p>
+      </div>
 
       <div className="mt-5 pt-4" style={{ borderTop: `1px solid ${C.rule}` }}>
         <p className="smallcaps mb-2" style={{ color: C.ochre }}>What "Modeled" means here</p>
@@ -806,7 +894,7 @@ const TaxRevenue: React.FC = () => {
         </div>
       )}
 
-      <RateHistorySection data={rateHistory} />
+      <RateHistorySection data={rateHistory} latestPercentiles={latestPercentileRow} />
       <PercentilesSection data={percentiles} />
       <ITEPSection itep={itep} latestPercentiles={latestPercentileRow} />
       <RevenueSection />
