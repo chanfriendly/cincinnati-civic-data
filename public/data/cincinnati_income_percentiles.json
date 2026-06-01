@@ -3,7 +3,7 @@
     "dataset": "U.S. Census Bureau ACS 5-Year Estimates, Table B19080 (Household Income Quintile Upper Limits)",
     "place": "Cincinnati city, Ohio (state:39 place:15000)",
     "api": "https://api.census.gov/data/<year>/acs/acs5",
-    "built_at": "2026-04-17",
+    "built_at": "2026-06-01",
     "note": "ACS 5-year estimates center on the middle year of the survey window. A 'year' value of 2022 represents 2018-2022 survey waves combined."
   },
   "fields": {

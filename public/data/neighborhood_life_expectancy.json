@@ -5,7 +5,7 @@
     "tractCount": 3,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "bondhill": {
     "name": "Bond Hill",
@@ -13,7 +13,7 @@
     "tractCount": 1,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "cbdriverfront": {
     "name": "CBD / Riverfront",
@@ -21,7 +21,7 @@
     "tractCount": 2,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "carthage": {
     "name": "Carthage",
@@ -29,7 +29,7 @@
     "tractCount": 5,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "clifton": {
     "name": "Clifton",
@@ -37,7 +37,7 @@
     "tractCount": 2,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "cliftonheights": {
     "name": "Clifton Heights",
@@ -45,7 +45,7 @@
     "tractCount": 1,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "collegehill": {
     "name": "College Hill",
@@ -53,7 +53,7 @@
     "tractCount": 4,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "corryville": {
     "name": "Corryville",
@@ -61,7 +61,7 @@
     "tractCount": 1,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "eastend": {
     "name": "East End",
@@ -69,7 +69,7 @@
     "tractCount": 9,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "eastwalnuthills": {
     "name": "East Walnut Hills",
@@ -77,7 +77,7 @@
     "tractCount": 3,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "eastwestwood": {
     "name": "East Westwood",
@@ -85,7 +85,7 @@
     "tractCount": 2,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "englishwoods": {
     "name": "English Woods",
@@ -93,7 +93,7 @@
     "tractCount": 8,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "evanston": {
     "name": "Evanston",
@@ -101,7 +101,7 @@
     "tractCount": 4,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "fayapartments": {
     "name": "Fay Apartments",
@@ -109,7 +109,7 @@
     "tractCount": 2,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "hartwell": {
     "name": "Hartwell",
@@ -117,7 +117,7 @@
     "tractCount": 24,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "hydepark": {
     "name": "Hyde Park",
@@ -125,7 +125,7 @@
     "tractCount": 2,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "kennedyheights": {
     "name": "Kennedy Heights",
@@ -133,7 +133,7 @@
     "tractCount": 4,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "linwood": {
     "name": "Linwood",
@@ -141,7 +141,7 @@
     "tractCount": 1,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "lowerpricehill": {
     "name": "Lower Price Hill",
@@ -149,7 +149,7 @@
     "tractCount": 4,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "madisonville": {
     "name": "Madisonville",
@@ -157,7 +157,7 @@
     "tractCount": 10,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "mountadams": {
     "name": "Mount Adams",
@@ -165,7 +165,7 @@
     "tractCount": 1,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "mountairy": {
     "name": "Mount Airy",
@@ -173,7 +173,7 @@
     "tractCount": 14,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "mountauburn": {
     "name": "Mount Auburn",
@@ -181,7 +181,7 @@
     "tractCount": 4,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "mtlookout": {
     "name": "Mt. Lookout",
@@ -189,7 +189,7 @@
     "tractCount": 1,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "northavondale": {
     "name": "North Avondale",
@@ -197,7 +197,7 @@
     "tractCount": 1,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "northfairmount": {
     "name": "North Fairmount",
@@ -205,7 +205,7 @@
     "tractCount": 1,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "northside": {
     "name": "Northside",
@@ -213,7 +213,7 @@
     "tractCount": 1,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "oakley": {
     "name": "Oakley",
@@ -221,7 +221,7 @@
     "tractCount": 3,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "overtherhine": {
     "name": "Over-the-Rhine",
@@ -229,7 +229,7 @@
     "tractCount": 2,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "paddockhills": {
     "name": "Paddock Hills",
@@ -237,7 +237,7 @@
     "tractCount": 1,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "pendleton": {
     "name": "Pendleton",
@@ -245,7 +245,7 @@
     "tractCount": 1,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "pleasantridge": {
     "name": "Pleasant Ridge",
@@ -253,7 +253,7 @@
     "tractCount": 14,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "riverside": {
     "name": "Riverside",
@@ -261,7 +261,7 @@
     "tractCount": 3,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "roselawn": {
     "name": "Roselawn",
@@ -269,7 +269,7 @@
     "tractCount": 10,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "saylerpark": {
     "name": "Sayler Park",
@@ -277,7 +277,7 @@
     "tractCount": 10,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "sedamsville": {
     "name": "Sedamsville",
@@ -285,7 +285,7 @@
     "tractCount": 6,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "southfairmount": {
     "name": "South Fairmount",
@@ -293,7 +293,7 @@
     "tractCount": 1,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "springgrovevillage": {
     "name": "Spring Grove Village",
@@ -301,7 +301,7 @@
     "tractCount": 1,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "walnuthills": {
     "name": "Walnut Hills",
@@ -309,7 +309,7 @@
     "tractCount": 2,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "westpricehill": {
     "name": "West Price Hill",
@@ -317,7 +317,7 @@
     "tractCount": 9,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   },
   "westwood": {
     "name": "Westwood",
@@ -325,6 +325,6 @@
     "tractCount": 12,
     "tractSuppressed": 0,
     "dataYears": "2010-2015",
-    "asOf": "2026-04-29"
+    "asOf": "2026-06-01"
   }
 }

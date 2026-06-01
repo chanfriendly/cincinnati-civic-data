@@ -1,896 +1,20 @@
 {
-  "westwood": {
-    "name": "Westwood",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 886,
-      "denied": 227,
-      "total": 1113,
-      "approvalRate": 79.6
-    },
-    "black": {
-      "approved": 152,
-      "denied": 78,
-      "total": 230,
-      "approvalRate": 66.1
-    },
-    "asian": {
-      "approved": 18,
-      "denied": 7,
-      "total": 25,
-      "approvalRate": 72.0
-    },
-    "hispanic": {
-      "approved": 38,
-      "denied": 16,
-      "total": 54,
-      "approvalRate": 70.4
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "saylerpark": {
-    "name": "Sayler Park",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 1731,
-      "denied": 390,
-      "total": 2121,
-      "approvalRate": 81.6
-    },
-    "black": {
-      "approved": 30,
-      "denied": 16,
-      "total": 46,
-      "approvalRate": 65.2
-    },
-    "asian": {
-      "approved": 14,
-      "denied": 5,
-      "total": 19,
-      "approvalRate": 73.7
-    },
-    "hispanic": {
-      "approved": 23,
-      "denied": 14,
-      "total": 37,
-      "approvalRate": 62.2
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "walnuthills": {
-    "name": "Walnut Hills",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 69,
-      "denied": 18,
-      "total": 87,
-      "approvalRate": 79.3
-    },
-    "black": {
-      "approved": 34,
-      "denied": 10,
-      "total": 44,
-      "approvalRate": 77.3
-    },
-    "asian": {
-      "approved": 7,
-      "denied": 1,
-      "total": 8,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 7,
-      "denied": 1,
-      "total": 8,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
   "avondale": {
     "name": "Avondale",
     "year": 2022,
     "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
+    "source": "county_fallback",
     "white": {
-      "approved": 26,
-      "denied": 5,
-      "total": 31,
-      "approvalRate": 83.9
+      "approvalRate": 83.0
     },
     "black": {
-      "approved": 71,
-      "denied": 41,
-      "total": 112,
-      "approvalRate": 63.4
+      "approvalRate": 67.8
     },
     "asian": {
-      "approved": 6,
-      "denied": 4,
-      "total": 10,
-      "approvalRate": 60.0
-    },
-    "hispanic": {
-      "approved": 0,
-      "denied": 1,
-      "total": 1,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "cuf": {
-    "name": "CUF",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 78,
-      "denied": 13,
-      "total": 91,
-      "approvalRate": 85.7
-    },
-    "black": {
-      "approved": 6,
-      "denied": 5,
-      "total": 11,
-      "approvalRate": 54.5
-    },
-    "asian": {
-      "approved": 23,
-      "denied": 2,
-      "total": 25,
-      "approvalRate": 92.0
-    },
-    "hispanic": {
-      "approved": 1,
-      "denied": 0,
-      "total": 1,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "hartwell": {
-    "name": "Hartwell",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 1554,
-      "denied": 310,
-      "total": 1864,
-      "approvalRate": 83.4
-    },
-    "black": {
-      "approved": 561,
-      "denied": 285,
-      "total": 846,
-      "approvalRate": 66.3
-    },
-    "asian": {
-      "approved": 64,
-      "denied": 21,
-      "total": 85,
-      "approvalRate": 75.3
-    },
-    "hispanic": {
-      "approved": 102,
-      "denied": 57,
-      "total": 159,
-      "approvalRate": 64.2
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "madisonville": {
-    "name": "Madisonville",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 733,
-      "denied": 121,
-      "total": 854,
-      "approvalRate": 85.8
-    },
-    "black": {
-      "approved": 48,
-      "denied": 32,
-      "total": 80,
-      "approvalRate": 60.0
-    },
-    "asian": {
-      "approved": 19,
-      "denied": 7,
-      "total": 26,
-      "approvalRate": 73.1
-    },
-    "hispanic": {
-      "approved": 14,
-      "denied": 4,
-      "total": 18,
-      "approvalRate": 77.8
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "springgrovevillage": {
-    "name": "Spring Grove Village",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 28,
-      "denied": 6,
-      "total": 34,
-      "approvalRate": 82.4
-    },
-    "black": {
-      "approved": 12,
-      "denied": 9,
-      "total": 21,
-      "approvalRate": 57.1
-    },
-    "asian": {
-      "approved": 0,
-      "denied": 1,
-      "total": 1,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "westpricehill": {
-    "name": "West Price Hill",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 668,
-      "denied": 159,
-      "total": 827,
-      "approvalRate": 80.8
-    },
-    "black": {
-      "approved": 115,
-      "denied": 46,
-      "total": 161,
-      "approvalRate": 71.4
-    },
-    "asian": {
-      "approved": 21,
-      "denied": 5,
-      "total": 26,
-      "approvalRate": 80.8
-    },
-    "hispanic": {
-      "approved": 28,
-      "denied": 4,
-      "total": 32,
-      "approvalRate": 87.5
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "kennedyheights": {
-    "name": "Kennedy Heights",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 2402,
-      "denied": 441,
-      "total": 2843,
-      "approvalRate": 84.5
-    },
-    "black": {
-      "approved": 135,
-      "denied": 54,
-      "total": 189,
-      "approvalRate": 71.4
-    },
-    "asian": {
-      "approved": 155,
-      "denied": 33,
-      "total": 188,
       "approvalRate": 82.4
     },
     "hispanic": {
-      "approved": 55,
-      "denied": 17,
-      "total": 72,
-      "approvalRate": 76.4
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "overtherhine": {
-    "name": "Over-the-Rhine",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 91,
-      "denied": 18,
-      "total": 109,
-      "approvalRate": 83.5
-    },
-    "black": {
-      "approved": 7,
-      "denied": 1,
-      "total": 8,
-      "approvalRate": null
-    },
-    "asian": {
-      "approved": 5,
-      "denied": 1,
-      "total": 6,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 3,
-      "denied": 2,
-      "total": 5,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "collegehill": {
-    "name": "College Hill",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 1175,
-      "denied": 300,
-      "total": 1475,
-      "approvalRate": 79.7
-    },
-    "black": {
-      "approved": 812,
-      "denied": 364,
-      "total": 1176,
-      "approvalRate": 69.0
-    },
-    "asian": {
-      "approved": 58,
-      "denied": 13,
-      "total": 71,
-      "approvalRate": 81.7
-    },
-    "hispanic": {
-      "approved": 77,
-      "denied": 28,
-      "total": 105,
-      "approvalRate": 73.3
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "mtairy": {
-    "name": "Mt. Airy",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 1077,
-      "denied": 252,
-      "total": 1329,
-      "approvalRate": 81.0
-    },
-    "black": {
-      "approved": 221,
-      "denied": 78,
-      "total": 299,
-      "approvalRate": 73.9
-    },
-    "asian": {
-      "approved": 30,
-      "denied": 9,
-      "total": 39,
-      "approvalRate": 76.9
-    },
-    "hispanic": {
-      "approved": 32,
-      "denied": 8,
-      "total": 40,
-      "approvalRate": 80.0
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "corryville": {
-    "name": "Corryville",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 11,
-      "denied": 0,
-      "total": 11,
-      "approvalRate": 100.0
-    },
-    "black": {
-      "approved": 1,
-      "denied": 2,
-      "total": 3,
-      "approvalRate": null
-    },
-    "asian": {
-      "approved": 7,
-      "denied": 0,
-      "total": 7,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 1,
-      "denied": 1,
-      "total": 2,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "mtwashington": {
-    "name": "Mt. Washington",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 1499,
-      "denied": 301,
-      "total": 1800,
-      "approvalRate": 83.3
-    },
-    "black": {
-      "approved": 33,
-      "denied": 6,
-      "total": 39,
-      "approvalRate": 84.6
-    },
-    "asian": {
-      "approved": 31,
-      "denied": 5,
-      "total": 36,
-      "approvalRate": 86.1
-    },
-    "hispanic": {
-      "approved": 18,
-      "denied": 10,
-      "total": 28,
-      "approvalRate": 64.3
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "eastpricehill": {
-    "name": "East Price Hill",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 113,
-      "denied": 42,
-      "total": 155,
-      "approvalRate": 72.9
-    },
-    "black": {
-      "approved": 32,
-      "denied": 17,
-      "total": 49,
-      "approvalRate": 65.3
-    },
-    "asian": {
-      "approved": 9,
-      "denied": 0,
-      "total": 9,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 4,
-      "denied": 2,
-      "total": 6,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "linwood": {
-    "name": "Linwood",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 149,
-      "denied": 21,
-      "total": 170,
-      "approvalRate": 87.6
-    },
-    "black": {
-      "approved": 4,
-      "denied": 1,
-      "total": 5,
-      "approvalRate": null
-    },
-    "asian": {
-      "approved": 3,
-      "denied": 0,
-      "total": 3,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 4,
-      "denied": 0,
-      "total": 4,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "paddockhills": {
-    "name": "Paddock Hills",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 119,
-      "denied": 26,
-      "total": 145,
-      "approvalRate": 82.1
-    },
-    "black": {
-      "approved": 5,
-      "denied": 4,
-      "total": 9,
-      "approvalRate": null
-    },
-    "asian": {
-      "approved": 3,
-      "denied": 1,
-      "total": 4,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 10,
-      "denied": 1,
-      "total": 11,
-      "approvalRate": 90.9
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "pleasantridge": {
-    "name": "Pleasant Ridge",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 430,
-      "denied": 76,
-      "total": 506,
-      "approvalRate": 85.0
-    },
-    "black": {
-      "approved": 56,
-      "denied": 35,
-      "total": 91,
-      "approvalRate": 61.5
-    },
-    "asian": {
-      "approved": 9,
-      "denied": 0,
-      "total": 9,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 9,
-      "denied": 2,
-      "total": 11,
-      "approvalRate": 81.8
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "roselawn": {
-    "name": "Roselawn",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 27,
-      "denied": 6,
-      "total": 33,
-      "approvalRate": 81.8
-    },
-    "black": {
-      "approved": 94,
-      "denied": 42,
-      "total": 136,
-      "approvalRate": 69.1
-    },
-    "asian": {
-      "approved": 1,
-      "denied": 1,
-      "total": 2,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 3,
-      "denied": 3,
-      "total": 6,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "lowerpricehillqueensgate": {
-    "name": "Lower Price Hill_Queensgate",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 3,
-      "denied": 0,
-      "total": 3,
-      "approvalRate": null
-    },
-    "black": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
-    },
-    "asian": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "rollhill": {
-    "name": "Roll Hill",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
-    },
-    "black": {
-      "approved": 1,
-      "denied": 0,
-      "total": 1,
-      "approvalRate": null
-    },
-    "asian": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "carthage": {
-    "name": "Carthage",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 36,
-      "denied": 12,
-      "total": 48,
-      "approvalRate": 75.0
-    },
-    "black": {
-      "approved": 21,
-      "denied": 12,
-      "total": 33,
-      "approvalRate": 63.6
-    },
-    "asian": {
-      "approved": 1,
-      "denied": 1,
-      "total": 2,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 6,
-      "denied": 2,
-      "total": 8,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "mtlookout": {
-    "name": "Mt. Lookout",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 197,
-      "denied": 30,
-      "total": 227,
-      "approvalRate": 86.8
-    },
-    "black": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
-    },
-    "asian": {
-      "approved": 6,
-      "denied": 0,
-      "total": 6,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 2,
-      "denied": 2,
-      "total": 4,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "riversidesedamsville": {
-    "name": "Riverside_Sedamsville",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 55,
-      "denied": 23,
-      "total": 78,
-      "approvalRate": 70.5
-    },
-    "black": {
-      "approved": 8,
-      "denied": 5,
-      "total": 13,
-      "approvalRate": 61.5
-    },
-    "asian": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 2,
-      "denied": 1,
-      "total": 3,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "riverside": {
-    "name": "Riverside",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 411,
-      "denied": 71,
-      "total": 482,
-      "approvalRate": 85.3
-    },
-    "black": {
-      "approved": 26,
-      "denied": 8,
-      "total": 34,
-      "approvalRate": 76.5
-    },
-    "asian": {
-      "approved": 2,
-      "denied": 1,
-      "total": 3,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 5,
-      "denied": 6,
-      "total": 11,
-      "approvalRate": 45.5
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "campwashington": {
-    "name": "Camp Washington",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 25,
-      "denied": 6,
-      "total": 31,
-      "approvalRate": 80.6
-    },
-    "black": {
-      "approved": 0,
-      "denied": 2,
-      "total": 2,
-      "approvalRate": null
-    },
-    "asian": {
-      "approved": 3,
-      "denied": 2,
-      "total": 5,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "hydepark": {
-    "name": "Hyde Park",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 447,
-      "denied": 51,
-      "total": 498,
-      "approvalRate": 89.8
-    },
-    "black": {
-      "approved": 6,
-      "denied": 1,
-      "total": 7,
-      "approvalRate": null
-    },
-    "asian": {
-      "approved": 12,
-      "denied": 0,
-      "total": 12,
-      "approvalRate": 100.0
-    },
-    "hispanic": {
-      "approved": 3,
-      "denied": 2,
-      "total": 5,
-      "approvalRate": null
+      "approvalRate": 71.5
     },
     "countyWhiteApprovalRate": 83.0,
     "countyBlackApprovalRate": 67.8
@@ -899,446 +23,18 @@
     "name": "Bond Hill",
     "year": 2022,
     "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
+    "source": "county_fallback",
     "white": {
-      "approved": 144,
-      "denied": 30,
-      "total": 174,
-      "approvalRate": 82.8
+      "approvalRate": 83.0
     },
     "black": {
-      "approved": 155,
-      "denied": 66,
-      "total": 221,
-      "approvalRate": 70.1
+      "approvalRate": 67.8
     },
     "asian": {
-      "approved": 6,
-      "denied": 0,
-      "total": 6,
-      "approvalRate": null
+      "approvalRate": 82.4
     },
     "hispanic": {
-      "approved": 11,
-      "denied": 1,
-      "total": 12,
-      "approvalRate": 91.7
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "mtauburn": {
-    "name": "Mt. Auburn",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 68,
-      "denied": 16,
-      "total": 84,
-      "approvalRate": 81.0
-    },
-    "black": {
-      "approved": 25,
-      "denied": 12,
-      "total": 37,
-      "approvalRate": 67.6
-    },
-    "asian": {
-      "approved": 7,
-      "denied": 0,
-      "total": 7,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 4,
-      "denied": 2,
-      "total": 6,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "southfairmount": {
-    "name": "South Fairmount",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 33,
-      "denied": 12,
-      "total": 45,
-      "approvalRate": 73.3
-    },
-    "black": {
-      "approved": 13,
-      "denied": 5,
-      "total": 18,
-      "approvalRate": 72.2
-    },
-    "asian": {
-      "approved": 1,
-      "denied": 0,
-      "total": 1,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 3,
-      "denied": 1,
-      "total": 4,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "northavondale": {
-    "name": "North Avondale",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 149,
-      "denied": 36,
-      "total": 185,
-      "approvalRate": 80.5
-    },
-    "black": {
-      "approved": 55,
-      "denied": 38,
-      "total": 93,
-      "approvalRate": 59.1
-    },
-    "asian": {
-      "approved": 4,
-      "denied": 0,
-      "total": 4,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 3,
-      "denied": 2,
-      "total": 5,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "evanston": {
-    "name": "Evanston",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 168,
-      "denied": 33,
-      "total": 201,
-      "approvalRate": 83.6
-    },
-    "black": {
-      "approved": 59,
-      "denied": 29,
-      "total": 88,
-      "approvalRate": 67.0
-    },
-    "asian": {
-      "approved": 12,
-      "denied": 1,
-      "total": 13,
-      "approvalRate": 92.3
-    },
-    "hispanic": {
-      "approved": 5,
-      "denied": 5,
-      "total": 10,
-      "approvalRate": 50.0
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "westend": {
-    "name": "West End",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 34,
-      "denied": 10,
-      "total": 44,
-      "approvalRate": 77.3
-    },
-    "black": {
-      "approved": 22,
-      "denied": 14,
-      "total": 36,
-      "approvalRate": 61.1
-    },
-    "asian": {
-      "approved": 2,
-      "denied": 0,
-      "total": 2,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 3,
-      "denied": 0,
-      "total": 3,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "oakley": {
-    "name": "Oakley",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 301,
-      "denied": 42,
-      "total": 343,
-      "approvalRate": 87.8
-    },
-    "black": {
-      "approved": 17,
-      "denied": 3,
-      "total": 20,
-      "approvalRate": 85.0
-    },
-    "asian": {
-      "approved": 14,
-      "denied": 0,
-      "total": 14,
-      "approvalRate": 100.0
-    },
-    "hispanic": {
-      "approved": 11,
-      "denied": 0,
-      "total": 11,
-      "approvalRate": 100.0
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "downtown": {
-    "name": "Downtown",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 53,
-      "denied": 4,
-      "total": 57,
-      "approvalRate": 93.0
-    },
-    "black": {
-      "approved": 5,
-      "denied": 2,
-      "total": 7,
-      "approvalRate": null
-    },
-    "asian": {
-      "approved": 4,
-      "denied": 0,
-      "total": 4,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 2,
-      "denied": 1,
-      "total": 3,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "clifton": {
-    "name": "Clifton",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 77,
-      "denied": 13,
-      "total": 90,
-      "approvalRate": 85.6
-    },
-    "black": {
-      "approved": 6,
-      "denied": 5,
-      "total": 11,
-      "approvalRate": 54.5
-    },
-    "asian": {
-      "approved": 5,
-      "denied": 1,
-      "total": 6,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 1,
-      "denied": 0,
-      "total": 1,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "northside": {
-    "name": "Northside",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 189,
-      "denied": 24,
-      "total": 213,
-      "approvalRate": 88.7
-    },
-    "black": {
-      "approved": 19,
-      "denied": 14,
-      "total": 33,
-      "approvalRate": 57.6
-    },
-    "asian": {
-      "approved": 5,
-      "denied": 2,
-      "total": 7,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 4,
-      "denied": 3,
-      "total": 7,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "eastwalnuthills": {
-    "name": "East Walnut Hills",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 73,
-      "denied": 8,
-      "total": 81,
-      "approvalRate": 90.1
-    },
-    "black": {
-      "approved": 3,
-      "denied": 1,
-      "total": 4,
-      "approvalRate": null
-    },
-    "asian": {
-      "approved": 3,
-      "denied": 1,
-      "total": 4,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "eastend": {
-    "name": "East End",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 67,
-      "denied": 10,
-      "total": 77,
-      "approvalRate": 87.0
-    },
-    "black": {
-      "approved": 2,
-      "denied": 1,
-      "total": 3,
-      "approvalRate": null
-    },
-    "asian": {
-      "approved": 1,
-      "denied": 1,
-      "total": 2,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 1,
-      "denied": 1,
-      "total": 2,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "northfairmount": {
-    "name": "North Fairmount",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 7,
-      "denied": 1,
-      "total": 8,
-      "approvalRate": null
-    },
-    "black": {
-      "approved": 8,
-      "denied": 8,
-      "total": 16,
-      "approvalRate": 50.0
-    },
-    "asian": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
-    },
-    "countyWhiteApprovalRate": 83.0,
-    "countyBlackApprovalRate": 67.8
-  },
-  "eastwestwood": {
-    "name": "East Westwood",
-    "year": 2022,
-    "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
-    "white": {
-      "approved": 33,
-      "denied": 7,
-      "total": 40,
-      "approvalRate": 82.5
-    },
-    "black": {
-      "approved": 48,
-      "denied": 36,
-      "total": 84,
-      "approvalRate": 57.1
-    },
-    "asian": {
-      "approved": 6,
-      "denied": 0,
-      "total": 6,
-      "approvalRate": null
-    },
-    "hispanic": {
-      "approved": 5,
-      "denied": 0,
-      "total": 5,
-      "approvalRate": null
+      "approvalRate": 71.5
     },
     "countyWhiteApprovalRate": 83.0,
     "countyBlackApprovalRate": 67.8
@@ -1347,164 +43,244 @@
     "name": "California",
     "year": 2022,
     "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
+    "source": "county_fallback",
     "white": {
-      "approved": 241,
-      "denied": 31,
-      "total": 272,
-      "approvalRate": 88.6
+      "approvalRate": 83.0
     },
     "black": {
-      "approved": 4,
-      "denied": 2,
-      "total": 6,
-      "approvalRate": null
+      "approvalRate": 67.8
     },
     "asian": {
-      "approved": 5,
-      "denied": 0,
-      "total": 5,
-      "approvalRate": null
+      "approvalRate": 82.4
     },
     "hispanic": {
-      "approved": 8,
-      "denied": 0,
-      "total": 8,
-      "approvalRate": null
+      "approvalRate": 71.5
     },
     "countyWhiteApprovalRate": 83.0,
     "countyBlackApprovalRate": 67.8
   },
-  "pendleton": {
-    "name": "Pendleton",
+  "campwashington": {
+    "name": "Camp Washington",
     "year": 2022,
     "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
+    "source": "county_fallback",
     "white": {
-      "approved": 8,
-      "denied": 0,
-      "total": 8,
-      "approvalRate": null
+      "approvalRate": 83.0
     },
     "black": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
+      "approvalRate": 67.8
     },
     "asian": {
-      "approved": 1,
-      "denied": 1,
-      "total": 2,
-      "approvalRate": null
+      "approvalRate": 82.4
     },
     "hispanic": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
+      "approvalRate": 71.5
     },
     "countyWhiteApprovalRate": 83.0,
     "countyBlackApprovalRate": 67.8
   },
-  "mtadams": {
-    "name": "Mt. Adams",
+  "carthage": {
+    "name": "Carthage",
     "year": 2022,
     "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
+    "source": "county_fallback",
     "white": {
-      "approved": 55,
-      "denied": 6,
-      "total": 61,
-      "approvalRate": 90.2
+      "approvalRate": 83.0
     },
     "black": {
-      "approved": 1,
-      "denied": 0,
-      "total": 1,
-      "approvalRate": null
+      "approvalRate": 67.8
     },
     "asian": {
-      "approved": 1,
-      "denied": 0,
-      "total": 1,
-      "approvalRate": null
+      "approvalRate": 82.4
     },
     "hispanic": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
+      "approvalRate": 71.5
     },
     "countyWhiteApprovalRate": 83.0,
     "countyBlackApprovalRate": 67.8
   },
-  "wintonhills": {
-    "name": "Winton Hills",
+  "clifton": {
+    "name": "Clifton",
     "year": 2022,
     "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
+    "source": "county_fallback",
     "white": {
-      "approved": 95,
-      "denied": 30,
-      "total": 125,
-      "approvalRate": 76.0
+      "approvalRate": 83.0
     },
     "black": {
-      "approved": 49,
-      "denied": 23,
-      "total": 72,
-      "approvalRate": 68.1
+      "approvalRate": 67.8
     },
     "asian": {
-      "approved": 9,
-      "denied": 0,
-      "total": 9,
-      "approvalRate": null
+      "approvalRate": 82.4
     },
     "hispanic": {
-      "approved": 5,
-      "denied": 3,
-      "total": 8,
-      "approvalRate": null
+      "approvalRate": 71.5
     },
     "countyWhiteApprovalRate": 83.0,
     "countyBlackApprovalRate": 67.8
   },
-  "southcumminsville": {
-    "name": "South Cumminsville",
+  "collegehill": {
+    "name": "College Hill",
     "year": 2022,
     "loanTypes": "All (purchase, refinance, home improvement)",
-    "source": "tract_level",
+    "source": "county_fallback",
     "white": {
-      "approved": 4,
-      "denied": 1,
-      "total": 5,
-      "approvalRate": null
+      "approvalRate": 83.0
     },
     "black": {
-      "approved": 14,
-      "denied": 8,
-      "total": 22,
-      "approvalRate": 63.6
+      "approvalRate": 67.8
     },
     "asian": {
-      "approved": 0,
-      "denied": 0,
-      "total": 0,
-      "approvalRate": null
+      "approvalRate": 82.4
     },
     "hispanic": {
-      "approved": 1,
-      "denied": 1,
-      "total": 2,
-      "approvalRate": null
+      "approvalRate": 71.5
     },
     "countyWhiteApprovalRate": 83.0,
     "countyBlackApprovalRate": 67.8
   },
   "columbiatusculum": {
     "name": "Columbia Tusculum",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "corryville": {
+    "name": "Corryville",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "cuf": {
+    "name": "CUF",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "downtown": {
+    "name": "Downtown",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "eastend": {
+    "name": "East End",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "eastpricehill": {
+    "name": "East Price Hill",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "eastwalnuthills": {
+    "name": "East Walnut Hills",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "eastwestwood": {
+    "name": "East Westwood",
     "year": 2022,
     "loanTypes": "All (purchase, refinance, home improvement)",
     "source": "county_fallback",
@@ -1543,8 +319,668 @@
     "countyWhiteApprovalRate": 83.0,
     "countyBlackApprovalRate": 67.8
   },
+  "evanston": {
+    "name": "Evanston",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "hartwell": {
+    "name": "Hartwell",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "hydepark": {
+    "name": "Hyde Park",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "kennedyheights": {
+    "name": "Kennedy Heights",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "linwood": {
+    "name": "Linwood",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "lowerpricehillqueensgate": {
+    "name": "Lower Price Hill_Queensgate",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "madisonville": {
+    "name": "Madisonville",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
   "millvale": {
     "name": "Millvale",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "mtadams": {
+    "name": "Mt. Adams",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "mtairy": {
+    "name": "Mt. Airy",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "mtauburn": {
+    "name": "Mt. Auburn",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "mtlookout": {
+    "name": "Mt. Lookout",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "mtwashington": {
+    "name": "Mt. Washington",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "northavondale": {
+    "name": "North Avondale",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "northfairmount": {
+    "name": "North Fairmount",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "northside": {
+    "name": "Northside",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "oakley": {
+    "name": "Oakley",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "overtherhine": {
+    "name": "Over-the-Rhine",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "paddockhills": {
+    "name": "Paddock Hills",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "pendleton": {
+    "name": "Pendleton",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "pleasantridge": {
+    "name": "Pleasant Ridge",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "riverside": {
+    "name": "Riverside",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "riversidesedamsville": {
+    "name": "Riverside_Sedamsville",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "rollhill": {
+    "name": "Roll Hill",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "roselawn": {
+    "name": "Roselawn",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "saylerpark": {
+    "name": "Sayler Park",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "southcumminsville": {
+    "name": "South Cumminsville",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "southfairmount": {
+    "name": "South Fairmount",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "springgrovevillage": {
+    "name": "Spring Grove Village",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "walnuthills": {
+    "name": "Walnut Hills",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "westend": {
+    "name": "West End",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "westpricehill": {
+    "name": "West Price Hill",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "westwood": {
+    "name": "Westwood",
+    "year": 2022,
+    "loanTypes": "All (purchase, refinance, home improvement)",
+    "source": "county_fallback",
+    "white": {
+      "approvalRate": 83.0
+    },
+    "black": {
+      "approvalRate": 67.8
+    },
+    "asian": {
+      "approvalRate": 82.4
+    },
+    "hispanic": {
+      "approvalRate": 71.5
+    },
+    "countyWhiteApprovalRate": 83.0,
+    "countyBlackApprovalRate": 67.8
+  },
+  "wintonhills": {
+    "name": "Winton Hills",
     "year": 2022,
     "loanTypes": "All (purchase, refinance, home improvement)",
     "source": "county_fallback",

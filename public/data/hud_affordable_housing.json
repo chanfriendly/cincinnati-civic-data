@@ -1,19 +1,85 @@
 {
+  "carthage": {
+    "name": "Carthage",
+    "totalAssistedUnits": 134,
+    "propertyCount": 2,
+    "byProgram": {
+      "202/8 NC": 7,
+      "Sec 8 NC": 127
+    },
+    "expiringProperties": [],
+    "asOf": "2026-06-01"
+  },
+  "overtherhine": {
+    "name": "Over-the-Rhine",
+    "totalAssistedUnits": 637,
+    "propertyCount": 17,
+    "byProgram": {
+      "LMSA": 287,
+      "PD/8 Existing": 251,
+      "PRAC/202": 14,
+      "811 PRA DEMO": 5,
+      "Sec 8 SR": 45,
+      "Sec 8 NC": 35
+    },
+    "expiringProperties": [],
+    "asOf": "2026-06-01"
+  },
+  "madisonville": {
+    "name": "Madisonville",
+    "totalAssistedUnits": 657,
+    "propertyCount": 8,
+    "byProgram": {
+      "LMSA": 222,
+      "HFDA/8 NC": 321,
+      "202/8 NC": 72,
+      "PRAC/202": 42
+    },
+    "expiringProperties": [],
+    "asOf": "2026-06-01"
+  },
+  "sedamsville": {
+    "name": "Sedamsville",
+    "totalAssistedUnits": 73,
+    "propertyCount": 1,
+    "byProgram": {
+      "Sec 8 NC": 73
+    },
+    "expiringProperties": [],
+    "asOf": "2026-06-01"
+  },
   "avondale": {
     "name": "Avondale",
-    "totalAssistedUnits": 700,
+    "totalAssistedUnits": 849,
     "propertyCount": 10,
     "byProgram": {
       "LMSA": 83,
-      "PD/8 SR": 113,
       "202/8 NC": 6,
-      "Sec 8 NC": 197,
+      "PD/8 SR": 113,
       "PD/8 Existing": 121,
+      "Sec 8 NC": 197,
       "Sec 8 SR": 31,
-      "RAD Mod Rehab Conv": 149
+      "RAD Mod Rehab Conv": 298
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
+  },
+  "walnuthills": {
+    "name": "Walnut Hills",
+    "totalAssistedUnits": 863,
+    "propertyCount": 13,
+    "byProgram": {
+      "PD/8 Existing": 186,
+      "LMSA": 236,
+      "202/8 NC": 30,
+      "Sec 8 SR": 18,
+      "Sec 8 NC": 28,
+      "811 PRA DEMO": 6,
+      "RAD PH Conv": 307,
+      "PRAC/202": 52
+    },
+    "expiringProperties": [],
+    "asOf": "2026-06-01"
   },
   "lowerpricehill": {
     "name": "Lower Price Hill",
@@ -27,45 +93,92 @@
       "RAD PH Conv": 32
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
   },
-  "sedamsville": {
-    "name": "Sedamsville",
-    "totalAssistedUnits": 73,
-    "propertyCount": 1,
+  "pendleton": {
+    "name": "Pendleton",
+    "totalAssistedUnits": 157,
+    "propertyCount": 4,
     "byProgram": {
-      "Sec 8 NC": 73
+      "PD/8 Existing": 118,
+      "Sec 8 NC": 33,
+      "811 PRA DEMO": 6
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
   },
   "mountauburn": {
     "name": "Mount Auburn",
     "totalAssistedUnits": 218,
     "propertyCount": 6,
     "byProgram": {
-      "Sec 8 SR": 26,
       "LMSA": 17,
+      "Sec 8 SR": 26,
       "PD/8 Existing": 23,
       "Sec 8 NC": 152
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
   },
-  "overtherhine": {
-    "name": "Over-the-Rhine",
-    "totalAssistedUnits": 637,
-    "propertyCount": 17,
+  "evanston": {
+    "name": "Evanston",
+    "totalAssistedUnits": 471,
+    "propertyCount": 5,
     "byProgram": {
-      "LMSA": 287,
-      "PD/8 Existing": 251,
-      "PRAC/202": 14,
-      "811 PRA DEMO": 5,
-      "Sec 8 NC": 35,
-      "Sec 8 SR": 45
+      "LMSA": 209,
+      "PD/8 Existing": 157,
+      "PRAC/811": 5,
+      "RAD PH Conv": 100
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
+  },
+  "oakley": {
+    "name": "Oakley",
+    "totalAssistedUnits": 39,
+    "propertyCount": 1,
+    "byProgram": {
+      "202/8 NC": 39
+    },
+    "expiringProperties": [],
+    "asOf": "2026-06-01"
+  },
+  "mountairy": {
+    "name": "Mount Airy",
+    "totalAssistedUnits": 268,
+    "propertyCount": 4,
+    "byProgram": {
+      "LMSA": 152,
+      "Sec 8 NC": 46,
+      "PRAC/202": 64,
+      "811 PRA DEMO": 6
+    },
+    "expiringProperties": [],
+    "asOf": "2026-06-01"
+  },
+  "pleasantridge": {
+    "name": "Pleasant Ridge",
+    "totalAssistedUnits": 96,
+    "propertyCount": 3,
+    "byProgram": {
+      "202/8 NC": 47,
+      "PRAC/202": 49
+    },
+    "expiringProperties": [],
+    "asOf": "2026-06-01"
+  },
+  "westwood": {
+    "name": "Westwood",
+    "totalAssistedUnits": 146,
+    "propertyCount": 4,
+    "byProgram": {
+      "202/8 NC": 40,
+      "HFDA/8 NC": 50,
+      "Sec 8 NC": 48,
+      "PRAC/811": 8
+    },
+    "expiringProperties": [],
+    "asOf": "2026-06-01"
   },
   "corryville": {
     "name": "Corryville",
@@ -75,7 +188,18 @@
       "202/8 NC": 24
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
+  },
+  "westpricehill": {
+    "name": "West Price Hill",
+    "totalAssistedUnits": 214,
+    "propertyCount": 2,
+    "byProgram": {
+      "PRAC/811": 24,
+      "RAD PH Conv": 190
+    },
+    "expiringProperties": [],
+    "asOf": "2026-06-01"
   },
   "northfairmount": {
     "name": "North Fairmount",
@@ -87,60 +211,17 @@
       "PRAC/202": 18
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
   },
-  "westwood": {
-    "name": "Westwood",
-    "totalAssistedUnits": 146,
-    "propertyCount": 4,
+  "millvale": {
+    "name": "Millvale",
+    "totalAssistedUnits": 18,
+    "propertyCount": 1,
     "byProgram": {
-      "202/8 NC": 40,
-      "Sec 8 NC": 48,
-      "HFDA/8 NC": 50,
-      "PRAC/811": 8
+      "PD/8 Existing": 18
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
-  },
-  "madisonville": {
-    "name": "Madisonville",
-    "totalAssistedUnits": 550,
-    "propertyCount": 8,
-    "byProgram": {
-      "LMSA": 222,
-      "202/8 NC": 72,
-      "HFDA/8 NC": 214,
-      "PRAC/202": 42
-    },
-    "expiringProperties": [],
-    "asOf": "2026-04-03"
-  },
-  "roselawn": {
-    "name": "Roselawn",
-    "totalAssistedUnits": 337,
-    "propertyCount": 2,
-    "byProgram": {
-      "Sec 8 NC": 337
-    },
-    "expiringProperties": [],
-    "asOf": "2026-04-03"
-  },
-  "walnuthills": {
-    "name": "Walnut Hills",
-    "totalAssistedUnits": 863,
-    "propertyCount": 13,
-    "byProgram": {
-      "PD/8 Existing": 186,
-      "LMSA": 236,
-      "202/8 NC": 30,
-      "RAD PH Conv": 307,
-      "PRAC/202": 52,
-      "811 PRA DEMO": 6,
-      "Sec 8 SR": 18,
-      "Sec 8 NC": 28
-    },
-    "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
   },
   "collegehill": {
     "name": "College Hill",
@@ -151,31 +232,7 @@
       "PRAC/202": 95
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
-  },
-  "westpricehill": {
-    "name": "West Price Hill",
-    "totalAssistedUnits": 214,
-    "propertyCount": 2,
-    "byProgram": {
-      "PRAC/811": 24,
-      "RAD PH Conv": 190
-    },
-    "expiringProperties": [],
-    "asOf": "2026-04-03"
-  },
-  "evanston": {
-    "name": "Evanston",
-    "totalAssistedUnits": 471,
-    "propertyCount": 5,
-    "byProgram": {
-      "PD/8 Existing": 157,
-      "LMSA": 209,
-      "PRAC/811": 5,
-      "RAD PH Conv": 100
-    },
-    "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
   },
   "cbdriverfront": {
     "name": "CBD / Riverfront",
@@ -186,51 +243,7 @@
       "HFDA/8 SR": 104
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
-  },
-  "mountairy": {
-    "name": "Mount Airy",
-    "totalAssistedUnits": 268,
-    "propertyCount": 4,
-    "byProgram": {
-      "Sec 8 NC": 46,
-      "LMSA": 152,
-      "811 PRA DEMO": 6,
-      "PRAC/202": 64
-    },
-    "expiringProperties": [],
-    "asOf": "2026-04-03"
-  },
-  "oakley": {
-    "name": "Oakley",
-    "totalAssistedUnits": 39,
-    "propertyCount": 1,
-    "byProgram": {
-      "202/8 NC": 39
-    },
-    "expiringProperties": [],
-    "asOf": "2026-04-03"
-  },
-  "pleasantridge": {
-    "name": "Pleasant Ridge",
-    "totalAssistedUnits": 96,
-    "propertyCount": 3,
-    "byProgram": {
-      "202/8 NC": 47,
-      "PRAC/202": 49
-    },
-    "expiringProperties": [],
-    "asOf": "2026-04-03"
-  },
-  "clifton": {
-    "name": "Clifton",
-    "totalAssistedUnits": 65,
-    "propertyCount": 1,
-    "byProgram": {
-      "LMSA": 65
-    },
-    "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
   },
   "eastwestwood": {
     "name": "East Westwood",
@@ -242,7 +255,17 @@
       "RAD PH Conv": 140
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
+  },
+  "clifton": {
+    "name": "Clifton",
+    "totalAssistedUnits": 65,
+    "propertyCount": 1,
+    "byProgram": {
+      "LMSA": 65
+    },
+    "expiringProperties": [],
+    "asOf": "2026-06-01"
   },
   "fayapartments": {
     "name": "Fay Apartments",
@@ -250,35 +273,22 @@
     "propertyCount": 5,
     "byProgram": {
       "LMSA": 154,
+      "PD/8 Existing": 69,
       "RAD PH Conv": 86,
-      "811 PRA DEMO": 7,
-      "PD/8 Existing": 69
+      "811 PRA DEMO": 7
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
   },
-  "pendleton": {
-    "name": "Pendleton",
-    "totalAssistedUnits": 157,
-    "propertyCount": 4,
-    "byProgram": {
-      "PD/8 Existing": 118,
-      "811 PRA DEMO": 6,
-      "Sec 8 NC": 33
-    },
-    "expiringProperties": [],
-    "asOf": "2026-04-03"
-  },
-  "carthage": {
-    "name": "Carthage",
-    "totalAssistedUnits": 134,
+  "roselawn": {
+    "name": "Roselawn",
+    "totalAssistedUnits": 337,
     "propertyCount": 2,
     "byProgram": {
-      "202/8 NC": 7,
-      "Sec 8 NC": 127
+      "Sec 8 NC": 337
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
   },
   "eastend": {
     "name": "East End",
@@ -288,17 +298,7 @@
       "Sec 8 NC": 48
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
-  },
-  "millvale": {
-    "name": "Millvale",
-    "totalAssistedUnits": 18,
-    "propertyCount": 1,
-    "byProgram": {
-      "PD/8 Existing": 18
-    },
-    "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
   },
   "southfairmount": {
     "name": "South Fairmount",
@@ -309,7 +309,7 @@
       "PD/8 Existing": 28
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
   },
   "northavondale": {
     "name": "North Avondale",
@@ -319,7 +319,7 @@
       "PRAC/202": 41
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
   },
   "northside": {
     "name": "Northside",
@@ -329,6 +329,6 @@
       "811 PRA DEMO": 12
     },
     "expiringProperties": [],
-    "asOf": "2026-04-03"
+    "asOf": "2026-06-01"
   }
 }

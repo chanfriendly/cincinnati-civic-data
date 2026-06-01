@@ -15,7 +15,7 @@
     "broadbandPct": 77.8,
     "noInternetPct": 22.0,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "bondhill": {
     "name": "Bond Hill",
@@ -33,7 +33,7 @@
     "broadbandPct": 83.6,
     "noInternetPct": 16.4,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "cbdriverfront": {
     "name": "CBD / Riverfront",
@@ -51,7 +51,7 @@
     "broadbandPct": 94.0,
     "noInternetPct": 5.4,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "carthage": {
     "name": "Carthage",
@@ -69,7 +69,7 @@
     "broadbandPct": 82.9,
     "noInternetPct": 16.2,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "clifton": {
     "name": "Clifton",
@@ -87,7 +87,7 @@
     "broadbandPct": 92.7,
     "noInternetPct": 5.2,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "cliftonheights": {
     "name": "Clifton Heights",
@@ -105,7 +105,7 @@
     "broadbandPct": 90.2,
     "noInternetPct": 2.5,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "collegehill": {
     "name": "College Hill",
@@ -123,7 +123,7 @@
     "broadbandPct": 86.8,
     "noInternetPct": 9.8,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "corryville": {
     "name": "Corryville",
@@ -141,7 +141,7 @@
     "broadbandPct": 87.2,
     "noInternetPct": 5.3,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "eastend": {
     "name": "East End",
@@ -159,7 +159,7 @@
     "broadbandPct": 92.9,
     "noInternetPct": 5.0,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "eastwalnuthills": {
     "name": "East Walnut Hills",
@@ -177,7 +177,7 @@
     "broadbandPct": 88.6,
     "noInternetPct": 9.3,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "eastwestwood": {
     "name": "East Westwood",
@@ -195,7 +195,7 @@
     "broadbandPct": 87.6,
     "noInternetPct": 7.3,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "englishwoods": {
     "name": "English Woods",
@@ -213,7 +213,7 @@
     "broadbandPct": 92.6,
     "noInternetPct": 4.9,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "evanston": {
     "name": "Evanston",
@@ -231,7 +231,7 @@
     "broadbandPct": 79.4,
     "noInternetPct": 16.5,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "fayapartments": {
     "name": "Fay Apartments",
@@ -249,7 +249,7 @@
     "broadbandPct": 81.5,
     "noInternetPct": 16.9,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "hartwell": {
     "name": "Hartwell",
@@ -267,7 +267,7 @@
     "broadbandPct": 90.7,
     "noInternetPct": 7.2,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "hydepark": {
     "name": "Hyde Park",
@@ -285,7 +285,7 @@
     "broadbandPct": 97.5,
     "noInternetPct": 1.2,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "kennedyheights": {
     "name": "Kennedy Heights",
@@ -303,7 +303,7 @@
     "broadbandPct": 87.4,
     "noInternetPct": 10.6,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "linwood": {
     "name": "Linwood",
@@ -321,7 +321,7 @@
     "broadbandPct": 93.5,
     "noInternetPct": 4.4,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "lowerpricehill": {
     "name": "Lower Price Hill",
@@ -339,7 +339,7 @@
     "broadbandPct": 82.4,
     "noInternetPct": 16.7,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "madisonville": {
     "name": "Madisonville",
@@ -357,7 +357,7 @@
     "broadbandPct": 90.0,
     "noInternetPct": 7.9,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "mountadams": {
     "name": "Mount Adams",
@@ -375,7 +375,7 @@
     "broadbandPct": 94.7,
     "noInternetPct": 2.8,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "mountairy": {
     "name": "Mount Airy",
@@ -393,7 +393,7 @@
     "broadbandPct": 87.6,
     "noInternetPct": 9.8,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "mountauburn": {
     "name": "Mount Auburn",
@@ -411,7 +411,7 @@
     "broadbandPct": 85.5,
     "noInternetPct": 11.5,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "mtlookout": {
     "name": "Mt. Lookout",
@@ -429,7 +429,7 @@
     "broadbandPct": 95.0,
     "noInternetPct": 4.0,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "northavondale": {
     "name": "North Avondale",
@@ -447,7 +447,7 @@
     "broadbandPct": 87.8,
     "noInternetPct": 10.1,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "northfairmount": {
     "name": "North Fairmount",
@@ -465,7 +465,7 @@
     "broadbandPct": 88.5,
     "noInternetPct": 5.8,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "northside": {
     "name": "Northside",
@@ -483,7 +483,7 @@
     "broadbandPct": 89.3,
     "noInternetPct": 7.3,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "oakley": {
     "name": "Oakley",
@@ -501,7 +501,7 @@
     "broadbandPct": 93.9,
     "noInternetPct": 5.0,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "overtherhine": {
     "name": "Over-the-Rhine",
@@ -519,7 +519,7 @@
     "broadbandPct": 81.3,
     "noInternetPct": 12.9,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "paddockhills": {
     "name": "Paddock Hills",
@@ -537,7 +537,7 @@
     "broadbandPct": 60.6,
     "noInternetPct": 39.4,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "pendleton": {
     "name": "Pendleton",
@@ -555,7 +555,7 @@
     "broadbandPct": 93.1,
     "noInternetPct": 5.4,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "pleasantridge": {
     "name": "Pleasant Ridge",
@@ -573,7 +573,7 @@
     "broadbandPct": 89.5,
     "noInternetPct": 7.8,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "riverside": {
     "name": "Riverside",
@@ -591,7 +591,7 @@
     "broadbandPct": 91.0,
     "noInternetPct": 8.5,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "roselawn": {
     "name": "Roselawn",
@@ -609,7 +609,7 @@
     "broadbandPct": 94.5,
     "noInternetPct": 4.0,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "saylerpark": {
     "name": "Sayler Park",
@@ -627,7 +627,7 @@
     "broadbandPct": 90.3,
     "noInternetPct": 7.6,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "sedamsville": {
     "name": "Sedamsville",
@@ -645,7 +645,7 @@
     "broadbandPct": 91.4,
     "noInternetPct": 7.3,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "southfairmount": {
     "name": "South Fairmount",
@@ -663,7 +663,7 @@
     "broadbandPct": 83.4,
     "noInternetPct": 8.3,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "springgrovevillage": {
     "name": "Spring Grove Village",
@@ -681,7 +681,7 @@
     "broadbandPct": 82.6,
     "noInternetPct": 13.0,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "walnuthills": {
     "name": "Walnut Hills",
@@ -699,7 +699,7 @@
     "broadbandPct": 71.0,
     "noInternetPct": 26.4,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "westpricehill": {
     "name": "West Price Hill",
@@ -717,7 +717,7 @@
     "broadbandPct": 86.5,
     "noInternetPct": 10.4,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "westwood": {
     "name": "Westwood",
@@ -735,6 +735,6 @@
     "broadbandPct": 89.2,
     "noInternetPct": 8.3,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   }
 }

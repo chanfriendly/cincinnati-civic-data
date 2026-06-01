@@ -27,7 +27,7 @@
     "allTeethLost": 36.6,
     "tractCount": 3,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "bondhill": {
     "name": "Bond Hill",
@@ -57,7 +57,7 @@
     "allTeethLost": 24.5,
     "tractCount": 1,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "cbdriverfront": {
     "name": "CBD / Riverfront",
@@ -87,7 +87,7 @@
     "allTeethLost": 10.9,
     "tractCount": 2,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "carthage": {
     "name": "Carthage",
@@ -117,7 +117,7 @@
     "allTeethLost": 25.0,
     "tractCount": 5,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "clifton": {
     "name": "Clifton",
@@ -147,7 +147,7 @@
     "allTeethLost": 8.7,
     "tractCount": 3,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "cliftonheights": {
     "name": "Clifton Heights",
@@ -177,7 +177,7 @@
     "allTeethLost": 23.7,
     "tractCount": 5,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "collegehill": {
     "name": "College Hill",
@@ -207,7 +207,7 @@
     "allTeethLost": 28.6,
     "tractCount": 4,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "corryville": {
     "name": "Corryville",
@@ -237,7 +237,7 @@
     "allTeethLost": 35.2,
     "tractCount": 4,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "eastend": {
     "name": "East End",
@@ -267,7 +267,7 @@
     "allTeethLost": 8.2,
     "tractCount": 10,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "eastwalnuthills": {
     "name": "East Walnut Hills",
@@ -297,7 +297,7 @@
     "allTeethLost": 16.3,
     "tractCount": 4,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "eastwestwood": {
     "name": "East Westwood",
@@ -327,7 +327,7 @@
     "allTeethLost": 35.4,
     "tractCount": 2,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "englishwoods": {
     "name": "English Woods",
@@ -357,7 +357,7 @@
     "allTeethLost": 12.9,
     "tractCount": 12,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "evanston": {
     "name": "Evanston",
@@ -387,7 +387,7 @@
     "allTeethLost": 29.3,
     "tractCount": 5,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "fayapartments": {
     "name": "Fay Apartments",
@@ -417,7 +417,7 @@
     "allTeethLost": 42.0,
     "tractCount": 2,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "hartwell": {
     "name": "Hartwell",
@@ -447,7 +447,7 @@
     "allTeethLost": 16.2,
     "tractCount": 24,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "hydepark": {
     "name": "Hyde Park",
@@ -477,7 +477,7 @@
     "allTeethLost": 4.1,
     "tractCount": 2,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "kennedyheights": {
     "name": "Kennedy Heights",
@@ -507,7 +507,7 @@
     "allTeethLost": 15.4,
     "tractCount": 5,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "linwood": {
     "name": "Linwood",
@@ -537,7 +537,7 @@
     "allTeethLost": 9.0,
     "tractCount": 1,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "lowerpricehill": {
     "name": "Lower Price Hill",
@@ -567,7 +567,7 @@
     "allTeethLost": 37.0,
     "tractCount": 4,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "madisonville": {
     "name": "Madisonville",
@@ -597,7 +597,7 @@
     "allTeethLost": 8.4,
     "tractCount": 13,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "mountadams": {
     "name": "Mount Adams",
@@ -627,7 +627,7 @@
     "allTeethLost": 5.9,
     "tractCount": 1,
     "dataYear": "2022",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "mountairy": {
     "name": "Mount Airy",
@@ -657,7 +657,7 @@
     "allTeethLost": 18.5,
     "tractCount": 16,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "mountauburn": {
     "name": "Mount Auburn",
@@ -687,7 +687,7 @@
     "allTeethLost": 21.2,
     "tractCount": 4,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "mtlookout": {
     "name": "Mt. Lookout",
@@ -717,7 +717,7 @@
     "allTeethLost": 8.8,
     "tractCount": 4,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "northavondale": {
     "name": "North Avondale",
@@ -747,7 +747,7 @@
     "allTeethLost": 12.2,
     "tractCount": 2,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "northfairmount": {
     "name": "North Fairmount",
@@ -777,7 +777,7 @@
     "allTeethLost": 64.5,
     "tractCount": 2,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "northside": {
     "name": "Northside",
@@ -807,7 +807,7 @@
     "allTeethLost": 10.8,
     "tractCount": 3,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "oakley": {
     "name": "Oakley",
@@ -837,7 +837,7 @@
     "allTeethLost": 8.6,
     "tractCount": 3,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "overtherhine": {
     "name": "Over-the-Rhine",
@@ -867,7 +867,7 @@
     "allTeethLost": 23.1,
     "tractCount": 5,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "paddockhills": {
     "name": "Paddock Hills",
@@ -897,7 +897,7 @@
     "allTeethLost": 28.1,
     "tractCount": 1,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "pendleton": {
     "name": "Pendleton",
@@ -927,7 +927,7 @@
     "allTeethLost": 7.4,
     "tractCount": 2,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "pleasantridge": {
     "name": "Pleasant Ridge",
@@ -957,7 +957,7 @@
     "allTeethLost": 11.6,
     "tractCount": 15,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "riverside": {
     "name": "Riverside",
@@ -987,7 +987,7 @@
     "allTeethLost": 26.5,
     "tractCount": 3,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "roselawn": {
     "name": "Roselawn",
@@ -1017,7 +1017,7 @@
     "allTeethLost": 10.4,
     "tractCount": 12,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "saylerpark": {
     "name": "Sayler Park",
@@ -1047,7 +1047,7 @@
     "allTeethLost": 16.1,
     "tractCount": 10,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "sedamsville": {
     "name": "Sedamsville",
@@ -1077,7 +1077,7 @@
     "allTeethLost": 13.9,
     "tractCount": 6,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "southfairmount": {
     "name": "South Fairmount",
@@ -1107,7 +1107,7 @@
     "allTeethLost": 37.6,
     "tractCount": 1,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "springgrovevillage": {
     "name": "Spring Grove Village",
@@ -1137,7 +1137,7 @@
     "allTeethLost": 27.9,
     "tractCount": 1,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "walnuthills": {
     "name": "Walnut Hills",
@@ -1167,7 +1167,7 @@
     "allTeethLost": 19.0,
     "tractCount": 2,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "westpricehill": {
     "name": "West Price Hill",
@@ -1197,7 +1197,7 @@
     "allTeethLost": 24.8,
     "tractCount": 9,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   },
   "westwood": {
     "name": "Westwood",
@@ -1227,6 +1227,6 @@
     "allTeethLost": 16.3,
     "tractCount": 13,
     "dataYear": "2023",
-    "asOf": "2026-05-12"
+    "asOf": "2026-06-01"
   }
 }
