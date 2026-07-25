@@ -4,7 +4,7 @@ This directory contains an alternative backend to `api/proxy.js` (the Vercel ser
 
 ## What it does
 
-Routes `/api/census/*`, `/api/openrouter/*`, and `/api/ohgo/*` to their upstream APIs, injecting secrets server-side. Functionally identical to `api/proxy.js`.
+Routes `/api/census/*`, `/api/openrouter/*`, and `/api/ohgo/*` to their upstream APIs, injecting secrets server-side. Functionally identical to `api/proxy.js`, except this Worker still carries the `/api/openrouter/*` branch — the app's AI features were removed in July 2026 and `api/proxy.js` dropped that route. The branch here is harmless dead code kept as reference for a future maintainer; the `OPENROUTER_API_KEY` secret is only needed if AI features are ever restored.
 
 ## When you'd use this
 

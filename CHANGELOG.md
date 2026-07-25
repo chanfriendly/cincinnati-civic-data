@@ -6,11 +6,27 @@
 
 ## Current Status
 
-**Phase:** Phase 8 — Design System Polish & UX Consistency  
-**Last updated:** 2026-05-17  
-**Active focus:** Complete — all Phase 8 tasks (32–36) done. Housing Justice scatter chart polished (Sessions 34–35).  
+**Phase:** Phase 9 — Production Handoff (UC College of Nursing adoption)  
+**Last updated:** 2026-07-25  
+**Active focus:** Handoff readiness — `HANDOFF.md` (transfer/ops) + `MAINTENANCE.md` (runbook) created, "For students & researchers" Limitations section added, **all AI features removed** (no funding/maintainer — preserved in git history, restoration conditions on the public Roadmap). LICENSE decision deferred to the UC conversation. Hosting (Vercel) is interim.  
 **Live site:** https://cincinnati-civic-data.vercel.app  
-**TypeScript:** ✅ `tsc --noEmit` passing clean (0 errors) as of Session 35
+**TypeScript:** ✅ `tsc --noEmit` passing clean (0 errors) as of Session 36
+
+---
+
+## Session 36 — Handoff Audit Gotchas
+
+### Documented-but-nonexistent GTFS script (Jul 2026)
+README instructed maintainers to run `node scripts/convert-gtfs.js` to refresh SORTA stop data. **That file never existed in the repo** — the documented procedure was impossible to follow, and nobody noticed because the seed data hadn't needed refreshing. Replaced with `scripts/convert_gtfs.py` (stdlib-only, matches the other build scripts' language, guards against truncated downloads by refusing to write <1,000 stops). Lesson: procedures in docs that were never executed are unverified claims — the handoff audit is the right time to actually run them.
+
+### AI features removed (Jul 2026) — restoration pointer
+All AI features were removed at Christian's direction: no funding for OpenRouter API costs, no maintainer to audit output quality. Removed: the Address Lookup "Plain English Summary" (including its carefully-tuned system prompt), the Police "Ask a Question" sub-tab, the Explorer top-5 AI blurbs, `callAI`/`callClaude` + `AI_ENDPOINT`/`AI_MODEL` in `src/utils/api.ts`, and the `/api/openrouter/` branch of `api/proxy.js`. `OPENROUTER_API_KEY` is no longer needed anywhere.
+**To restore:** check out the commit tagged in this entry's git history (the last commit before "Remove AI features") — the prompts and UI are intact there. The public Roadmap lists the feature as `needs-partner` with three restoration conditions: sustained API funding, a named output-quality reviewer, and visible AI-generated disclosures. The dormant `worker/api-proxy.js` still contains an OpenRouter branch — intentionally left as reference; it is not deployed.
+
+### Documentation drift caught in audit (Jul 2026)
+- **USALEEP vintage:** the Limitations tab `VINTAGE_ROWS` said "2015–2019" — the actual data (and script, and UI section) is **2010–2015**, the only USALEEP release to date. Fixed. Lesson: `VINTAGE_ROWS` is hand-maintained and must be bumped whenever a data file's vintage changes.
+- **OIS dataset UID:** README said `r6qu-muts`; the code (and CLAUDE.md) use **`r6q4-muts`**. Fixed in README.
+- **No LICENSE file exists.** The repo is public but legally all-rights-reserved. Do not add one unilaterally — open-source status is Christian's explicit open decision. Documented as the adoption blocker in `HANDOFF.md` §2.
 
 ---
 
@@ -74,7 +90,7 @@
 - **Census tract → neighborhood mapping** uses nearest centroid. Tracts straddling two neighborhoods are assigned to whichever centroid is closer. There is no exact fix without a full spatial join.
 - **OHGO traffic** only covers Ohio-managed roads (interstates, state routes). Cincinnati city streets are not in this dataset. Coverage note is shown in the UI.
 - **Neighborhood Explorer GeoJSON** tries 4 CAGIS URLs with 8s timeouts each. If all fail, the map won't render but scoring still works. Long-term fix: embed a static `public/data/cincinnati_neighborhoods.geojson`.
-- **AI summary outputs** (Address Lookup + Police Accountability) have not been formally reassessed for framing, accuracy, or appropriate disclosure. See `TODO(reassess-ai-summary)` in `AddressLookup/index.tsx`.
+- **AI features removed (Jul 2026)** — the AI summary, Police Q&A, and Explorer blurbs no longer exist in the app. Code and prompts preserved in git history; see Session 36 entry for the restoration pointer and conditions.
 - **Spanish translations** are machine-generated. A native speaker review is pending. A disclaimer banner now shows when `language === 'es'`.
 - **Eviction data** requires a data partner (Legal Aid Society). County totals from Eviction Lab are available but not integrated. Do not build without tract-level data.
 - **First Street Foundation** (property-level flood probability) is a paid API — deferred indefinitely.
@@ -92,7 +108,7 @@
 | Early 2026 | Pre-build static JSON files for slow data (parks, schools, transit equity, HMDA, HUD) | Live CAGIS/ArcGIS queries for 52 neighborhoods take 30–60 seconds. Static files load instantly. Build scripts live in `scripts/` |
 | Early 2026 | Nearest-centroid mapping for Census tract → neighborhood | True spatial join requires PostGIS or a server-side process. Centroid approximation is good enough at neighborhood granularity |
 | Early 2026 | Vercel serverless function (`api/proxy.js`) for key injection | OpenRouter and Census keys must never be in the browser bundle. Proxy injects them server-side |
-| Early 2026 | `minimax/minimax-m2.5` via OpenRouter for AI summaries | Cost-effective for summarization tasks; uses OpenAI-compatible message format |
+| Early 2026 | `minimax/minimax-m2.5` via OpenRouter for AI summaries | Cost-effective for summarization tasks; uses OpenAI-compatible message format. **Superseded Jul 2026: all AI features removed** (see Session 36) |
 | Apr 2026 | SODA `count(*)` query for permit totals, not just fetching 500 rows | Without a separate count query, the total would be capped at the pagination limit, producing misleading numbers |
 | Apr 2026 | Explicit `PROGRAM_LABELS` map for HUD codes | HUD's internal codes (e.g. "PD/8 SR", "RAD PH Conv") are not human-readable. Residents need plain English |
 | Apr 2026 | `NeighborhoodExplorer` scoring runs schools dimension as disabled | No open, reliable school quality data source exists. Placeholder exists in code but does not score |
@@ -173,6 +189,7 @@ The API infrastructure exists but the city has not enabled it. **Do not attempt 
 | 31 | Apr 2026 | Phase 7c: Life expectancy by neighborhood (CDC USALEEP 2010–2015, 41 neighborhoods, 63–87yr range) + LifeExpectancySection with city-range gradient bar + 23-year equity gap callout |
 | 32 | May 2026 | Editorial design system migration — Police Accountability tab: OIS section redesign (digit chips for small counts, CCIA context, Collaborative Agreement / 2014-2016 editorial callouts, legacy chart with officer race breakdown); Use of Force Leaflet map fix (direct fetch bypasses useSODA timing issue, AbortController cleanup); x-axis overlap fix (horizontal bar chart for Subjects by Race) |
 | 33 | May 2026 | Design system documentation — `DESIGN_SYSTEM.md` created (color tokens, typography scale, component patterns, Leaflet init pattern, Recharts chart templates, tab migration checklist). `CLAUDE.md` updated to reference it. Inspired by https://github.com/google-labs-code/design.md |
+| 36 | Jul 2026 | Production handoff audit (UC Nursing adoption): `HANDOFF.md` created; "For students & researchers" section in Limitations tab (fieldwork gaps, model-estimate caveats, citation guidance); fixed USALEEP vintage (2015–2019 → 2010–2015) and README OIS UID; LICENSE gap flagged as adoption blocker. **Then: all AI features removed** (no funding/maintainer) — Address Lookup summary, Police Q&A sub-tab, Explorer blurbs, `callAI`/`callClaude`, `/api/openrouter/` proxy branch; preserved in git history; Roadmap documents restoration conditions |
 | 34 | May 2026 | Housing Justice tab (formerly "Displacement") — renamed in nav, full C-token migration of `Displacement/index.tsx` (1,480 lines) and `ConnectedCommunitiesSection.tsx`: all old Tailwind color utilities replaced, phase colors remapped to C tokens, sub-nav migrated, serif/smallcaps headings applied, "Housing Justice" eyebrow added |
 
 ---

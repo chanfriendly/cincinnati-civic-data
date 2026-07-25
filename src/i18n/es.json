@@ -12,8 +12,6 @@
     "source": "Fuente",
     "updated": "Actualizado",
     "learnMore": "Más información",
-    "explain": "Explica esto en lenguaje sencillo",
-    "generating": "Generando resumen…",
     "dataDisclaimer": "Datos de {{source}} — Actualizado {{date}}"
   },
   "nav": {

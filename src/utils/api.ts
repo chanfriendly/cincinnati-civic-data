@@ -6,10 +6,6 @@ const SODA_BASE = 'https://data.cincinnati-oh.gov/resource';
 // App token is VITE_ so it's in the client bundle (low sensitivity — just prevents rate-limiting)
 const SOCRATA_TOKEN = import.meta.env.VITE_SOCRATA_APP_TOKEN ?? '';
 
-// OpenRouter proxy route (key is injected server-side by Vite dev proxy / Cloudflare Worker)
-const AI_ENDPOINT = '/api/openrouter/v1/chat/completions';
-const AI_MODEL = 'minimax/minimax-m2.5';
-
 // ─── SODA API ─────────────────────────────────────────────────────────────────
 
 /**
@@ -73,57 +69,11 @@ export async function fetchSODA<T>(
   return { data, lastUpdated };
 }
 
-// ─── OpenRouter / AI ──────────────────────────────────────────────────────────
-
-/**
- * Call the AI via OpenRouter (proxied — key is never in the browser bundle).
- * Uses the OpenAI-compatible messages format.
- */
-export async function callAI(
-  userMessage: string,
-  systemPrompt: string = 'You are a helpful civic data assistant.',
-  maxTokens: number = 4096
-): Promise<string> {
-  const response = await fetch(AI_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: AI_MODEL,
-      max_tokens: maxTokens,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userMessage },
-      ],
-    }),
-  });
-
-  if (!response.ok) {
-    const text = await response.text().catch(() => '');
-    throw new Error(`AI API error ${response.status}: ${text}`);
-  }
-
-  const json = await response.json();
-  // OpenAI-compatible response format
-  return json?.choices?.[0]?.message?.content ?? '';
-}
-
-/**
- * Backward-compatible wrapper that matches the call sites in Tab 1 and Tab 3.
- * Signature: callClaude(systemPrompt, userMessage, language?)
- * Language ('en'|'es') is automatically appended to the system prompt.
- */
-export async function callClaude(
-  systemPrompt: string,
-  userMessage: string,
-  language?: string
-): Promise<string> {
-  const langInstruction = language === 'es'
-    ? ' Respond in Spanish.'
-    : ' Respond in English.';
-  return callAI(userMessage, systemPrompt + langInstruction);
-}
+// ─── AI (removed) ─────────────────────────────────────────────────────────────
+// The OpenRouter-backed callAI/callClaude helpers were removed in Jul 2026 —
+// no maintainer or funding for the AI features. If a future contributor wants to
+// restore them, the helpers, prompts, and UI live in git history (see CHANGELOG
+// Session 36) and the serverless proxy needs its /api/openrouter/ branch back.
 
 // ─── Census ───────────────────────────────────────────────────────────────────
 

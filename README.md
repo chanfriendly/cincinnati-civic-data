@@ -17,14 +17,14 @@ The platform serves community organizers, researchers, residents, journalists, a
 
 | # | Tab | Status | Purpose | Primary Data Sources |
 |---|-----|--------|---------|----------------------|
-| 01 | **Address Lookup** | ✅ Working | Search any Cincinnati address to see nearby crime, zoning, flood zone, historic district, parks, transit stops, schools, and live traffic — plus an AI-generated summary | Socrata (crime, inspections, abatements, blight), Hamilton County CAGIS (zoning/parks/historic), FEMA NFHL (flood), OHGO (traffic), SORTA (transit), static schools JSON, OpenRouter AI |
+| 01 | **Address Lookup** | ✅ Working | Search any Cincinnati address to see nearby crime, zoning, flood zone, historic district, parks, transit stops, schools, and live traffic | Socrata (crime, inspections, abatements, blight), Hamilton County CAGIS (zoning/parks/historic), FEMA NFHL (flood), OHGO (traffic), SORTA (transit), static schools JSON |
 | 02 | **Neighborhoods** | ✅ Working | Two sub-views via internal nav: **Profiles** (per-neighborhood crime, 311, permits, Census demographics, racial equity, affordable housing, health outcomes, transit equity) and **Map & Compare** (choropleth map ranking all 52 neighborhoods across 9 scored dimensions with a side-by-side comparison tool) | Socrata, U.S. Census ACS, CFPB HMDA, HUD, CAGIS, FEMA NFHL, SORTA GTFS, CDC PLACES, USDA FARA, EPA AirToxScreen |
 | 03 | **Housing Justice** | ✅ Working | Displacement pressure phases across all 52 neighborhoods (scatter chart), zoning reform tracker (Connected Communities YoY), permit trend analysis | Socrata (permits, abatements, PLAP, demolitions), Census ACS |
 | 04 | **Lead Safety** | ✅ Working | Neighborhood-level lead service line inventory, risk ratings, address lookup, and resident guidance | Cincinnati Health Dept. lead service line data |
-| 05 | **Police** | ✅ Working | Explore CPD traffic stops, pedestrian stops, use-of-force incidents, and officer-involved shootings — broken down by race, district, and year — with an AI Q&A interface | Socrata (CPD datasets), OpenRouter AI |
+| 05 | **Police** | ✅ Working | Explore CPD traffic stops, pedestrian stops, use-of-force incidents, and officer-involved shootings — broken down by race, district, and year | Socrata (CPD datasets) |
 | 06 | **Explorer** | ✅ Working | Disability prevalence, paratransit coverage, and infrastructure accessibility by neighborhood | Census ACS (disability), SORTA GTFS (paratransit) |
 | 07 | **Tax & Revenue** | ✅ Working | Municipal income tax rate history, ACS household income percentiles (2012–2023), ITEP Ohio modeled tax burden by income group, City general fund revenue and vendor spend by category | Census ACS, ITEP Who Pays?, Socrata (city finance datasets) |
-| 08 | **Methodology & Limits** | ✅ Working | Two sub-views: **Limitations** (boundary ambiguity, data vintages, AI disclosures, known gaps, contribution form) and **Roadmap** (public feature roadmap) | Static |
+| 08 | **Methodology & Limits** | ✅ Working | Two sub-views: **Limitations** (boundary ambiguity, data vintages, known gaps, student/researcher guidance, contribution form) and **Roadmap** (public feature roadmap) | Static |
 
 > **Note on sub-navigation:** Tabs 02 and 08 contain internal sub-navs — clicking the top-level tab opens the default sub-view. The sub-nav pills appear below the main tab bar.
 
@@ -70,7 +70,7 @@ The platform serves community organizers, researchers, residents, journalists, a
    ```
    The app will open at `http://localhost:5173`.
 
-> **Note:** The AI features (Address Lookup summary, Police Accountability Q&A) call `/api/openrouter/*`, which is a Vercel serverless function. This route is not available in local dev unless you run `vercel dev` or mock the endpoint. The rest of the app works fully without it.
+> **Note:** The former AI features (address summary, police Q&A) were removed in July 2026 — no OpenRouter key or AI configuration is needed. See "AI features (removed)" under Known Limitations.
 
 ---
 
@@ -82,7 +82,6 @@ The platform serves community organizers, researchers, residents, journalists, a
 | `VITE_GEOCODING_API_KEY` | Mapbox | Convert addresses to lat/lon for Address Lookup | Low | Browser bundle / Vercel env var |
 | `VITE_GEOCODING_PROVIDER` | — | Set to `mapbox` | — | Browser bundle / Vercel env var |
 | `VITE_OHGO_API_KEY` | OHGO (Ohio ODOT) | Live traffic incidents, construction zones, cameras | Low | Browser bundle / Vercel env var |
-| `OPENROUTER_API_KEY` | OpenRouter | AI summaries and Q&A (routed through Vercel serverless function) | **High** | Vercel env var only — never use `VITE_` prefix |
 | `CENSUS_API_KEY` | U.S. Census Bureau | ACS demographic data — only needed to regenerate `neighborhood_acs.json` | **High** | Vercel env var only — never use `VITE_` prefix |
 
 ### Getting Each Key
@@ -105,12 +104,6 @@ The platform serves community organizers, researchers, residents, journalists, a
 3. Add to `.env.local`: `VITE_OHGO_API_KEY=your_key`
 
 > Note: OHGO covers Ohio-managed roads only (interstates, state routes) — not Cincinnati city streets.
-
-**OpenRouter API Key** *(AI features — high sensitivity)*
-1. Visit https://openrouter.ai → **Keys** → **Create Key**
-2. The platform uses `minimax/minimax-m2.5`
-3. Add to **Vercel project settings** as `OPENROUTER_API_KEY` (no `VITE_` prefix)
-4. Do **not** add this to `.env.local` or any browser-facing variable
 
 **Census API Key** *(only needed to regenerate pre-built data files)*
 1. Visit https://api.census.gov/data/key_signup.html
@@ -145,7 +138,6 @@ VITE_OHGO_API_KEY
 
 **Server-only (never expose in browser):**
 ```
-OPENROUTER_API_KEY
 CENSUS_API_KEY
 ```
 
@@ -157,15 +149,17 @@ vercel --prod
 
 Or connect your GitHub repo to Vercel for automatic deploys on every push to `main`.
 
-### How the AI proxy works
+### How the API proxy works
 
-All AI requests go to `/api/openrouter/[...path]` — a Vercel serverless function defined in `api/openrouter/[...path].js`. This function injects the `OPENROUTER_API_KEY` server-side and forwards requests to `https://openrouter.ai/api/v1/`. The key is never exposed to the browser.
+All `/api/*` requests go to a single Vercel serverless function (`api/proxy.js`), which dispatches by path prefix (`/api/census/*`, `/api/ohgo/*`) and injects the corresponding key server-side. Keys are never exposed to the browser.
 
 ---
 
 ## Pre-Built Static Data Files
 
 Several data sources are expensive to query at runtime and are instead pre-computed and committed to the repository. If you need to regenerate them, the relevant scripts are in `scripts/`.
+
+> **Maintaining this data?** See **[MAINTENANCE.md](MAINTENANCE.md)** — the runbook for the monthly automated refresh, per-dataset rebuild commands, upstream release cadences, and troubleshooting. Most months this is a single PR review.
 
 | File | Source | Script | Notes |
 |------|--------|--------|-------|
@@ -180,7 +174,7 @@ Several data sources are expensive to query at runtime and are instead pre-compu
 | `public/data/neighborhood_ejscreen.json` | EPA AirToxScreen 2019 | `scripts/build_ejscreen.py` | Pre-built; EJScreen API has been offline since Feb 2025 |
 | `public/data/cagis_neighborhood_parks.json` | Hamilton County CAGIS | `scripts/build_parks.py` | 49 neighborhoods; replaces 52 live CAGIS calls at load time |
 | `public/data/neighborhood_transit_equity.json` | SORTA GTFS + Census ACS | — | 50 neighborhoods; stop count + income for transit equity scatter chart |
-| `public/data/sorta_stops.json` | SORTA GTFS | `scripts/convert-gtfs.js` | 3,743 bus stops; see note below |
+| `public/data/sorta_stops.json` | SORTA GTFS | `scripts/convert_gtfs.py` | 3,743 bus stops; see note below |
 | `public/data/schools.json` | Hamilton County CAGIS layer 32 | — | 309 schools; used for Address Lookup "Nearby Schools" card |
 | `public/data/healthcare_facilities.json` | OpenStreetMap Overpass | `scripts/build_healthcare_facilities.py` | 458 facilities; used for Address Lookup "Nearby Healthcare" card |
 | `public/data/lead_service_lines.json` | Cincinnati Health Dept. | `scripts/build_lead.py` | Lead service line inventory by neighborhood |
@@ -197,17 +191,17 @@ Several data sources are expensive to query at runtime and are instead pre-compu
 ```bash
 # Download latest GTFS feed
 curl -o google_transit.zip https://www.go-metro.com/transitdata/google_transit.zip
-unzip google_transit.zip
+unzip -o google_transit.zip -d gtfs/
 
 # Convert to app format
-node scripts/convert-gtfs.js
+python3 scripts/convert_gtfs.py gtfs/stops.txt
 
 # Commit
 git add public/data/sorta_stops.json
 git commit -m "chore: update SORTA transit data"
 ```
 
-> **Note:** Route associations (`routes: []`) are currently empty in the seed data — the GTFS conversion script needs to be updated to join `stop_times.txt` → `trips.txt` → `routes.txt` to populate them. The UI handles empty routes gracefully.
+> **Note:** Route associations (`routes: []`) are intentionally left empty — SORTA's public GTFS export has no route assignments at stop level, and transit scoring uses stop *count* by design. Populating them would require joining `stop_times.txt` → `trips.txt` → `routes.txt`; nothing in the UI needs it.
 
 ---
 
@@ -222,7 +216,7 @@ git commit -m "chore: update SORTA transit data"
 | Traffic Stops (CPD) | `ktgf-4sjh` | Police Accountability |
 | Pedestrian Stops (CPD) | `jx3x-rh6i` | Police Accountability |
 | Use of Force (CPD) | `748b-sht4` | Police Accountability |
-| Officer-Involved Shootings | `r6qu-muts` | Police Accountability |
+| Officer-Involved Shootings | `r6q4-muts` | Police Accountability |
 | Community Perceptions Survey | `gdf4-fqik` | Neighborhood Profiles (city-wide averages only — no neighborhood field) |
 | Building Permits | `uhjb-xac9` | Displacement, Neighborhood Profiles, Neighborhood Explorer |
 | Tax Abatements | `tkp7-yf64` | Displacement, Address Lookup |
@@ -247,17 +241,10 @@ git commit -m "chore: update SORTA transit data"
 | SORTA GTFS | Address Lookup (nearby stops), Neighborhood Explorer (transit dimension), Neighborhood Profiles (transit equity) | Static file; 3,743 stops |
 | Cincinnati Health Dept. | Lead Safety tab — lead service line inventory | Static file |
 | Hamilton County CAGIS — Schools (layer 32) | Address Lookup — nearby schools | Static file; 309 Hamilton County schools |
-| OpenRouter → MiniMax M2.5 | Address Lookup — address summary; Police Accountability — Q&A | Routed through Vercel serverless proxy |
 
 ---
 
 ## Development Notes
-
-### AI features in local dev
-
-The `/api/openrouter/*` serverless function only runs on Vercel. To test AI features locally, either:
-- Run `vercel dev` instead of `npm run dev` (requires Vercel CLI and linked project)
-- Or temporarily set a direct OpenRouter key and adjust the fetch target in `src/utils/api.ts` (revert before committing)
 
 ### CAGIS Endpoints
 
@@ -286,7 +273,7 @@ The build command (`npm run build`) runs `tsc && vite build` — both must pass 
 - **Census tract alignment:** Neighborhood-to-tract mapping uses closest centroid. Tracts straddling neighborhood boundaries are assigned to the nearest neighborhood centroid.
 - **Police data lag:** CPD datasets on Socrata are updated on varying schedules; some may lag by 30–90 days.
 - **Community Perceptions Survey:** Dataset `gdf4-fqik` has no neighborhood field — it is a city-wide survey only. Shown with a clear disclaimer in Neighborhood Profiles.
-- **AI summary quality:** The AI-generated summaries in Address Lookup and Police Accountability have not been formally reviewed for framing, accuracy, or disclosure. This is a known pending item. See `TODO(reassess-ai-summary)` in `src/tabs/AddressLookup/index.tsx`.
+- **AI features (removed):** The AI-generated address summary, police Q&A, and Explorer neighborhood blurbs were removed in July 2026 — the project has no funding for AI API costs or a maintainer to audit output quality. The code and prompts are preserved in git history (see `CHANGELOG.md` Session 36) as a starting point if a future maintainer wants to restore them responsibly.
 
 ---
 

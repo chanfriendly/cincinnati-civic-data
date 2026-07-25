@@ -6,7 +6,7 @@ A React/TypeScript web application that aggregates public civic data for Cincinn
 
 **Live site:** <https://cincinnati-civic-data.vercel.app>
 **Stack:** Vite 5 + React 18 + TypeScript + Tailwind CSS + Leaflet + Recharts + i18next
-**Backend:** Vercel serverless function (`api/proxy.js`) that injects API keys for OpenRouter, Census, and OHGO
+**Backend:** Vercel serverless function (`api/proxy.js`) that injects API keys for Census and OHGO
 **Alternative backend:** Cloudflare Worker (`worker/api-proxy.js`)
 **Deploy:** Vercel (auto-deploys from `main` branch)
 
@@ -20,7 +20,9 @@ A React/TypeScript web application that aggregates public civic data for Cincinn
 - TypeScript interfaces: `src/types/index.ts`
 - Tab components: `src/tabs/`
 - Scoring logic: `src/utils/scoring.ts`
-- Handoff notes: `CLAUDE_CODE_HANDOFF.md` — hard-won field names and architecture decisions
+- **Operational handoff:** `HANDOFF.md` — accounts/keys inventory, maintenance calendar, fragility ranking, transfer checklist. The document for a new maintainer (e.g. UC College of Nursing adoption).
+- **Maintenance runbook:** `MAINTENANCE.md` — step-by-step how-to for the monthly refresh PR, per-dataset rebuild commands and release cadences, manual procedures (GTFS, elections), and a symptom→fix troubleshooting table.
+- Handoff notes: `CLAUDE_CODE_HANDOFF.md` — stale (Mar 2026), historical only
 
 ## Starting a Session
 
@@ -61,11 +63,11 @@ These guide every feature decision. When evaluating new work, run it through the
 
 | # | Nav Label | Tab ID | Path | Status | Description |
 |---|-----------|--------|------|--------|-------------|
-| 01 | Address Lookup | `address` | `src/tabs/AddressLookup/` | ✅ Working | Geocode an address; show crime, zoning, flood zone, parks, transit, live traffic, AI summary |
+| 01 | Address Lookup | `address` | `src/tabs/AddressLookup/` | ✅ Working | Geocode an address; show crime, zoning, flood zone, parks, transit, live traffic |
 | 02 | Neighborhoods | `neighborhoods` | `src/tabs/Neighborhoods/` | ✅ Working | Container with internal sub-nav: **Profiles** (per-neighborhood data) and **Map & Compare** (choropleth + scoring via `src/tabs/NeighborhoodExplorer/`) |
 | 03 | Housing Justice | `displacement` | `src/tabs/Displacement/` | ✅ Working | Displacement pressure scatter chart, zoning reform tracker (Connected Communities YoY), permit trends |
 | 04 | Lead Safety | `lead` | `src/tabs/LeadSafety/` | ✅ Working | Neighborhood lead service line inventory, risk ratings, address lookup, resident guidance |
-| 05 | Police | `police` | `src/tabs/PoliceAccountability/` | ✅ Working | CPD traffic/pedestrian stops, use-of-force, OIS — charts by race/district + AI Q&A |
+| 05 | Police | `police` | `src/tabs/PoliceAccountability/` | ✅ Working | CPD traffic/pedestrian stops, use-of-force, OIS — charts by race/district |
 | 06 | Explorer | `accessibility` | `src/tabs/Accessibility/` | ✅ Working | Disability prevalence, paratransit coverage, and infrastructure accessibility by neighborhood |
 | 07 | Tax & Revenue | `tax` | `src/tabs/TaxRevenue/` | ✅ Working | Municipal income tax rate history, ACS household income percentiles, ITEP Ohio modeled tax burden, City general fund revenue and vendor spend. Uses **Measured vs Modeled** badges |
 | 08 | Methodology & Limits | `about` | `src/tabs/About/` | ✅ Working | Container with internal sub-nav: **Limitations** (`src/tabs/Limitations/`) and **Roadmap** (`src/tabs/Roadmap/`) |
@@ -75,14 +77,14 @@ These guide every feature decision. When evaluating new work, run it through the
 ### Key Files
 
 ```
-src/utils/api.ts           All API calls (SODA, OpenRouter, Census, CAGIS, OHGO, SORTA, FARA)
+src/utils/api.ts           All API calls (SODA, Census, CAGIS, OHGO, SORTA, FARA)
 src/utils/scoring.ts       Neighborhood Explorer scoring: normalize(), computeScores()
 src/hooks/useSODA.ts       React hook wrapping fetchSODA() with loading/error/success states
 src/hooks/useCensus.ts     React hook for Census API
 src/types/index.ts         All TypeScript interfaces
 src/context/LanguageContext.tsx  EN/ES toggle persisted to localStorage
 src/i18n/en.json, es.json  All user-visible strings (ES is machine-translated, needs review)
-api/proxy.js               Vercel serverless function — key injection for OpenRouter/Census/OHGO
+api/proxy.js               Vercel serverless function — key injection for Census/OHGO
 public/data/sorta_stops.json     3,743 SORTA bus stops (static GTFS asset)
 public/data/neighborhood_acs.json  226 Hamilton County Census tracts (ACS 2022, pre-built)
 ```
@@ -119,7 +121,6 @@ public/data/neighborhood_acs.json  226 Hamilton County Census tracts (ACS 2022, 
 | CAGIS / ArcGIS | Zoning, parks, historic districts | None (CORS-open) |
 | FEMA NFHL | Flood zone boundaries | None (federal) |
 | Census ACS | Income, rent, demographics | `CENSUS_API_KEY` (server-side only) |
-| OpenRouter → MiniMax M2.5 | AI summaries and Q&A | `OPENROUTER_API_KEY` (server-side only) |
 | OHGO / Ohio ODOT | Live traffic incidents | `VITE_OHGO_API_KEY` (browser-safe) |
 | SORTA GTFS | Bus stop locations | Static file |
 | USDA Food Access | Food desert data | None |
@@ -146,6 +147,8 @@ public/data/neighborhood_acs.json  226 Hamilton County Census tracts (ACS 2022, 
 ## Data Maintenance & Automated Refresh
 
 Static JSON files in `public/data/` are rebuilt from upstream sources by Python scripts in `scripts/`. They do **not** update on their own — a GitHub Actions workflow handles scheduled refreshes.
+
+> **`MAINTENANCE.md` is the operator-facing runbook** for all of this: how to review the monthly refresh PR, per-dataset rebuild commands, upstream release cadences, manual procedures (GTFS, post-election council data), and a symptom→fix troubleshooting table. Keep the two in sync — if you change a script or cadence here, update `MAINTENANCE.md` §3.
 
 ### Automation
 
@@ -176,6 +179,7 @@ Add `CENSUS_API_KEY` as a repository secret in GitHub → Settings → Secrets a
 | `build_racial_equity.py` | `neighborhood_racial_equity.json` | ✅ Monthly | Census ACS + HMDA |
 | `build_ejscreen.py` | `neighborhood_ejscreen.json` | ❌ Skipped | EJScreen offline since Feb 2025 |
 | `build_healthcare_facilities.py` | `healthcare_facilities.json` | ❌ Skipped | OSM Overpass unreliable from CI |
+| `convert_gtfs.py` | `sorta_stops.json` | ❌ Manual | GTFS is a zip download, not an API. Usage in `MAINTENANCE.md` §4.1 |
 
 **Note on cadence:** Most source data (ACS, CDC PLACES, HMDA) releases annually with a ~1-year lag. Monthly runs are mostly no-ops 11 months of the year — that's expected and harmless.
 
@@ -202,9 +206,9 @@ Names vary across datasets. All are normalized via `stripNeighborhoodName()` (lo
 - GeoJSON: Title Case (`Over-the-Rhine`)
 - Match key: `overtherine` ← both normalize to this
 
-### AI Model
+### AI Model — REMOVED (Jul 2026)
 
-OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...` → Vercel proxy injects key. The model uses OpenAI-compatible message format.
+All AI features (Address Lookup summary, Police Q&A, Explorer blurbs via OpenRouter → `minimax/minimax-m2.5`) were removed in July 2026 — no funding or maintainer for them. Code and prompts live in git history (CHANGELOG Session 36). Do not re-add AI calls without a funded plan and quality reviewer; the Roadmap documents the conditions for responsible restoration.
 
 ### CAGIS Queries
 
@@ -224,12 +228,11 @@ OpenRouter → `minimax/minimax-m2.5`. Request goes through `/api/openrouter/...
 | `VITE_GEOCODING_PROVIDER` | `.env.local` | `mapbox` |
 | `VITE_SOCRATA_APP_TOKEN` | `.env.local` | Leave blank — registered token is invalid; public datasets work without it |
 | `VITE_OHGO_API_KEY` | `.env.local` | Ohio ODOT traffic API |
-| `OPENROUTER_API_KEY` | `.env.local` (non-VITE) | Injected server-side — NEVER in browser bundle |
 | `CENSUS_API_KEY` | `.env.local` (non-VITE) | Injected server-side — only needed to regenerate `neighborhood_acs.json` |
 
 ## Vercel Routing
 
-`vercel.json` routes all `/api/:path*` requests to the single serverless function at `api/proxy.js`, which dispatches internally by pathname prefix (`/api/openrouter/*`, `/api/census/*`, `/api/ohgo/*`). This is intentional — there is only one function. If you ever add a second serverless function (e.g. `api/webhooks.js`), add its specific route **before** the wildcard rewrite or it will be swallowed by `api/proxy.js`.
+`vercel.json` routes all `/api/:path*` requests to the single serverless function at `api/proxy.js`, which dispatches internally by pathname prefix (`/api/census/*`, `/api/ohgo/*`). This is intentional — there is only one function. If you ever add a second serverless function (e.g. `api/webhooks.js`), add its specific route **before** the wildcard rewrite or it will be swallowed by `api/proxy.js`.
 
 The `worker/` directory contains a complete **Cloudflare Worker** alternative to `api/proxy.js`. It is not currently deployed. See `worker/README.md` for setup instructions if you ever want to migrate to Cloudflare for cost or latency reasons.
 
@@ -290,6 +293,15 @@ The `worker/` directory contains a complete **Cloudflare Worker** alternative to
 
 > **What the nursing template covers that we cannot build:** "History" (no public API; qualitative), "Values and beliefs" (no neighborhood-level data; Community Perceptions Survey is city-wide only), "Perception of residents" at neighborhood level (same limitation). Flag these clearly in Limitations tab — nurses need to collect this via fieldwork. Do not fabricate proxies.
 
+### Phase 9 — Production Handoff (UC College of Nursing adoption)
+
+37. **Choose a LICENSE** — ⚠️ Blocker for formal university adoption. Repo is public but has no LICENSE file (= all rights reserved). Christian's decision; MIT or Apache-2.0 fit the stated non-commercial public-benefit spirit. See `HANDOFF.md` §2.
+38. ✅ **Operational handoff doc** — `HANDOFF.md` created (Jul 2026): accounts/costs inventory, transfer checklist, maintenance calendar, fragility ranking, nursing-specific guidance.
+38b. ✅ **Maintenance runbook** — `MAINTENANCE.md` created (Jul 2026): monthly refresh PR review, per-dataset rebuild commands + upstream cadences, manual procedures, troubleshooting table. Also added `scripts/convert_gtfs.py` (the README had documented a `convert-gtfs.js` that never existed).
+39. ✅ **AI features removed entirely** — Christian's call (no funding, no maintainer): Address Lookup summary, Police Q&A sub-tab, and Explorer AI blurbs all removed, along with `callAI`/`callClaude` in `api.ts` and the `/api/openrouter/` proxy branch. Preserved in git history; Roadmap documents restoration conditions (`needs-partner`). Supersedes the earlier inline-disclosure work from this same phase.
+40. ✅ **"For students & researchers" section in Limitations tab** — fieldwork-required dimensions (history, values/beliefs, perceptions), model-based-estimate caveats, composite-index disclaimer, and how-to-cite guidance. Closes the Phase 7 note "flag these clearly in Limitations tab."
+41. **Transfer accounts per HANDOFF.md §3** — repo, Vercel, API keys, Google Form. Pending the adoption conversation.
+
 ### Phase 8 — Design System Polish & UX Consistency
 
 > Motivated by a Claude Design reference prototype (May 2026) that demonstrated a more editorial, user-friendly layout for Housing Justice and Lead Safety content. Reference: `DESIGN_SYSTEM.md` for all token/component specs.
@@ -312,4 +324,4 @@ The `worker/` directory contains a complete **Cloudflare Worker** alternative to
 - **Building permits address filter** — Uses `within_circle(location,...)` which requires a `location` geo_point field. If a "No such column: location" error appears, switch to bounding box lat/lon filter.
 - **OHGO traffic** — Only covers Ohio-managed roads (interstates, state routes), not Cincinnati city streets. A coverage note is now shown in the UI above the Traffic & Infrastructure section.
 - **Census tract→neighborhood mapping** — Uses closest centroid; tracts straddling boundaries go to nearest neighborhood centroid.
-- **AI summary outputs (pending reassessment)** — The "Plain English Summary" in Address Lookup and the Q&A in Police Accountability use `minimax/minimax-m2.5` via OpenRouter. Output quality, framing, and disclosure have not been formally reviewed. Key questions: Is the "factual, not alarmist" prompt producing outputs residents trust? Should raw data points be shown so users can verify? Should there be an explicit "AI-generated" disclosure? See `TODO(reassess-ai-summary)` comment in `src/tabs/AddressLookup/index.tsx`.
+- **AI features removed (Jul 2026)** — The AI summary (Address Lookup), Q&A (Police), and Explorer neighborhood blurbs were removed: no funding for API costs, no maintainer to audit outputs. Preserved in git history (CHANGELOG Session 36); Roadmap lists it as `needs-partner` with the conditions for responsible restoration.

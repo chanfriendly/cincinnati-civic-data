@@ -6,6 +6,61 @@
 
 ## Session Log
 
+### Session 36c — Maintenance Runbook (July 2026)
+
+**Context:** Handoff needs a *how*, not just a *when*. `HANDOFF.md` covers accounts, calendar, and fragility; nothing documented the actual mechanics of keeping data fresh.
+
+**What was built:**
+1. **`MAINTENANCE.md`** — operator runbook, no prior context assumed. Six sections: (1) the monthly automated refresh loop, including how to review the PR and the "silent month is normal" point plus what a broken diff looks like; (2) running build scripts locally; (3) per-dataset reference tables split into automated / deliberately-not-automated / hand-curated, each with upstream release rhythm and what "new data" actually looks like; (4) manual procedures (SORTA GTFS, post-election council update, vintage-roll three-file checklist); (5) verification; (6) symptom→cause→fix troubleshooting table drawn from CHANGELOG history.
+2. **`scripts/convert_gtfs.py`** (new) — README documented `scripts/convert-gtfs.js`, which **never existed in the repo**; the documented SORTA refresh procedure was therefore impossible to follow. Written in Python for consistency with the other 12 build scripts, stdlib-only, emits the exact existing JSON shape, and refuses to write if it parses <1,000 stops so a truncated download can't clobber good data. Tested against a synthetic `stops.txt`; real data verified byte-identical afterward.
+3. **Cross-links** — README (pre-built data section + corrected GTFS commands), CLAUDE.md (Quick Reference, Data Maintenance section, script table row), HANDOFF.md (doc map + calendar pointer).
+
+**Key decision:** Kept `MAINTENANCE.md` separate from `HANDOFF.md` rather than merging. Handoff is read once during transfer; the runbook is read repeatedly during operation. Different audiences, different lifespans.
+
+---
+
+### Session 36b — AI Feature Removal (July 2026)
+
+**Context:** Christian decided the AI features cannot be maintained or funded going forward. Removed entirely, preserved in git history as a future consideration for others.
+
+**Removed:**
+1. **Address Lookup** — "Plain English Summary" card, `handleAiSummary` (including the tuned system prompt), AI state hooks, `renderMarkdown`/`callClaude`/`useLanguage` imports. An inline comment marks the removal and points to CHANGELOG Session 36.
+2. **Police Accountability** — entire "Ask a Question" sub-tab (nav pill, textarea, handler, response card, dataset list), `SubSection` type narrowed to `'traffic' | 'force' | 'ois'`, AI state and imports removed.
+3. **Neighborhood Explorer** — `TopNeighborhoods.tsx` AI-generated blurbs removed; component rewritten as a pure ranked list (props `dimensions`/`language` dropped, parent call site updated).
+4. **`src/utils/api.ts`** — `callAI`, `callClaude`, `AI_ENDPOINT`, `AI_MODEL` removed; tombstone comment points to git history.
+5. **`api/proxy.js`** — `/api/openrouter/` branch removed; `OPENROUTER_API_KEY` no longer required anywhere. (The dormant `worker/api-proxy.js` intentionally keeps its OpenRouter branch as reference — noted in `worker/README.md`.)
+6. **i18n** — orphaned `app.explain` / `app.generating` keys pruned from en/es.
+7. **Limitations tab** — "AI on this site" section rewritten: AI features removed July 2026, why, and where the code lives; "no AI in scoring" caveat retained.
+8. **Roadmap** — new public item "AI Plain-Language Summaries (removed — future consideration)", status `needs-partner`, listing three restoration conditions: sustained API funding, a named output-quality reviewer, visible AI-generated disclosures.
+9. **Docs** — README (keys guide, deploy, data sources, known limitations), CLAUDE.md (backend line, tab table, AI Model section → removal notice, env vars, Phase 9 item 39), HANDOFF.md (OpenRouter row dropped — **the platform now has zero recurring costs**; fragility list renumbered; hosting-is-interim note added since Vercel is not the committed long-term home), CHANGELOG (restoration pointer entry).
+
+**Verified:** `tsc --noEmit` clean, `vite build` clean, all three affected tabs load in dev with no console errors; Police sub-nav shows three pills; Limitations renders the rewritten AI section.
+
+**Also decided this session:** LICENSE stays as-is for now — to be discussed with UC. Hosting decision deferred to the adopting institution.
+
+---
+
+### Session 36 — Production Handoff Audit for UC College of Nursing (July 2026)
+
+**Context:** UC College of Nursing is looking to adopt the platform; Christian has limited maintenance bandwidth. Goal: audit the work, address nursing-specific blindspots, and produce a handoff package.
+
+**Audit results:**
+- ✅ `tsc --noEmit` and `vite build` both clean.
+- ✅ Scoring logic reviewed (`scoring.ts`, Senior Vulnerability Score, displacement phases) — all use equal-weight min–max normalization against the city range with median/threshold splits; methodology is disclosed in-app; no arithmetic issues found.
+- 🐛 Fixed: Limitations tab said USALEEP vintage was "2015–2019"; actual data is **2010–2015**.
+- 🐛 Fixed: README listed OIS dataset as `r6qu-muts`; correct UID is **`r6q4-muts`**.
+- ⚠️ Found: **no LICENSE file** — repo is legally all-rights-reserved; blocks formal university adoption. Left as Christian's decision, flagged in `HANDOFF.md` §2 and CLAUDE.md Phase 9.
+
+**What was built:**
+1. **`HANDOFF.md`** (new) — operational handoff guide: accounts/keys/cost inventory with transfer checklist, monthly/quarterly/annual maintenance calendar, "what breaks first" fragility ranking, hand-curated file list, nursing-specific notes, open-items table, documentation map.
+2. **Inline AI disclosures** — "AI-generated (MiniMax M2.5)… verify against the data on this page" footer now renders under the Address Lookup Plain English Summary and the Police Accountability Q&A response. Closes the disclosure half of `TODO(reassess-ai-summary)`; formal prompt/framing audit remains open.
+3. **Limitations tab — "For students & researchers" section** (new, with jump link) — three caveats: (a) history / values & beliefs / resident perceptions are not derivable from public data and require fieldwork (closes the Phase 7 note that promised this flag); (b) CDC PLACES are model-based estimates and composite indices are relative rankings, not validated instruments; (c) how-to-cite guidance (primary source first, platform as aggregator, note the centroid mapping method).
+4. **Doc updates** — CLAUDE.md (Phase 9 sprint section, HANDOFF.md in Quick Reference, AI known-issue updated), CHANGELOG (Session 36 gotchas + status), this entry.
+
+**Next:** LICENSE decision (blocker), account transfers per HANDOFF.md §3, then the pre-existing open items (Spanish review, mobile QA, AI prompt audit).
+
+---
+
 ### Session 35 — Displacement scatter chart polish (May 2026)
 
 **What was built:**

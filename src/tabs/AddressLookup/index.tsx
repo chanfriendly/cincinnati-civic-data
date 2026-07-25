@@ -1,10 +1,8 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { renderMarkdown } from '../../utils/markdown';
 import { useTranslation } from 'react-i18next';
 import { useSODA } from '../../hooks/useSODA';
-import { useLanguage } from '../../context/LanguageContext';
 import {
-  callClaude, formatDate, distanceMiles,
+  formatDate, distanceMiles,
   fetchZoning, fetchFloodZone, fetchHistoricDistrict, fetchNearbyParks,
   fetchOHGOIncidents, fetchOHGOCameras, fetchOHGOConstruction, ohgoEnabled,
 } from '../../utils/api';
@@ -128,13 +126,9 @@ interface AddressLookupProps {
 
 export default function AddressLookup({ onTabChange }: AddressLookupProps = {}) {
   const { t } = useTranslation();
-  const { language } = useLanguage();
   const [selectedAddress, setSelectedAddress] = useState<GeocodedAddress | null>(null);
   const [searchInput, setSearchInput] = useState('');
   const [suggestions, setSuggestions] = useState<MapboxFeature[]>([]);
-  const [aiSummary, setAiSummary] = useState<string | null>(null);
-  const [loadingAi, setLoadingAi] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -603,155 +597,6 @@ export default function AddressLookup({ onTabChange }: AddressLookupProps = {}) 
     });
   }, [selectedAddress, mergedCrime]);
 
-  // TODO(reassess-ai-summary): Open follow-ups on this feature:
-  //   - Should we show the raw JSON payload being sent so users can verify the summary?
-  //   - Should we add an "AI-generated" disclosure badge in the UI itself (currently only
-  //     implicit in the section title)?
-  // See CLAUDE.md "Known Issues" for context.
-  const handleAiSummary = useCallback(async () => {
-    if (!selectedAddress) return;
-
-    setLoadingAi(true);
-    setAiError(null);
-    setAiSummary(null);
-    try {
-      const HIGH_FLOOD_ZONES = ['AE', 'A', 'AO', 'AH', 'VE', 'V'];
-      const failedInspectionsCount = (inspections.data || []).filter(
-        (i: any) => /fail|viol|notice/i.test(String(i.data_status ?? ''))
-      ).length;
-      const floodCode = floodZone[0] ? String(floodZone[0].FLD_ZONE ?? 'X') : 'X';
-      const isHighFlood = HIGH_FLOOD_ZONES.includes(floodCode);
-      const topCrimeTypes = Object.entries(
-        mergedCrime.reduce<Record<string, number>>((acc, c) => {
-          const k = String(c.stars_category || c.offense_type || c.offense || 'Unknown');
-          acc[k] = (acc[k] || 0) + 1;
-          return acc;
-        }, {})
-      )
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 3)
-        .map(([category, count]) => ({ category, count }));
-
-      let leadSummary:
-        | { riskLevel: 'high' | 'moderate' | 'low'; totalLines: number; knownLeadLines: number; galvanizedLines: number; unknownLines: number; replaced: number }
-        | null = null;
-      if (leadRecord && leadRecord.total > 0) {
-        const riskLines = leadRecord.lead + leadRecord.galvanized;
-        const riskPct = riskLines / leadRecord.total;
-        const unknownPct = leadRecord.unknown / leadRecord.total;
-        const riskLevel: 'high' | 'moderate' | 'low' =
-          riskPct > 0.15 || (riskPct > 0 && unknownPct > 0.4)
-            ? 'high'
-            : riskPct > 0 || unknownPct > 0.3
-              ? 'moderate'
-              : 'low';
-        leadSummary = {
-          riskLevel,
-          totalLines: leadRecord.total,
-          knownLeadLines: leadRecord.lead,
-          galvanizedLines: leadRecord.galvanized,
-          unknownLines: leadRecord.unknown,
-          replaced: leadRecord.replaced,
-        };
-      }
-
-      const payload = {
-        address: selectedAddress.formatted,
-        neighborhood: selectedAddress.neighborhood ?? null,
-        place: {
-          zoning: zoning[0]
-            ? {
-                code: String(zoning[0].ZONING ?? ''),
-                description: String(zoning[0].ZONE_DESCRIPTION ?? zoning[0].ZONEDESC ?? ''),
-              }
-            : null,
-          floodZone: { code: floodCode, isHighRisk: isHighFlood },
-          historicDistrict: historicDistrict[0]
-            ? String(historicDistrict[0].DISTNAME ?? historicDistrict[0].NAME ?? '')
-            : null,
-        },
-        property: {
-          inspectionsLast12mo: inspections.data?.length || 0,
-          failedOrViolationInspections: failedInspectionsCount,
-          activeTaxAbatement: (taxAbatements.data?.length || 0) > 0,
-          taxAbatementCount: taxAbatements.data?.length || 0,
-          problemLandlordOrBlightCases: blight.data?.length || 0,
-        },
-        publicSafety: {
-          crimeIncidentsWithin400mLast12mo: mergedCrime.length,
-          topCrimeTypes,
-          activeFreewayIncidents: ohgoIncidents.length,
-          activeFreewayConstruction: ohgoConstruction.length,
-        },
-        neighborhoodHealth: {
-          leadServiceLines: leadSummary,
-        },
-        amenities: {
-          parksWithinHalfMile: nearbyParks.length,
-          transitStopsWithinHalfMile: transitStops.length,
-          schoolsWithinOneMile: nearbySchools.length,
-          healthcare: {
-            withinOneMile: nearbyHealthcare.length,
-            hasFederallyQualifiedHealthCenter: nearbyHealthcare.some((f) => f.fqhc),
-          },
-        },
-        civic: {
-          pollingPlace: votingPrecinct
-            ? { name: votingPrecinct.location, address: votingPrecinct.address }
-            : null,
-        },
-      };
-
-      const systemPrompt = `You are a civic-data assistant for a Cincinnati public-records platform. The user has looked up a property address. They may be a homeowner checking on their own home, a nurse or social worker preparing for a home visit, a neighbor, or a community advocate. The JSON in the user message summarizes what the city's public datasets know about that property and the surrounding area.
-
-Your job is to answer: "What should someone know about this address?" Not what to ask before signing a lease — what to understand about the place itself. The summary should stand on its own; someone who never looks at a single chart should still walk away with what matters.
-
-FORMAT
-- Three short paragraphs. No headings, no bullet lists, no bold, no markdown.
-- Plain English, 8th-grade reading level. Under 250 words total.
-- Translate codes. "SF" or "R-SF" → "a single-family residential block." "Zone AE" → "a FEMA high-risk flood zone where standard homeowners insurance does not cover flood damage." Never leave a code unexplained.
-
-PARAGRAPH STRUCTURE
-1. Orient the reader. What kind of place is this — neighborhood character, zoning, flood zone, historic district status, and nearby amenities (transit, parks, schools, healthcare). 2–3 sentences that give a real sense of the location.
-2. What stands out about this specific address. Lead with the most important finding. Possibilities: code violations or failed inspections on the building; high lead-service-line risk in the neighborhood (give the risk level and mention that old homes on this block are likely affected); a high-risk flood zone; an active tax abatement; a pattern in nearby crime worth naming. If there's nothing notable, say "no red flags in the public record" — that's a real and useful answer. Skip anything that's zero or ordinary.
-3. What to do with this. Practical, address-specific next steps. For lead risk: homeowners can contact Greater Cincinnati Water Works (GCWW) for free service line testing; healthcare workers should note the risk for patients with children or who are pregnant. For code violations: look up the case at Cincinnati 311 or the Buildings & Inspections portal. For flood zone: check whether NFIP flood insurance is in place. Close every response with one sentence about what this does not cover: indoor hazards like mold or radon, eviction history, private disputes, and that the information here is only as current as the city's last data update.
-
-TONE
-- Direct, calm, practical. Speak about the place, not the spreadsheet.
-- Never invent details not in the JSON. If a field is null or zero, skip it.
-- No legal, medical, or financial advice — point to the right agency instead.`;
-
-      const userMessage = JSON.stringify(payload);
-
-      const response = await callClaude(systemPrompt, userMessage, language);
-      setAiSummary(response);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      console.error('AI summary error:', msg);
-      setAiError(`Summary unavailable: ${msg}`);
-    } finally {
-      setLoadingAi(false);
-    }
-  }, [
-    selectedAddress,
-    inspections.data,
-    taxAbatements.data,
-    mergedCrime,
-    blight.data,
-    transitStops,
-    nearbyParks,
-    nearbySchools,
-    nearbyHealthcare,
-    zoning,
-    floodZone,
-    historicDistrict,
-    leadRecord,
-    votingPrecinct,
-    ohgoIncidents,
-    ohgoConstruction,
-    language,
-  ]);
-
   const crimeLoading = crimeOld.loading || crimeNew.loading;
   const crimeError = crimeOld.error || crimeNew.error;
 
@@ -1017,33 +862,9 @@ TONE
             </div>
           </div>
 
-          {/* ── Plain English Summary ─────────────────────────────────────────── */}
-          <div className="rounded-md shadow-sm p-6" style={{ background: C.paper }}>
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="text-lg font-semibold" style={{ color: C.ink }}>
-                {t('addressLookup.aiSummary', 'Plain English Summary')}
-              </h3>
-              <button
-                onClick={handleAiSummary}
-                disabled={loadingAi}
-                className="px-4 py-2 rounded-md disabled:opacity-50 text-sm text-white"
-                style={{ background: C.riverDeep }}
-              >
-                {loadingAi
-                  ? t('addressLookup.generating', 'Generating...')
-                  : t('addressLookup.explainRecord', 'Explain This Record')}
-              </button>
-            </div>
-            {aiSummary ? (
-              <div className="prose prose-sm max-w-none">{renderMarkdown(aiSummary)}</div>
-            ) : aiError ? (
-              <p className="text-sm" style={{ color: C.brick }}>{aiError}</p>
-            ) : (
-              <p className="text-sm italic" style={{ color: C.muted }}>
-                {t('addressLookup.aiHint', 'Click "Explain This Record" to get a plain-language summary of all data found for this address.')}
-              </p>
-            )}
-          </div>
+          {/* AI "Plain English Summary" removed Jul 2026 (maintenance/funding).
+              The full feature — handler, payload builder, and system prompt — is
+              preserved in git history; see CHANGELOG.md Session 36 for the pointer. */}
 
           {/* ── Section: Property Record ──────────────────────────────────────── */}
           <div className="flex items-center gap-3">

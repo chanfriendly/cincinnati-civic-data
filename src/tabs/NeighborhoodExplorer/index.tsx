@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '../../context/LanguageContext';
 import { C } from '../../components/ui/DesignAtoms';
 import { computeScores } from '../../utils/scoring';
 import { fetchSODA, distanceMiles, normalizeNeighborhoodName, stripNeighborhoodName, calculateCentroid, fetchNearbyParks, fetchFloodZone, fetchFARAHamilton, fetchNeighborhoodEJStats } from '../../utils/api';
@@ -150,7 +149,6 @@ const CAGIS_URLS = [
 
 export default function NeighborhoodExplorer() {
   const { t } = useTranslation();
-  const { language } = useLanguage();
 
   const [dimensions, setDimensions] = useState<Dimension[]>(INITIAL_DIMENSIONS);
   const [geojson, setGeojson] = useState<GeoJSONFeatureCollection | null>(null);
@@ -937,11 +935,9 @@ export default function NeighborhoodExplorer() {
           <div>
             <TopNeighborhoods
               scores={scores}
-              dimensions={dimensions}
               onSelect={setSelectedNeighborhood}
               selectedNeighborhood={selectedNeighborhood}
               anyDimensionEnabled={anyDimensionEnabled}
-              language={language as 'en' | 'es'}
             />
           </div>
             </>

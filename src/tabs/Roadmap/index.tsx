@@ -515,6 +515,12 @@ const SECTIONS: RoadmapSection[] = [
         tab: 'About & Methods',
       },
       {
+        title: 'AI Plain-Language Summaries (removed — future consideration)',
+        status: 'needs-partner',
+        description: 'Earlier versions of this site offered an AI-generated "Plain English Summary" in Address Lookup, an AI Q&A on the Police tab, and AI-written neighborhood blurbs in the Explorer. All were removed in July 2026: the project has no ongoing funding for AI API costs and no maintainer to audit output quality. The feature code and prompts are preserved in git history for a future maintainer.',
+        why: 'Plain-language explanation of civic data is genuinely valuable — an 8th-grade-reading-level summary of a property record serves residents that charts alone do not. But an unaudited, unfunded AI feature is worse than none. Restoring this responsibly needs three things: sustained funding for API costs, a named reviewer for output quality and framing, and a visible AI-generated disclosure on every output.',
+      },
+      {
         title: 'Civic Organizations Directory',
         status: 'completed',
         description: 'A curated directory of 19 Cincinnati organizations working on housing, policing, environmental justice, food access, and civic engagement — surfaced contextually alongside relevant data. Appears in Neighborhood Profiles and alongside the City Council panel. When you\'re looking at eviction data, you see Legal Aid. When you\'re looking at council contacts, you see civic engagement organizations.',

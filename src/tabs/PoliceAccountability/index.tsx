@@ -1,17 +1,14 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { renderMarkdown } from '../../utils/markdown';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import L from 'leaflet';
 import { useTranslation } from 'react-i18next';
 import { useSODA } from '../../hooks/useSODA';
-import { callClaude } from '../../utils/api';
-import { useLanguage } from '../../context/LanguageContext';
 import { DataCard, EmptyState, DataAttribution } from '../../components/ui';
 import { C } from '../../components/ui/DesignAtoms';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
 
-type SubSection = 'traffic' | 'force' | 'ois' | 'question';
+type SubSection = 'traffic' | 'force' | 'ois';
 
 // Editorial-palette race colors — distinguishable, not value-laden
 const RACE_COLORS: Record<string, string> = {
@@ -31,14 +28,10 @@ const DISCLAIMER = 'This data is published by the City of Cincinnati for public 
 
 export default function PoliceAccountability() {
   const { t } = useTranslation();
-  const { language } = useLanguage();
   const [activeSection, setActiveSection] = useState<SubSection>('traffic');
   const [trafficYear, setTrafficYear] = useState<number>(2024);
   const [trafficDistrict, setTrafficDistrict] = useState<string>('all');
   const [forceYear, setForceYear] = useState<number>(2024);
-  const [aiQuestion, setAiQuestion] = useState('');
-  const [aiResponse, setAiResponse] = useState<string | null>(null);
-  const [loadingAi, setLoadingAi] = useState(false);
   const [mapLoading, setMapLoading] = useState(false);
 
   // ── Traffic Stops (ktgf-4sjh) ───────────────────────────────────────────────
@@ -202,21 +195,6 @@ export default function PoliceAccountability() {
     return [...firearmsIncidentsByYear].sort((a: any, b: any) => b.year.localeCompare(a.year))[0];
   }, [firearmsIncidentsByYear]);
 
-  // ── AI Q&A ──────────────────────────────────────────────────────────────────
-  const handleAiQuestion = useCallback(async () => {
-    if (!aiQuestion.trim()) return;
-    setLoadingAi(true);
-    try {
-      const systemPrompt = 'You are a civic data assistant for Cincinnati. You help users query CPD transparency data. When given a question, construct a valid Socrata SODA API query for the most relevant dataset, then explain what the data would show. Available datasets: Traffic Stops (ktgf-4sjh: interview_date, race, sex, disposition_text, district — actively updated), Use of Force (748b-sht4: eventdate, sna_neighborhood, formtype — actively updated through 2024), OIS Legacy (r6q4-muts: incident_date — frozen at 2019). Note: the Pedestrian Stops dataset (jx3x-rh6i) is currently near-empty and should not be queried. Return your response as: 1) which dataset, 2) the SODA $where query string, 3) a plain-language explanation. Be factual and non-editorializing.';
-      const response = await callClaude(systemPrompt, aiQuestion, language);
-      setAiResponse(response);
-    } catch (e) {
-      console.error('AI query error:', e);
-    } finally {
-      setLoadingAi(false);
-    }
-  }, [aiQuestion, language]);
-
   const trafficLoading = trafficByRace.loading || trafficOutcome.loading;
   const trafficError = trafficByRace.error || trafficOutcome.error;
 
@@ -343,7 +321,6 @@ export default function PoliceAccountability() {
             { id: 'traffic',  label: t('police.trafficStops', 'Traffic Stops') },
             { id: 'force',    label: t('police.useOfForce',   'Use of Force') },
             { id: 'ois',      label: t('police.ois',          'OIS') },
-            { id: 'question', label: t('police.askQuestion',  'Ask a Question') },
           ] as { id: SubSection; label: string }[]).map((tab) => (
             <button
               key={tab.id}
@@ -815,87 +792,7 @@ export default function PoliceAccountability() {
         </div>
       )}
 
-      {/* ── Ask a Question ────────────────────────────────────────────────────── */}
-      {activeSection === 'question' && (
-        <div className="space-y-5">
-          <DataCard
-            title={t('police.askQuestion_title', 'Ask a Question About Police Data')}
-            loading={false}
-            error={null}
-            empty={false}
-          >
-            <div className="space-y-4">
-              <textarea
-                value={aiQuestion}
-                onChange={(e) => setAiQuestion(e.target.value)}
-                placeholder={t('police.questionPlaceholder', 'e.g., "What is the search rate for pedestrian stops in 2024?" or "How many traffic stops were there in District 3?"')}
-                rows={4}
-                className="w-full px-4 py-2 rounded-md text-[13px]"
-                style={{
-                  background: C.limestone,
-                  border: `1px solid ${C.rule}`,
-                  color: C.ink,
-                  fontFamily: '"Public Sans", sans-serif',
-                  resize: 'vertical',
-                  outline: 'none',
-                }}
-              />
-
-              <button
-                onClick={handleAiQuestion}
-                disabled={loadingAi || !aiQuestion.trim()}
-                className="px-5 py-2 rounded-md text-[13px] font-medium transition-opacity disabled:opacity-40"
-                style={{
-                  background: C.river,
-                  color: '#fff',
-                  fontFamily: '"Public Sans", sans-serif',
-                  cursor: loadingAi || !aiQuestion.trim() ? 'not-allowed' : 'pointer',
-                }}
-              >
-                {loadingAi
-                  ? t('police.askQuestion_loading', 'Analyzing...')
-                  : t('police.askQuestion_button', 'Ask Question')}
-              </button>
-
-              {aiResponse && (
-                <div
-                  className="rounded-md p-4"
-                  style={{ background: C.hillLight, borderLeft: `3px solid ${C.hill}` }}
-                >
-                  <div className="text-[13px] font-semibold mb-2" style={{ color: C.hill }}>
-                    {t('police.response', 'Response')}
-                  </div>
-                  <div className="prose prose-sm max-w-none text-[13px]" style={{ color: C.ink }}>
-                    {renderMarkdown(aiResponse)}
-                  </div>
-                </div>
-              )}
-
-              <div className="pt-4" style={{ borderTop: `1px solid ${C.rule}` }}>
-                <p className="smallcaps mb-2" style={{ color: C.muted }}>
-                  {t('police.availableDatasets', 'Available Datasets')}
-                </p>
-                <ul className="space-y-1 text-[12px]" style={{ color: C.muted }}>
-                  <li>
-                    <strong style={{ color: C.ink }}>Traffic Stops</strong> (ktgf-4sjh):
-                    interview_date, race, sex, disposition_text, district
-                  </li>
-                  <li>
-                    <strong style={{ color: C.ink }}>Use of Force</strong> (748b-sht4):
-                    eventdate, sna_neighborhood, formtype — updated through 2024
-                  </li>
-                  <li>
-                    <strong style={{ color: C.ink }}>OIS Legacy</strong> (r6q4-muts): incident_date — frozen at 2019
-                  </li>
-                  <li style={{ opacity: 0.6, fontStyle: 'italic' }}>
-                    Pedestrian Stops (jx3x-rh6i): currently near-empty on the city portal — not queryable
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </DataCard>
-        </div>
-      )}
+      {/* AI Q&A sub-section removed Jul 2026 (maintenance/funding). Preserved in git history — see CHANGELOG.md Session 36. */}
 
       <p className="serif italic text-[12px] pt-6" style={{ color: C.muted, borderTop: `1px solid ${C.rule}` }}>
         Sources: Cincinnati Police Department — Traffic Stops (data.cincinnati-oh.gov, ktgf-4sjh); Use of Force (748b-sht4); Officer-Involved Shootings (r6q4-muts). Traffic stop race data are self-reported or officer-observed at time of stop.
